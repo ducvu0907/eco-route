@@ -2,6 +2,9 @@ package com.ducvu.backend_java.model;
 
 import java.time.LocalDateTime;
 
+import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.UpdateTimestamp;
+
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
@@ -23,10 +26,18 @@ public class DispatchRun {
   @GeneratedValue(strategy = GenerationType.UUID) 
   private String id;
 
+  private String name;
+
   private LocalDateTime startTime;
 
   private LocalDateTime endTime;
 
   @Enumerated(value = EnumType.STRING)
   private DispatchRunStatus status;
+
+  @CreationTimestamp
+  private LocalDateTime createdAt;
+
+  @UpdateTimestamp
+  private LocalDateTime updatedAt;
 }

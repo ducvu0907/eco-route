@@ -6,6 +6,7 @@ docker run --name postgres_dev \
   -e POSTGRES_USER=admin \
   -e POSTGRES_PASSWORD=admin \
   -p 5432:5432 \
+  -v eco_route_data:/var/lib/postgresql/data \
   -d postgres
 
 echo "Starting Spring Boot application..."

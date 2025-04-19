@@ -45,6 +45,8 @@ public class Vehicle {
 
   private Double currentLongitude;
 
+  private Double currentLoad;
+
   @Enumerated(value = EnumType.STRING)
   private VehicleStatus status;
 

@@ -2,6 +2,9 @@ package com.ducvu.backend_java.model;
 
 import java.time.LocalDateTime;
 
+import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.UpdateTimestamp;
+
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -22,7 +25,7 @@ import lombok.NoArgsConstructor;
 public class VehicleTrip {
   @Id
   @GeneratedValue(strategy = GenerationType.UUID)
-  private String id; 
+  private String id;
 
   @OneToOne
   @JoinColumn(name = "vehicle_id")
@@ -30,11 +33,17 @@ public class VehicleTrip {
 
   @ManyToOne
   @JoinColumn(name = "run_id")
-  private DispatchRun run;
+  private DispatchRun dispatchRun;
 
   private Double totalDistance;
 
   private LocalDateTime startTime;
 
   private LocalDateTime endTime;
+
+  @CreationTimestamp
+  private LocalDateTime createdAt;
+
+  @UpdateTimestamp
+  private LocalDateTime updatedAt;
 }

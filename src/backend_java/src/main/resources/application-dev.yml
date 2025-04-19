@@ -1,0 +1,27 @@
+spring:
+  application:
+    name: app
+  datasource:
+    url: ${SPRING_DATASOURCE_URL:jdbc:postgresql://localhost:5432/eco_route_db}
+    username: ${SPRING_DATASOURCE_USERNAME:admin}
+    password: ${SPRING_DATASOURCE_PASSWORD:admin}
+    driver-class-name: org.postgresql.Driver
+  jpa:
+    show-sql: true
+    properties:
+      hibernate:
+        format_sql: true
+    hibernate:
+      ddl-auto: update
+
+server:
+  port: ${SERVER_PORT:8000}
+
+application:
+  security:
+    jwt:
+      secret-key: ${SECRET_KEY:1af670eff96448b0c64d3ee1ae5939a25a9522ec6ae1fa192732b43e9fe8c29d}
+      access-token-expiration: ${ACCESS_TOKEN_EXPIRATION:3600000} # milliseconds
+
+client:
+  url: ${CLIENT_URL:http://localhost:5173,http://localhost:8081}
