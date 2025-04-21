@@ -2,8 +2,9 @@
 
 from __future__ import annotations # forward declaring
 from dataclasses import dataclass, field
-from typing import List
+from typing import List, Tuple
 from collections import deque
+from sortedcontainers import SortedList
 import random
 import time
 
@@ -103,16 +104,60 @@ class Individual:
   """
   def __init__(self, params: Params):
     self.eval: EvalIndiv # solution cost params
-    self.chrom_t: List[int] # giant tour representing the individual
-    self.chrom_r: List[List[int]] # complete solution for each vehicle
-    self.successors: List[int] # successor in the solution for each node (can be the depot 0)
-    self.predecessors: List[int] # predecessor in the solution for each node (can be the depot 0)
-    self.individuals_per_proximity: any # TODO: what data structure to be ported from multiset ?
+
+    self.chrom_t: List[int] = [] # giant tour representing the individual
+    self.chrom_r: List[List[int]] = [[] for _ in range(params.num_vehicles)] # complete solution for each vehicle
+
+    self.successors: List[int] = [-1 for _ in range(params.num_clients + 1)] # successor in the solution for each node (can be the depot 0)
+    self.predecessors: List[int] = [-1 for _ in range(params.num_clients + 1)] # predecessor in the solution for each node (can be the depot 0)
+
+    self.individuals_per_proximity: SortedList[Tuple[float, Individual]] = SortedList(key=lambda x: x[0]) # other individuals in the population, ordered by increasing proximity
     self.biased_fitness: float # biased fitness of the solution
+
+    # initialize a random giant tour
+    for i in range(params.num_clients): self.chrom_t.append(i + 1)
+    random.shuffle(self.chrom_t)
 
   
   def evaluate_complete_cost(self, params: Params) -> None:
-    pass
+    """
+    Evaluate complete cost of the solution
+    """
+    self.eval = EvalIndiv()
+
+    for r in range(params.num_vehicles):
+      if self.chrom_r[r]:
+        distance = 0
+        load = 0
+        service_duration = 0
+
+        # the original implementation doesn't include depot as the first and last stops
+        # but here im including both so we only need one for loop
+        # the last stop is the depot so load and service duration aren't considered
+        for i in range(1, len(self.chrom_r[r])):
+          distance += params.dist_matrix[self.chrom_r[r][i - 1]][self.chrom_r[r][i]]
+
+          if i < len(self.chrom_r[r]) - 1:
+            load += params.clients[self.chrom_r[r][i]].demand
+
+          if i < len(self.chrom_r[r]) - 1:
+            self.successors[self.chrom_r[r][i]] = self.chrom_r[r][i - 1]
+
+          if i > 1:
+            self.predecessors[self.chrom_r[r][i - 1]] = self.chrom_r[r][i]
+
+          if i < len(self.chrom_r[r]) - 1:
+            service_duration += params.clients[self.chrom_r[r][i]].service_duration
+
+        self.eval.distance += distance
+        self.eval.num_routes += 1
+
+        if load > params.vehicle_capacity: self.eval.capacity_excess += load - params.vehicle_capacity
+        if service_duration > params.duration_limit: self.eval.duration_excess += service_duration - params.duration_limit
+    
+    # self.eval.penalized_cost = self.eval.distance + self.eval.capacity_excess*params.penalty_capacity_unit + self.eval.duration_excess*params.penalty_duration_unit
+    self.eval.penalized_cost = self.eval.distance + self.eval.capacity_excess*params.penalty_capacity_unit
+    self.eval.is_feasible = self.eval.capacity_excess < EPSILON
 
 
 class Population:
@@ -262,7 +307,7 @@ class AlgorithmParameters:
   time_limit: int = 0 # time limit until termination (0 = inactive)
   use_swap_star: bool = True # use SWAP* local search or not, only available when coordinates are provided
 
-  def print_algorithm_parameters(self):
+  def print_algorithm_parameters(self) -> None:
     """
     Helper for printing current algorithm configuration parameters
     """
@@ -304,5 +349,4 @@ class Instance:
 
 # main
 if __name__ == "__main__":
-  ap = AlgorithmParameters(10)
-  ap.print_algorithm_parameters()
+  pass
