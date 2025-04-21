@@ -27,7 +27,7 @@ public class SecurityConfig {
     return httpSecurity
         .csrf(AbstractHttpConfigurer::disable)
         .authorizeHttpRequests(request ->
-            request.requestMatchers("/api/auth/**")
+            request.requestMatchers("/api/auth/**", "/docs/**", "/swagger-ui/**", "/v3/api-docs/**", "/api-docs/**")
                 .permitAll()
                 .anyRequest()
                 .authenticated()
@@ -45,7 +45,7 @@ public class SecurityConfig {
       public void addCorsMappings(CorsRegistry registry) {
         registry.addMapping("/api/**")
             .allowedOrigins(clientUrls)
-            .allowedMethods("GET", "POST", "PUT", "DELETE")
+            .allowedMethods("*")
             .allowedHeaders("*");
       }
     };

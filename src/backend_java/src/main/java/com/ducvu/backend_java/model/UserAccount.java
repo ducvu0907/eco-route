@@ -4,15 +4,10 @@ import java.time.LocalDateTime;
 import java.util.Collection;
 import java.util.List;
 
+import jakarta.persistence.*;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.EnumType;
-import jakarta.persistence.Enumerated;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -21,6 +16,7 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 @Entity
+@Table(name = "user_account")
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
@@ -30,15 +26,13 @@ public class UserAccount implements UserDetails {
   @GeneratedValue(strategy = GenerationType.UUID)
   private String id; 
 
-  private String name;
+  private String username;
 
   private String phone;
 
   private String hashedPassword;
 
   private String fcmToken;
-
-  private String email;
 
   @Enumerated(value = EnumType.STRING)
   private Role role;
@@ -51,7 +45,7 @@ public class UserAccount implements UserDetails {
 
   @Override
   public Collection<? extends GrantedAuthority> getAuthorities() {
-    return List.of(() -> "ROLE_" + role.name());
+    return List.of(() -> role.name());
   }
 
   @Override
@@ -61,7 +55,7 @@ public class UserAccount implements UserDetails {
 
   @Override
   public String getUsername() {
-    return email;
+    return username;
   }
 
 }
