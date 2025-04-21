@@ -262,6 +262,27 @@ class AlgorithmParameters:
   time_limit: int = 0 # time limit until termination (0 = inactive)
   use_swap_star: bool = True # use SWAP* local search or not, only available when coordinates are provided
 
+  def print_algorithm_parameters(self):
+    """
+    Helper for printing current algorithm configuration parameters
+    """
+    print("=========== Algorithm Parameters =================")
+    print(f"---- Granular Search Level        : {self.granular_search}")
+    print(f"---- Population Size (mu)         : {self.population_size}")
+    print(f"---- Generation Size (lambda)     : {self.generation_size}")
+    print(f"---- Number of Elites             : {self.num_elites}")
+    print(f"---- Closest Individuals Count    : {self.num_closes}")
+    print(f"---- Penalty Update Interval      : {self.num_iters_penalty}")
+    print(f"---- Target Feasible Ratio        : {self.target_feasible_ratio}")
+    print(f"---- Penalty Decrease Factor      : {self.penalty_decrease}")
+    print(f"---- Penalty Increase Factor      : {self.penalty_increase}")
+    print(f"---- Random Seed                  : {self.seed}")
+    print(f"---- Max Iterations               : {self.num_iters}")
+    print(f"---- Trace Interval               : {self.num_iters_trace}")
+    print(f"---- Time Limit (0 = no limit)    : {self.time_limit}")
+    print(f"---- Use SWAP* Local Search       : {self.use_swap_star}")
+    print("==================================================")
+
 
 @dataclass(frozen=True)
 class Instance:
@@ -283,4 +304,5 @@ class Instance:
 
 # main
 if __name__ == "__main__":
-  pass
+  ap = AlgorithmParameters(10)
+  ap.print_algorithm_parameters()
