@@ -76,6 +76,7 @@ class Params:
     self.__constructor(x_coords, 
                        y_coords, 
                        dist_matrix, 
+                       demands,
                        service_durations, 
                        vehicle_capacity, 
                        duration_limit, 
@@ -96,7 +97,7 @@ class Params:
                     num_vehicles: int, 
                     has_duration_constraint: bool, 
                     is_verbose: bool,
-                    algorithm_paramters: AlgorithmParameters):
+                    algorithm_paramters: AlgorithmParameters) -> None:
     
     self.algorithm_parameters = algorithm_paramters
     self.has_duration_constraint = has_duration_constraint
@@ -174,6 +175,92 @@ class Params:
 
 
 
+@dataclass
+class Node:
+  """
+  Data structure represents a node
+  """
+  is_depot: bool  # if the node the depot or not
+  cour: int  # node index
+  position: int  # position in the route
+  last_tested_ri: int  # when ri moves for this node have been last tested
+  next: Node  # next node in the route
+  prev: Node  # prev node in the route
+  cumulated_load: float  # cumulated load on this route until the customer (including itself) 
+  cumulated_time: float  # cumulated time on this route until the customer (including itself) 
+  cumulated_reversal_distance: float  # difference of cost if the segment of route (0...cour) is reversed (useful for 2-opt moves with asymmetric problems)
+  delta_removal: float  # Difference of cost in the current route if the node is removed (used in SWAP*)
+
+@dataclass
+class Route:
+  """
+  Data structure represents a route
+  """
+  cour: int  # route index
+  num_customers: int  # number of customers visited in the route
+  last_modified: int  # when this route has been last modified 
+  last_tested_swap_star: int  # when the SWAP* moves for this route have been last tested
+  depot: Node  # associated depot
+  duration: float  # total time on the route
+  load: float  # total load on the route
+  reversal_distance: float  # difference of cost if the route is reversed
+  penalty: float  # current sum of load and duration penalties
+  polar_angle_barycenter: float  # polar angle of the bary center of the route
+  sector: CircleSector  # circle sector associated to the set of customers
+
+class ThreeBestInsert:
+  """
+  Structure used in SWAP* to remember the three best insertion positions of a customer in a given route
+  """
+  def __init__(self):
+    self.last_calculated: int
+    self.best_cost: List[float] = [-1] * 3
+    self.best_location: List[Node] = [-1] * 3
+    self.reset()
+
+  def compare_and_add(self, cost: float, place: Node) -> None:
+    """
+    Insert a new node
+    """
+    if cost >= self.best_cost[2]: 
+      return
+    elif cost >= self.best_cost[1]:
+      self.best_cost[2] = cost
+      self.best_location[2] = place
+    elif cost >= self.best_cost[0]:
+      self.best_cost[2] = self.best_cost[1]
+      self.best_location[2] = self.best_location[1]
+      self.best_cost[1] = cost
+      self.best_location[1] = place
+    else:
+      self.best_cost[2] = self.best_cost[1]
+      self.best_location[2] = self.best_location[1]
+      self.best_cost[1] = self.best_cost[0]
+      self.best_location[1] = self.best_location[0]
+      self.best_cost[0] = cost
+      self.best_location[0] = place
+
+  def reset(self) -> None:
+    """
+    Resets the structure
+    """
+    self.best_cost[0] = 1e30
+    self.best_cost[1] = 1e30
+    self.best_cost[2] = 1e30
+    self.best_location[0] = None
+    self.best_location[1] = None
+    self.best_location[2] = None
+
+@dataclass
+class SwapStarElement:
+  """
+
+  """
+  move_cost: float = 1e30
+  node_u: Node = None
+  best_position_u: Node = None
+  node_v: Node = None
+  best_position_v: Node = None
 
 # TODO
 class LocalSearch:
@@ -181,17 +268,185 @@ class LocalSearch:
   Provides all functions needed for local search
   """
 
-  def __init__(self):
+  def __init__(self, params: Params):
+    self.params: Params  # problem parameters
+    self.is_search_completed: bool  # whether all moves have been evaluated without success
+    self.num_moves: int  # total number of moves (RI and SWAP*) applied during the local search
+    self.order_nodes: List[int]  # randomized order for checking nodes in the RI local search
+    self.order_routes: List[int]  # randomized order for checking routes in the SWAP* local search
+    self.empty_routes: SortedSet[int]  # indices of all empty routes
+    self.loop_idx: int  # current loop index
+    
+    # the solution
+    self.clients: List[Node]  # elements representing clients (clients[0] is sentinel and should not be accessed)
+    self.depots: List[Node]  # elements representing depots
+    self.depots_end: List[Node]  # duplicate of depots to mark the end of the route
+    self.routes: List[Route]  # elements representing routes
+    self.best_insert_client: List[List[ThreeBestInsert]]  # storing cheapest insertion cost for each route, used in SWAP*
+
+    # temporary variables used in local search loop
+    self.node_u: Node
+    self.node_x: Node
+    self.node_v: Node
+    self.node_y: Node
+
+    self.route_u: Route
+    self.route_v: Route
+
+    self.node_u_prev_index: int
+    self.node_u_index: int
+    self.node_x_index: int
+    self.node_x_next_index: int
+
+    self.node_v_prev_index: int
+    self.node_v_index: int
+    self.node_y_index: int
+    self.node_y_next_index: int
+
+    self.load_u: float
+    self.load_x: float
+    self.load_v: float
+    self.load_y: float
+
+    self.service_u: float
+    self.service_x: float
+    self.service_v: float
+    self.service_y: float
+
+    self.penalty_capacity_ls: float
+    self.penalty_duration_ls: float
+
+    self.intra_route_move: bool
+  
+  def __constructor(self, params: Params):
+    pass
+
+  def set_local_variables_route_u(self):
+    pass
+  
+  def set_local_variables_route_v(self):
+    pass
+
+  def penalty_excess_duration(self, my_duration: float) -> float:
+    pass
+  
+  def penalty_excess_load(self, my_load: float) -> float:
+    pass
+  
+  # relocate moves
+  def move1(self) -> bool:
+    pass
+
+  def move2(self) -> bool:
+    pass
+
+  def move3(self) -> bool:
+    pass
+
+  # swap moves
+  def move4(self) -> bool:
+    pass
+
+  def move5(self) -> bool:
+    pass
+
+  def move6(self) -> bool:
+    pass
+
+  # 2-opt and 2-opt* moves
+  def move7(self) -> bool:
+    pass
+
+  def move8(self) -> bool:
+    pass
+
+  def move9(self) -> bool:
+    pass
+
+  # sub-routines for efficient swap* evaluations
+  def swap_star(self) -> bool:
+    pass
+
+  def get_cheapest_simult_removal(self, u: Node, v: Node, best_position: Node) -> float:
+    pass
+
+  def preprocess_insertions(self, r1: Route, r2: Route) -> None:
+    pass
+
+  # routines to update the solutions
+  @staticmethod
+  def insert_node(u: Node, v: Node) -> None:
+    pass
+
+  @staticmethod
+  def swap_node(u: Node, v: Node) -> None:
+    pass
+
+  def update_route_data(self, my_route: Route) -> None:
+    pass
+
+  
+  def run(self) -> None:
+    pass
+  
+  def load_individual(self) -> None:
+    pass
+
+  def export_individual(self) -> None:
     pass
 
 
+
 # TODO
+@dataclass
+class ClientSplit:
+  demand: float = 0.0
+  service_time: float = 0.0
+  d0_x: float = 0.0
+  dx_0: float = 0.0
+  d_next: float = 0.0
+
 class Split:
   """
   Linear split algorithm
   """
 
-  def __init__(self):
+  def __init__(self, params: Params):
+    self.params: Params
+    self.num_max_vehicles: int
+    self.client_split: List[ClientSplit]
+    self.sum_distance: List[float]
+    self.sum_load: List[float]
+    self.sum_service: List[float]
+    self.potential: List[List[float]]
+    self.pred: List[List[int]]
+    self.__constructor(params)
+
+  def __constructor(self, params: Params):
+    self.params = params
+    self.client_split = [-1] * (params.num_clients + 1)
+    self.sum_distance = [0.0] * (params.num_clients + 1)
+    self.sum_load = [0.0] * (params.num_clients + 1)
+    self.sum_service = [0.0] * (params.num_clients + 1)
+    self.potential = [[1e30] * (params.num_clients + 1) for _ in range(params.num_vehicles + 1)]
+    self.pred = [[0] * (params.num_clients + 1) for _ in range(params.num_vehicles + 1)]
+
+  def propagate(self, i: int, j: int, k: int) -> bool:
+    pass
+
+  def dominate(self, i: int, j: int, k: int) -> bool:
+    pass
+
+  def dominate_right(self, i: int, j: int, k: int) -> bool:
+    pass
+
+  def split_simple(self, indiv: Individual) -> int:
+    pass
+
+  def split_lf(self, indiv: Individual) -> int:
+    pass
+
+  def general_split(self, indiv: Individual, num_max_vehicles: int) -> None:
     pass
 
 
@@ -230,6 +485,7 @@ class Individual:
     for i in range(params.num_clients):
       self.chrom_t.append(i + 1)
     random.shuffle(self.chrom_t)
+
 
   def evaluate_complete_cost(self, params: Params) -> None:
     self.eval = EvalIndiv()
@@ -285,10 +541,10 @@ class Population:
   def __del__(self):
     pass
 
-  def __update_biased_fitness(self) -> None:
+  def update_biased_fitness(self) -> None:
     pass
 
-  def __remove_worst_biased_fitness(self) -> None:
+  def remove_worst_biased_fitness(self) -> None:
     pass
 
   def generate_population(self) -> None:
@@ -345,10 +601,10 @@ class Genetic:
 
   def __init__(self, params: Params):
     self.params = params
-    self.split = Split()
-    self.local_search = LocalSearch()
-    self.population = Population()
-    self.offspring = Individual()
+    self.split = Split(self.params)
+    self.local_search: LocalSearch = LocalSearch(self.params)
+    self.population: Population = Population(self.params, self.split, self.local_search)
+    self.offspring: Individual = Individual(self.params)
 
   def crossover_ox(self, result: Individual, parent1: Individual, parent2: Individual) -> None:
     pass
