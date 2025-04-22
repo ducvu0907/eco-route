@@ -9,6 +9,7 @@ import com.ducvu.backend_java.exception.UsernameAlreadyExistsException;
 import com.ducvu.backend_java.model.UserAccount;
 import com.ducvu.backend_java.repository.UserAccountRepository;
 import com.ducvu.backend_java.util.Mapper;
+import com.ducvu.backend_java.util.Validator;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -27,11 +28,13 @@ public class AuthService {
   private final JwtService jwtService;
   private final AuthenticationManager authenticationManager;
   private final Mapper mapper;
+  private final Validator validator;
 
   public UserAccountResponse register(UserAccountCreateRequest request) {
-    if (userAccountRepository.existsByUsername(request.getUsername())) {
-      throw new UsernameAlreadyExistsException("Username already exists");
-    }
+    validator.validate(request);
+
+    userAccountRepository.findByUsername(request.getUsername())
+        .ifPresent(u -> { throw new UsernameAlreadyExistsException("Username already exists"); });
 
     UserAccount userAccount = UserAccount.builder()
         .username(request.getUsername())
@@ -48,6 +51,8 @@ public class AuthService {
   }
 
   public AuthResponse login(AuthRequest request) {
+    validator.validate(request);
+
     UserAccount userAccount = userAccountRepository.findByUsername(request.getUsername())
         .orElseThrow(() -> new UsernameNotFoundException("Username not found"));
 
@@ -64,8 +69,8 @@ public class AuthService {
         .token(jwt)
         .build();
 
-    if (request.getFcmToken() != null && !request.getFcmToken().equals(userAccount.getFcmToken())) {
-      log.info("FCM Token: {}", request.getFcmToken());
+    if (request.getFcmToken() != null && !request.getFcmToken().isEmpty()) {
+      log.info("FCM token: {}", request.getFcmToken());
       userAccount.setFcmToken(request.getFcmToken());
       userAccountRepository.save(userAccount);
     }

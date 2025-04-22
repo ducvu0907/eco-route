@@ -1,7 +1,6 @@
 package com.ducvu.backend_java.exception;
 
 import com.ducvu.backend_java.dto.ApiResponse;
-import io.jsonwebtoken.io.IOException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -21,6 +20,22 @@ public class GlobalExceptionHandler {  // TODO: refactor to remove hard-coded er
         .message("Uncategorized error")
         .build();
     return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(apiResponse);
+  }
+
+  @ExceptionHandler(HttpMessageNotReadableException.class)
+  public ResponseEntity<ApiResponse<?>> handleHttpMessageNotReadableException(HttpMessageNotReadableException e) {
+    ApiResponse<?> apiResponse = ApiResponse.builder()
+        .message("Invalid request")
+        .build();
+    return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(apiResponse);
+  }
+
+  @ExceptionHandler(InvalidRequestException.class)
+  public ResponseEntity<ApiResponse<?>> handleRequestInvalidException(InvalidRequestException e) {
+    ApiResponse<?> apiResponse = ApiResponse.builder()
+        .message("Invalid request")
+        .build();
+    return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(apiResponse);
   }
 
   @ExceptionHandler(BadCredentialsException.class)
@@ -44,7 +59,7 @@ public class GlobalExceptionHandler {  // TODO: refactor to remove hard-coded er
     ApiResponse<?> apiResponse = ApiResponse.builder()
         .message("Username already exists")
         .build();
-    return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(apiResponse);
+    return ResponseEntity.status(HttpStatus.CONFLICT).body(apiResponse);
   }
 
 }
