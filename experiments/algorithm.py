@@ -1,13 +1,13 @@
 # an attempt to port original cvrp written in cpp to python
 
-from __future__ import annotations # forward declaring
+from __future__ import annotations
 from dataclasses import dataclass, field
-from typing import List, Tuple
+from typing import List, Tuple, Set
 from collections import deque
-from sortedcontainers import SortedList
+from sortedcontainers import SortedList, SortedSet
 import random
 import time
-
+import math
 
 # constants
 PI = 3.14159265359
@@ -18,45 +18,49 @@ EPSILON = 0.00001
 @dataclass(frozen=True)
 class Client:
   """
+  Represents client/customer in the problem instance
   """
-  x_coord: float # coordinate x
-  y_coord: float # coordinate y
-  service_duration: float # service duration
-  demand: float # demand
+  x_coord: float  # coordinate x
+  y_coord: float  # coordinate y
+  service_duration: float  # service duration
+  demand: float  # demand
+  polar_angle: float  # polar angle of the client around the assigned depot, measured in degrees
+
 
 class Params:
   """
+  Stores the parameters of the algorithm
   """
-  # TODO
+
   def __init__(self, 
                x_coords: List[float], 
-               y_coords: List[float],
+               y_coords: List[float], 
                dist_matrix: List[List[float]],
-               service_durations: List[float],
-               demands: List[float],
+               service_durations: List[float], 
+               demands: List[float], 
                vehicle_capacity: float,
-               duration_limit: float,
-               num_vehicles: int,
+               duration_limit: float, 
+               num_vehicles: int, 
                has_duration_constraint: bool,
-               is_verbose: bool,
+               is_verbose: bool, 
                algorithm_paramters: AlgorithmParameters):
 
     # algorithm params
-    self.is_verbose: bool = is_verbose # verbose level
-    self.algorithm_parameters: AlgorithmParameters = algorithm_paramters # main params
+    self.is_verbose: bool
+    self.algorithm_parameters: AlgorithmParameters
 
     # adaptive penalties coefficients
     self.penalty_capacity_unit: float
     self.penalty_duration_unit: float
 
     # start time of the algorithm
-    self.start_time: float = time.time()
+    self.start_time: float
 
     # random number generator
-    self.rng: random.Random = random.Random()
+    self.rng: random.Random
 
     # data of the problem instance
-    self.has_duration_constraint: bool = has_duration_constraint
+    self.has_duration_constraint: bool
     self.num_clients: int
     self.num_vehicles: int
     self.duration_limit: float
@@ -69,20 +73,124 @@ class Params:
     self.correlated_neighborhood: List[List[int]]
     self.are_coordinates_provided: bool
 
+    self.__constructor(x_coords, 
+                       y_coords, 
+                       dist_matrix, 
+                       service_durations, 
+                       vehicle_capacity, 
+                       duration_limit, 
+                       num_vehicles, 
+                       has_duration_constraint, 
+                       is_verbose, 
+                       algorithm_paramters)
 
 
-# TODO: implement local search core
+  def __constructor(self, 
+                    x_coords: List[float], 
+                    y_coords: List[float],
+                    dist_matrix: List[List[float]], 
+                    service_durations: List[float],
+                    demands: List[float], 
+                    vehicle_capacity: float, 
+                    duration_limit: float,
+                    num_vehicles: int, 
+                    has_duration_constraint: bool, 
+                    is_verbose: bool,
+                    algorithm_paramters: AlgorithmParameters):
+    
+    self.algorithm_parameters = algorithm_paramters
+    self.has_duration_constraint = has_duration_constraint
+    self.num_vehicles = num_vehicles
+    self.duration_limit = duration_limit
+    self.vehicle_capacity = vehicle_capacity
+    self.dist_matrix = dist_matrix
+    self.is_verbose = is_verbose
+
+    self.start_time = time.time()
+    self.num_clients = len(demands) - 1  # subtract depot
+
+    self.total_demand = 0.0
+    self.max_demand = 0.0
+
+    self.rng = random.Random(self.algorithm_parameters.seed)
+
+    self.are_coordinates_provided = (len(demands) == len(x_coords)) and (len(demands) == len(y_coords))
+
+    # we would use self.num_clients + 1 a lot because it counts the depot as well
+
+    self.clients = [-1] * (self.num_clients + 1)
+    for i in range(self.num_clients + 1):
+      if self.algorithm_parameters.use_swap_star and self.are_coordinates_provided:
+        self.clients[i].x_coord = x_coords[i] 
+        self.clients[i].y_coord = y_coords[i] 
+
+        # compute arctan and then convert from radian to degree
+        self.clients[i].polar_angle = CircleSector.positive_mod(
+          32768.0 * math.atan2(self.clients[i].y_coord - self.clients[0].y_coord, 
+                               self.clients[i].x_coord - self.clients[0].x_coord) / PI)
+      else:
+        self.clients[i].x_coord = 0.0
+        self.clients[i].y_coord = 0.0
+        self.clients[i].polar_angle = 0.0
+      
+      self.clients[i].service_duration = service_durations[i]
+      self.clients[i].demand = demands[i]
+      if self.clients[i].demand > self.max_demand: self.max_demand = self.clients[i].demand
+      self.total_demand += self.clients[i].demand
+
+    # TODO: add verbose settings here
+
+    # calculate max distance
+    self.max_dist = 0.0
+    for i in range(self.num_clients + 1):
+      for j in range(self.num_clients + 1):
+        if self.dist_matrix[i][j] > self.max_dist: self.max_dist = self.dist_matrix[i][j]
+    
+    # calculate correlated vertices for each customer (for the granular restriction)
+    # basically closest neighborhood restricted by granular search parameter
+    # ported directly from cpp implementation
+    self.correlated_neighborhood = [[] for _ in range(self.num_clients + 1)]
+    set_correlated_vertices: List[SortedSet[int]] = [SortedSet() for _ in range(self.num_clients + 1)]
+    order_proximity: List[Tuple[float, int]] = []
+    for i in range(1, self.num_clients + 1):
+      order_proximity.clear()
+
+      for j in range(1, self.num_clients + 1):
+        if i != j:
+          order_proximity.append((self.dist_matrix[i][j], j))
+        order_proximity.sort()
+
+      for j in range(min(self.algorithm_parameters.granular_search, self.num_clients - 1)):
+        set_correlated_vertices[i].add(order_proximity[j][1])
+        set_correlated_vertices[order_proximity[j][1]].add(i)
+    
+    for i in range(1, self.num_clients + 1):
+      for x in set_correlated_vertices[i]:
+        self.correlated_neighborhood[i].append(x)
+
+    # initialize penalties scale
+    self.penalty_duration_unit = 1.0
+    self.penalty_capacity_unit = max(0.1, min(1000.0, self.max_dist / self.max_demand))
+
+
+
+
+# TODO
 class LocalSearch:
   """
+  Provides all functions needed for local search
   """
+
   def __init__(self):
     pass
 
 
-# TODO: implement split algorithm
+# TODO
 class Split:
   """
+  Linear split algorithm
   """
+
   def __init__(self):
     pass
 
@@ -90,39 +198,40 @@ class Split:
 @dataclass(frozen=True)
 class EvalIndiv:
   """
-  Individual cost parameters
+  Solution cost parameters
   """
-  penalized_cost: float = 0.0 # penalized cost of the individual
-  num_routes: int = 0 # number of routes
-  distance: float = 0.0 # total distance
-  capacity_excess: float = 0.0 # sum of excess load in all routes
-  duration_excess: float = 0.0 # sum of excess duration in all routes
-  is_feasible: bool = False # if the individual is feasible
+  penalized_cost: float = 0.0  # penalized cost of the individual
+  num_routes: int = 0  # number of routes
+  distance: float = 0.0  # total distance
+  capacity_excess: float = 0.0  # sum of excess load in all routes
+  duration_excess: float = 0.0  # sum of excess duration in all routes
+  is_feasible: bool = False  # if the individual is feasible
+
 
 class Individual:
   """
+  Represents the solutions through the search
+  Stores complete solutions including trip delimeters along with their associated giant tour
   """
+
   def __init__(self, params: Params):
-    self.eval: EvalIndiv # solution cost params
+    self.eval: EvalIndiv  # solution cost params
 
-    self.chrom_t: List[int] = [] # giant tour representing the individual
-    self.chrom_r: List[List[int]] = [[] for _ in range(params.num_vehicles)] # complete solution for each vehicle
+    self.chrom_t: List[int] = []  # giant tour representing the individual
+    self.chrom_r: List[List[int]] = [[] for _ in range(params.num_vehicles)]  # complete solution for each vehicle
 
-    self.successors: List[int] = [-1 for _ in range(params.num_clients + 1)] # successor in the solution for each node (can be the depot 0)
-    self.predecessors: List[int] = [-1 for _ in range(params.num_clients + 1)] # predecessor in the solution for each node (can be the depot 0)
+    self.successors: List[int] = [-1 for _ in range(params.num_clients + 1)]  # successor in the solution for each node (can be the depot 0)
+    self.predecessors: List[int] = [-1 for _ in range(params.num_clients + 1)]  # predecessor in the solution for each node (can be the depot 0)
 
-    self.individuals_per_proximity: SortedList[Tuple[float, Individual]] = SortedList(key=lambda x: x[0]) # other individuals in the population, ordered by increasing proximity
-    self.biased_fitness: float # biased fitness of the solution
+    self.individuals_per_proximity: SortedList[Tuple[float, Individual]] = SortedList(key=lambda x: x[0])  # other individuals in the population, ordered by increasing proximity
+    self.biased_fitness: float  # biased fitness of the solution
 
     # initialize a random giant tour
-    for i in range(params.num_clients): self.chrom_t.append(i + 1)
+    for i in range(params.num_clients):
+      self.chrom_t.append(i + 1)
     random.shuffle(self.chrom_t)
 
-  
   def evaluate_complete_cost(self, params: Params) -> None:
-    """
-    Evaluate complete cost of the solution
-    """
     self.eval = EvalIndiv()
 
     for r in range(params.num_vehicles):
@@ -152,18 +261,24 @@ class Individual:
         self.eval.distance += distance
         self.eval.num_routes += 1
 
-        if load > params.vehicle_capacity: self.eval.capacity_excess += load - params.vehicle_capacity
-        if service_duration > params.duration_limit: self.eval.duration_excess += service_duration - params.duration_limit
-    
+        if load > params.vehicle_capacity:
+          self.eval.capacity_excess += load - params.vehicle_capacity
+
+        if service_duration > params.duration_limit:
+          self.eval.duration_excess += service_duration - params.duration_limit
+
     # self.eval.penalized_cost = self.eval.distance + self.eval.capacity_excess*params.penalty_capacity_unit + self.eval.duration_excess*params.penalty_duration_unit
-    self.eval.penalized_cost = self.eval.distance + self.eval.capacity_excess*params.penalty_capacity_unit
+    self.eval.penalized_cost = self.eval.distance + self.eval.capacity_excess * params.penalty_capacity_unit
     self.eval.is_feasible = self.eval.capacity_excess < EPSILON
 
 
+# TODO
 class Population:
   """
-  Population of the genetic algorithm
+  Holds the two subpopulations
+  Memorizes distance between solutions used in diversity calculations
   """
+
   def __init__(self, params: Params, split: Split, local_search: LocalSearch):
     pass
 
@@ -222,10 +337,12 @@ class Population:
     pass
 
 
+# TODO
 class Genetic:
   """
-  Genetic algorithm
+  Contains the main structure of the genetic algorithm and the crossover operator
   """
+
   def __init__(self, params: Params):
     self.params = params
     self.split = Split()
@@ -240,12 +357,13 @@ class Genetic:
     pass
 
 
-
 class CircleSector:
   """
-  A simple data structure to represent circle sectors
-  Angles are measured in [0, 65535] instead of [0, 359]
+  A simple data structure represents circle sectors
+  Angles are measured in [0, 65535]
+  Contains elementary routines to calculate polar sectors and their intersections for SWAP*
   """
+
   def __init__(self, point: int):
     self.start = point
     self.end = point
@@ -288,28 +406,28 @@ class CircleSector:
 @dataclass(frozen=True)
 class AlgorithmParameters:
   """
-  Algorithm configuration parameters
+  Main configuration parameters of the algorithm
   """
-  granular_search: int = 20 # granular search parameters, limits the number of moves in the RI local search
-  population_size: int = 25 # minimum population size
-  generation_size: int = 40 # generation size (max population size = min population size + generation size)
-  num_elites: int = 4 # number of elite individuals
-  num_closes: int = 5 # number of closest individuals considered when calculating diversity contribution
+  granular_search: int = 20  # granular search parameters, limits the number of moves in the RI local search
+  population_size: int = 25  # minimum population size
+  generation_size: int = 40  # generation size (max population size = min population size + generation size)
+  num_elites: int = 4  # number of elite individuals
+  num_closes: int = 5  # number of closest individuals considered when calculating diversity contribution
 
-  num_iters_penalty: int = 100 # number of iterations between penalty updates
-  target_feasible_ratio: float = 0.2 # target proportion for the number of feasible individuals, used to adapt penalty params
-  penalty_decrease: float = 0.85 # multiplier used for decrease penalty parameters if there are sufficient feasible individuals
-  penalty_increase: float = 1.2 # multiplier used for increase penalty parameters if there are insufficient feasible individuals
+  num_iters_penalty: int = 100  # number of iterations between penalty updates
+  target_feasible_ratio: float = 0.2  # target proportion for the number of feasible individuals, used to adapt penalty params
+  penalty_decrease: float = 0.85  # multiplier used for decrease penalty parameters if there are sufficient feasible individuals
+  penalty_increase: float = 1.2  # multiplier used for increase penalty parameters if there are insufficient feasible individuals
 
-  seed: int = 0 # random seed
-  num_iters: int = 20000 # number of iterations without improvement until termination (or restart if a time limit is specified)
-  num_iters_trace: int = 500 # number of iterations between traces
-  time_limit: int = 0 # time limit until termination (0 = inactive)
-  use_swap_star: bool = True # use SWAP* local search or not, only available when coordinates are provided
+  seed: int = 0  # random seed
+  num_iters: int = 20000  # number of iterations without improvement until termination (or restart if a time limit is specified)
+  num_iters_trace: int = 500  # number of iterations between traces
+  time_limit: int = 0  # time limit until termination (0 = inactive)
+  use_swap_star: bool = True  # use SWAP* local search or not, only available when coordinates are provided
 
   def print_algorithm_parameters(self) -> None:
     """
-    Helper for printing current algorithm configuration parameters
+    Utility for printing algorithm configuration parameters
     """
     print("=========== Algorithm Parameters =================")
     print(f"---- Granular Search Level        : {self.granular_search}")
@@ -339,12 +457,10 @@ class Instance:
   dist_matrix: List[List[float]]
   service_durations: List[float]
   demands: List[float]
-  num_clients: int # number of clients
-  duration_limit: float = 1e30 # route duration limit
-  vehicle_capacity: float = 1e30 # vehicle capacity
-  has_duration_constraint: bool = False # if the instance has duration constraint
-
-
+  num_clients: int  # number of clients
+  duration_limit: float = 1e30  # route duration limit
+  vehicle_capacity: float = 1e30  # vehicle capacity
+  has_duration_constraint: bool = False  # if the instance has duration constraint
 
 
 # main
