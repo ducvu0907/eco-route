@@ -8,17 +8,6 @@ import org.springframework.util.StringUtils;
 
 @Component
 public class Validator {
-  public boolean isValid(UserAccountCreateRequest request) {
-    return StringUtils.hasText(request.getUsername())
-        && StringUtils.hasText(request.getPassword())
-        && request.getRole() != null;
-  }
-
-  public boolean isValid(AuthRequest request) {
-    return StringUtils.hasText(request.getUsername())
-        && StringUtils.hasText(request.getPassword());
-  }
-
   public void validate(UserAccountCreateRequest request) {
     if (!isValid(request)) {
       throw new InvalidRequestException("Invalid request");
@@ -29,6 +18,18 @@ public class Validator {
     if (!isValid(request)) {
       throw new InvalidRequestException("Invalid request");
     }
+  }
+
+  private boolean isValid(UserAccountCreateRequest request) {
+    return StringUtils.hasText(request.getUsername())
+        && StringUtils.hasText(request.getPassword())
+        && StringUtils.hasText(request.getPhone())
+        && request.getRole() != null;
+  }
+
+  private boolean isValid(AuthRequest request) {
+    return StringUtils.hasText(request.getUsername())
+        && StringUtils.hasText(request.getPassword());
   }
 
 }
