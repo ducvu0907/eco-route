@@ -139,7 +139,8 @@ class Params:
       if self.clients[i].demand > self.max_demand: self.max_demand = self.clients[i].demand
       self.total_demand += self.clients[i].demand
 
-    # TODO: add verbose settings here
+    if self.is_verbose and self.algorithm_parameters.use_swap_star and not self.are_coordinates_provided:
+      print("----- NO COORDINATES HAVE BEEN PROVIDED, SWAP* NEIGHBORHOOD WILL BE DEACTIVATED BY DEFAULT")
 
     # calculate max distance
     self.max_dist = 0.0
@@ -173,6 +174,9 @@ class Params:
     self.penalty_duration_unit = 1.0
     self.penalty_capacity_unit = max(0.1, min(1000.0, self.max_dist / self.max_demand))
 
+    if self.is_verbose:
+      print(f"----- INSTANCE SUCCESSFULLY LOADED WITH {self.num_clients} CLIENTS AND {self.num_vehicles} VEHICLES")
+
 
 
 @dataclass
@@ -186,6 +190,7 @@ class Node:
   last_tested_ri: int  # when ri moves for this node have been last tested
   next: Node  # next node in the route
   prev: Node  # prev node in the route
+  route: Route # associated route
   cumulated_load: float  # cumulated load on this route until the customer (including itself) 
   cumulated_time: float  # cumulated time on this route until the customer (including itself) 
   cumulated_reversal_distance: float  # difference of cost if the segment of route (0...cour) is reversed (useful for 2-opt moves with asymmetric problems)
@@ -213,6 +218,12 @@ class ThreeBestInsert:
   Structure used in SWAP* to remember the three best insertion positions of a customer in a given route
   """
   def __init__(self):
+    self.last_calculated: int
+    self.best_cost: List[float]
+    self.best_location: List[Node]
+    self.__constructor()
+
+  def __constructor(self):
     self.last_calculated: int
     self.best_cost: List[float] = [-1] * 3
     self.best_location: List[Node] = [-1] * 3
@@ -316,16 +327,39 @@ class LocalSearch:
     self.penalty_capacity_ls: float
     self.penalty_duration_ls: float
 
-    self.intra_route_move: bool
+    self.is_intra_route_move: bool
+
+    self.__constructor(params)
   
   def __constructor(self, params: Params):
     pass
 
   def set_local_variables_route_u(self):
-    pass
+    self.route_u = self.node_u.route
+    self.node_x = self.node_u.next
+    self.node_x_next_index = self.node_x.next.cour
+    self.node_u_index = self.node_u.cour
+    self.node_u_prev_index = self.node_u.prev
+    self.node_x_index = self.node_x.cour
+    self.load_u = self.params.clients[self.node_u_index].demand
+    self.service_u = self.params.clients[self.node_u_index].service_duration
+    self.load_x = self.params.clients[self.node_x_index].demand
+    self.service_x = self.params.clients[self.node_x_index].service_duration
+
   
   def set_local_variables_route_v(self):
-    pass
+    self.route_v = self.node_v.route
+    self.node_y = self.node_v.next
+    self.node_y_next_index = self.node_y.next.cour
+    self.node_v_index = self.node_v.cour
+    self.node_v_prev_index = self.node_v.prev
+    self.node_y_index = self.node_y.cour
+    self.load_v = self.params.clients[self.node_v_index].demand
+    self.service_v = self.params.clients[self.node_v_index].service_duration
+    self.load_y = self.params.clients[self.node_v_index].demand
+    self.service_y = self.params.clients[self.node_v_index].service_duration
+    self.is_intra_route_move = (self.route_u == self.routev)
+
 
   def penalty_excess_duration(self, my_duration: float) -> float:
     pass
@@ -472,15 +506,25 @@ class Individual:
   def __init__(self, params: Params):
     self.eval: EvalIndiv  # solution cost params
 
-    self.chrom_t: List[int] = []  # giant tour representing the individual
-    self.chrom_r: List[List[int]] = [[] for _ in range(params.num_vehicles)]  # complete solution for each vehicle
+    self.chrom_t: List[int]  # giant tour representing the individual
+    self.chrom_r: List[List[int]]  # complete solution for each vehicle
 
-    self.successors: List[int] = [-1 for _ in range(params.num_clients + 1)]  # successor in the solution for each node (can be the depot 0)
-    self.predecessors: List[int] = [-1 for _ in range(params.num_clients + 1)]  # predecessor in the solution for each node (can be the depot 0)
+    self.successors: List[int]  # successor in the solution for each node (can be the depot 0)
+    self.predecessors: List[int]  # predecessor in the solution for each node (can be the depot 0)
 
-    self.individuals_per_proximity: SortedList[Tuple[float, Individual]] = SortedList(key=lambda x: x[0])  # other individuals in the population, ordered by increasing proximity
+    self.individuals_per_proximity: SortedList[Tuple[float, Individual]]  # other individuals in the population, ordered by increasing proximity
     self.biased_fitness: float  # biased fitness of the solution
 
+    self.__constructor(params)
+
+  def __constructor(self, params: Params):
+    self.eval 
+    self.chrom_t = []
+    self.chrom_r = [[] for _ in range(params.num_vehicles)]
+    self.successors = [-1 for _ in range(params.num_clients + 1)]
+    self.predecessors = [-1 for _ in range(params.num_clients + 1)]
+    self.individuals_per_proximity = SortedList(key=lambda x: x[0])
+    self.biased_fitness 
     # initialize a random giant tour
     for i in range(params.num_clients):
       self.chrom_t.append(i + 1)
@@ -492,27 +536,19 @@ class Individual:
 
     for r in range(params.num_vehicles):
       if self.chrom_r[r]:
-        distance = 0
-        load = 0
-        service_duration = 0
+        distance = params.dist_matrix[0][self.chrom_r[r][0]]
+        load = params.clients[self.chrom_r[r][0]].demand
+        service_duration = params.clients[self.chrom_r[r][0]].service_duration
+        self.predecessors[self.chrom_r[r][0]] = 0
 
-        # the original implementation doesn't include depot as the first and last stops
-        # but here im including both so we only need one for loop
-        # the last stop is the depot so load and service duration aren't considered
         for i in range(1, len(self.chrom_r[r])):
           distance += params.dist_matrix[self.chrom_r[r][i - 1]][self.chrom_r[r][i]]
+          load += params.clients[self.chrom_r[r][i]].demand
+          service_duration += params.clients[self.chrom_r[r][i]].service_duration
+          self.successors[self.chrom_r[r][i]] = self.chrom_r[r][i - 1]
+          self.predecessors[self.chrom_r[r][i - 1]] = self.chrom_r[r][i]
 
-          if i < len(self.chrom_r[r]) - 1:
-            load += params.clients[self.chrom_r[r][i]].demand
-
-          if i < len(self.chrom_r[r]) - 1:
-            self.successors[self.chrom_r[r][i]] = self.chrom_r[r][i - 1]
-
-          if i > 1:
-            self.predecessors[self.chrom_r[r][i - 1]] = self.chrom_r[r][i]
-
-          if i < len(self.chrom_r[r]) - 1:
-            service_duration += params.clients[self.chrom_r[r][i]].service_duration
+        self.successors[self.chrom_r[r][len(self.chrom_r) - 1]] = 0
 
         self.eval.distance += distance
         self.eval.num_routes += 1
@@ -536,6 +572,9 @@ class Population:
   """
 
   def __init__(self, params: Params, split: Split, local_search: LocalSearch):
+    pass
+
+  def __constructor(self, params: Params, split: Split, local_search: LocalSearch):
     pass
 
   def __del__(self):
@@ -600,11 +639,19 @@ class Genetic:
   """
 
   def __init__(self, params: Params):
+    self.params: Params
+    self.split: Split
+    self.local_search: LocalSearch
+    self.population: Population
+    self.offspring: Individual
+    self.__constructor(params)
+
+  def __constructor(self, params: Params):
     self.params = params
     self.split = Split(self.params)
-    self.local_search: LocalSearch = LocalSearch(self.params)
-    self.population: Population = Population(self.params, self.split, self.local_search)
-    self.offspring: Individual = Individual(self.params)
+    self.local_search = LocalSearch(self.params)
+    self.population = Population(self.params, self.split, self.local_search)
+    self.offspring = Individual(self.params)
 
   def crossover_ox(self, result: Individual, parent1: Individual, parent2: Individual) -> None:
     pass
@@ -621,6 +668,11 @@ class CircleSector:
   """
 
   def __init__(self, point: int):
+    self.start: int
+    self.end: int
+    self.__constructor(point)
+
+  def __constructor(self, point: int):
     self.start = point
     self.end = point
 
