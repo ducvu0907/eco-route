@@ -36,9 +36,8 @@ def bellman_split(tour, demand, distance_matrix, capacity):
   return dp[n], routes
 
 
-from collections import deque
-
 def linear_split(tour, demand, distance, capacity):
+  from collections import deque
   n = len(tour)
   dp = [float('inf')] * (n + 1)
   pred = [-1] * (n + 1)
@@ -79,14 +78,18 @@ def linear_split(tour, demand, distance, capacity):
   return dp[n], routes
 
 
-def bellman_split_lf(tour, demand, distance, capacity, fleet_size):
+def bellman_split_lf(tour, demands, distances, capacity, fleet_size):
+  """
+  dp[k][i] = minimum cost to visit first i clients using k vehicles
+  pred[k][i] = start of the route with minimum cost
+  """
   num_clients = len(tour)
   num_vehicles = fleet_size
 
   # dp[k][i] = minimum cost to visit first i customer using k vehicles
-  dp = [[float("inf")] * (num_clients + 1) for _ in range(num_vehicles+1)]
+  dp = [[float("inf")] * (num_clients + 1) for _ in range(num_vehicles + 1)]
   dp[0][0] = 0
-  pred = [[-1] * (num_clients + 1) for _ in range(num_vehicles+1)]
+  pred = [[-1] * (num_clients + 1) for _ in range(num_vehicles + 1)]
 
   for k in range(1, num_vehicles + 1):
     for i in range(k - 1, num_clients):
@@ -94,18 +97,18 @@ def bellman_split_lf(tour, demand, distance, capacity, fleet_size):
       dist = 0
       # we find if i can be good split of any j in (i+1 to num_clients)
       for j in range(i + 1, num_clients + 1):
-        load += demand[tour[j - 1]]
+        load += demands[tour[j - 1]]
         if load > capacity:
           break
 
         if j == i + 1: 
           # entry to the new route
-          dist = distance[0][tour[j - 1]]
+          dist = distances[0][tour[j - 1]]
         else: 
           # accumulate distance
-          dist += distance[tour[j - 2]][tour[j - 1]]
+          dist += distances[tour[j - 2]][tour[j - 1]]
 
-        cost = dist + distance[tour[j - 1]][0] # there are additional penalties in the robust impl
+        cost = dist + distances[tour[j - 1]][0] # there are additional penalties in the robust impl
 
         if dp[k - 1][i] + cost < dp[k][j]:
           dp[k][j] = dp[k - 1][i] + cost
@@ -133,14 +136,71 @@ def bellman_split_lf(tour, demand, distance, capacity, fleet_size):
   return routes, min_cost
 
 
-def linear_split_lf(giant_tour, demand, distance, capacity, fleet_size):
-  pass
+# towards a very simple algorithm
+# define cumulative distance Di and cumulative load Qi
+# then the cost can be accessed with c(i,j) = d[0][i+1] + D[j] - D[i+1] + d[j][0]
+# and the arc only exists if and only if Q[j] - Q[i] <= capacity
+# we also rely on double-ended queue A, which supports the following operations in O(1)
+# front, front2, back, push_back, pop_front, pop_back
+# proposed algorithm pseudo:
+#
+# p[0] = 0
+# A <- (0)
+# traverse number of clients
+# for t = 1 to n do
+  # p[t] = p[front] + f(front,t)
+  # pred[t] = front
+  # if t < n then
+    # if not dominates(back,t) then
+      # while len(queue) > 0 and dominates(t,back) do
+        # pop_back()
+      # push_back(t)
+    # while Q[t+1] > Q + Q[front] do
+      # pop_front()
+# dominates(i,j) = p[i] + d[0][i+1] - D[i+1] <= p[j] + d[0][j+1] - D[j+1]
+# f(i,x) = p[i] + c(i,x) - cost when extending the label of a predecessor i to a node x
+def linear_split_lf(tour, demands, distances, capacity, fleet_size):
+  from collections import deque
+  num_clients = len(tour)
+  num_vehicles = fleet_size
+
+  dp = [[float("inf")] * (num_clients + 1) for _ in range(num_vehicles + 1)]
+  dp[0][0] = 0
+
+  pred = [[-1] * (num_clients + 1) for _ in range(num_vehicles + 1)]
+  queue = deque([0])
+
+  # core split algorithm
+  for k in range(1, num_vehicles + 1):
+    for j in range(k, num_clients + 1):
+      pass
+
+
+  # record solution
+  min_cost = dp[-1][-1]
+  num_routes = num_vehicles
+  for k in range(1, num_vehicles):
+    if dp[k][-1] < min_cost:
+      min_cost = dp[k][-1]
+      num_routes = k
+  
+  # trace
+  routes = []
+  end = num_clients
+  while num_routes:
+    start = pred[num_routes][end]
+    routes.insert(0, tour[start:end])
+    num_routes -= 1
+    end = start
+  
+  return routes, min_cost
+
 
 if __name__ == "__main__":
   tour = [1, 2, 3, 4, 5, 6, 7, 8]
-  demand = [0, 4, 3, 7, 2, 5, 4, 6, 3]
+  demands = [0, 4, 3, 7, 2, 5, 4, 6, 3]
   capacity = 15
-  distance = [
+  distances = [
     [0, 2, 3, 4, 5, 6, 7, 8, 9],
     [2, 0, 2, 3, 4, 5, 6, 7, 8],
     [3, 2, 0, 2, 3, 4, 5, 6, 7],
@@ -153,6 +213,7 @@ if __name__ == "__main__":
   ]
   fleet_size = 3
 
-  routes, min_cost = bellman_split_lf(tour, demand, distance, capacity, fleet_size)
+  # routes, min_cost = bellman_split_lf(tour, demands, distances, capacity, fleet_size)
+  routes, min_cost = linear_split_lf(tour, demands, distances, capacity, fleet_size)
   print(routes)
   print(min_cost)

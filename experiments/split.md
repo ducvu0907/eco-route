@@ -15,61 +15,22 @@ c(i1, j1) + c(i2, j2) <= c(i1, j2) + c(i2, j1) where c(i, j) is the cost of an a
 
 Split is traditionally based on a simple dynamic programming algorithm, which enumerates nodes in topological order and, for each node t, propagates its label to all successors i. The arc costs are not preprocessed but directly computed in the inner loop.
 
-```python
-def bellman_split(tour, demand, distance_matrix, capacity):
-  """
-  tour: List of customer indices (e.g., [1, 2, 3, 4])
-  demand: List of demands, where demand[i] is the demand of customer i (0-indexed)
-  distance_matrix: 2D list or array where distance_matrix[i][j] is the distance from i to j
-  capacity: Maximum vehicle capacity
-  """
-
-  n = len(tour)
-  INF = float("inf")
-  dp = [INF] * (n + 1)
-  predecessor = [-1] * (n + 1)
-  dp[0] = 0
-
-  for j in range(1, n + 1):
-    load = 0
-    cost = 0
-    for i in range(j - 1, -1, -1):
-      load += demand[tour[i]]
-      if load > capacity:
-        break
-      route_cost = (
-        distance_matrix[0][tour[i]] +  # depot to first customer
-        sum(distance_matrix[tour[k]][tour[k+1]] for k in range(i, j - 1)) +
-        distance_matrix[tour[j - 1]][0]  # last customer to depot
-      )
-
-      if dp[i] + route_cost < dp[j]:
-        dp[j] = dp[i] + route_cost
-        predecessor[j] = i
-
-  routes = []
-  end = n
-  while end > 0:
-    start = predecessor[end]
-    routes.insert(0, tour[start:end])
-    end = start
-
-  return dp[n], routes
-
-tour = [1, 2, 3, 4]  # customer indices
-demand = [0, 2, 4, 3, 2]  # index 0 is depot, customers 1-4
-capacity = 5
-distance_matrix = [
-  [0, 2, 4, 6, 8],
-  [2, 0, 1, 3, 5],
-  [4, 1, 0, 2, 4],
-  [6, 3, 2, 0, 2],
-  [8, 5, 4, 2, 0],
-]
-
-total_cost, routes = bellman_split(tour, demand, distance_matrix, capacity)
-print("Total cost:", total_cost)
-print("Routes:", routes)
-```
-
 ## Split in linear time
+
+This section will introduce a more efficient Split algorithm. As in the classical Split, the arc costs of the underlying graph are not preprocessed.
+
+We define for i in {1,...n} the cumulative distance D[i] and cumulative load Q[i]
+These values can be preprocessed and stored in O(n) at the beginning of the algorithm. For i < j, the cost c(i,j) is the cost of leaving the depot, visiting customers(i+1,...j) and returning to the depot, computed as:
+c(i,j) = d[0][i+1] + D[j] - D[i+1] + d[j][0]
+and the arc (i,j) exists only if the route is feasible - Q[j] - Q[i] < Q
+
+Our algorithm also relies on a double-ended queue, supports the following operations in O(1):
+front - accesses the oldest element in the queue
+front2 - accesses the second oldest element in the queue
+back - accesses the most recent element in the queue
+push_back - adds an element to the queue
+pop_front - removes the oldest element in the queue
+pop_back - removes the newest element in the queue
+
+**Main algorithm**: instead of iterating over all arcs to propagate minimum-cost paths, the proposed algorithm takes advantage of the cost structure of the split graph and maintains a set of nondominated predecessors in a queue. For each node, this structure enables to find in O(1) a best predecessor for t along with the cost of a shortest path from 0 to t.
+
