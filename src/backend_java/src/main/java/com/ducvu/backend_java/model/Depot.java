@@ -22,8 +22,6 @@ public class Depot {
   @GeneratedValue(strategy = GenerationType.UUID) 
   private String id;
 
-  private String name;
-
   private Double latitude;
 
   private Double longitude;

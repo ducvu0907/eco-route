@@ -32,7 +32,7 @@ public class Vehicle {
 
   private String licensePlate;
 
-  private Integer capacity;
+  private Double capacity;
 
   private Double currentLatitude;
 

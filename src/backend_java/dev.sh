@@ -1,5 +1,7 @@
 #!/bin/bash
 
+set -e
+
 echo "Starting PostgreSQL container..."
 docker run --name postgres_dev \
   -e POSTGRES_DB=eco_route_db \

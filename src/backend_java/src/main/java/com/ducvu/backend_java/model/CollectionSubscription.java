@@ -1,40 +1,30 @@
 package com.ducvu.backend_java.model;
 
-import java.time.LocalDateTime;
 
 import jakarta.persistence.*;
-import org.hibernate.annotations.CreationTimestamp;
-import org.hibernate.annotations.UpdateTimestamp;
-
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.UpdateTimestamp;
+
+import java.time.LocalDateTime;
 
 @Entity
-@Table(name = "trip_stop")
+@Table(name = "collection_subscription")
+@Data
 @AllArgsConstructor
 @NoArgsConstructor
-@Data
 @Builder
-public class TripStop {
+public class CollectionSubscription {
   @Id
   @GeneratedValue(strategy = GenerationType.UUID)
-  private String id; 
-
-  private Integer sequenceNumber;
-
-  @ManyToOne
-  @JoinColumn(name = "trip_id")
-  private VehicleTrip vehicleTrip;
+  private String id;
 
   @OneToOne
-  @JoinColumn(name = "request_id")
-  private CollectionRequest collectionRequest;
-
-  @ManyToOne
-  @JoinColumn(name = "subscription_id")
-  private CollectionSubscription collectionSubscription;
+  @JoinColumn(name = "user_id")
+  private UserAccount user;
 
   private Double latitude;
 
@@ -43,6 +33,9 @@ public class TripStop {
   private String address;
 
   private Double estimatedWeight;
+
+  @Enumerated(value = EnumType.STRING)
+  private SubscriptionStatus status;
 
   @CreationTimestamp
   private LocalDateTime createdAt;

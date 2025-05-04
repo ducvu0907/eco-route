@@ -22,8 +22,6 @@ public class DispatchRun {
   @GeneratedValue(strategy = GenerationType.UUID) 
   private String id;
 
-  private String name;
-
   private LocalDateTime startTime;
 
   private LocalDateTime endTime;
