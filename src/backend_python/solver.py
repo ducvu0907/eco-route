@@ -1,15 +1,85 @@
 import numpy as np
 import hygese as hgs
 import math
+import os
+import subprocess
 from api import Route, RoutingRequest, RoutingResponse, logger
 from typing import List, Dict
-from sklearn.cluster import KMeans
 from collections import defaultdict
+from vrplib import read_instance, read_solution
+
+
+def solve_cli_with_binary(instance_path, time_limit=3, seed=0, verbose=1):
+  """
+  """
+  exec_path = os.path.join("bin", "hgs")
+  assert os.path.isfile(exec_path), f"HGS executable '{exec_path}' not found"
+
+  hgs_cmd = [
+    exec_path,
+    instance_path,
+    "solution.sol",
+    "-t", str(time_limit),
+    "-seed", str(seed),
+    "-log", str(verbose)
+  ]
+  print(f"HGS binary run with cmd: {hgs_cmd}")
+
+  try:
+    result = subprocess.run(hgs_cmd, capture_output=True, text=True, check=True)
+    print(result.stdout)
+  except subprocess.CalledProcessError as e:
+    print(f"Solver failed with return code {e.returncode}")
+    print(e.stderr)
+
+def solve_cli_with_hygese(instance_path, time_limit=3, seed=0, verbose=1):
+  """
+  """
+  try:
+    instance = read_instance(instance_path)
+    distance_matrix = instance["edge_weight"]
+    demands = instance["demand"]
+    depot = instance["depot"][0] # only support single-depot
+    vehicle_capacity = instance["capacity"]
+    n = len(demands)
+
+    data = {
+      "service_times": np.zeros(n),
+      "distance_matrix": distance_matrix,
+      "vehicle_capacity": vehicle_capacity,
+      "demands": demands,
+      # "num_vehicles": 10**9, # uncapped vehicles limit
+      "depot": depot
+    }
+    ap = hgs.AlgorithmParameters(timeLimit=time_limit, seed=seed)
+    hgs_solver = hgs.Solver(parameters=ap, verbose=verbose)
+    result = hgs_solver.solve_cvrp(data)
+    print(f"Routes: {result.routes}\nCost: {result.cost}")
+
+  except Exception as e:
+    print(str(e))
+    raise RuntimeError(f"Reading instance path failed: {str(e)}")
 
 
 def solve_api(request: RoutingRequest):
   """
-  Entrypoint for solving the VRP using the Hygese solver.
+  Entrypoint for VRP HTTP request. 
+  """
+  if not request.routes:
+    return solve_static(request)
+  else:
+    return solve_dynamic(request)
+
+
+def solve_dynamic(request: RoutingRequest):
+  """
+  """
+  pass
+
+
+def solve_static(request: RoutingRequest):
+  """
+  Solving static Multi-Depot VRP.
 
   Parameters:
   ----------
@@ -22,7 +92,7 @@ def solve_api(request: RoutingRequest):
     An object containing optimized routes and total distance.
   """
   logger.info("Received request for VRP solving.")
-  depots_vehicles, customers_jobs = _parse_request(request)
+  depots_vehicles, customers_jobs = _parse_static_request(request)
   depot_coords = list(depots_vehicles.keys())
   customer_coords = list(customers_jobs.keys())
 
@@ -137,7 +207,7 @@ def _convert_coords_to_distance_matrix(depot: List[float], customers: List[List[
   return distance_matrix
 
 
-def _parse_request(request: RoutingRequest):
+def _parse_static_request(request: RoutingRequest):
   """
   Extracts and structures vehicle and job information for clustering.
 
@@ -249,3 +319,11 @@ def _solve_cvrp_with_hygese(distance_matrix: List[List[float]], demands: List[fl
   except Exception as e:
     logger.error(f"Hygese solver failed: {str(e)}")
     raise RuntimeError("CVRP solver failed to produce a valid result.") from e
+
+
+# TODO
+def _solve_with_pyvrp():
+  """
+  Solving VRP instance with pyvrp.
+  """
+  pass
