@@ -9,6 +9,22 @@ from collections import defaultdict
 from vrplib import read_instance, read_solution
 
 
+def solve_cli_with_pyvrp(instance_path, time_limit=3, seed=0, verbose=1):
+  """
+  Solving VRP instance with pyvrp.
+  """
+  from pyvrp import read, Model
+  from pyvrp.stop import MaxIterations, MaxRuntime
+
+  try:
+    instance = read(instance_path, round_func="none")
+  except Exception as e:
+    raise RuntimeError(f"Reading instance failed: {str(e)}")
+  model = Model.from_data(instance)
+  result = model.solve(stop=MaxRuntime(time_limit), seed=seed, display=verbose)
+  print(f"PyVRP result: {result}")
+
+
 def solve_cli_with_binary(instance_path, time_limit=3, seed=0, verbose=1):
   """
   """
@@ -319,11 +335,3 @@ def _solve_cvrp_with_hygese(distance_matrix: List[List[float]], demands: List[fl
   except Exception as e:
     logger.error(f"Hygese solver failed: {str(e)}")
     raise RuntimeError("CVRP solver failed to produce a valid result.") from e
-
-
-# TODO
-def _solve_with_pyvrp():
-  """
-  Solving VRP instance with pyvrp.
-  """
-  pass
