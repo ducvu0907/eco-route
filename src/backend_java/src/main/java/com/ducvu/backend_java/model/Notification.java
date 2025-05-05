@@ -12,7 +12,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 @Entity
-@Table(name = "notification")
+@Table(name = "notifications")
 @AllArgsConstructor
 @NoArgsConstructor
 @Data
@@ -27,7 +27,7 @@ public class Notification {
 
   @ManyToOne
   @JoinColumn(name = "user_id")
-  private UserAccount user;
+  private User user;
 
   private String message;
 

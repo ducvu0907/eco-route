@@ -1,5 +1,6 @@
 #!/bin/bash
 
+docker stop postgres_dev && docker rm postgres_dev
 set -e
 
 echo "Starting PostgreSQL container..."

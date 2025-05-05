@@ -12,19 +12,29 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 @Entity
-@Table(name = "collection_request")
-@Data
+@Table(name = "nodes")
 @AllArgsConstructor
 @NoArgsConstructor
+@Data
 @Builder
-public class CollectionRequest {
+public class Node {
   @Id
   @GeneratedValue(strategy = GenerationType.UUID)
   private String id; 
 
+  private Integer sequenceNumber;
+
   @ManyToOne
-  @JoinColumn(name = "user_id")
-  private UserAccount user;
+  @JoinColumn(name = "route_id")
+  private Route route;
+
+  @OneToOne
+  @JoinColumn(name = "order_id")
+  private Order order;
+
+  @ManyToOne
+  @JoinColumn(name = "subscription_id")
+  private Subscription subscription;
 
   private Double latitude;
 
@@ -33,11 +43,6 @@ public class CollectionRequest {
   private String address;
 
   private Double estimatedWeight;
-
-  @Enumerated(value = EnumType.STRING)
-  private CollectionRequestStatus status;
-
-  private LocalDateTime completedAt;
 
   @CreationTimestamp
   private LocalDateTime createdAt;

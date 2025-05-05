@@ -1,9 +1,9 @@
 package com.ducvu.backend_java.service;
 
-import com.ducvu.backend_java.dto.response.UserAccountResponse;
+import com.ducvu.backend_java.dto.response.UserResponse;
 import com.ducvu.backend_java.exception.PhoneAlreadyExistsException;
-import com.ducvu.backend_java.model.UserAccount;
-import com.ducvu.backend_java.repository.UserAccountRepository;
+import com.ducvu.backend_java.model.User;
+import com.ducvu.backend_java.repository.UserRepository;
 import com.ducvu.backend_java.util.Mapper;
 import com.ducvu.backend_java.util.Validator;
 import lombok.RequiredArgsConstructor;
@@ -17,16 +17,16 @@ import org.springframework.util.StringUtils;
 @Service
 @RequiredArgsConstructor
 @Slf4j
-public class UserAccountService {
-  private final UserAccountRepository userAccountRepository;
+public class UserService {
+  private final UserRepository userRepository;
   private final Validator validator;
   private final Mapper mapper;
 
-  public UserAccountResponse getMe() {
+  public UserResponse getMe() {
     String username = getCurrentUsername();
-    UserAccount userAccount = userAccountRepository.findByUsername(username)
+    User user = userRepository.findByUsername(username)
         .orElseThrow(() -> new UsernameNotFoundException("Username not found"));
-    return mapper.map(userAccount);
+    return mapper.map(user);
   }
 
   // helper for getting the extracted username from authorization header

@@ -1,6 +1,6 @@
 package com.ducvu.backend_java.config;
 
-import com.ducvu.backend_java.repository.UserAccountRepository;
+import com.ducvu.backend_java.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -18,11 +18,11 @@ import java.security.AuthProvider;
 @Configuration
 @RequiredArgsConstructor
 public class ApplicationConfig {
-  private final UserAccountRepository userAccountRepository;
+  private final UserRepository userRepository;
 
   @Bean
   public UserDetailsService userDetailsService() {
-    return username -> userAccountRepository.findByUsername(username)
+    return username -> userRepository.findByUsername(username)
         .orElseThrow(() -> new UsernameNotFoundException("Username not found"));
   }
 

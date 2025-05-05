@@ -1,19 +1,18 @@
 package com.ducvu.backend_java.util;
 
-import com.ducvu.backend_java.dto.response.AuthResponse;
-import com.ducvu.backend_java.dto.response.UserAccountResponse;
-import com.ducvu.backend_java.model.UserAccount;
+import com.ducvu.backend_java.dto.response.UserResponse;
+import com.ducvu.backend_java.model.User;
 import org.springframework.stereotype.Component;
 
 @Component
 public class Mapper {
 
-  public UserAccountResponse map(UserAccount userAccount) {
-    return UserAccountResponse.builder()
-        .id(userAccount.getId())
-        .username(userAccount.getUsername())
-        .phone(userAccount.getPhone())
-        .role(userAccount.getRole())
+  public UserResponse map(User user) {
+    return UserResponse.builder()
+        .id(user.getId())
+        .username(user.getUsername())
+        .phone(user.getPhone())
+        .role(user.getRole())
         .build();
   }
 

@@ -12,22 +12,29 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 @Entity
-@Table(name = "dispatch_run")
+@Table(name = "routes")
+@Data
 @AllArgsConstructor
 @NoArgsConstructor
-@Data
 @Builder
-public class DispatchRun {
+public class Route {
   @Id
-  @GeneratedValue(strategy = GenerationType.UUID) 
+  @GeneratedValue(strategy = GenerationType.UUID)
   private String id;
+
+  @OneToOne
+  @JoinColumn(name = "vehicle_id")
+  private Vehicle vehicle;
+
+  @ManyToOne
+  @JoinColumn(name = "dispatch_id")
+  private Dispatch dispatch;
+
+  private Double totalDistance;
 
   private LocalDateTime startTime;
 
   private LocalDateTime endTime;
-
-  @Enumerated(value = EnumType.STRING)
-  private DispatchRunStatus status;
 
   @CreationTimestamp
   private LocalDateTime createdAt;

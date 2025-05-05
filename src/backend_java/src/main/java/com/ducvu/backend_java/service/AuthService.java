@@ -2,13 +2,13 @@ package com.ducvu.backend_java.service;
 
 import com.ducvu.backend_java.config.JwtService;
 import com.ducvu.backend_java.dto.request.AuthRequest;
-import com.ducvu.backend_java.dto.request.UserAccountCreateRequest;
+import com.ducvu.backend_java.dto.request.UserCreateRequest;
 import com.ducvu.backend_java.dto.response.AuthResponse;
-import com.ducvu.backend_java.dto.response.UserAccountResponse;
+import com.ducvu.backend_java.dto.response.UserResponse;
 import com.ducvu.backend_java.exception.PhoneAlreadyExistsException;
 import com.ducvu.backend_java.exception.UsernameAlreadyExistsException;
-import com.ducvu.backend_java.model.UserAccount;
-import com.ducvu.backend_java.repository.UserAccountRepository;
+import com.ducvu.backend_java.model.User;
+import com.ducvu.backend_java.repository.UserRepository;
 import com.ducvu.backend_java.util.Mapper;
 import com.ducvu.backend_java.util.Validator;
 import lombok.RequiredArgsConstructor;
@@ -24,23 +24,23 @@ import org.springframework.stereotype.Service;
 @RequiredArgsConstructor
 @Slf4j
 public class AuthService {
-  private final UserAccountRepository userAccountRepository;
+  private final UserRepository userRepository;
   private final PasswordEncoder passwordEncoder;
   private final JwtService jwtService;
   private final AuthenticationManager authenticationManager;
   private final Mapper mapper;
   private final Validator validator;
 
-  public UserAccountResponse register(UserAccountCreateRequest request) {
+  public UserResponse register(UserCreateRequest request) {
     validator.validate(request);
 
-    userAccountRepository.findByUsername(request.getUsername())
+    userRepository.findByUsername(request.getUsername())
         .ifPresent(u -> { throw new UsernameAlreadyExistsException("Username already exists"); });
 
-    userAccountRepository.findByPhone(request.getPhone())
+    userRepository.findByPhone(request.getPhone())
         .ifPresent(u -> { throw new PhoneAlreadyExistsException("Phone number already exists"); });
 
-    UserAccount userAccount = UserAccount.builder()
+    User user = User.builder()
         .username(request.getUsername())
         .phone(request.getPhone())
         .fcmToken(request.getFcmToken())
@@ -48,16 +48,16 @@ public class AuthService {
         .role(request.getRole())
         .build();
 
-    userAccountRepository.save(userAccount);
-    log.info("New account created: {}", userAccount);
+    userRepository.save(user);
+    log.info("New account created: {}", user);
 
-    return mapper.map(userAccount);
+    return mapper.map(user);
   }
 
   public AuthResponse login(AuthRequest request) {
     validator.validate(request);
 
-    UserAccount userAccount = userAccountRepository.findByUsername(request.getUsername())
+    User user = userRepository.findByUsername(request.getUsername())
         .orElseThrow(() -> new UsernameNotFoundException("Username not found"));
 
     Authentication authentication = authenticationManager.authenticate(
@@ -68,15 +68,15 @@ public class AuthService {
     );
     log.info("Authenticate user: {}", authentication.getPrincipal());
 
-    String jwt = jwtService.generateToken(userAccount);
+    String jwt = jwtService.generateToken(user);
     AuthResponse authResponse = AuthResponse.builder()
         .token(jwt)
         .build();
 
     if (request.getFcmToken() != null && !request.getFcmToken().isEmpty()) {
       log.info("FCM token: {}", request.getFcmToken());
-      userAccount.setFcmToken(request.getFcmToken());
-      userAccountRepository.save(userAccount);
+      user.setFcmToken(request.getFcmToken());
+      userRepository.save(user);
     }
 
     return authResponse;

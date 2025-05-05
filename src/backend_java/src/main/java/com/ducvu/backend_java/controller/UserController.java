@@ -1,8 +1,8 @@
 package com.ducvu.backend_java.controller;
 
 import com.ducvu.backend_java.dto.ApiResponse;
-import com.ducvu.backend_java.dto.response.UserAccountResponse;
-import com.ducvu.backend_java.service.UserAccountService;
+import com.ducvu.backend_java.dto.response.UserResponse;
+import com.ducvu.backend_java.service.UserService;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -13,14 +13,14 @@ import org.springframework.web.bind.annotation.*;
 @Slf4j
 @RequiredArgsConstructor
 @SecurityRequirement(name = "bearerAuth")
-public class UserAccountController {
-  private final UserAccountService userAccountService;
+public class UserController {
+  private final UserService userService;
 
   @GetMapping("/me")
-  public ApiResponse<UserAccountResponse> getMe() {
+  public ApiResponse<UserResponse> getMe() {
     log.info("Received get me request");
-    var result = userAccountService.getMe();
-    return ApiResponse.<UserAccountResponse>builder()
+    var result = userService.getMe();
+    return ApiResponse.<UserResponse>builder()
         .message("Get your profile successfully")
         .result(result)
         .build();

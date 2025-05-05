@@ -1,4 +1,5 @@
-package com.ducvu.backend_java.dto.request;
+package com.ducvu.backend_java.dto.response;
+
 
 import com.ducvu.backend_java.model.Role;
 import lombok.AllArgsConstructor;
@@ -10,10 +11,9 @@ import lombok.NoArgsConstructor;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class UserAccountCreateRequest {
+public class UserResponse {
+  private String id;
   private String username;
-  private String password;
   private String phone;
-  private String fcmToken;
   private Role role;
 }

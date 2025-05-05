@@ -12,19 +12,19 @@ import org.hibernate.annotations.UpdateTimestamp;
 import java.time.LocalDateTime;
 
 @Entity
-@Table(name = "collection_subscription")
+@Table(name = "subscriptions")
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class CollectionSubscription {
+public class Subscription {
   @Id
   @GeneratedValue(strategy = GenerationType.UUID)
   private String id;
 
   @OneToOne
   @JoinColumn(name = "user_id")
-  private UserAccount user;
+  private User user;
 
   private Double latitude;
 

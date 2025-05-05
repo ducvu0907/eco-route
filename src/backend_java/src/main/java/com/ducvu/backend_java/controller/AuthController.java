@@ -2,9 +2,9 @@ package com.ducvu.backend_java.controller;
 
 import com.ducvu.backend_java.dto.ApiResponse;
 import com.ducvu.backend_java.dto.request.AuthRequest;
-import com.ducvu.backend_java.dto.request.UserAccountCreateRequest;
+import com.ducvu.backend_java.dto.request.UserCreateRequest;
 import com.ducvu.backend_java.dto.response.AuthResponse;
-import com.ducvu.backend_java.dto.response.UserAccountResponse;
+import com.ducvu.backend_java.dto.response.UserResponse;
 import com.ducvu.backend_java.service.AuthService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -22,10 +22,10 @@ public class AuthController {
   private final AuthService authService;
 
   @PostMapping("/register")
-  public ApiResponse<UserAccountResponse> register(@RequestBody UserAccountCreateRequest request) {
+  public ApiResponse<UserResponse> register(@RequestBody UserCreateRequest request) {
     log.info("Received register request: {}", request);
     var result = authService.register(request);
-    return ApiResponse.<UserAccountResponse>builder()
+    return ApiResponse.<UserResponse>builder()
         .message("Register successfully")
         .result(result)
         .build();

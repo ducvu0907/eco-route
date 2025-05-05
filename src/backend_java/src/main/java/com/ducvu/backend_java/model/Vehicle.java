@@ -12,7 +12,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 @Entity
-@Table(name = "vehicle")
+@Table(name = "vehicles")
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
@@ -24,7 +24,7 @@ public class Vehicle {
 
   @OneToOne
   @JoinColumn(name = "driver_id")
-  private UserAccount driver;
+  private User driver;
 
   @ManyToOne
   @JoinColumn(name = "depot_id")

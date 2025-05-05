@@ -1,6 +1,6 @@
 package com.ducvu.backend_java.model;
 
-public enum DispatchRunStatus {
+public enum DispatchStatus {
   PLANNED,
   IN_PROGRESS,
   COMPLETED
