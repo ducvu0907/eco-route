@@ -48,6 +48,7 @@ def solve_cli_with_binary(instance_path, time_limit=3, seed=0, verbose=1):
     print(f"Solver failed with return code {e.returncode}")
     print(e.stderr)
 
+
 def solve_cli_with_hygese(instance_path, time_limit=3, seed=0, verbose=1):
   """
   """
@@ -84,11 +85,69 @@ def solve_api(request: RoutingRequest):
   if not request.routes:
     return solve_static(request)
   else:
-    return solve_dynamic(request)
+    return solve_dynamic_best_insertion(request)
 
 
-def solve_dynamic(request: RoutingRequest):
+def solve_dynamic_best_insertion(request: RoutingRequest):
   """
+  Choose the insertion with lowest cost increase
+  """
+  all_routes = {route.vehicle_id: list(route.steps) for route in request.routes}
+
+  for job in request.jobs:
+    best_insertion = None
+    best_cost_increase = float("inf")
+
+    for vehicle in request.vehicles:
+      if vehicle.load + job.demand > vehicle.capacity:
+        continue
+
+      route_steps = all_routes.get(vehicle.id, [])
+      current_points = [(vehicle.start.lat, vehicle.start.lon)] + [
+        (step.location.lat, step.location.lon) for step in route_steps
+      ]
+
+      for i in range(len(route_steps) + 1):
+        new_points = current_points[:i+1] + [(job.location.lat, job.location.lon)] + current_points[i+1:]
+        new_dist = _route_distance(new_points)
+        old_dist = _route_distance(current_points)
+        cost_increase = new_dist - old_dist
+
+        if cost_increase < best_cost_increase:
+          best_cost_increase = cost_increase
+          best_insertion = (vehicle.id, i)
+
+    if not best_insertion:
+      raise RuntimeError(f"No feasible insertion for job {job.id}")
+
+    vehicle_id, insert_pos = best_insertion
+    all_routes.setdefault(vehicle_id, [])
+    all_routes[vehicle_id].insert(insert_pos, job)
+
+  response_routes = [
+    Route(vehicle_id=vid, steps=steps) for vid, steps in all_routes.items()
+  ]
+
+  return RoutingResponse(routes=response_routes)
+      
+
+def _route_distance(points):
+  """
+  Helper for computing total distance (haversine) in a route
+  """
+  if not points or len(points) < 2:
+    return 0.0
+
+  return sum(
+    _haversine_distance(lat1, lon1, lat2, lon2)
+    for (lat1, lon1), (lat2, lon2) in zip(points[:-1], points[1:])
+  )
+
+
+def solve_dynamic_greedy_tsp(request: RoutingRequest):
+  """
+  Dispatch dynamic requests
+  Choose the vehicle closest to each request and then resolve its route (simulate TSP)
   """
   all_routes = []
 
@@ -202,9 +261,12 @@ def solve_static(request: RoutingRequest):
   depots_vehicles, customers_jobs = _parse_static_request(request)
   depot_coords = list(depots_vehicles.keys())
   customer_coords = list(customers_jobs.keys())
+  depot_capacity = [sum([v.capacity for v in depots_vehicles[d]]) for d in depot_coords]
+  customer_demand = [customers_jobs[c].demand for c in customer_coords]
 
   logger.info(f"Parsed {len(depot_coords)} depot(s) and {len(customer_coords)} customer(s).")
-  clusters = _clustering_greedy(depot_coords, customer_coords)
+  # clusters = _clustering_greedy(depot_coords, customer_coords)
+  clusters = _clustering_greedy_with_capacity(depot_coords, customer_coords, depot_capacity, customer_demand)
   logger.info(f"Generated {len(clusters)} cluster(s) based on depots.")
 
   all_routes = []
@@ -338,6 +400,49 @@ def _parse_static_request(request: RoutingRequest):
 
   logger.info(f"Extracted {len(depots_vehicles)} depots and {len(customers_jobs)} jobs from request.")
   return depots_vehicles, customers_jobs
+
+
+
+def _clustering_greedy_with_capacity(depot_coords: List[List[float]], customer_coords: List[List[float]], depot_capacity: List[List[float]], customer_demand: List[List[float]]):
+  """
+  Assigns each customer to the closest depot using greedy distance-based logic.
+
+  Parameters:
+  ----------
+  depot_coords : List[List[float]]
+    Coordinates of depots.
+  customer_coords : List[List[float]]
+    Coordinates of customers.
+
+  Returns:
+  -------
+  Dict[Tuple[float, float], List[Tuple[float, float]]]
+    Mapping of depot coordinates to customer coordinates.
+  """
+  clusters = defaultdict(list)
+
+  for i, coord in enumerate(customer_coords):
+    customer_lat, customer_lon = coord
+    min_distance = float('inf')
+    closest_depot = None
+    closest_depot_index = -1
+
+    for j, depot in enumerate(depot_coords):
+      if depot_capacity[j] <= customer_demand[i]:
+        continue
+      depot_lat, depot_lon = depot
+      distance = _haversine_distance(customer_lat, customer_lon, depot_lat, depot_lon)
+      if distance < min_distance:
+        min_distance = distance
+        closest_depot = depot
+        closest_depot_index = j
+
+    if closest_depot:
+      clusters[closest_depot].append(coord)
+      depot_capacity[closest_depot_index] -= customer_demand[i]
+
+  logger.info(f"Clustering result: {dict((k, len(v)) for k, v in clusters.items())}")
+  return clusters
 
 
 def _clustering_greedy(depot_coords: List[List[float]], customer_coords: List[List[float]]):
