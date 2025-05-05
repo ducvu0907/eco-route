@@ -38,8 +38,9 @@ class Job(BaseModel):
 
 class Vehicle(BaseModel):
   id: str
-  start: Location
+  start: Location # can be different from end in dynamic request, this should indicate the current position of the vehicle
   end: Location
+  load: float = 0 # current load of the vehicle, could be positive if dynamic request
   capacity: float
 
 
@@ -50,13 +51,12 @@ class Route(BaseModel):
 
 class RoutingRequest(BaseModel):
   vehicles: List[Vehicle]
-  routes: List[Route] = []
+  routes: List[Route] = [] # this should only contain unfinished steps in the dynamic request
   jobs: List[Job]
 
 
 class RoutingResponse(BaseModel):
-  routes: List[Route]
-  total_distance: float
+  routes: List[Route] # should only contain updated routes when respond to dynamic request
 
 
 # app
@@ -85,7 +85,7 @@ def solve_vrp(request: RoutingRequest):
 
   try:
     solution = solve_api(request)
-    logger.info(f"Solver returned solution with total distance: {solution.total_distance}")
+    logger.info(f"Solver returned solution: {solution}")
     return solution
   except Exception as e:
     logger.error(f"Solver failed: {str(e)}")

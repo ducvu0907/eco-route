@@ -90,7 +90,98 @@ def solve_api(request: RoutingRequest):
 def solve_dynamic(request: RoutingRequest):
   """
   """
-  pass
+  all_routes = []
+
+  for job in request.jobs:
+    job_lat, job_lon = job.location.lat, job.location.lon
+    closest_vehicle = None
+    min_dist = float("inf")
+
+    # find the closest vehicle with enough capacity
+    for vehicle in request.vehicles:
+      vehicle_lat, vehicle_lon = vehicle.start.lat, vehicle.start.lon
+      dist = _haversine_distance(job_lat, job_lon, vehicle_lat, vehicle_lon)
+      if dist < min_dist and vehicle.load + job.demand <= vehicle.capacity:
+        dist = min_dist
+        closest_vehicle = vehicle
+
+    logger.info(f"Get closest vehicle: {closest_vehicle}")
+
+    # find the round of the closest vehicle
+    assigned_route = None
+    for route in request.routes:
+      if route.vehicle_id == closest_vehicle.id:
+        assigned_route = route
+        break
+
+    logger.info(f"Get assigned route: {assigned_route}")
+
+    # solve the route with static solver
+    depot = (vehicle.start.lat, vehicle.start.lon) # this is the current position of the vehicle
+
+    # if there's assigned route we simulate tsp 
+    # else the vehicle is not yet assigned so we just dispatch it
+    if assigned_route:
+      customers_jobs = {}
+      customers_jobs[(job.location.lat, job.location.lon)] = job
+      for step in assigned_route.steps:
+        lat, lon = step.location.lat, step.location.lon
+        customers_jobs[(lat,lon)] = step
+
+      customers = [(job_lat, job_lon)] + [(s.location.lat, s.location.lon) for s in assigned_route.steps]
+      distance_matrix = _convert_coords_to_distance_matrix(depot, customers)
+      result = _solve_tsp_with_hygese(distance_matrix)
+
+      logger.info(f"Result: {result.routes}")
+      logger.info(customers_jobs)
+      steps = []
+      for r in result.routes[0]:
+        customer = customers[r - 1]
+        steps.append(customers_jobs[customer])
+      
+      logger.info(f"Steps: {steps}")
+      route_response = Route(
+        vehicle_id=closest_vehicle.id,
+        steps=steps
+      )
+      logger.info(route_response)
+
+      all_routes.append(route_response)
+
+    elif not closest_vehicle:
+      raise RuntimeError(f"No valid vehicle to assign the new job")
+
+    else:
+      route_response = Route(
+        vehicle_id=closest_vehicle.id,
+        steps=[job]
+      )
+      all_routes.append(route_response)
+    
+  return RoutingResponse(routes=all_routes)
+
+
+
+def _solve_tsp_with_hygese(distance_matrix):
+  """
+  """
+  data = {
+    "distance_matrix": distance_matrix
+  }
+  ap = hgs.AlgorithmParameters(timeLimit=1.0)
+  hgs_solver = hgs.Solver(parameters=ap, verbose=True)
+  try:
+    result = hgs_solver.solve_tsp(data)
+
+    if result is None or not hasattr(result, "cost") or not hasattr(result, "routes"):
+      raise RuntimeError("Solver returned invalid or incomplete result.")
+
+    logger.info(f"Hygese returned solution with cost {result.cost}.")
+    return result
+
+  except Exception as e:
+    logger.error(f"Hygese solver failed: {str(e)}")
+    raise RuntimeError("TSP solver failed to produce a valid result.") from e
 
 
 def solve_static(request: RoutingRequest):
@@ -116,7 +207,6 @@ def solve_static(request: RoutingRequest):
   clusters = _clustering_greedy(depot_coords, customer_coords)
   logger.info(f"Generated {len(clusters)} cluster(s) based on depots.")
 
-  total_cost = 0.0
   all_routes = []
 
   for depot, customers in clusters.items():
@@ -150,8 +240,6 @@ def solve_static(request: RoutingRequest):
     result = _solve_cvrp_with_hygese(distance_matrix, demands, vehicle_capacity, num_vehicles)
     logger.info(f"Solved cluster for depot {depot}. Cost: {result.cost}, Routes: {result.routes}")
 
-    total_cost += result.cost
-    
     # parse to route response
     # we assume vehicles are all the same (mostly yes)
     # so we simply assign vehicle in order
@@ -170,7 +258,7 @@ def solve_static(request: RoutingRequest):
 
       all_routes.append(route_response)
       
-  return RoutingResponse(routes=all_routes, total_distance=total_cost)
+  return RoutingResponse(routes=all_routes)
 
 
 def _haversine_distance(lat1: float, lon1: float, lat2: float, lon2: float):
@@ -235,10 +323,10 @@ def _parse_static_request(request: RoutingRequest):
   -------
   Tuple[Dict[Tuple[float, float], List[Vehicle]], Dict[Tuple[float, float], Job]]
     - depots_vehicles maps depot coordinates to lists of vehicles
-    - customers_demands maps job coordinates to Job objects
+    - customers_jobs maps job coordinates to Job objects
   """
   depots_vehicles = defaultdict(list)
-  customers_demands = dict()
+  customers_jobs = dict()
 
   for v in request.vehicles:
     lat, lon = v.start.lat, v.start.lon
@@ -246,10 +334,10 @@ def _parse_static_request(request: RoutingRequest):
 
   for j in request.jobs:
     lat, lon = j.location.lat, j.location.lon
-    customers_demands[(lat, lon)] = j
+    customers_jobs[(lat, lon)] = j
 
-  logger.info(f"Extracted {len(depots_vehicles)} depots and {len(customers_demands)} jobs from request.")
-  return depots_vehicles, customers_demands
+  logger.info(f"Extracted {len(depots_vehicles)} depots and {len(customers_jobs)} jobs from request.")
+  return depots_vehicles, customers_jobs
 
 
 def _clustering_greedy(depot_coords: List[List[float]], customer_coords: List[List[float]]):
