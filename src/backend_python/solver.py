@@ -90,9 +90,10 @@ def solve_api(request: RoutingRequest):
 
 def solve_dynamic_best_insertion(request: RoutingRequest):
   """
-  Choose the insertion with lowest cost increase
+  Choose the insertion with lowest cost increase (a lot faster than greedy + tsp)
   """
   all_routes = {route.vehicle_id: list(route.steps) for route in request.routes}
+  modified_vehicle_ids = set() # track which routes got updated
 
   for job in request.jobs:
     best_insertion = None
@@ -123,9 +124,16 @@ def solve_dynamic_best_insertion(request: RoutingRequest):
     vehicle_id, insert_pos = best_insertion
     all_routes.setdefault(vehicle_id, [])
     all_routes[vehicle_id].insert(insert_pos, job)
+    modified_vehicle_ids.add(vehicle_id)
 
+  # this one return full routes
+  # response_routes = [
+  #   Route(vehicle_id=vid, steps=steps) for vid, steps in all_routes.items()
+  # ]
+
+  # return only updated routes
   response_routes = [
-    Route(vehicle_id=vid, steps=steps) for vid, steps in all_routes.items()
+    Route(vehicle_id=vid, steps=all_routes[vid]) for vid in modified_vehicle_ids
   ]
 
   return RoutingResponse(routes=response_routes)
