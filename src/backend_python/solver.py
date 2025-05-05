@@ -10,9 +10,7 @@ from vrplib import read_instance, read_solution
 
 
 def solve_cli_with_pyvrp(instance_path, time_limit=3, seed=0, verbose=1):
-  """
-  Solving VRP instance with pyvrp.
-  """
+  """Solve VRP instance using PyVRP."""
   from pyvrp import read, Model
   from pyvrp.stop import MaxIterations, MaxRuntime
 
@@ -26,8 +24,7 @@ def solve_cli_with_pyvrp(instance_path, time_limit=3, seed=0, verbose=1):
 
 
 def solve_cli_with_binary(instance_path, time_limit=3, seed=0, verbose=1):
-  """
-  """
+  """Solve VRP instance using external HGS binary."""
   exec_path = os.path.join("bin", "hgs")
   assert os.path.isfile(exec_path), f"HGS executable '{exec_path}' not found"
 
@@ -50,8 +47,7 @@ def solve_cli_with_binary(instance_path, time_limit=3, seed=0, verbose=1):
 
 
 def solve_cli_with_hygese(instance_path, time_limit=3, seed=0, verbose=1):
-  """
-  """
+  """Solve VRP instance using Hygese Python API."""
   try:
     instance = read_instance(instance_path)
     distance_matrix = instance["edge_weight"]
@@ -79,9 +75,7 @@ def solve_cli_with_hygese(instance_path, time_limit=3, seed=0, verbose=1):
 
 
 def solve_api(request: RoutingRequest):
-  """
-  Entrypoint for VRP HTTP request. 
-  """
+  """Dispatch routing request to static or dynamic solver."""
   if not request.routes:
     return solve_static(request)
   else:
@@ -89,9 +83,7 @@ def solve_api(request: RoutingRequest):
 
 
 def solve_dynamic_best_insertion(request: RoutingRequest):
-  """
-  Choose the insertion with lowest cost increase (a lot faster than greedy + tsp)
-  """
+  """Insert jobs into existing routes by minimizing cost increase."""
   all_routes = {route.vehicle_id: list(route.steps) for route in request.routes}
   modified_vehicle_ids = set() # track which routes got updated
 
@@ -140,9 +132,7 @@ def solve_dynamic_best_insertion(request: RoutingRequest):
       
 
 def _route_distance(points):
-  """
-  Helper for computing total distance (haversine) in a route
-  """
+  """Compute total route distance using haversine formula."""
   if not points or len(points) < 2:
     return 0.0
 
@@ -153,10 +143,7 @@ def _route_distance(points):
 
 
 def solve_dynamic_greedy_tsp(request: RoutingRequest):
-  """
-  Dispatch dynamic requests
-  Choose the vehicle closest to each request and then resolve its route (simulate TSP)
-  """
+  """Assign jobs to closest vehicles and resolve with TSP."""
   all_routes = []
 
   for job in request.jobs:
@@ -230,8 +217,7 @@ def solve_dynamic_greedy_tsp(request: RoutingRequest):
 
 
 def _solve_tsp_with_hygese(distance_matrix):
-  """
-  """
+  """Solve TSP using Hygese given a distance matrix."""
   data = {
     "distance_matrix": distance_matrix
   }
@@ -252,19 +238,7 @@ def _solve_tsp_with_hygese(distance_matrix):
 
 
 def solve_static(request: RoutingRequest):
-  """
-  Solving static Multi-Depot VRP.
-
-  Parameters:
-  ----------
-  request : RoutingRequest
-    A request object containing vehicles, jobs, and (optionally) routes.
-
-  Returns:
-  -------
-  RoutingResponse
-    An object containing optimized routes and total distance.
-  """
+  """Solve static multi-depot CVRP request."""
   logger.info("Received request for VRP solving.")
   depots_vehicles, customers_jobs = _parse_static_request(request)
   depot_coords = list(depots_vehicles.keys())
@@ -332,14 +306,7 @@ def solve_static(request: RoutingRequest):
 
 
 def _haversine_distance(lat1: float, lon1: float, lat2: float, lon2: float):
-  """
-  Computes the great-circle distance between two geographic coordinates.
-
-  Returns:
-  -------
-  float
-    Distance in kilometers.
-  """
+  """Compute haversine distance between two coordinates."""
   R = 6371
   phi1 = math.radians(lat1)
   phi2 = math.radians(lat2)
@@ -351,21 +318,7 @@ def _haversine_distance(lat1: float, lon1: float, lat2: float, lon2: float):
 
 
 def _convert_coords_to_distance_matrix(depot: List[float], customers: List[List[float]]):
-  """
-  Builds a symmetric distance matrix for a depot and its customers.
-
-  Parameters:
-  ----------
-  depot : List[float]
-    Latitude and longitude of the depot.
-  customers : List[List[float]]
-    List of [lat, lon] for customers.
-
-  Returns:
-  -------
-  List[List[float]]
-    Symmetric matrix where entry [i][j] is the distance between node i and j.
-  """
+  """Build distance matrix for a depot and its customers."""
   points = [depot] + customers
   n = len(points)
   distance_matrix = [[0.0] * n for _ in range(n)]
@@ -382,19 +335,7 @@ def _convert_coords_to_distance_matrix(depot: List[float], customers: List[List[
 
 
 def _parse_static_request(request: RoutingRequest):
-  """
-  Extracts and structures vehicle and job information for clustering.
-
-  Parameters:
-  ----------
-  request : RoutingRequest
-
-  Returns:
-  -------
-  Tuple[Dict[Tuple[float, float], List[Vehicle]], Dict[Tuple[float, float], Job]]
-    - depots_vehicles maps depot coordinates to lists of vehicles
-    - customers_jobs maps job coordinates to Job objects
-  """
+  """Extract depot-vehicle and customer-job mappings from request."""
   depots_vehicles = defaultdict(list)
   customers_jobs = dict()
 
@@ -412,21 +353,7 @@ def _parse_static_request(request: RoutingRequest):
 
 
 def _clustering_greedy_with_capacity(depot_coords: List[List[float]], customer_coords: List[List[float]], depot_capacity: List[List[float]], customer_demand: List[List[float]]):
-  """
-  Assigns each customer to the closest depot using greedy distance-based logic.
-
-  Parameters:
-  ----------
-  depot_coords : List[List[float]]
-    Coordinates of depots.
-  customer_coords : List[List[float]]
-    Coordinates of customers.
-
-  Returns:
-  -------
-  Dict[Tuple[float, float], List[Tuple[float, float]]]
-    Mapping of depot coordinates to customer coordinates.
-  """
+  """Cluster customers to closest depots considering capacity."""
   clusters = defaultdict(list)
 
   for i, coord in enumerate(customer_coords):
@@ -454,21 +381,7 @@ def _clustering_greedy_with_capacity(depot_coords: List[List[float]], customer_c
 
 
 def _clustering_greedy(depot_coords: List[List[float]], customer_coords: List[List[float]]):
-  """
-  Assigns each customer to the closest depot using greedy distance-based logic.
-
-  Parameters:
-  ----------
-  depot_coords : List[List[float]]
-    Coordinates of depots.
-  customer_coords : List[List[float]]
-    Coordinates of customers.
-
-  Returns:
-  -------
-  Dict[Tuple[float, float], List[Tuple[float, float]]]
-    Mapping of depot coordinates to customer coordinates.
-  """
+  """Cluster customers to closest depots without capacity check."""
   clusters = defaultdict(list)
 
   for coord in customer_coords:
@@ -490,25 +403,7 @@ def _clustering_greedy(depot_coords: List[List[float]], customer_coords: List[Li
 
 
 def _solve_cvrp_with_hygese(distance_matrix: List[List[float]], demands: List[float], vehicle_capacity: float, num_vehicles: int):
-  """
-  Solves a Capacitated Vehicle Routing Problem using Hygese.
-
-  Parameters:
-  ----------
-  distance_matrix : List[List[float]]
-    Symmetric matrix of pairwise distances.
-  demands : List[float]
-    Demand for each node (0 for depot at index 0).
-  vehicle_capacity : float
-    Maximum load per vehicle.
-  num_vehicles : int
-    Total number of vehicles available.
-
-  Returns:
-  -------
-  dict
-    Solver result including 'cost' and 'routes' keys.
-  """
+  """Solve CVRP using Hygese given distances, demands, and capacity."""
   n = len(demands)
   logger.info(f"Solving CVRP with {n} nodes, {num_vehicles} vehicles, capacity {vehicle_capacity}.")
 
