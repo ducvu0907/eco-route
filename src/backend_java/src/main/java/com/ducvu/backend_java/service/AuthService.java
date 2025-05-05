@@ -5,8 +5,6 @@ import com.ducvu.backend_java.dto.request.AuthRequest;
 import com.ducvu.backend_java.dto.request.UserCreateRequest;
 import com.ducvu.backend_java.dto.response.AuthResponse;
 import com.ducvu.backend_java.dto.response.UserResponse;
-import com.ducvu.backend_java.exception.PhoneAlreadyExistsException;
-import com.ducvu.backend_java.exception.UsernameAlreadyExistsException;
 import com.ducvu.backend_java.model.User;
 import com.ducvu.backend_java.repository.UserRepository;
 import com.ducvu.backend_java.util.Mapper;
@@ -35,10 +33,10 @@ public class AuthService {
     validator.validate(request);
 
     userRepository.findByUsername(request.getUsername())
-        .ifPresent(u -> { throw new UsernameAlreadyExistsException("Username already exists"); });
+        .ifPresent(u -> { throw new RuntimeException("Username already exists"); });
 
     userRepository.findByPhone(request.getPhone())
-        .ifPresent(u -> { throw new PhoneAlreadyExistsException("Phone number already exists"); });
+        .ifPresent(u -> { throw new RuntimeException("Phone number already exists"); });
 
     User user = User.builder()
         .username(request.getUsername())

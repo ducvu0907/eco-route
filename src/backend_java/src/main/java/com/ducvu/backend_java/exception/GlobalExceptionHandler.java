@@ -19,12 +19,12 @@ import java.security.SignatureException;
 
 @RestControllerAdvice
 @Slf4j
-public class GlobalExceptionHandler {  // TODO: refactor to remove hard-coded error messages
+public class GlobalExceptionHandler {
 
   @ExceptionHandler(Exception.class)
   public ResponseEntity<ApiResponse<?>> handleException(Exception e) {
     ApiResponse<?> apiResponse = ApiResponse.builder()
-        .message("Unknown error")
+        .message(e.getMessage())
         .build();
     return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(apiResponse);
   }
@@ -40,15 +40,7 @@ public class GlobalExceptionHandler {  // TODO: refactor to remove hard-coded er
   @ExceptionHandler(HttpMessageNotReadableException.class)
   public ResponseEntity<ApiResponse<?>> handleHttpMessageNotReadableException(HttpMessageNotReadableException e) {
     ApiResponse<?> apiResponse = ApiResponse.builder()
-        .message("Invalid request")
-        .build();
-    return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(apiResponse);
-  }
-
-  @ExceptionHandler(InvalidRequestException.class)
-  public ResponseEntity<ApiResponse<?>> handleRequestInvalidException(InvalidRequestException e) {
-    ApiResponse<?> apiResponse = ApiResponse.builder()
-        .message("Invalid request")
+        .message("Invalid request format")
         .build();
     return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(apiResponse);
   }
@@ -61,28 +53,12 @@ public class GlobalExceptionHandler {  // TODO: refactor to remove hard-coded er
     return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(apiResponse);
   }
 
-  @ExceptionHandler(PhoneAlreadyExistsException.class)
-  public ResponseEntity<ApiResponse<?>> handlePhoneAlreadyExistsException(PhoneAlreadyExistsException e) {
-    ApiResponse<?> apiResponse = ApiResponse.builder()
-        .message("Phone already exists")
-        .build();
-    return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(apiResponse);
-  }
-
   @ExceptionHandler(UsernameNotFoundException.class)
   public ResponseEntity<ApiResponse<?>> handleUsernameNotFoundException(UsernameNotFoundException e) {
     ApiResponse<?> apiResponse = ApiResponse.builder()
         .message("Username not found")
         .build();
     return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(apiResponse);
-  }
-
-  @ExceptionHandler(UsernameAlreadyExistsException.class)
-  public ResponseEntity<ApiResponse<?>> handleUsernameAlreadyExistsException(UsernameAlreadyExistsException e) {
-    ApiResponse<?> apiResponse = ApiResponse.builder()
-        .message("Username already exists")
-        .build();
-    return ResponseEntity.status(HttpStatus.CONFLICT).body(apiResponse);
   }
 
 }

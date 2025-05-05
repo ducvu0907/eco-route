@@ -2,7 +2,6 @@ package com.ducvu.backend_java.util;
 
 import com.ducvu.backend_java.dto.request.AuthRequest;
 import com.ducvu.backend_java.dto.request.UserCreateRequest;
-import com.ducvu.backend_java.exception.InvalidRequestException;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 
@@ -10,13 +9,13 @@ import org.springframework.util.StringUtils;
 public class Validator {
   public void validate(UserCreateRequest request) {
     if (!isValid(request)) {
-      throw new InvalidRequestException("Invalid request");
+      throw new RuntimeException("Invalid request format");
     }
   }
 
   public void validate(AuthRequest request) {
     if (!isValid(request)) {
-      throw new InvalidRequestException("Invalid request");
+      throw new RuntimeException("Invalid request format");
     }
   }
 
