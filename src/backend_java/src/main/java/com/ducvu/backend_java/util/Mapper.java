@@ -14,18 +14,20 @@ public class Mapper {
         .username(user.getUsername())
         .phone(user.getPhone())
         .role(user.getRole())
+        .createdAt(user.getCreatedAt())
+        .updatedAt(user.getUpdatedAt())
         .build();
   }
 
   public DepotResponse map(Depot depot) {
-      return DepotResponse.builder()
-          .id(depot.getId())
-          .latitude(depot.getLatitude())
-          .longitude(depot.getLongitude())
-          .address(depot.getAddress())
-          .createdAt(depot.getCreatedAt())
-          .updatedAt(depot.getUpdatedAt())
-          .build();
+    return DepotResponse.builder()
+        .id(depot.getId())
+        .latitude(depot.getLatitude())
+        .longitude(depot.getLongitude())
+        .address(depot.getAddress())
+        .createdAt(depot.getCreatedAt())
+        .updatedAt(depot.getUpdatedAt())
+        .build();
   }
 
   public VehicleResponse map(Vehicle vehicle) {
@@ -116,6 +118,17 @@ public class Mapper {
         .updatedAt(subscription.getUpdatedAt())
         .build();
 
+  }
+
+  public NotificationResponse map(Notification notification) {
+    return NotificationResponse.builder()
+        .id(notification.getId())
+        .type(notification.getType())
+        .message(notification.getMessage())
+        .isRead(notification.getIsRead())
+        .createdAt(notification.getCreatedAt())
+        .updatedAt(notification.getUpdatedAt())
+        .build();
   }
 
 }

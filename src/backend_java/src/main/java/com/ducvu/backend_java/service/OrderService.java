@@ -2,6 +2,7 @@ package com.ducvu.backend_java.service;
 
 
 import com.ducvu.backend_java.dto.request.OrderCreateRequest;
+import com.ducvu.backend_java.dto.request.OrderUpdateRequest;
 import com.ducvu.backend_java.dto.response.OrderResponse;
 import com.ducvu.backend_java.dto.response.OsmResponse;
 import com.ducvu.backend_java.model.Order;
@@ -92,6 +93,22 @@ public class OrderService {
       }
     }
 
+    return mapper.map(orderRepository.save(order));
+  }
+
+  // TODO: refactor this
+  // currently a placeholder for driver to mark the order as done
+  // and this should notify user that the order status has changed
+  public OrderResponse updateOrder(String orderId, OrderUpdateRequest request) {
+    User user = userService.getCurrentUser();
+    Order order = orderRepository.findById(orderId)
+        .orElseThrow(() -> new RuntimeException("Order not found"));
+
+    if (user.getRole() != Role.DRIVER) {
+      throw new RuntimeException("Unauthorized");
+    }
+
+    order.setStatus(request.getStatus());
     return mapper.map(orderRepository.save(order));
   }
 

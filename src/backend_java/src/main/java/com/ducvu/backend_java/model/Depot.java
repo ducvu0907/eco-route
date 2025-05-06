@@ -23,7 +23,7 @@ public class Depot {
   @GeneratedValue(strategy = GenerationType.UUID) 
   private String id;
 
-  @OneToMany(mappedBy = "depot", cascade = CascadeType.ALL)
+  @OneToMany(mappedBy = "depot", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
   private List<Vehicle> vehicles;
 
   private Double latitude;

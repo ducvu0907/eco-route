@@ -1,8 +1,10 @@
 package com.ducvu.backend_java.controller;
 
 import com.ducvu.backend_java.dto.ApiResponse;
+import com.ducvu.backend_java.dto.response.NotificationResponse;
 import com.ducvu.backend_java.dto.response.UserResponse;
 import com.ducvu.backend_java.model.Role;
+import com.ducvu.backend_java.service.NotificationService;
 import com.ducvu.backend_java.service.UserService;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import lombok.RequiredArgsConstructor;
@@ -19,6 +21,7 @@ import java.util.List;
 @SecurityRequirement(name = "bearerAuth")
 public class UserController {
   private final UserService userService;
+  private final NotificationService notificationService;
 
   @GetMapping("")
   @PreAuthorize("hasRole('ROLE_MANAGER')")
@@ -42,4 +45,14 @@ public class UserController {
         .build();
   }
 
+
+  @GetMapping("/{userId}/notifications")
+  public ApiResponse<List<NotificationResponse>> getNotificationsByUser(@PathVariable("userId") String userId) {
+    log.info("Received get notifications by user request");
+    var result = notificationService.getNotificationsByUser(userId);
+    return ApiResponse.<List<NotificationResponse>>builder()
+        .message("Get notifications by user successfully")
+        .result(result)
+        .build();
+  }
 }

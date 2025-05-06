@@ -3,6 +3,7 @@ package com.ducvu.backend_java.controller;
 
 import com.ducvu.backend_java.dto.ApiResponse;
 import com.ducvu.backend_java.dto.request.OrderCreateRequest;
+import com.ducvu.backend_java.dto.request.OrderUpdateRequest;
 import com.ducvu.backend_java.dto.response.OrderResponse;
 import com.ducvu.backend_java.repository.OrderRepository;
 import com.ducvu.backend_java.service.OrderService;
@@ -44,6 +45,7 @@ public class OrderController {
         .build();
   }
 
+  // TODO: this should notify manager on new order
   @PostMapping("")
   @PreAuthorize("hasRole('ROLE_CUSTOMER')")
   public ApiResponse<OrderResponse> createOrder(OrderCreateRequest request) {
@@ -51,6 +53,17 @@ public class OrderController {
     var result = orderService.createOrder(request);
     return ApiResponse.<OrderResponse>builder()
         .message("Create order successfully")
+        .result(result)
+        .build();
+  }
+
+  // currently used for driver to update order status
+  @PostMapping("/{orderId}")
+  public ApiResponse<OrderResponse> updateOrder(@PathVariable("orderId") String orderId, @RequestBody OrderUpdateRequest request) {
+    log.info("Received order update request: {}", request);
+    var result = orderService.updateOrder(orderId, request);
+    return ApiResponse.<OrderResponse>builder()
+        .message("Update order successfully")
         .result(result)
         .build();
   }

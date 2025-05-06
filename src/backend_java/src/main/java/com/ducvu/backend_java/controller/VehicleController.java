@@ -4,8 +4,10 @@ package com.ducvu.backend_java.controller;
 import com.ducvu.backend_java.dto.ApiResponse;
 import com.ducvu.backend_java.dto.request.VehicleCreateRequest;
 import com.ducvu.backend_java.dto.request.VehicleUpdateRequest;
+import com.ducvu.backend_java.dto.response.RouteResponse;
 import com.ducvu.backend_java.dto.response.VehicleResponse;
 import com.ducvu.backend_java.repository.VehicleRepository;
+import com.ducvu.backend_java.service.RouteService;
 import com.ducvu.backend_java.service.VehicleService;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import lombok.RequiredArgsConstructor;
@@ -22,6 +24,18 @@ import java.util.List;
 @SecurityRequirement(name = "bearerAuth")
 public class VehicleController {
   private final VehicleService vehicleService;
+  private final RouteService routeService;
+
+  @GetMapping("/{vehicleId}/routes")
+  @PreAuthorize("hasRole('ROLE_MANAGER')")
+  public ApiResponse<List<RouteResponse>> getRoutesByVehicle(@PathVariable("vehicleId") String vehicleId) {
+    log.info("Received get routes by vehicle request");
+    var result = routeService.getRoutesByVehicle(vehicleId);
+    return ApiResponse.<List<RouteResponse>>builder()
+        .message("Get routes by vehicle successfully")
+        .result(result)
+        .build();
+  }
 
   @GetMapping("")
   @PreAuthorize("hasRole('ROLE_MANAGER')")
