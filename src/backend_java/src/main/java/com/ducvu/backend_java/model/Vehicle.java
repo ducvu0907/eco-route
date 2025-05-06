@@ -1,6 +1,7 @@
 package com.ducvu.backend_java.model;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 import jakarta.persistence.*;
 import org.hibernate.annotations.CreationTimestamp;
@@ -29,6 +30,9 @@ public class Vehicle {
   @ManyToOne
   @JoinColumn(name = "depot_id")
   private Depot depot;
+
+  @OneToMany(mappedBy = "vehicle", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+  private List<Route> routes;
 
   private String licensePlate;
 

@@ -1,6 +1,6 @@
 package com.ducvu.backend_java.dto.request;
 
-import com.ducvu.backend_java.model.Role;
+
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -10,10 +10,9 @@ import lombok.NoArgsConstructor;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class UserCreateRequest {
-  private String username;
-  private String password;
-  private String phone;
-  private String fcmToken;
-  private Role role;
+public class VehicleCreateRequest {
+  private String driverId;
+  private String depotId;
+  private String licensePlate;
+  private Double capacity;
 }

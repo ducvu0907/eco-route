@@ -1,8 +1,8 @@
 package com.ducvu.backend_java.service;
 
 import com.ducvu.backend_java.config.JwtService;
-import com.ducvu.backend_java.dto.request.AuthRequest;
-import com.ducvu.backend_java.dto.request.UserCreateRequest;
+import com.ducvu.backend_java.dto.request.LoginRequest;
+import com.ducvu.backend_java.dto.request.RegisterRequest;
 import com.ducvu.backend_java.dto.response.AuthResponse;
 import com.ducvu.backend_java.dto.response.UserResponse;
 import com.ducvu.backend_java.model.User;
@@ -29,7 +29,7 @@ public class AuthService {
   private final Mapper mapper;
   private final Validator validator;
 
-  public UserResponse register(UserCreateRequest request) {
+  public UserResponse register(RegisterRequest request) {
     validator.validate(request);
 
     userRepository.findByUsername(request.getUsername())
@@ -46,13 +46,10 @@ public class AuthService {
         .role(request.getRole())
         .build();
 
-    userRepository.save(user);
-    log.info("New account created: {}", user);
-
-    return mapper.map(user);
+    return mapper.map(userRepository.save(user));
   }
 
-  public AuthResponse login(AuthRequest request) {
+  public AuthResponse login(LoginRequest request) {
     validator.validate(request);
 
     User user = userRepository.findByUsername(request.getUsername())

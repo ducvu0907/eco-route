@@ -24,7 +24,7 @@ public class Node {
 
   private Integer sequenceNumber;
 
-  @ManyToOne
+  @ManyToOne(fetch = FetchType.LAZY)
   @JoinColumn(name = "route_id")
   private Route route;
 

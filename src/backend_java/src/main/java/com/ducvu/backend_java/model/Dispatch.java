@@ -1,6 +1,7 @@
 package com.ducvu.backend_java.model;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 import jakarta.persistence.*;
 import org.hibernate.annotations.CreationTimestamp;
@@ -21,6 +22,9 @@ public class Dispatch {
   @Id
   @GeneratedValue(strategy = GenerationType.UUID) 
   private String id;
+
+  @OneToMany(mappedBy = "dispatch", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+  private List<Route> routes;
 
   private LocalDateTime startTime;
 

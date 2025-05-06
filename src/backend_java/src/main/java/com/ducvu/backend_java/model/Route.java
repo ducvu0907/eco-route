@@ -1,6 +1,7 @@
 package com.ducvu.backend_java.model;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 import jakarta.persistence.*;
 import org.hibernate.annotations.CreationTimestamp;
@@ -22,13 +23,16 @@ public class Route {
   @GeneratedValue(strategy = GenerationType.UUID)
   private String id;
 
-  @OneToOne
+  @ManyToOne
   @JoinColumn(name = "vehicle_id")
   private Vehicle vehicle;
 
   @ManyToOne
   @JoinColumn(name = "dispatch_id")
   private Dispatch dispatch;
+
+  @OneToMany(mappedBy = "route", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+  private List<Node> nodes;
 
   private Double totalDistance;
 

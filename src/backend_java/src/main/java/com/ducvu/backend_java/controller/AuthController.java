@@ -1,8 +1,8 @@
 package com.ducvu.backend_java.controller;
 
 import com.ducvu.backend_java.dto.ApiResponse;
-import com.ducvu.backend_java.dto.request.AuthRequest;
-import com.ducvu.backend_java.dto.request.UserCreateRequest;
+import com.ducvu.backend_java.dto.request.LoginRequest;
+import com.ducvu.backend_java.dto.request.RegisterRequest;
 import com.ducvu.backend_java.dto.response.AuthResponse;
 import com.ducvu.backend_java.dto.response.UserResponse;
 import com.ducvu.backend_java.service.AuthService;
@@ -22,7 +22,7 @@ public class AuthController {
   private final AuthService authService;
 
   @PostMapping("/register")
-  public ApiResponse<UserResponse> register(@RequestBody UserCreateRequest request) {
+  public ApiResponse<UserResponse> register(@RequestBody RegisterRequest request) {
     log.info("Received register request: {}", request);
     var result = authService.register(request);
     return ApiResponse.<UserResponse>builder()
@@ -32,7 +32,7 @@ public class AuthController {
   }
 
   @PostMapping("/login")
-  public ApiResponse<AuthResponse> login(@RequestBody AuthRequest request) {
+  public ApiResponse<AuthResponse> login(@RequestBody LoginRequest request) {
     log.info("Received login request: {}", request);
     var result = authService.login(request);
     return ApiResponse.<AuthResponse>builder()

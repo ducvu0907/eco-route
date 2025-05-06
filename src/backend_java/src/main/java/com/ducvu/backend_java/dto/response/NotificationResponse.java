@@ -1,7 +1,6 @@
 package com.ducvu.backend_java.dto.response;
 
-
-import com.ducvu.backend_java.model.Role;
+import com.ducvu.backend_java.model.NotificationType;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -13,13 +12,11 @@ import java.time.LocalDateTime;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class UserResponse {
+public class NotificationResponse {
   private String id;
-  private String username;
-  private String phone;
-  private Role role;
-  private SubscriptionResponse subscription;
-  private VehicleResponse vehicle;
+  private NotificationType type;
+  private String message;
+  private Boolean isRead;
   private LocalDateTime createdAt;
   private LocalDateTime updatedAt;
 }

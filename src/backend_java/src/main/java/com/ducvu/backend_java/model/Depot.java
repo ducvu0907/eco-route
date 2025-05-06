@@ -1,6 +1,7 @@
 package com.ducvu.backend_java.model;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 import jakarta.persistence.*;
 import org.hibernate.annotations.CreationTimestamp;
@@ -22,6 +23,9 @@ public class Depot {
   @GeneratedValue(strategy = GenerationType.UUID) 
   private String id;
 
+  @OneToMany(mappedBy = "depot", cascade = CascadeType.ALL)
+  private List<Vehicle> vehicles;
+
   private Double latitude;
 
   private Double longitude;
@@ -33,4 +37,5 @@ public class Depot {
 
   @UpdateTimestamp
   private LocalDateTime updatedAt;
+
 }

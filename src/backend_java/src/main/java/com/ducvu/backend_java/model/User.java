@@ -43,6 +43,15 @@ public class User implements UserDetails {
   @UpdateTimestamp
   private LocalDateTime updatedAt;
 
+  @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+  private List<Order> orders;
+
+  @OneToOne(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+  private Subscription subscription;
+
+  @OneToOne(mappedBy = "driver", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+  private Vehicle vehicle;
+
   @Override
   public Collection<? extends GrantedAuthority> getAuthorities() {
     return List.of(() -> "ROLE_" + role.name());

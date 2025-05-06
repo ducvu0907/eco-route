@@ -1,5 +1,4 @@
-package com.ducvu.backend_java.dto.response;
-
+package com.ducvu.backend_java.dto.request;
 
 import com.ducvu.backend_java.model.Role;
 import lombok.AllArgsConstructor;
@@ -7,19 +6,14 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.time.LocalDateTime;
-
 @Data
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class UserResponse {
-  private String id;
+public class RegisterRequest {
   private String username;
+  private String password;
   private String phone;
+  private String fcmToken;
   private Role role;
-  private SubscriptionResponse subscription;
-  private VehicleResponse vehicle;
-  private LocalDateTime createdAt;
-  private LocalDateTime updatedAt;
 }

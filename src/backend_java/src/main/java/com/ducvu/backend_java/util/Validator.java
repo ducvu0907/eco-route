@@ -1,34 +1,79 @@
 package com.ducvu.backend_java.util;
 
-import com.ducvu.backend_java.dto.request.AuthRequest;
-import com.ducvu.backend_java.dto.request.UserCreateRequest;
+import com.ducvu.backend_java.dto.request.*;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 
 @Component
 public class Validator {
-  public void validate(UserCreateRequest request) {
+  public void validate(SubscriptionCreateRequest request) {
     if (!isValid(request)) {
       throw new RuntimeException("Invalid request format");
     }
   }
 
-  public void validate(AuthRequest request) {
+  public void validate(OrderCreateRequest request) {
     if (!isValid(request)) {
       throw new RuntimeException("Invalid request format");
     }
   }
 
-  private boolean isValid(UserCreateRequest request) {
+  public void validate(VehicleCreateRequest request) {
+    if (!isValid(request)) {
+      throw new RuntimeException("Invalid request format");
+    }
+  }
+
+  public void validate(RegisterRequest request) {
+    if (!isValid(request)) {
+      throw new RuntimeException("Invalid request format");
+    }
+  }
+
+  public void validate(LoginRequest request) {
+    if (!isValid(request)) {
+      throw new RuntimeException("Invalid request format");
+    }
+  }
+
+  public void validate(DepotCreateRequest request) {
+    if (!isValid(request)) {
+      throw new RuntimeException("Invalid request format");
+    }
+  }
+
+  private boolean isValid(RegisterRequest request) {
     return StringUtils.hasText(request.getUsername())
         && StringUtils.hasText(request.getPassword())
         && StringUtils.hasText(request.getPhone())
         && request.getRole() != null;
   }
 
-  private boolean isValid(AuthRequest request) {
+  private boolean isValid(LoginRequest request) {
     return StringUtils.hasText(request.getUsername())
         && StringUtils.hasText(request.getPassword());
   }
 
+  private boolean isValid(DepotCreateRequest request) {
+    return request.getLatitude() != null && request.getLongitude() != null;
+  }
+
+  private boolean isValid(VehicleCreateRequest request) {
+    return StringUtils.hasText(request.getDriverId())
+        && StringUtils.hasText(request.getDepotId())
+        && StringUtils.hasText(request.getLicensePlate())
+        && request.getCapacity() != null;
+  }
+
+
+  private boolean isValid(SubscriptionCreateRequest request) {
+    return request.getLatitude() != null
+        && request.getLongitude() != null
+        && request.getEstimatedWeight() != null;
+  }
+  private boolean isValid(OrderCreateRequest request) {
+    return request.getLatitude() != null
+        && request.getLongitude() != null
+        && request.getEstimatedWeight() != null;
+  }
 }

@@ -1,7 +1,7 @@
 package com.ducvu.backend_java.dto.response;
 
 
-import com.ducvu.backend_java.model.Role;
+import com.ducvu.backend_java.model.VehicleStatus;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -13,13 +13,16 @@ import java.time.LocalDateTime;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class UserResponse {
+public class VehicleResponse {
   private String id;
-  private String username;
-  private String phone;
-  private Role role;
-  private SubscriptionResponse subscription;
-  private VehicleResponse vehicle;
+  private String driverId;
+  private String depotId;
+  private String licensePlate;
+  private Double capacity;
+  private Double currentLatitude;
+  private Double currentLongitude;
+  private Double currentLoad;
+  private VehicleStatus status;
   private LocalDateTime createdAt;
   private LocalDateTime updatedAt;
 }
