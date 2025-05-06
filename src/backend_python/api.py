@@ -79,12 +79,12 @@ def solve_vrp(request: RoutingRequest):
   API endpoint to solve Vehicle Routing Problem (VRP).
   Delegates the computation to the solver module.
   """
-  from solver import solve_api
+  from solver import route_request
 
   logger.info(f"Incoming VRP request: {request}")
 
   try:
-    solution = solve_api(request)
+    solution = route_request(request)
     logger.info(f"Solver returned solution: {solution}")
     return solution
   except Exception as e:
