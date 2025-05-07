@@ -1,4 +1,5 @@
 export interface ApiResponse<T> {
+  code: string; // 00 - succeed, 99 - fail
   message: string;
   result: T | null;
 }

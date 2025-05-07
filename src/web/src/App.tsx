@@ -1,13 +1,32 @@
-import { Button } from "@/components/ui/button"
-import { useState } from "react";
+import { Route, Routes } from "react-router";
+import { LoginPage } from "./pages/auth/LoginPage";
+import { RegisterPage } from "./pages/auth/RegisterPage";
+import NotFoundPage from "./pages/NotFoundPage";
+import { Navigate } from "react-router";
+import Dashboard from "./pages/Dashboard";
+import { useAuth } from "./hooks/useAuth";
+import Layout from "./pages/Layout";
 
-function App() {
-  const [count, setCount] = useState<number>(0);
+const App = () => {
+  const { isAuthenticated } = useAuth();
 
   return (
-    <div className="flex flex-col items-center justify-center min-h-svh">
-      <Button onClick={() => setCount((prev: number) => prev + 1)}>{count}</Button>
-    </div>
+    <Routes>
+
+      <Route element={isAuthenticated && <Navigate to={"/"}/>}>
+        <Route path="/login" element={<LoginPage />} />
+        <Route path="/register" element={<RegisterPage />} />
+      </Route>
+
+      <Route element={!isAuthenticated ? <Navigate to={"/login"}/> : <Layout />}>
+        <Route path="/" element={<Navigate to="/dashboard"/>}/>
+        <Route path="/dashboard" element={<Dashboard />}/>
+
+      </Route>
+
+      <Route path="*" element={<NotFoundPage />} />
+
+    </Routes>
   )
 }
 
