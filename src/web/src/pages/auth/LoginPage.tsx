@@ -19,10 +19,10 @@ const formSchema = z.object({
   fcmToken: z.string().nullable(),
 });
 
-type LoginFormValues = z.infer<typeof formSchema>;
+type LoginForm = z.infer<typeof formSchema>;
 
 export const LoginPage = () => {
-  const form = useForm<LoginFormValues>({
+  const form = useForm<LoginForm>({
     resolver: zodResolver(formSchema),
     defaultValues: {
       username: "",
@@ -33,7 +33,7 @@ export const LoginPage = () => {
 
   const { mutate: login, isPending } = useLogin();
 
-  const onSubmit = (data: LoginFormValues) => {
+  const onSubmit = (data: LoginForm) => {
     login(data);
   };
 

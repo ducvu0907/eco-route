@@ -24,9 +24,10 @@ export const useLogin = () => {
       console.log(result);
       setAuth({
         token: result.token,
-        userId: null,
-        username: null,
+        userId: result.userId,
+        username: result.username,
         fcmToken: null,
+        role: result.role
       });
     },
   });

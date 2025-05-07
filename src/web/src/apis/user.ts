@@ -1,4 +1,4 @@
-import { ApiResponse, NotificationResponse, Role, UserResponse } from "@/types/types"
+import { ApiResponse, NotificationResponse, Role, SubscriptionResponse, UserResponse } from "@/types/types"
 import axiosInstance from "."
 
 export const getUsers = async (role?: Role): Promise<ApiResponse<UserResponse[]>> => {
@@ -17,3 +17,8 @@ export const getNotificationsByUser = async (userId: string): Promise<ApiRespons
   const { data } = await axiosInstance.get(`/users/${userId}/notifications`);
   return data;
 }
+
+export const getSubscriptionByUser = async (userId: string): Promise<ApiResponse<SubscriptionResponse>> => {
+  const { data } = await axiosInstance.get(`/users/${userId}/subscription`);
+  return data;
+};

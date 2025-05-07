@@ -9,35 +9,34 @@ export interface ApiResponse<T> {
 
 // enums
 export enum Role {
-  CUSTOMER, 
-  DRIVER, 
-  MANAGER
+  CUSTOMER = "CUSTOMER", 
+  DRIVER = "DRIVER", 
+  MANAGER = "MANAGER"
 }
 
 export enum OrderStatus {
-  PENDING,
-  IN_PROGRESS,
-  DONE,
-  CANCELLED
+  PENDING = "PENDING",
+  IN_PROGRESS = "IN_PROGRESS",
+  DONE = "DONE",
+  CANCELLED = "CANCELLED"
 }
 
 export enum SubscriptionStatus {
-  ACTIVE,
-  CANCELLED
+  ACTIVE = "ACTIVE",
+  CANCELLED = "CANCELLED"
 }
 
 export enum VehicleStatus {
-  IDLE,
-  ACTIVE,
-  REPAIR
+  IDLE = "IDLE",
+  ACTIVE = "ACTIVE",
+  REPAIR = "REPAIR"
 }
 
 export enum DispatchStatus {
-  PLANNED,
-  IN_PROGRESS,
-  COMPLETED
+  PLANNED = "PLANNED",
+  IN_PROGRESS = "IN_PROGRESS",
+  COMPLETED = "COMPLETED"
 }
-
 
 
 
@@ -102,6 +101,9 @@ export interface VehicleUpdateRequest {
 // responses
 export interface AuthResponse {
   token: string;
+  userId: string;
+  username: string;
+  role: Role;
 }
 
 export interface DepotResponse {

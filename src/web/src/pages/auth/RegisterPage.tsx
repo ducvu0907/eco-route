@@ -32,12 +32,12 @@ const registerSchema = z.object({
   fcmToken: z.string().nullable(),
 });
 
-type RegisterFormValues = z.infer<typeof registerSchema>;
+type RegisterForm = z.infer<typeof registerSchema>;
 
 export const RegisterPage = () => {
   const navigate = useNavigate();
 
-  const form = useForm<RegisterFormValues>({
+  const form = useForm<RegisterForm>({
     resolver: zodResolver(registerSchema),
     defaultValues: {
       username: "",
@@ -50,7 +50,7 @@ export const RegisterPage = () => {
 
   const { mutate: registerUser, isPending } = useRegister();
 
-  const onSubmit = (data: RegisterFormValues) => {
+  const onSubmit = (data: RegisterForm) => {
     registerUser(data);
     navigate("/login");
   };
