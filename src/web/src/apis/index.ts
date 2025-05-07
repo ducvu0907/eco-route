@@ -4,7 +4,7 @@ import axios from 'axios';
 
 const axiosInstance = axios.create({
   baseURL: apiUrl,
-})
+});
 
 axiosInstance.interceptors.request.use(
   (config) => {

@@ -20,6 +20,7 @@ import {
 } from "@/components/ui/select";
 import { useRegister } from "@/hooks/useAuthMutation";
 import { Role } from "@/types/types";
+import { useNavigate } from "react-router";
 
 const registerSchema = z.object({
   username: z.string().min(1, "Username is required"),
@@ -34,6 +35,8 @@ const registerSchema = z.object({
 type RegisterFormValues = z.infer<typeof registerSchema>;
 
 export const RegisterPage = () => {
+  const navigate = useNavigate();
+
   const form = useForm<RegisterFormValues>({
     resolver: zodResolver(registerSchema),
     defaultValues: {
@@ -49,11 +52,12 @@ export const RegisterPage = () => {
 
   const onSubmit = (data: RegisterFormValues) => {
     registerUser(data);
+    navigate("/login");
   };
 
   return (
     <div className="max-w-md mx-auto mt-10 p-6 border rounded-lg shadow-sm">
-      <h2 className="text-2xl font-semibold mb-4 text-center">Create account</h2>
+      <h2 className="text-2xl font-semibold mb-4 text-center">Sign up</h2>
       <Form {...form}>
         <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
           <FormField
