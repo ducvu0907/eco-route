@@ -1,6 +1,7 @@
 import { apiUrl } from '@/config/config';
 import { useToast } from '@/hooks/useToast';
-import axios from 'axios';
+import { ApiResponse } from '@/types/types';
+import axios, { AxiosResponse } from 'axios';
 
 const axiosInstance = axios.create({
   baseURL: apiUrl,
@@ -20,7 +21,9 @@ axiosInstance.interceptors.request.use(
 );
 
 axiosInstance.interceptors.response.use(
-  (response) => {
+  (response: AxiosResponse<ApiResponse<unknown>, unknown>) => {
+    const { showToast } = useToast();
+    showToast(response.data.message, "success");
     return response;
   },
   (error) => {

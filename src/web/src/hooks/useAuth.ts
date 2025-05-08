@@ -36,6 +36,12 @@ export const useLogin = () => {
 export const useLogout = () => {
   const { clearAuth } = useAuthContext();
   const { showToast } = useToast();
-  clearAuth(); 
-  showToast("Logged out successfully", "success");
+
+  const logout = () => {
+    clearAuth();
+    showToast("Logged out successfully", "success");
+  }
+
+
+  return { logout };
 }

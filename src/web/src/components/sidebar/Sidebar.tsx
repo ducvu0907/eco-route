@@ -3,6 +3,7 @@ import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { useLocation, useNavigate } from "react-router-dom";
+import UserSection from "./UserSection";
 
 type NavItem = {
   label: string;
@@ -42,6 +43,7 @@ export default function Sidebar() {
           );
         })}
       </nav>
+      <UserSection />
     </Card>
   );
 }
