@@ -6,6 +6,7 @@ import { Navigate } from "react-router";
 import Dashboard from "./pages/Dashboard";
 import Layout from "./pages/Layout";
 import { useAuthContext } from "./hooks/useAuthContext";
+import DepotsListPage from "./pages/depot/DepotsListPage";
 
 const App = () => {
   const { isAuthenticated } = useAuthContext();
@@ -21,6 +22,7 @@ const App = () => {
       <Route element={!isAuthenticated ? <Navigate to={"/login"}/> : <Layout />}>
         <Route path="/" element={<Navigate to="/dashboard"/>}/>
         <Route path="/dashboard" element={<Dashboard />}/>
+        <Route path="/depots" element={<DepotsListPage />}/>
 
       </Route>
 

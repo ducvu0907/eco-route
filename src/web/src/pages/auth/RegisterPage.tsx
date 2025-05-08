@@ -110,16 +110,16 @@ export const RegisterPage = () => {
                 <FormLabel>Role</FormLabel>
                 <FormControl>
                   <Select
-                    onValueChange={(value) => field.onChange(Number(value))}
+                    onValueChange={(value) => field.onChange(value)}
                     defaultValue={field.value?.toString()}
                   >
                     <SelectTrigger>
                       <SelectValue placeholder="Select a role" />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value={Role.CUSTOMER.toString()}>Customer</SelectItem>
-                      <SelectItem value={Role.DRIVER.toString()}>Driver</SelectItem>
-                      <SelectItem value={Role.MANAGER.toString()}>Manager</SelectItem>
+                      <SelectItem value={Role.CUSTOMER}>Customer</SelectItem>
+                      <SelectItem value={Role.DRIVER}>Driver</SelectItem>
+                      <SelectItem value={Role.MANAGER}>Manager</SelectItem>
                     </SelectContent>
                   </Select>
                 </FormControl>
