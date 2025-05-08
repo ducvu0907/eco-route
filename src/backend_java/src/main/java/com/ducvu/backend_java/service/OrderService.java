@@ -33,33 +33,27 @@ public class OrderService {
   private final Mapper mapper;
   private final Helper helper;
 
-  public List<OrderResponse> getOrders(String userId) {
+  public List<OrderResponse> getOrdersByUserId(String userId) {
     User user = userService.getCurrentUser();
 
-    if (userId != null) {
-      if (!user.getId().equals(userId) && user.getRole() != Role.MANAGER) {
-        throw new RuntimeException("Unauthorized");
-      }
-
-      return orderRepository.findByUserId(userId)
-          .stream()
-          .map(mapper::map)
-          .toList();
-
-    } else {
-      if (user.getRole() != Role.MANAGER) {
-        throw new RuntimeException("Unauthorized");
-      }
-
-      return orderRepository.findAll()
-          .stream()
-          .map(mapper::map)
-          .toList();
-
+    if (!user.getId().equals(userId) && user.getRole() != Role.MANAGER) {
+      throw new RuntimeException("Unauthorized");
     }
+
+    return orderRepository.findByUserId(userId)
+        .stream()
+        .map(mapper::map)
+        .toList();
   }
 
-  public OrderResponse getOrder(String orderId) {
+  public List<OrderResponse> getOrders() {
+    return orderRepository.findAll()
+        .stream()
+        .map(mapper::map)
+        .toList();
+  }
+
+  public OrderResponse getOrderById(String orderId) {
     Order order = orderRepository.findById(orderId)
         .orElseThrow(() -> new RuntimeException("Order not found"));
     User user = userService.getCurrentUser();
@@ -84,14 +78,13 @@ public class OrderService {
         .status(OrderStatus.PENDING) // default to pending
         .build();
 
-    // if address not provided, attempt to reverse the (lat,lon)
-    if (order.getAddress() == null) {
-      OsmResponse osmResponse = helper.reverseGeocode(request.getLatitude(), request.getLongitude());
-      if (osmResponse.getError() != null) {
-        order.setAddress(osmResponse.getDisplayName());
-        log.info("Get OSM response successfully: {}", osmResponse);
-      }
-    }
+//    if (order.getAddress() == null) {
+//      OsmResponse osmResponse = helper.reverseGeocode(request.getLatitude(), request.getLongitude());
+//      if (osmResponse.getError() != null) {
+//        order.setAddress(osmResponse.getDisplayName());
+//        log.info("Get OSM response successfully: {}", osmResponse);
+//      }
+//    }
 
     return mapper.map(orderRepository.save(order));
   }

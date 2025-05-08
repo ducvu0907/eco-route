@@ -1,6 +1,7 @@
 package com.ducvu.backend_java.model;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 import jakarta.persistence.*;
@@ -31,8 +32,9 @@ public class Route {
   @JoinColumn(name = "dispatch_id")
   private Dispatch dispatch;
 
+  @Builder.Default
   @OneToMany(mappedBy = "route", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-  private List<Node> nodes;
+  private List<Node> nodes = new ArrayList<>();
 
   private Double totalDistance;
 

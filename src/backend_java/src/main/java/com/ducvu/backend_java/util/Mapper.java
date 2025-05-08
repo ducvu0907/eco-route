@@ -25,6 +25,11 @@ public class Mapper {
         .latitude(depot.getLatitude())
         .longitude(depot.getLongitude())
         .address(depot.getAddress())
+        .vehicles(depot.getVehicles()
+            .stream()
+            .map(this::map)
+            .toList()
+        )
         .createdAt(depot.getCreatedAt())
         .updatedAt(depot.getUpdatedAt())
         .build();
@@ -123,7 +128,6 @@ public class Mapper {
   public NotificationResponse map(Notification notification) {
     return NotificationResponse.builder()
         .id(notification.getId())
-        .type(notification.getType())
         .message(notification.getMessage())
         .isRead(notification.getIsRead())
         .createdAt(notification.getCreatedAt())

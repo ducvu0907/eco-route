@@ -12,7 +12,7 @@ public class Helper {
   private final RestTemplate restTemplate;
 
   public OsmResponse reverseGeocode(Double lat, Double lon) {
-    String apiUrl = String.format("https://nominatim.openstreetmap.org/reverse?lat=%f&lon=%f", lat, lon);
+    String apiUrl = String.format("https://nominatim.openstreetmap.org/reverse?lat=%f&lon=%f&format=json", lat, lon);
     ResponseEntity<OsmResponse> response = restTemplate.getForEntity(apiUrl, OsmResponse.class);
     return response.getBody();
   }

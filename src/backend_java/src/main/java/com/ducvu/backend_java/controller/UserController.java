@@ -2,9 +2,11 @@ package com.ducvu.backend_java.controller;
 
 import com.ducvu.backend_java.dto.ApiResponse;
 import com.ducvu.backend_java.dto.response.NotificationResponse;
+import com.ducvu.backend_java.dto.response.SubscriptionResponse;
 import com.ducvu.backend_java.dto.response.UserResponse;
 import com.ducvu.backend_java.model.Role;
 import com.ducvu.backend_java.service.NotificationService;
+import com.ducvu.backend_java.service.SubscriptionService;
 import com.ducvu.backend_java.service.UserService;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import lombok.RequiredArgsConstructor;
@@ -15,30 +17,27 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/users")
+@RequestMapping("/api")
 @Slf4j
 @RequiredArgsConstructor
 @SecurityRequirement(name = "bearerAuth")
 public class UserController {
   private final UserService userService;
-  private final NotificationService notificationService;
 
-  @GetMapping("")
-  @PreAuthorize("hasRole('ROLE_MANAGER')")
-  public ApiResponse<List<UserResponse>> getUsers(@RequestParam(value = "role", required = false) Role role) {
+  @GetMapping("/users")
+  public ApiResponse<List<UserResponse>> getUsers() {
     log.info("Received get users request");
-    var result = userService.getUsers(role);
+    var result = userService.getUsers();
     return ApiResponse.<List<UserResponse>>builder()
         .message("Get users successfully")
         .result(result)
         .build();
   }
 
-  @GetMapping("/{userId}")
-  @PreAuthorize("hasAnyRole('ROLE_MANAGER', 'ROLE_CUSTOMER')")
-  public ApiResponse<UserResponse> getUser(@PathVariable("userId") String userId) {
+  @GetMapping("/users/{userId}")
+  public ApiResponse<UserResponse> getUserById(@PathVariable("userId") String userId) {
     log.info("Received get user request");
-    var result = userService.getUser(userId);
+    var result = userService.getUserById(userId);
     return ApiResponse.<UserResponse>builder()
         .message("Get user successfully")
         .result(result)
@@ -46,13 +45,4 @@ public class UserController {
   }
 
 
-  @GetMapping("/{userId}/notifications")
-  public ApiResponse<List<NotificationResponse>> getNotificationsByUser(@PathVariable("userId") String userId) {
-    log.info("Received get notifications by user request");
-    var result = notificationService.getNotificationsByUser(userId);
-    return ApiResponse.<List<NotificationResponse>>builder()
-        .message("Get notifications by user successfully")
-        .result(result)
-        .build();
-  }
 }

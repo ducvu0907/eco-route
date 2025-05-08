@@ -7,6 +7,11 @@ import lombok.*;
 @NoArgsConstructor
 @AllArgsConstructor
 public class ApiResponse<T> {
+  @Builder.Default
+  private String code = "00";
+
   private String message;
-  private T result;
+
+  @Builder.Default
+  private T result = null;
 }

@@ -18,27 +18,34 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/vehicles")
+@RequestMapping("/api")
 @Slf4j
 @RequiredArgsConstructor
 @SecurityRequirement(name = "bearerAuth")
 public class VehicleController {
   private final VehicleService vehicleService;
-  private final RouteService routeService;
 
-  @GetMapping("/{vehicleId}/routes")
-  @PreAuthorize("hasRole('ROLE_MANAGER')")
-  public ApiResponse<List<RouteResponse>> getRoutesByVehicle(@PathVariable("vehicleId") String vehicleId) {
-    log.info("Received get routes by vehicle request");
-    var result = routeService.getRoutesByVehicle(vehicleId);
-    return ApiResponse.<List<RouteResponse>>builder()
-        .message("Get routes by vehicle successfully")
+  @GetMapping("/users/{driverId}/vehicle")
+  public ApiResponse<VehicleResponse> getVehicleByDriverId(@PathVariable("driverId") String driverId) {
+    log.info("Received get vehicle by driver id request");
+    var result = vehicleService.getVehicleByDriverId(driverId);
+    return ApiResponse.<VehicleResponse>builder()
+        .message("Get vehicle by driver id successfully")
         .result(result)
         .build();
   }
 
-  @GetMapping("")
-  @PreAuthorize("hasRole('ROLE_MANAGER')")
+  @GetMapping("/vehicles/{vehicleId}")
+  public ApiResponse<VehicleResponse> getVehicleById(@PathVariable("vehicleId") String vehicleId) {
+    log.info("Received get vehicle by id request");
+    var result = vehicleService.getVehicleById(vehicleId);
+    return ApiResponse.<VehicleResponse>builder()
+        .message("Get vehicle by id successfully")
+        .result(result)
+        .build();
+  }
+
+  @GetMapping("/vehicles")
   public ApiResponse<List<VehicleResponse>> getVehicles() {
     log.info("Received get vehicles request");
     var result = vehicleService.getVehicles();
@@ -48,8 +55,7 @@ public class VehicleController {
         .build();
   }
 
-  @PostMapping("")
-  @PreAuthorize("hasRole('ROLE_MANAGER')")
+  @PostMapping("/vehicles")
   public ApiResponse<VehicleResponse> createVehicle(@RequestBody VehicleCreateRequest request) {
     log.info("Received create vehicle request: {}", request);
     var result = vehicleService.createVehicle(request);
@@ -59,8 +65,7 @@ public class VehicleController {
         .build();
   }
 
-  @PostMapping("/{vehicleId}")
-  @PreAuthorize("hasRole('ROLE_MANAGER')")
+  @PostMapping("/vehicles/{vehicleId}")
   public ApiResponse<VehicleResponse> updateVehicle(@PathVariable("vehicleId") String vehicleId, @RequestBody VehicleUpdateRequest request) {
     log.info("Received update vehicle request: {}", request);
     var result = vehicleService.updateVehicle(vehicleId, request);

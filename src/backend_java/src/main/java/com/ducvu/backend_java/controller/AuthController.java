@@ -15,13 +15,13 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@RequestMapping("/api/auth")
+@RequestMapping("/api")
 @RequiredArgsConstructor
 @Slf4j
 public class AuthController {
   private final AuthService authService;
 
-  @PostMapping("/register")
+  @PostMapping("/auth/register")
   public ApiResponse<UserResponse> register(@RequestBody RegisterRequest request) {
     log.info("Received register request: {}", request);
     var result = authService.register(request);
@@ -31,7 +31,7 @@ public class AuthController {
         .build();
   }
 
-  @PostMapping("/login")
+  @PostMapping("/auth/login")
   public ApiResponse<AuthResponse> login(@RequestBody LoginRequest request) {
     log.info("Received login request: {}", request);
     var result = authService.login(request);

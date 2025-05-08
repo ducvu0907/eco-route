@@ -22,23 +22,14 @@ public class UserService {
   private final Validator validator;
   private final Mapper mapper;
 
-  public List<UserResponse> getUsers(Role role) {
-    List<User> users = userRepository.findAll();
-    if (role != null) {
-      return users
-          .stream()
-          .filter(u -> u.getRole() == role)
-          .map(mapper::map)
-          .toList();
-    }
-
-    return users
+  public List<UserResponse> getUsers() {
+    return userRepository.findAll()
         .stream()
         .map(mapper::map)
         .toList();
   }
 
-  public UserResponse getUser(String userId) {
+  public UserResponse getUserById(String userId) {
     User user = getCurrentUser();
     if (!user.getId().equals(userId) && user.getRole() != Role.MANAGER) {
       throw new RuntimeException("Unauthorized");

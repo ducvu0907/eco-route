@@ -1,6 +1,7 @@
 package com.ducvu.backend_java.model;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 import jakarta.persistence.*;
@@ -23,8 +24,9 @@ public class Depot {
   @GeneratedValue(strategy = GenerationType.UUID) 
   private String id;
 
+  @Builder.Default
   @OneToMany(mappedBy = "depot", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-  private List<Vehicle> vehicles;
+  private List<Vehicle> vehicles = new ArrayList<>();
 
   private Double latitude;
 

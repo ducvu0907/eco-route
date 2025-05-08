@@ -18,6 +18,8 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
+
 @Service
 @RequiredArgsConstructor
 @Slf4j
@@ -65,6 +67,9 @@ public class AuthService {
 
     String jwt = jwtService.generateToken(user);
     AuthResponse authResponse = AuthResponse.builder()
+        .username(user.getUsername())
+        .userId(user.getId())
+        .role(user.getRole())
         .token(jwt)
         .build();
 

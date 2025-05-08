@@ -29,7 +29,13 @@ public class SubscriptionService {
   private final Mapper mapper;
   private final Helper helper;
 
-  public SubscriptionResponse getSubscriptionByUser(String userId) {
+  public SubscriptionResponse getSubscriptionById(String subscriptionId) {
+    Subscription subscription = subscriptionRepository.findById(subscriptionId)
+        .orElseThrow(() -> new RuntimeException("Subscription not found"));
+    return mapper.map(subscription);
+  }
+
+  public SubscriptionResponse getSubscriptionByUserId(String userId) {
     User user = userService.getCurrentUser();
     if (!user.getId().equals(userId) && user.getRole() != Role.MANAGER) {
       throw new RuntimeException("Unauthorized");
@@ -60,15 +66,19 @@ public class SubscriptionService {
         .estimatedWeight(request.getEstimatedWeight())
         .build();
 
-    if (subscription.getAddress() == null) {
-      OsmResponse osmResponse = helper.reverseGeocode(request.getLatitude(), request.getLongitude());
-      if (osmResponse.getError() != null) {
-        subscription.setAddress(osmResponse.getDisplayName());
-        log.info("Get OSM response successfully: {}", osmResponse);
-      }
-    }
+//    if (subscription.getAddress() == null) {
+//      OsmResponse osmResponse = helper.reverseGeocode(request.getLatitude(), request.getLongitude());
+//      if (osmResponse.getError() != null) {
+//        subscription.setAddress(osmResponse.getDisplayName());
+//        log.info("Get OSM response successfully: {}", osmResponse);
+//      }
+//    }
 
     return mapper.map(subscriptionRepository.save(subscription));
+  }
+
+  public void deleteSubscription(String subscriptionId) {
+    subscriptionRepository.deleteById(subscriptionId);
   }
 
 }

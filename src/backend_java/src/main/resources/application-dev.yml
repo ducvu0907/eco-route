@@ -23,9 +23,6 @@ application:
       secret-key: ${SECRET_KEY:1af670eff96448b0c64d3ee1ae5939a25a9522ec6ae1fa192732b43e9fe8c29d}
       access-token-expiration: ${ACCESS_TOKEN_EXPIRATION:3600000} # milliseconds
 
-client:
-  url: ${CLIENT_URL:http://localhost:5173,http://localhost:8081}
-
 springdoc:
   api-docs:
     path: /api-docs

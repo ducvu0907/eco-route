@@ -1,6 +1,7 @@
 package com.ducvu.backend_java.model;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 import jakarta.persistence.*;
@@ -24,7 +25,7 @@ public class Dispatch {
   private String id;
 
   @OneToMany(mappedBy = "dispatch", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-  private List<Route> routes;
+  private List<Route> routes = new ArrayList<>();
 
   private LocalDateTime startTime;
 

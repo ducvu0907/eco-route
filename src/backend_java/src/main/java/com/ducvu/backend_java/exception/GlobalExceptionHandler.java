@@ -19,11 +19,12 @@ import java.security.SignatureException;
 
 @RestControllerAdvice
 @Slf4j
-public class GlobalExceptionHandler {
+public class GlobalExceptionHandler { // TODO: replace hard-coded response code with declarative pattern
 
   @ExceptionHandler(Exception.class)
   public ResponseEntity<ApiResponse<?>> handleException(Exception e) {
     ApiResponse<?> apiResponse = ApiResponse.builder()
+        .code("99")
         .message(e.getMessage())
         .build();
     return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(apiResponse);
@@ -32,6 +33,7 @@ public class GlobalExceptionHandler {
   @ExceptionHandler(AccessDeniedException.class)
   public ResponseEntity<ApiResponse<?>> handleAccessDeniedException(AccessDeniedException e) {
     ApiResponse<?> apiResponse = ApiResponse.builder()
+        .code("99")
         .message("You do not have permission")
         .build();
     return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(apiResponse);
@@ -40,6 +42,7 @@ public class GlobalExceptionHandler {
   @ExceptionHandler(HttpMessageNotReadableException.class)
   public ResponseEntity<ApiResponse<?>> handleHttpMessageNotReadableException(HttpMessageNotReadableException e) {
     ApiResponse<?> apiResponse = ApiResponse.builder()
+        .code("99")
         .message("Invalid request format")
         .build();
     return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(apiResponse);
@@ -48,6 +51,7 @@ public class GlobalExceptionHandler {
   @ExceptionHandler(BadCredentialsException.class)
   public ResponseEntity<ApiResponse<?>> handleBadCredentialsException(BadCredentialsException e) {
     ApiResponse<?> apiResponse = ApiResponse.builder()
+        .code("99")
         .message("Password incorrect")
         .build();
     return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(apiResponse);
@@ -56,6 +60,7 @@ public class GlobalExceptionHandler {
   @ExceptionHandler(UsernameNotFoundException.class)
   public ResponseEntity<ApiResponse<?>> handleUsernameNotFoundException(UsernameNotFoundException e) {
     ApiResponse<?> apiResponse = ApiResponse.builder()
+        .code("99")
         .message("Username not found")
         .build();
     return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(apiResponse);

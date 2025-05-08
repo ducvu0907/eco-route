@@ -15,6 +15,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -49,13 +50,13 @@ public class DepotService {
         .address(request.getAddress())
         .build();
 
-    if (depot.getAddress() == null) {
-      OsmResponse osmResponse = helper.reverseGeocode(request.getLatitude(), request.getLongitude());
-      if (osmResponse.getError() != null) {
-        depot.setAddress(osmResponse.getDisplayName());
-        log.info("Get OSM response successfully: {}", osmResponse);
-      }
-    }
+//    if (depot.getAddress() == null) {
+//      OsmResponse osmResponse = helper.reverseGeocode(request.getLatitude(), request.getLongitude());
+//      if (osmResponse != null && osmResponse.getError() != null) {
+//        depot.setAddress(osmResponse.getDisplayName());
+//        log.info("Get OSM response successfully: {}", osmResponse);
+//      }
+//    }
 
     return mapper.map(depotRepository.save(depot));
 

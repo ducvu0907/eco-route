@@ -12,19 +12,19 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/notifications")
+@RequestMapping("/api")
 @Slf4j
 @RequiredArgsConstructor
 @SecurityRequirement(name = "bearerAuth")
 public class NotificationController {
   private final NotificationService notificationService;
 
-  @PostMapping("/{notificationId}")
-  public ApiResponse<NotificationResponse> readNotification(@PathVariable("notificationId") String notificationId) {
-    log.info("Received read notification request");
-    var result = notificationService.readNotification(notificationId);
-    return ApiResponse.<NotificationResponse>builder()
-        .message("Read notification successfully")
+  @GetMapping("/users/{userId}/notifications")
+  public ApiResponse<List<NotificationResponse>> getNotificationsByUserId(@PathVariable("userId") String userId) {
+    log.info("Received get notifications by user id request");
+    var result = notificationService.getNotificationsByUser(userId);
+    return ApiResponse.<List<NotificationResponse>>builder()
+        .message("Get notifications by user id successfully")
         .result(result)
         .build();
   }

@@ -22,9 +22,6 @@ public class Notification {
   @GeneratedValue(strategy = GenerationType.UUID)
   private String id;
 
-  @Enumerated(value = EnumType.STRING)
-  private NotificationType type;
-
   @ManyToOne
   @JoinColumn(name = "user_id")
   private User user;

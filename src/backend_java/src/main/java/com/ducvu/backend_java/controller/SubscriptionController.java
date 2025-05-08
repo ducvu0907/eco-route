@@ -14,26 +14,24 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/subscriptions")
+@RequestMapping("/api")
 @Slf4j
 @RequiredArgsConstructor
 @SecurityRequirement(name = "bearerAuth")
 public class SubscriptionController {
   private final SubscriptionService subscriptionService;
 
-  @GetMapping("/users/{userId}")
-  @PreAuthorize("hasAnyRole('ROLE_CUSTOMER', 'ROLE_MANAGER')")
-  public ApiResponse<SubscriptionResponse> getSubscriptionByUser(@PathVariable("userId") String userId) {
-    log.info("Received get subscription by user request");
-    var result = subscriptionService.getSubscriptionByUser(userId);
+  @GetMapping("/subscriptions/{subscriptionId}")
+  public ApiResponse<SubscriptionResponse> getSubscriptionById(@PathVariable("subscriptionId") String subscriptionId) {
+    log.info("Received get subscription by id request");
+    var result = subscriptionService.getSubscriptionById(subscriptionId);
     return ApiResponse.<SubscriptionResponse>builder()
-        .message("Get subscription by user successfully")
+        .message("Get subscription by id successfully")
         .result(result)
         .build();
   }
 
-  @GetMapping("")
-  @PreAuthorize("hasRole('ROLE_MANAGER')")
+  @GetMapping("/subscriptions")
   public ApiResponse<List<SubscriptionResponse>> getSubscriptions() {
     log.info("Received get subscriptions request");
     var result = subscriptionService.getSubscriptions();
@@ -43,14 +41,33 @@ public class SubscriptionController {
         .build();
   }
 
-  @PostMapping("")
-  @PreAuthorize("hasRole('ROLE_CUSTOMER')")
+  @GetMapping("/users/{userId}/subscription")
+  public ApiResponse<SubscriptionResponse> getSubscriptionByUserId(@PathVariable("userId") String userId) {
+    log.info("Received get subscription by user id request");
+    var result = subscriptionService.getSubscriptionByUserId(userId);
+    return ApiResponse.<SubscriptionResponse>builder()
+        .message("Get subscription by user id successfully")
+        .result(result)
+        .build();
+  }
+
+  @PostMapping("/subscriptions")
   public ApiResponse<SubscriptionResponse> createSubscription(@RequestBody SubscriptionCreateRequest request) {
     log.info("Received create subscription request");
     var result = subscriptionService.createSubscription(request);
     return ApiResponse.<SubscriptionResponse>builder()
         .message("Create subscription successfully")
         .result(result)
+        .build();
+  }
+
+  @DeleteMapping("/subscriptions/{subscriptionId}")
+  @PreAuthorize("hasRole('ROLE_CUSTOMER')")
+  public ApiResponse<Void> deleteSubscription(@PathVariable("subscriptionId") String subscriptionId) {
+    log.info("Received delete subscription request");
+    subscriptionService.deleteSubscription(subscriptionId);
+    return ApiResponse.<Void>builder()
+        .message("Delete subscription successfully")
         .build();
   }
 

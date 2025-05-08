@@ -29,6 +29,18 @@ public class VehicleService {
   private final Validator validator;
   private final Mapper mapper;
 
+  public VehicleResponse getVehicleByDriverId(String driverId) {
+    Vehicle vehicle = vehicleRepository.findByDriverId(driverId)
+        .orElseThrow(() -> new RuntimeException("Vehicle not found"));
+    return mapper.map(vehicle);
+  }
+
+  public VehicleResponse getVehicleById(String vehicleId) {
+    Vehicle vehicle = vehicleRepository.findById(vehicleId)
+        .orElseThrow(() -> new RuntimeException("Vehicle not found"));
+    return mapper.map(vehicle);
+  }
+
   public List<VehicleResponse> getVehicles() {
     return vehicleRepository.findAll()
         .stream()
