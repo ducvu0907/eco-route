@@ -10,7 +10,3 @@ export const login = async (payload: LoginRequest): Promise<ApiResponse<AuthResp
   const { data } = await axiosInstance.post("/auth/login", payload);
   return data;
 }
-
-export const logout = async (): Promise<void> => {
-  console.log("You called logout api.");
-}

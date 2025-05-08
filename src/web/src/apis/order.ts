@@ -1,15 +1,18 @@
 import { ApiResponse, OrderResponse, OrderCreateRequest, OrderUpdateRequest, } from "@/types/types";
 import axiosInstance from ".";
 
-export const getOrders = async (userId?: string): Promise<ApiResponse<OrderResponse[]>> => {
-  const { data } = await axiosInstance.get("/orders", {
-    params: userId ? { userId } : undefined,
-  });
+export const getOrders = async (): Promise<ApiResponse<OrderResponse[]>> => {
+  const { data } = await axiosInstance.get("/orders");
   return data;
 };
 
-export const getOrder = async (orderId: string): Promise<ApiResponse<OrderResponse>> => {
+export const getOrderById = async (orderId: string): Promise<ApiResponse<OrderResponse>> => {
   const { data } = await axiosInstance.get(`/orders/${orderId}`);
+  return data;
+};
+
+export const getOrderByUserId = async (userId: string): Promise<ApiResponse<OrderResponse[]>> => {
+  const { data } = await axiosInstance.get(`/users/${userId}/orders`);
   return data;
 };
 

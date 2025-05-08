@@ -18,7 +18,7 @@ import {
   SelectItem,
   SelectValue,
 } from "@/components/ui/select";
-import { useRegister } from "@/hooks/useAuthMutation";
+import { useRegister } from "@/hooks/useAuth";
 import { Role } from "@/types/types";
 import { useNavigate } from "react-router";
 

@@ -4,11 +4,11 @@ import { RegisterPage } from "./pages/auth/RegisterPage";
 import NotFoundPage from "./pages/NotFoundPage";
 import { Navigate } from "react-router";
 import Dashboard from "./pages/Dashboard";
-import { useAuth } from "./hooks/useAuth";
 import Layout from "./pages/Layout";
+import { useAuthContext } from "./hooks/useAuthContext";
 
 const App = () => {
-  const { isAuthenticated } = useAuth();
+  const { isAuthenticated } = useAuthContext();
 
   return (
     <Routes>

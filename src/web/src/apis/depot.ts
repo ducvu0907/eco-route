@@ -6,7 +6,7 @@ export const getDepots = async (): Promise<ApiResponse<DepotResponse[]>> => {
   return data;
 };
 
-export const getDepot = async (depotId: string): Promise<ApiResponse<DepotResponse>> => {
+export const getDepotById = async (depotId: string): Promise<ApiResponse<DepotResponse>> => {
   const { data } = await axiosInstance.get(`/depots/${depotId}`);
   return data;
 };

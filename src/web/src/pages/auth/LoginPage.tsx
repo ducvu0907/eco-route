@@ -11,7 +11,7 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { useLogin } from "@/hooks/useAuthMutation";
+import { useLogin } from "@/hooks/useAuth";
 
 const formSchema = z.object({
   username: z.string().min(1, "Username is required"),
