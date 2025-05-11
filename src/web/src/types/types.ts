@@ -160,22 +160,36 @@ export interface OrderResponse {
   updatedAt: string;
 }
 
+// export interface OsmAddress {
+//   amenity?: string;
+//   house_number?: string;
+//   road?: string;
+//   neighbourhood?: string;
+//   suburb?: string;
+//   city?: string;
+//   postcode?: string;
+//   country?: string;
+//   country_code?: string;
+//   [key: string]: string | undefined; // for extra dynamic fields like ISO3166-2-lvl4
+// }
+
 export interface OsmResponse {
-  placeId?: number;
+  place_id?: number;
   licence?: string;
-  osmType?: string;
-  osmId?: number;
+  osm_type?: string;
+  osm_id?: number;
   lat?: string;
   lon?: string;
-  classType?: string;
+  class?: string;
   type?: string;
-  placeRank?: number;
+  place_rank?: number;
   importance?: number;
   addresstype?: string;
   name?: string;
-  displayName?: string;
+  display_name?: string;
   boundingbox?: string[];
-  error?: string; // if there's not field error then it succeeds
+  // address?: OsmAddress;
+  error?: string;
 }
 
 export interface RouteResponse {

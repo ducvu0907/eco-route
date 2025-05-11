@@ -2,12 +2,12 @@ import { OsmResponse } from "@/types/types";
 import axios from "axios";
 import { useState } from "react";
 
-export const useReverse = () => {
+export const useReverseLocation = () => {
   const [data, setData] = useState<OsmResponse | null>(null);
   const [loading, setLoading] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
 
-  const reverseGeocode = async (lat: number, lon: number) => {
+  const reverseLocation = async (lat: number, lon: number) => {
     setLoading(true);
     setError(null);
     try {
@@ -22,7 +22,7 @@ export const useReverse = () => {
       setData(response.data);
 
     } catch (err) {
-      setError("Failed to fetch address");
+      setError("Failed to fetch locations");
 
     } finally {
       setLoading(false);
@@ -33,12 +33,12 @@ export const useReverse = () => {
     data,
     loading,
     error,
-    reverseGeocode,
+    reverseLocation,
   };
 };
 
-export const useSearch = () => {
-  const [data, setData] = useState<OsmResponse[] | null>(null);
+export const useSearchLocation = () => {
+  const [data, setData] = useState<OsmResponse[]>([]);
   const [loading, setLoading] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -54,10 +54,11 @@ export const useSearch = () => {
           limit: 5,
         },
       });
+      console.log(response.data);
       setData(response.data);
 
     } catch (err) {
-      setError("Failed to fetch locations");
+      setError("Failed to fetch location");
 
     } finally {
       setLoading(false);

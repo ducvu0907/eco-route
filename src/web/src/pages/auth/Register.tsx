@@ -34,7 +34,7 @@ const registerSchema = z.object({
 
 type RegisterForm = z.infer<typeof registerSchema>;
 
-export const RegisterPage = () => {
+export default function Register() {
   const navigate = useNavigate();
 
   const form = useForm<RegisterForm>({

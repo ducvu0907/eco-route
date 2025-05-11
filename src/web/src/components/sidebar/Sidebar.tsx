@@ -1,4 +1,4 @@
-import { Home, Warehouse, Truck, Users, Send } from "lucide-react";
+import { Home, Warehouse, Truck, Users, Send, ShoppingCart, Map } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
@@ -18,6 +18,8 @@ const navItems: NavItem[] = [
   { label: "Vehicles", icon: <Truck className="w-4 h-4" />, key: "vehicles", path: "/vehicles" },
   { label: "Users", icon: <Users className="w-4 h-4" />, key: "users", path: "/users" },
   { label: "Dispatches", icon: <Send className="w-4 h-4" />, key: "dispatches", path: "/dispatches" },
+  { label: "Orders", icon: <ShoppingCart className="w-4 h-4" />, key: "orders", path: "/orders" },
+  { label: "Map", icon: <Map className="w-4 h-4" />, key: "map", path: "/map" },
 ];
 
 export default function Sidebar() {

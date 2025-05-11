@@ -3,7 +3,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { useNavigate } from "react-router-dom";
 import { AlertTriangle } from "lucide-react";
 
-export default function NotFoundPage() {
+export default function NotFound() {
   const navigate = useNavigate()
 
   return (
