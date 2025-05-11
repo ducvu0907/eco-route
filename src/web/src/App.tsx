@@ -10,8 +10,11 @@ import DepotManagement from "./pages/depot/DepotManagement";
 import UserManagement from "./pages/user/UserManagement";
 import OrderManagement from "./pages/order/OrderManagement";
 import Map from "./pages/map/Map";
-import DepotCreate from "./pages/depot/DepotCreate";
 import 'leaflet/dist/leaflet.css';
+import DepotDetails from "./pages/depot/DepotDetails";
+import UserDetails from "./pages/user/UserDetails";
+import VehicleManagement from "./pages/vehicle/VehicleManagement";
+import VehicleDetails from "./pages/vehicle/VehicleDetails";
 
 const App = () => {
   const { isAuthenticated } = useAuthContext();
@@ -25,12 +28,20 @@ const App = () => {
       </Route>
 
       <Route element={!isAuthenticated ? <Navigate to={"/login"}/> : <Layout />}>
+
         <Route path="/" element={<Navigate to="/dashboard"/>}/>
         <Route path="/dashboard" element={<Dashboard />}/>
+
+        <Route path="/vehicles" element={<VehicleManagement />}/>
+
         <Route path="/depots" element={<DepotManagement />}/>
-        <Route path="/create-depot" element={<DepotCreate />}/>
+        <Route path="/depots/:depotId" element={<DepotDetails />}/>
+
         <Route path="/users" element={<UserManagement />}/>
+        <Route path="/users/:userId" element={<UserDetails />}/>
+
         <Route path="/orders" element={<OrderManagement />}/>
+
         <Route path="/map" element={<Map />}/>
 
       </Route>

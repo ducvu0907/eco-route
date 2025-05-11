@@ -25,3 +25,8 @@ export const updateVehicle = async (vehicleId: string, payload: VehicleUpdateReq
   const { data } = await axiosInstance.post(`/vehicles/${vehicleId}`, payload);
   return data;
 };
+
+export const deleteVehicle = async (vehicleId: string): Promise<ApiResponse<void>> => {
+  const { data } = await axiosInstance.delete(`/vehicles/${vehicleId}`);
+  return data;
+};

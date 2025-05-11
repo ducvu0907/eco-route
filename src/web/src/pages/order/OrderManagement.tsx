@@ -17,8 +17,10 @@ import {
 import { Skeleton } from "@/components/ui/skeleton";
 import { Alert, AlertTitle, AlertDescription } from "@/components/ui/alert";
 import { formatDate } from "@/utils/formatDate";
+import { useNavigate } from "react-router";
 
 export default function OrderManagement() {
+  const navigate = useNavigate();
   const { data, isLoading, isError } = useGetOrders();
   const orders: OrderResponse[] = data?.result || [];
 
@@ -67,7 +69,7 @@ export default function OrderManagement() {
           </TableHeader>
           <TableBody>
             {orders.map((order) => (
-              <TableRow key={order.id}>
+              <TableRow key={order.id} className="cursor-pointer" onClick={() => navigate(`/orders/${order.id}`)}>
                 <TableCell>{order.id}</TableCell>
                 <TableCell>{order.userId}</TableCell>
                 <TableCell>

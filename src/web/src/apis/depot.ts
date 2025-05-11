@@ -11,6 +11,11 @@ export const getDepotById = async (depotId: string): Promise<ApiResponse<DepotRe
   return data;
 };
 
+export const updateDepot = async (depotId: string, payload: DepotCreateRequest): Promise<ApiResponse<DepotResponse>> => {
+  const { data } = await axiosInstance.post(`/depots/${depotId}`, payload);
+  return data;
+};
+
 export const createDepot = async (payload: DepotCreateRequest): Promise<ApiResponse<DepotResponse>> => {
   const { data } = await axiosInstance.post("/depots", payload);
   return data;

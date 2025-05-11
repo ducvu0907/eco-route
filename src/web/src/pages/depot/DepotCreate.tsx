@@ -22,9 +22,9 @@ import { useNavigate } from "react-router";
 import SearchDropdown from "@/components/depot/SearchDropdown";
 
 const formSchema = z.object({
-  address: z.string().nullable(),
-  latitude: z.number(),
-  longitude: z.number(),
+  address: z.string(),
+  latitude: z.coerce.number(),
+  longitude: z.coerce.number(),
 });
 
 type FormValues = z.infer<typeof formSchema>;
@@ -167,9 +167,9 @@ export default function DepotCreate() {
                               <FormLabel>Address</FormLabel>
                               <FormControl>
                                 <Input
-                                  readOnly
+                                  placeholder="Select address"
                                   {...field}
-                                  value={field.value || ""}
+                                  value={field.value}
                                   className="w-full"
                                 />
                               </FormControl>
@@ -217,11 +217,11 @@ export default function DepotCreate() {
               </div>
 
               <div className="flex justify-end border-t pt-4 mt-6">
-                <Button type="button" variant="outline" className="mr-2">
+                <Button type="button" variant="outline" className="mr-2" onClick={() => navigate("/depots")}>
                   Cancel
                 </Button>
-                <Button type="submit" disabled={isPending} onClick={() => navigate("/depots")}>
-                  {isPending ?
+                <Button type="submit" disabled={isPending || isReversing} onClick={() => navigate("/depots")}>
+                  {isPending || isReversing ?
                     <><Loader2 className="mr-2 h-4 w-4 animate-spin" /> Creating...</> :
                     "Create Depot"}
                 </Button>

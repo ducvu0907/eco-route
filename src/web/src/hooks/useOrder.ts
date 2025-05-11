@@ -1,7 +1,6 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { getOrders, getOrderById, createOrder, updateOrder, getOrderByUserId, } from "@/apis/order";
 import { ApiResponse, OrderResponse, OrderCreateRequest, OrderUpdateRequest, } from "@/types/types";
-import { useAuthContext } from "./useAuthContext";
 
 export const useGetOrders = () => {
   return useQuery<ApiResponse<OrderResponse[]>>({
@@ -25,20 +24,17 @@ export const useGetOrderById = (orderId: string) => {
 };
 
 export const useCreateOrder = () => {
-  const { userId } = useAuthContext();
   const queryClient = useQueryClient();
 
   return useMutation({
     mutationFn: (payload: OrderCreateRequest) => createOrder(payload),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["orders"] });
-      queryClient.invalidateQueries({ queryKey: ["users", userId, "orders"] });
     },
   });
 };
 
 export const useUpdateOrder = () => {
-  const { userId } = useAuthContext();
   const queryClient = useQueryClient();
 
   return useMutation({
@@ -47,7 +43,6 @@ export const useUpdateOrder = () => {
     onSuccess: (_data, { orderId }) => {
       queryClient.invalidateQueries({ queryKey: ["orders"] });
       queryClient.invalidateQueries({ queryKey: ["orders", orderId] });
-      queryClient.invalidateQueries({ queryKey: ["users", userId, "orders"] });
     },
   });
 };

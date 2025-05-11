@@ -9,7 +9,6 @@ export const useRegister = () => {
     mutationFn: (payload: RegisterRequest) => register(payload),
     onSuccess: (response: ApiResponse<UserResponse>) => {
       const result = response.result as UserResponse;
-      console.log(result);
     },
   });
 }
@@ -21,7 +20,6 @@ export const useLogin = () => {
     mutationFn: (payload: LoginRequest) => login(payload),
     onSuccess: (response: ApiResponse<AuthResponse>) => {
       const result = response.result as AuthResponse;
-      console.log(result);
       setAuth({
         token: result.token,
         userId: result.userId,

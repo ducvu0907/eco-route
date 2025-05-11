@@ -17,8 +17,10 @@ import {
 import { Skeleton } from "@/components/ui/skeleton";
 import { Alert, AlertTitle, AlertDescription } from "@/components/ui/alert";
 import { formatDate } from "@/utils/formatDate";
+import { useNavigate } from "react-router";
 
 export default function UserManagement() {
+  const navigate = useNavigate();
   const { data, isLoading, isError } = useGetUsers();
   const users: UserResponse[] = data?.result || [];
 
@@ -65,7 +67,7 @@ export default function UserManagement() {
           </TableHeader>
           <TableBody>
             {users.map((user) => (
-              <TableRow key={user.id}>
+              <TableRow key={user.id} className="cursor-pointer" onClick={() => navigate(`/users/${user.id}`)}>
                 <TableCell>{user.id}</TableCell>
                 <TableCell>{user.username}</TableCell>
                 <TableCell>{user.phone}</TableCell>

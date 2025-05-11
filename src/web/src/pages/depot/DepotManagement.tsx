@@ -1,21 +1,36 @@
-import { useGetDepots } from "@/hooks/useDepot";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
+import { useDeleteDepot, useGetDepots } from "@/hooks/useDepot";
 import { DepotResponse } from "@/types/types";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { MapPin, Truck } from "lucide-react";
 import { formatDate } from "@/utils/formatDate";
-import { Button } from "@/components/ui/button"; // Assuming the button component exists
+import { Button } from "@/components/ui/button";
 import { useNavigate } from "react-router";
+import DepotCreateModal from "@/components/depot/DepotCreateModal";
+import { useState } from "react";
 
 export default function DepotManagement() {
+  const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
   const navigate = useNavigate();
   const { data, isLoading, isError } = useGetDepots();
+  const { mutate: deleteDepot, isPending: isDeleting } = useDeleteDepot();
   const depots: DepotResponse[] = data?.result || [];
 
 
-  const handleCreateDepot = () => {
-    navigate("/create-depot");
+  const handleViewDepot = (depot: DepotResponse) => {
+    navigate(`/depots/${depot.id}`);
   };
 
   if (isLoading) {
@@ -41,9 +56,10 @@ export default function DepotManagement() {
 
   return (
     <div className="p-4 space-y-4">
+      <DepotCreateModal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} />
       <div className="flex justify-between items-center">
         <h2 className="text-xl font-semibold">Depot Management</h2>
-        <Button onClick={handleCreateDepot}>Create Depot</Button>
+        <Button onClick={() => setIsModalOpen(true)}>Create Depot</Button>
       </div>
 
       {depots.length === 0 ? (
@@ -53,12 +69,12 @@ export default function DepotManagement() {
           {depots.map((depot: DepotResponse) => (
             <Card key={depot.id}>
               <CardHeader>
-                <CardTitle className="text-lg flex items-center gap-2">
-                  <MapPin className="w-5 h-5" />
-                  {depot.address ?? "N/A"}
+                <CardTitle className="text-lg flex items-start gap-2">
+                  <MapPin className="w-5 h-5 shrink-0 mt-1" />
+                  <span className="line-clamp-2 text-left">{depot.address ?? "N/A"}</span>
                 </CardTitle>
               </CardHeader>
-              <CardContent className="text-sm text-muted-foreground space-y-1">
+              <CardContent className="text-sm text-muted-foreground space-y-2">
                 <div>Latitude: {depot.latitude}</div>
                 <div>Longitude: {depot.longitude}</div>
                 <div className="flex items-center gap-2">
@@ -66,6 +82,45 @@ export default function DepotManagement() {
                   Vehicles: {depot.vehicles.length}
                 </div>
                 <div>Created: {formatDate(depot.createdAt)}</div>
+
+                {/* Action Buttons */}
+                <div className="flex justify-end gap-2 pt-2 border-t mt-2">
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={() => handleViewDepot(depot)}
+                  >
+                    View
+                  </Button>
+                  <AlertDialog>
+                    <AlertDialogTrigger asChild>
+                      <Button
+                        variant="destructive"
+                        size="sm"
+                        disabled={isDeleting}
+                      >
+                        Delete
+                      </Button>
+                    </AlertDialogTrigger>
+                    <AlertDialogContent>
+                      <AlertDialogHeader>
+                        <AlertDialogTitle>Are you sure?</AlertDialogTitle>
+                        <AlertDialogDescription>
+                          This action cannot be undone. This will permanently delete the depot at <strong>{depot.address ?? "N/A"}</strong>.
+                        </AlertDialogDescription>
+                      </AlertDialogHeader>
+                      <AlertDialogFooter>
+                        <AlertDialogCancel>Cancel</AlertDialogCancel>
+                        <AlertDialogAction
+                          onClick={() => deleteDepot(depot.id)}
+                          disabled={isDeleting}
+                        >
+                          {isDeleting ? "Deleting..." : "Delete"}
+                        </AlertDialogAction>
+                      </AlertDialogFooter>
+                    </AlertDialogContent>
+                  </AlertDialog>
+                </div>
               </CardContent>
             </Card>
           ))}

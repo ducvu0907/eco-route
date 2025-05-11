@@ -1,6 +1,6 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { getDepots, getDepotById, createDepot, deleteDepot, } from "@/apis/depot";
-import { ApiResponse, DepotResponse, DepotCreateRequest, } from "@/types/types";
+import { getDepots, getDepotById, createDepot, deleteDepot, updateDepot, } from "@/apis/depot";
+import { ApiResponse, DepotResponse, DepotCreateRequest, DepotUpdateRequest, } from "@/types/types";
 
 export const useGetDepots = () => {
   return useQuery<ApiResponse<DepotResponse[]>>({
@@ -11,9 +11,20 @@ export const useGetDepots = () => {
 
 export const useGetDepotById = (depotId: string) => {
   return useQuery<ApiResponse<DepotResponse>>({
-    queryKey: ["depot", depotId],
+    queryKey: ["depots", depotId],
     queryFn: () => getDepotById(depotId),
-    enabled: !!depotId,
+  });
+};
+
+export const useUpdateDepot = () => {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: ({ depotId, payload }: {depotId: string, payload: DepotUpdateRequest}) => updateDepot(depotId, payload),
+    onSuccess: (_data, { depotId }) => {
+      queryClient.invalidateQueries({ queryKey: ["depots"] });
+      queryClient.invalidateQueries({ queryKey: ["depots", depotId] });
+    },
   });
 };
 

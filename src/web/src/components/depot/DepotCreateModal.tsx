@@ -5,29 +5,44 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
-import { Button } from "../ui/button";
 import {
-  FormField, FormItem, FormLabel, FormControl, FormMessage, Form
-} from "../ui/form";
-import { Dialog, DialogContent, DialogTitle, DialogTrigger, DialogClose } from "@radix-ui/react-dialog";
-import { DialogHeader, DialogFooter } from "../ui/dialog";
-import { Input } from "../ui/input";
-import { Loader2 } from "lucide-react";
-import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList } from "../ui/command";
-import { Popover, PopoverContent, PopoverTrigger } from "../ui/popover";
-import MapModalInput from "../map/MapModalInput";
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogFooter,
+} from "@/components/ui/dialog";
+import { Button } from "@/components/ui/button";
+import {
+  Form,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormControl,
+  FormMessage
+} from "@/components/ui/form";
+import MapModalInput from "@/components/map/MapModalInput";
+import { Input } from "@/components/ui/input";
+import { Loader2, MapPin } from "lucide-react";
+import SearchDropdown from "@/components/depot/SearchDropdown";
 
 const formSchema = z.object({
-  address: z.string().nullable(),
-  latitude: z.number(),
-  longitude: z.number(),
+  address: z.string(),
+  latitude: z.coerce.number(),
+  longitude: z.coerce.number(),
 });
 
 type FormValues = z.infer<typeof formSchema>;
 
-interface DepotCreateModalProps {}
+interface DepotCreateModalProps {
+  isOpen: boolean;
+  onClose: () => void;
+}
 
-export default function DepotCreateModal({}: DepotCreateModalProps) {
+export default function DepotCreateModal({ isOpen, onClose }: DepotCreateModalProps) {
+  const [showDropdown, setShowDropdown] = useState<boolean>(false);
+  const [searchQuery, setSearchQuery] = useState<string | null>(null);
+  const [debouncedQuery, setDebouncedQuery] = useState<string | null>(null);
   const { mutate: createDepot, isPending } = useCreateDepot();
   const form = useForm<FormValues>({
     resolver: zodResolver(formSchema),
@@ -38,43 +53,53 @@ export default function DepotCreateModal({}: DepotCreateModalProps) {
     },
   });
 
-  const [searchQuery, setSearchQuery] = useState("");
-  const [openDropdown, setOpenDropdown] = useState(false);
-
-  const { reverseLocation, data: reverseData } = useReverseLocation();
-  const { searchLocation, data: searchResults } = useSearchLocation();
+  const { reverseLocation, data: reverseData, loading: isReversing } = useReverseLocation();
+  const { searchLocation, data: searchData } = useSearchLocation();
 
   const lat = form.watch("latitude");
   const lon = form.watch("longitude");
 
-  // reverse geocode when lat/lon change
   useEffect(() => {
     if (lat && lon) reverseLocation(lat, lon);
   }, [lat, lon]);
 
-  // set address if reverse geocode result found
   useEffect(() => {
     if (reverseData?.display_name) {
       form.setValue("address", reverseData.display_name);
     }
   }, [reverseData]);
 
-  // debounce or watch query change
   useEffect(() => {
-    if (searchQuery.trim().length >= 3) {
-      searchLocation(searchQuery);
+    if (debouncedQuery) {
+      searchLocation(debouncedQuery);
     }
+  }, [debouncedQuery]);
+
+  useEffect(() => {
+    const handler = setTimeout(() => {
+      if (searchQuery && searchQuery.trim().length > 3) {
+        setDebouncedQuery(searchQuery.trim());
+      }
+    }, 500);
+
+    return () => {
+      clearTimeout(handler);
+    };
   }, [searchQuery]);
 
-  const onSubmit = (data: DepotCreateRequest) => {
-    createDepot(data);
-  };
+  useEffect(() => {
+    if (searchData) {
+      setShowDropdown(true);
+    }
+  }, [searchData]);
 
-  const handleSelectLocation = (item: OsmResponse) => {
-    form.setValue("latitude", parseFloat(item.lat ?? "0"));
-    form.setValue("longitude", parseFloat(item.lon ?? "0"));
-    form.setValue("address", item.display_name ?? null);
-    setOpenDropdown(false);
+  const onSubmit = (data: DepotCreateRequest) => {
+    createDepot(data, {
+      onSuccess: () => {
+        onClose();
+      },
+    });
+    form.reset();
   };
 
   const setLatLng = (lat: number, lng: number) => {
@@ -82,108 +107,120 @@ export default function DepotCreateModal({}: DepotCreateModalProps) {
     form.setValue("longitude", lng);
   };
 
-  return (
-    <Dialog>
-      <DialogTrigger asChild>
-        <Button variant={"default"}>Create New Depot</Button>
-      </DialogTrigger>
+  const handleSelectItem = (item: OsmResponse) => {
+    form.setValue("latitude", parseFloat(item.lat ?? "0"));
+    form.setValue("longitude", parseFloat(item.lon ?? "0"));
+    form.setValue("address", item.display_name ?? "");
+    setShowDropdown(false);
+  };
 
-      <DialogContent className="max-w-3xl">
+  return (
+    <Dialog open={isOpen} onOpenChange={onClose}>
+      <DialogContent className="lg:max-w-5xl h-1/2">
         <DialogHeader>
-          <DialogTitle>Create New Depot</DialogTitle>
+          <DialogTitle className="flex items-center gap-2">
+            <MapPin className="h-5 w-5" />
+            Create New Depot
+          </DialogTitle>
         </DialogHeader>
 
         <Form {...form}>
-          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
               <div className="space-y-4">
-                {/* 🔍 Address Search Dropdown */}
-                <Popover open={openDropdown} onOpenChange={setOpenDropdown}>
-                  <PopoverTrigger asChild>
-                    <Input
-                      placeholder="Search address..."
-                      value={searchQuery}
-                      onChange={(e) => setSearchQuery(e.target.value)}
-                    />
-                  </PopoverTrigger>
-                  <PopoverContent className="p-0 w-[400px]">
-                    <Command>
-                      <CommandInput placeholder="Search locations..." />
-                      <CommandList>
-                        <CommandEmpty>No results found.</CommandEmpty>
-                        <CommandGroup>
-                          {searchResults?.map((item, idx) => (
-                            <CommandItem
-                              key={idx}
-                              value={item.display_name ?? "N/A"}
-                              onSelect={() => handleSelectLocation(item)}
-                            >
-                              {item.display_name}
-                            </CommandItem>
-                          ))}
-                        </CommandGroup>
-                      </CommandList>
-                    </Command>
-                  </PopoverContent>
-                </Popover>
+                <div>
+                  <h3 className="text-sm font-medium mb-1">Search Location</h3>
+                  <p className="text-sm text-slate-500">Search or pick from map</p>
+                </div>
+                <div className="flex gap-2">
+                  <Input
+                    placeholder="Search address..."
+                    value={searchQuery || ""}
+                    onChange={(e) => setSearchQuery(e.target.value)}
+                    className="w-full"
+                  />
+                  <MapModalInput setLatLng={setLatLng} />
+                </div>
+                {searchData && searchData.length > 0 && showDropdown && (
+                  <div className="relative">
+                    <div className="absolute z-10 w-full bg-white border border-slate-200 mt-1 rounded shadow">
+                      <SearchDropdown
+                        isOpen={showDropdown}
+                        results={searchData}
+                        onSelect={handleSelectItem}
+                      />
+                    </div>
+                  </div>
+                )}
+              </div>
 
-                {/* 📍 Lat / Lng Inputs */}
-                <FormField
-                  control={form.control}
-                  name="latitude"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Latitude</FormLabel>
-                      <FormControl>
-                        <Input type="number" step="any" {...field} disabled />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-
-                <FormField
-                  control={form.control}
-                  name="longitude"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Longitude</FormLabel>
-                      <FormControl>
-                        <Input type="number" step="any" {...field} disabled />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-
-                <MapModalInput setLatLng={setLatLng}/>
+              <div className="space-y-4">
+                <div>
+                  <h3 className="text-sm font-medium mb-1">Location Details</h3>
+                  <p className="text-sm text-slate-500">Coordinates and address</p>
+                </div>
 
                 <FormField
                   control={form.control}
                   name="address"
                   render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Address</FormLabel>
-                      <FormControl>
-                        <Input {...field} value={field.value || ""} />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
+                    <>
+                      {isReversing ? <Loader2 /> : (
+                        <FormItem>
+                          <FormLabel>Address</FormLabel>
+                          <FormControl>
+                            <Input {...field} className="w-full" />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    </>
                   )}
                 />
+
+                <div className="grid grid-cols-2 gap-4">
+                  <FormField
+                    control={form.control}
+                    name="latitude"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Latitude</FormLabel>
+                        <FormControl>
+                          <Input type="number" step="any" {...field} readOnly className="bg-slate-50" />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                  <FormField
+                    control={form.control}
+                    name="longitude"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Longitude</FormLabel>
+                        <FormControl>
+                          <Input type="number" step="any" {...field} readOnly className="bg-slate-50" />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                </div>
               </div>
             </div>
 
             <DialogFooter className="pt-4">
-              <Button type="submit" disabled={isPending}>
-                {isPending ? <Loader2 className="animate-spin" /> : "Create Depot"}
+              <Button type="button" variant="outline" onClick={onClose}>
+                Cancel
+              </Button>
+              <Button type="submit" disabled={isPending || isReversing}>
+                {isPending || isReversing ?
+                  <><Loader2 className="mr-2 h-4 w-4 animate-spin" /> Creating...</> :
+                  "Create Depot"}
               </Button>
             </DialogFooter>
           </form>
         </Form>
-
-        <DialogClose className="absolute top-4 right-4 text-lg font-bold text-gray-600 hover:text-gray-800 cursor-pointer">×</DialogClose>
-
       </DialogContent>
     </Dialog>
   );

@@ -21,11 +21,6 @@ export enum OrderStatus {
   CANCELLED = "CANCELLED"
 }
 
-export enum SubscriptionStatus {
-  ACTIVE = "ACTIVE",
-  CANCELLED = "CANCELLED"
-}
-
 export enum VehicleStatus {
   IDLE = "IDLE",
   ACTIVE = "ACTIVE",
@@ -58,13 +53,19 @@ export interface LoginRequest {
 export interface DepotCreateRequest {
   latitude: number;
   longitude: number;
-  address: string | null;
+  address: string;
+}
+
+export interface DepotUpdateRequest {
+  latitude: number;
+  longitude: number;
+  address: string;
 }
 
 export interface OrderCreateRequest {
   latitude: number;
   longitude: number;
-  address: string | null;
+  address: string;
   estimatedWeight: number;
 }
 
@@ -72,25 +73,16 @@ export interface OrderUpdateRequest {
   status: OrderStatus;
 }
 
-export interface SubscriptionCreateRequest {
-  latitude: number;
-  longitude: number;
-  address: string | null;
-  estimatedWeight: number;
-}
-
 export interface VehicleCreateRequest {
-  driverId: string;
-  depotId: string;
+  driverId: string | null;
+  depotId: string | null;
   licensePlate: string;
   capacity: number;
 }
 
 export interface VehicleUpdateRequest {
-  driverId: string;
-  depotId: string;
-  licensePlate: string;
-  capacity: number;
+  driverId: string | null;
+  depotId: string | null;
 }
 
 
@@ -110,7 +102,7 @@ export interface DepotResponse {
   id: string;
   latitude: number;
   longitude: number;
-  address: string | null;
+  address: string;
   vehicles: VehicleResponse[];
   createdAt: string;
   updatedAt: string;
@@ -133,7 +125,7 @@ export interface NodeResponse {
   subscriptionId: string | null;
   latitude: number;
   longitude: number;
-  address: string | null;
+  address: string;
   estimatedWeight: number;
   createdAt: string;
   updatedAt: string;
@@ -152,7 +144,7 @@ export interface OrderResponse {
   userId: string;
   latitude: number;
   longitude: number;
-  address: string | null;
+  address: string;
   estimatedWeight: number;
   status: OrderStatus;
   completedAt: string | null;
@@ -204,17 +196,6 @@ export interface RouteResponse {
   updatedAt: string;
 }
 
-export interface SubscriptionResponse {
-  id: string;
-  userId: string;
-  latitude: number;
-  longitude: number;
-  address: string | null;
-  estimatedWeight: number;
-  createdAt: string;
-  updatedAt: string;
-}
-
 export interface UserResponse {
   id: string;
   username: string;
@@ -226,8 +207,8 @@ export interface UserResponse {
 
 export interface VehicleResponse {
   id: string;
-  driverId: string;
-  depotId: string;
+  driverId: string | null;
+  depotId: string | null;
   licensePlate: string;
   capacity: number;
   currentLatitude: number | null;
