@@ -75,4 +75,13 @@ public class VehicleController {
         .build();
   }
 
+
+  @DeleteMapping("/vehicles/{vehicleId}")
+  public ApiResponse<Void> deleteVehicle(@PathVariable("vehicleId") String vehicleId) {
+    log.info("Received delete vehicle request");
+    vehicleService.deleteVehicle(vehicleId);
+    return ApiResponse.<Void>builder()
+        .message("Delete vehicle successfully")
+        .build();
+  }
 }

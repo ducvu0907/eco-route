@@ -25,7 +25,7 @@ public class Depot {
   private String id;
 
   @Builder.Default
-  @OneToMany(mappedBy = "depot", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+  @OneToMany(mappedBy = "depot", fetch = FetchType.LAZY) // no cascading
   private List<Vehicle> vehicles = new ArrayList<>();
 
   private Double latitude;

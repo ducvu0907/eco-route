@@ -13,14 +13,9 @@ import java.time.LocalDateTime;
 @Builder
 public class NodeResponse {
   private String id;
-  private Integer sequenceNumber;
+  private Integer index;
   private String routeId;
-  private String orderId;
-  private String subscriptionId;
-  private Double latitude;
-  private Double longitude;
-  private String address;
-  private Double estimatedWeight;
+  private OrderResponse order;
   private LocalDateTime createdAt;
   private LocalDateTime updatedAt;
 }

@@ -18,7 +18,7 @@ public class OrderResponse {
   private Double latitude;
   private Double longitude;
   private String address;
-  private Double estimatedWeight;
+  private Double weight;
   private OrderStatus status;
   private LocalDateTime completedAt;
   private LocalDateTime createdAt;

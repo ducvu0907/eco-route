@@ -48,10 +48,7 @@ public class User implements UserDetails {
   @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
   private List<Order> orders = new ArrayList<>();
 
-  @OneToOne(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-  private Subscription subscription;
-
-  @OneToOne(mappedBy = "driver", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+  @OneToOne(mappedBy = "driver", fetch = FetchType.LAZY) // no cascading
   private Vehicle vehicle;
 
   @Override

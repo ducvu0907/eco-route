@@ -13,5 +13,5 @@ import lombok.NoArgsConstructor;
 public class DepotCreateRequest {
   private Double latitude;
   private Double longitude;
-  private String address; // if null we look up using reverse geocoding api
+  private String address;
 }

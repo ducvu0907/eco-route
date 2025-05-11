@@ -1,17 +1,11 @@
 package com.ducvu.backend_java.controller;
 
 import com.ducvu.backend_java.dto.ApiResponse;
-import com.ducvu.backend_java.dto.response.NotificationResponse;
-import com.ducvu.backend_java.dto.response.SubscriptionResponse;
 import com.ducvu.backend_java.dto.response.UserResponse;
-import com.ducvu.backend_java.model.Role;
-import com.ducvu.backend_java.service.NotificationService;
-import com.ducvu.backend_java.service.SubscriptionService;
 import com.ducvu.backend_java.service.UserService;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;

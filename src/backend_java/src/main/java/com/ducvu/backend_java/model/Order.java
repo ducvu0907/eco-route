@@ -32,7 +32,7 @@ public class Order {
 
   private String address;
 
-  private Double estimatedWeight;
+  private Double weight;
 
   @Enumerated(value = EnumType.STRING)
   private OrderStatus status;

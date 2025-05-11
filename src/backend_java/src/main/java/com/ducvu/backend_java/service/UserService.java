@@ -30,10 +30,13 @@ public class UserService {
   }
 
   public UserResponse getUserById(String userId) {
-    User user = getCurrentUser();
-    if (!user.getId().equals(userId) && user.getRole() != Role.MANAGER) {
+    User currentUser = getCurrentUser();
+    if (!currentUser.getId().equals(userId) && currentUser.getRole() != Role.MANAGER) {
       throw new RuntimeException("Unauthorized");
     }
+
+    User user = userRepository.findById(userId)
+        .orElseThrow(() -> new RuntimeException("User not found"));
 
     return mapper.map(user);
   }

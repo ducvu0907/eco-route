@@ -13,5 +13,5 @@ public class OrderCreateRequest {
   private Double latitude;
   private Double longitude;
   private String address; // if null we reverse geocode using osm api
-  private Double estimatedWeight;
+  private Double weight;
 }

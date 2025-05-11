@@ -28,3 +28,6 @@ springdoc:
     path: /api-docs
   swagger-ui:
     path: /docs
+
+vrp:
+  api-url: ${VRP_API_URL:http://localhost:8000/api/vrp}

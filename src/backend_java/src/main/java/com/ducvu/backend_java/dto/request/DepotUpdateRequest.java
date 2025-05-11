@@ -10,7 +10,8 @@ import lombok.NoArgsConstructor;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class VehicleUpdateRequest {
-  private String driverId;
-  private String depotId;
+public class DepotUpdateRequest {
+  private Double latitude;
+  private Double longitude;
+  private String address;
 }

@@ -18,6 +18,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -50,19 +51,33 @@ public class VehicleService {
 
   public VehicleResponse createVehicle(VehicleCreateRequest request) {
     validator.validate(request);
-    User driver = userRepository.findById(request.getDriverId())
-        .orElseThrow(() -> new RuntimeException("Driver not found"));
-
-    Depot depot = depotRepository.findById(request.getDepotId())
-        .orElseThrow(() -> new RuntimeException("Depot not found"));
 
     Vehicle vehicle = Vehicle.builder()
-        .driver(driver)
-        .depot(depot)
         .licensePlate(request.getLicensePlate())
         .capacity(request.getCapacity())
         .status(VehicleStatus.IDLE)
+        .currentLoad(0.)
         .build();
+
+    if (request.getDriverId() != null) {
+      User driver = userRepository.findById(request.getDriverId())
+          .orElseThrow(() -> new RuntimeException("Driver not found"));
+
+      vehicleRepository.findByDriverId(request.getDriverId())
+          .ifPresent(v -> {
+            throw new RuntimeException("Driver is already assigned");
+          });
+
+      vehicle.setDriver(driver);
+    }
+
+    if (request.getDepotId() != null) {
+      Depot depot = depotRepository.findById(request.getDepotId())
+          .orElseThrow(() -> new RuntimeException("Depot not found"));
+      vehicle.setDepot(depot);
+      vehicle.setCurrentLatitude(depot.getLatitude());
+      vehicle.setCurrentLongitude(depot.getLongitude());
+    }
 
     return mapper.map(vehicleRepository.save(vehicle));
   }
@@ -74,25 +89,38 @@ public class VehicleService {
     if (request.getDriverId() != null) {
       User driver = userRepository.findById(request.getDriverId())
           .orElseThrow(() -> new RuntimeException("Driver not found"));
+
+      vehicleRepository.findByDriverId(request.getDriverId())
+          .ifPresent(v -> {
+            v.setDriver(null);
+            vehicleRepository.save(v);
+          });
+
       vehicle.setDriver(driver);
     }
 
     if (request.getDepotId() != null) {
       Depot depot = depotRepository.findById(request.getDepotId())
           .orElseThrow(() -> new RuntimeException("Depot not found"));
+
       vehicle.setDepot(depot);
-    }
-
-    if (request.getLicensePlate() != null) {
-      vehicle.setLicensePlate(request.getLicensePlate());
-    }
-
-    if (request.getCapacity() != null) {
-      vehicle.setCapacity(request.getCapacity());
+      vehicle.setCurrentLongitude(depot.getLatitude());
+      vehicle.setCurrentLongitude(depot.getLongitude());
     }
 
     return mapper.map(vehicleRepository.save(vehicle));
   }
 
+  public void deleteVehicle(String vehicleId) {
+    Vehicle vehicle = vehicleRepository.findById(vehicleId)
+        .orElseThrow(() -> new RuntimeException("Vehicle not found"));
+
+    if (vehicle.getDriver() != null) {
+      vehicle.getDriver().setVehicle(null);
+      userRepository.save(vehicle.getDriver());
+    }
+
+    vehicleRepository.deleteById(vehicleId);
+  }
 }
 

@@ -4,22 +4,16 @@ package com.ducvu.backend_java.service;
 import com.ducvu.backend_java.dto.request.OrderCreateRequest;
 import com.ducvu.backend_java.dto.request.OrderUpdateRequest;
 import com.ducvu.backend_java.dto.response.OrderResponse;
-import com.ducvu.backend_java.dto.response.OsmResponse;
 import com.ducvu.backend_java.model.Order;
 import com.ducvu.backend_java.model.OrderStatus;
 import com.ducvu.backend_java.model.Role;
 import com.ducvu.backend_java.model.User;
 import com.ducvu.backend_java.repository.OrderRepository;
-import com.ducvu.backend_java.repository.UserRepository;
-import com.ducvu.backend_java.util.Helper;
 import com.ducvu.backend_java.util.Mapper;
 import com.ducvu.backend_java.util.Validator;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.aspectj.weaver.ast.Or;
-import org.hibernate.boot.model.relational.ColumnOrderingStrategyStandard;
 import org.springframework.stereotype.Service;
-import org.w3c.dom.stylesheets.LinkStyle;
 
 import java.util.List;
 
@@ -31,7 +25,6 @@ public class OrderService {
   private final OrderRepository orderRepository;
   private final Validator validator;
   private final Mapper mapper;
-  private final Helper helper;
 
   public List<OrderResponse> getOrdersByUserId(String userId) {
     User user = userService.getCurrentUser();
@@ -74,7 +67,7 @@ public class OrderService {
         .latitude(request.getLatitude())
         .longitude(request.getLongitude())
         .address(request.getAddress())
-        .estimatedWeight(request.getEstimatedWeight())
+        .weight(request.getWeight())
         .status(OrderStatus.PENDING) // default to pending
         .build();
 

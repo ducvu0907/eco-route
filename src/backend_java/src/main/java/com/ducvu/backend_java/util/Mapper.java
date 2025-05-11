@@ -2,7 +2,6 @@ package com.ducvu.backend_java.util;
 
 import com.ducvu.backend_java.dto.response.*;
 import com.ducvu.backend_java.model.*;
-import com.ducvu.backend_java.repository.VehicleRepository;
 import org.springframework.stereotype.Component;
 
 @Component
@@ -38,8 +37,8 @@ public class Mapper {
   public VehicleResponse map(Vehicle vehicle) {
     return VehicleResponse.builder()
         .id(vehicle.getId())
-        .driverId(vehicle.getDriver().getId())
-        .depotId(vehicle.getDepot().getId())
+        .driverId(vehicle.getDriver() != null ? vehicle.getDriver().getId() : null)
+        .depotId(vehicle.getDepot() != null ? vehicle.getDepot().getId() : null)
         .licensePlate(vehicle.getLicensePlate())
         .capacity(vehicle.getCapacity())
         .currentLatitude(vehicle.getCurrentLatitude())
@@ -54,14 +53,9 @@ public class Mapper {
   public NodeResponse map(Node node) {
     return NodeResponse.builder()
         .id(node.getId())
-        .sequenceNumber(node.getSequenceNumber())
+        .index(node.getIndex())
         .routeId(node.getRoute().getId())
-        .orderId(node.getOrder().getId())
-        .subscriptionId(node.getSubscription().getId())
-        .latitude(node.getLatitude())
-        .longitude(node.getLongitude())
-        .address(node.getAddress())
-        .estimatedWeight(node.getEstimatedWeight())
+        .order(this.map(node.getOrder()))
         .createdAt(node.getCreatedAt())
         .updatedAt(node.getUpdatedAt())
         .build();
@@ -103,26 +97,12 @@ public class Mapper {
         .latitude(order.getLatitude())
         .longitude(order.getLongitude())
         .address(order.getAddress())
-        .estimatedWeight(order.getEstimatedWeight())
+        .weight(order.getWeight())
         .status(order.getStatus())
         .completedAt(order.getCompletedAt())
         .createdAt(order.getCreatedAt())
         .updatedAt(order.getUpdatedAt())
         .build();
-  }
-
-  public SubscriptionResponse map(Subscription subscription) {
-    return SubscriptionResponse.builder()
-        .id(subscription.getId())
-        .userId(subscription.getUser().getId())
-        .latitude(subscription.getLatitude())
-        .longitude(subscription.getLongitude())
-        .address(subscription.getAddress())
-        .estimatedWeight(subscription.getEstimatedWeight())
-        .createdAt(subscription.getCreatedAt())
-        .updatedAt(subscription.getUpdatedAt())
-        .build();
-
   }
 
   public NotificationResponse map(Notification notification) {
@@ -134,5 +114,44 @@ public class Mapper {
         .updatedAt(notification.getUpdatedAt())
         .build();
   }
+
+  public VrpVehicle mapVrp(Vehicle vehicle) {
+    return VrpVehicle.builder()
+        .id(vehicle.getId())
+        .start(new VrpLocation(vehicle.getCurrentLatitude(), vehicle.getCurrentLongitude())) // this should be the same as depot if not running
+        .end(new VrpLocation(vehicle.getCurrentLatitude(), vehicle.getCurrentLongitude()))
+        .load(vehicle.getCurrentLoad())
+        .capacity(vehicle.getCapacity())
+        .build();
+  }
+
+  public VrpJob mapVrp(Order order) {
+    return VrpJob.builder()
+        .id(order.getId())
+        .location(new VrpLocation(order.getLatitude(), order.getLongitude()))
+        .demand(order.getWeight())
+        .build();
+  }
+
+  public VrpRoute mapVrp(Route route) {
+    return VrpRoute.builder()
+        .vehicleId(route.getVehicle().getId())
+        .steps(
+            route.getNodes()
+                .stream()
+                .map(this::mapVrp)
+                .toList()
+        )
+        .build();
+  }
+
+  public VrpJob mapVrp(Node node) {
+    return VrpJob.builder()
+        .id(node.getOrder().getId())
+        .location(new VrpLocation(node.getOrder().getLatitude(), node.getOrder().getLongitude()))
+        .demand(node.getOrder().getWeight())
+        .build();
+  }
+
 
 }

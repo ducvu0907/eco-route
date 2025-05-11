@@ -3,6 +3,7 @@ package com.ducvu.backend_java.controller;
 
 import com.ducvu.backend_java.dto.ApiResponse;
 import com.ducvu.backend_java.dto.request.DepotCreateRequest;
+import com.ducvu.backend_java.dto.request.DepotUpdateRequest;
 import com.ducvu.backend_java.dto.response.DepotResponse;
 import com.ducvu.backend_java.dto.response.VehicleResponse;
 import com.ducvu.backend_java.service.DepotService;
@@ -45,10 +46,20 @@ public class DepotController {
 
   @PostMapping("/depots")
   public ApiResponse<DepotResponse> createDepot(@RequestBody DepotCreateRequest request) {
-    log.info("Received create depot request");
+    log.info("Received create depot request: {}", request);
     var result = depotService.createDepot(request);
     return ApiResponse.<DepotResponse>builder()
         .message("Create depot successfully")
+        .result(result)
+        .build();
+  }
+
+  @PostMapping("/depots/{depotId}")
+  public ApiResponse<DepotResponse> updateDepot(@PathVariable("depotId") String depotId, @RequestBody DepotUpdateRequest request) {
+    log.info("Received update depot request");
+    var result = depotService.updateDepot(depotId, request);
+    return ApiResponse.<DepotResponse>builder()
+        .message("Update depot successfully")
         .result(result)
         .build();
   }

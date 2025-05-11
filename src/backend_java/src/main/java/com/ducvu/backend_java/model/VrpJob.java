@@ -1,4 +1,4 @@
-package com.ducvu.backend_java.dto.request;
+package com.ducvu.backend_java.model;
 
 
 import lombok.AllArgsConstructor;
@@ -10,7 +10,8 @@ import lombok.NoArgsConstructor;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class VehicleUpdateRequest {
-  private String driverId;
-  private String depotId;
+public class VrpJob {
+  private String id;
+  private VrpLocation location;
+  private Double demand;
 }

@@ -6,12 +6,6 @@ import org.springframework.util.StringUtils;
 
 @Component
 public class Validator {
-  public void validate(SubscriptionCreateRequest request) {
-    if (!isValid(request)) {
-      throw new RuntimeException("Invalid request format");
-    }
-  }
-
   public void validate(OrderCreateRequest request) {
     if (!isValid(request)) {
       throw new RuntimeException("Invalid request format");
@@ -36,6 +30,12 @@ public class Validator {
     }
   }
 
+  public void validate(DepotUpdateRequest request) {
+    if (!isValid(request)) {
+      throw new RuntimeException("Invalid request format");
+    }
+  }
+
   public void validate(DepotCreateRequest request) {
     if (!isValid(request)) {
       throw new RuntimeException("Invalid request format");
@@ -54,26 +54,27 @@ public class Validator {
         && StringUtils.hasText(request.getPassword());
   }
 
+  private boolean isValid(DepotUpdateRequest request) {
+    return request.getLatitude() != null
+        && request.getLongitude() != null
+        && request.getAddress() != null;
+  }
+
   private boolean isValid(DepotCreateRequest request) {
-    return request.getLatitude() != null && request.getLongitude() != null;
+    return request.getLatitude() != null
+        && request.getLongitude() != null
+        && request.getAddress() != null;
   }
 
   private boolean isValid(VehicleCreateRequest request) {
-    return StringUtils.hasText(request.getDriverId())
-        && StringUtils.hasText(request.getDepotId())
-        && StringUtils.hasText(request.getLicensePlate())
+    return StringUtils.hasText(request.getLicensePlate())
         && request.getCapacity() != null;
   }
 
-
-  private boolean isValid(SubscriptionCreateRequest request) {
-    return request.getLatitude() != null
-        && request.getLongitude() != null
-        && request.getEstimatedWeight() != null;
-  }
   private boolean isValid(OrderCreateRequest request) {
     return request.getLatitude() != null
         && request.getLongitude() != null
-        && request.getEstimatedWeight() != null;
+        && request.getAddress() != null
+        && request.getWeight() != null;
   }
 }

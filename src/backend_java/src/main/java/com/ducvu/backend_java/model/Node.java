@@ -22,7 +22,7 @@ public class Node {
   @GeneratedValue(strategy = GenerationType.UUID)
   private String id; 
 
-  private Integer sequenceNumber;
+  private Integer index;
 
   @ManyToOne(fetch = FetchType.LAZY)
   @JoinColumn(name = "route_id")
@@ -31,18 +31,6 @@ public class Node {
   @OneToOne
   @JoinColumn(name = "order_id")
   private Order order;
-
-  @ManyToOne
-  @JoinColumn(name = "subscription_id")
-  private Subscription subscription;
-
-  private Double latitude;
-
-  private Double longitude;
-
-  private String address;
-
-  private Double estimatedWeight;
 
   @CreationTimestamp
   private LocalDateTime createdAt;
