@@ -86,6 +86,7 @@ def insert_jobs_best_cost(request: RoutingRequest):
   """Insert jobs into existing routes by minimizing cost increase."""
   all_routes = {route.vehicle_id: list(route.steps) for route in request.routes}
   modified_vehicle_ids = set() # track which routes got updated
+  new_dists = {} # map vehicle_id to new distance
 
   for job in request.jobs:
     best_insertion = None
@@ -108,15 +109,16 @@ def insert_jobs_best_cost(request: RoutingRequest):
 
         if cost_increase < best_cost_increase:
           best_cost_increase = cost_increase
-          best_insertion = (vehicle.id, i)
+          best_insertion = (vehicle.id, i, new_dist)
 
     if not best_insertion:
       raise RuntimeError(f"No feasible insertion for job {job.id}")
 
-    vehicle_id, insert_pos = best_insertion
+    vehicle_id, insert_pos, route_dist = best_insertion
     all_routes.setdefault(vehicle_id, [])
     all_routes[vehicle_id].insert(insert_pos, job)
     modified_vehicle_ids.add(vehicle_id)
+    new_dists[vehicle_id] = route_dist
 
   # this one return full routes
   # response_routes = [
@@ -125,7 +127,7 @@ def insert_jobs_best_cost(request: RoutingRequest):
 
   # return only updated routes
   response_routes = [
-    Route(vehicle_id=vid, steps=all_routes[vid]) for vid in modified_vehicle_ids
+    Route(vehicle_id=vid, steps=all_routes[vid], distance=new_dists[vid]) for vid in modified_vehicle_ids
   ]
 
   return RoutingResponse(routes=response_routes)
@@ -142,6 +144,7 @@ def _calculate_route_distance(points):
   )
 
 
+# Too slow, currently not in used
 def assign_greedy_and_solve_tsp(request: RoutingRequest):
   """Assign jobs to closest vehicles and resolve with TSP."""
   all_routes = []
@@ -156,7 +159,7 @@ def assign_greedy_and_solve_tsp(request: RoutingRequest):
       vehicle_lat, vehicle_lon = vehicle.start.lat, vehicle.start.lon
       dist = _calculate_haversine_distance(job_lat, job_lon, vehicle_lat, vehicle_lon)
       if dist < min_dist and vehicle.load + job.demand <= vehicle.capacity:
-        dist = min_dist
+        min_dist = dist
         closest_vehicle = vehicle
 
     logger.info(f"Get closest vehicle: {closest_vehicle}")
@@ -289,14 +292,20 @@ def solve_static_mdvrp(request: RoutingRequest):
     # also note that we might not use all of the vehicles
     vehicles = depots_vehicles[depot]
     for i, route in enumerate(result.routes):
+      point = (vehicles[i].start.lat, vehicles[i].start.lon)
+      distance = 0.0
       steps = []
       for r in route:
         customer = customers[r - 1]
+        next_point = (customers_jobs[customer].location.lat, customers_jobs[customer].location.lon)
+        distance += _calculate_haversine_distance(point[0], point[1], next_point[0], next_point[1])
+        point = next_point
         steps.append(customers_jobs[customer])
         
       route_response = Route(
         vehicle_id=vehicles[i].id, 
-        steps=steps
+        steps=steps,
+        distance=distance
         )
 
       all_routes.append(route_response)

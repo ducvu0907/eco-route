@@ -49,6 +49,7 @@ class Vehicle(BaseModel):
 class Route(BaseModel):
   vehicle_id: str
   steps: List[Job]
+  distance: float = 0.0
 
 
 class RoutingRequest(BaseModel):
