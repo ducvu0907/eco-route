@@ -76,7 +76,7 @@ export default function DepotDetails() {
           {depot.vehicles.length === 0 ? (
             <div className="text-muted-foreground">No vehicles assigned to this depot.</div>
           ) : (
-            <div className="space-y-4">
+            <div className="space-y-4 max-h-[450px] overflow-y-auto pr-2">
               {depot.vehicles.map((vehicle) => (
                 <div
                   key={vehicle.id}

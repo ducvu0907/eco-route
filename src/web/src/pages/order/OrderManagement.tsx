@@ -76,7 +76,7 @@ export default function OrderManagement() {
                   {order.latitude}, {order.longitude}
                 </TableCell>
                 <TableCell>{order.address || "N/A"}</TableCell>
-                <TableCell>{order.estimatedWeight} kg</TableCell>
+                <TableCell>{order.weight} kg</TableCell>
                 <TableCell>{order.status}</TableCell>
                 <TableCell>{formatDate(order.completedAt)}</TableCell>
                 <TableCell>{formatDate(order.createdAt)}</TableCell>

@@ -42,19 +42,22 @@ export default function UserOrders({ userId }: UserOrdersProps) {
         <CardTitle>Orders</CardTitle>
       </CardHeader>
       <CardContent className="space-y-2 text-sm">
-        <ul className="space-y-3">
+        <ul className="space-y-4 max-h-[450px] overflow-y-auto pr-2">
           {orders?.map((order) => (
-            <li key={order.id} className="border p-3 rounded-md">
-              <div className="flex flex-wrap justify-between items-start gap-y-2 text-sm">
-                <div className="flex flex-wrap gap-x-6 gap-y-2">
-                  <div><strong>Address:</strong> {order.address ?? "N/A"}</div>
-                  <div><strong>Status:</strong> {order.status}</div>
-                  <div><strong>Estimated Weight:</strong> {order.estimatedWeight} kg</div>
-                  <div><strong>Completed At:</strong> {formatDate(order.completedAt)}</div>
-                  <div><strong>Created At:</strong> {formatDate(order.createdAt)}</div>
-                  <div><strong>Updated At:</strong> {formatDate(order.updatedAt)}</div>
-                </div>
-                <Button onClick={() => navigate(`/orders/${order.id}`)}>View Details</Button>
+            <li
+              key={order.id}
+              className="border border-muted rounded-xl p-4 bg-white shadow-sm flex flex-col gap-4"
+            >
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-3 text-sm text-muted-foreground">
+                <div><strong className="text-primary">Address:</strong> {order.address ?? "N/A"}</div>
+                <div><strong className="text-primary">Status:</strong> {order.status}</div>
+                <div><strong className="text-primary">Estimated Weight:</strong> {order.weight} kg</div>
+                <div><strong className="text-primary">Completed At:</strong> {formatDate(order.completedAt)}</div>
+                <div><strong className="text-primary">Created At:</strong> {formatDate(order.createdAt)}</div>
+                <div><strong className="text-primary">Updated At:</strong> {formatDate(order.updatedAt)}</div>
+              </div>
+              <div className="flex justify-end">
+                <Button size="sm" onClick={() => navigate(`/orders/${order.id}`)}>View Details</Button>
               </div>
             </li>
           ))}

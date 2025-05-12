@@ -28,7 +28,6 @@ export enum VehicleStatus {
 }
 
 export enum DispatchStatus {
-  PLANNED = "PLANNED",
   IN_PROGRESS = "IN_PROGRESS",
   COMPLETED = "COMPLETED"
 }
@@ -66,7 +65,7 @@ export interface OrderCreateRequest {
   latitude: number;
   longitude: number;
   address: string;
-  estimatedWeight: number;
+  weight: number;
 }
 
 export interface OrderUpdateRequest {
@@ -110,23 +109,8 @@ export interface DepotResponse {
 
 export interface DispatchResponse {
   id: string;
-  startTime: string | null;
-  endTime: string | null;
   status: DispatchStatus;
-  createdAt: string;
-  updatedAt: string;
-}
-
-export interface NodeResponse {
-  id: string;
-  sequenceNumber: number;
-  routeId: string;
-  orderId: string | null;
-  subscriptionId: string | null;
-  latitude: number;
-  longitude: number;
-  address: string;
-  estimatedWeight: number;
+  completedAt: string;
   createdAt: string;
   updatedAt: string;
 }
@@ -141,11 +125,13 @@ export interface NotificationResponse {
 
 export interface OrderResponse {
   id: string;
+  index: number | null;
   userId: string;
+  routeId: string | null;
   latitude: number;
   longitude: number;
   address: string;
-  estimatedWeight: number;
+  weight: number;
   status: OrderStatus;
   completedAt: string | null;
   createdAt: string;
@@ -189,9 +175,8 @@ export interface RouteResponse {
   vehicleId: string;
   dispatchId: string;
   totalDistance: number;
-  nodes: NodeResponse[];
-  startTime: string | null;
-  endTime: string | null;
+  orders: OrderResponse[];
+  completedAt: string;
   createdAt: string;
   updatedAt: string;
 }

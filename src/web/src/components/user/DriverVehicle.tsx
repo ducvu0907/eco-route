@@ -82,7 +82,7 @@ export default function DriverVehicle({ driverId }: DriverVehicleProps) {
               <SelectContent className="w-full max-h-60 overflow-auto">
                 {vehicles.map((v: any) => (
                   <SelectItem key={v.id} value={v.id}>
-                    {v.licensePlate} ({v.status})
+                    {v.licensePlate} ({v.status}) ({v.driverId === null ? "Not assigned" : "Assigned"})
                   </SelectItem>
                 ))}
               </SelectContent>
@@ -91,7 +91,7 @@ export default function DriverVehicle({ driverId }: DriverVehicleProps) {
           <Button onClick={handleAssign} disabled={!selectedVehicleId || isPending}>
             {isPending ? "Assigning..." : "Assign Vehicle"}
           </Button>
-          <Button variant={"secondary"} onClick={() => navigate(`/vehicles/${vehicle?.id}`)} >
+          <Button disabled={!vehicle} variant={"secondary"} onClick={() => navigate(`/vehicles/${vehicle?.id}`)} >
             View vehicle details
           </Button>
         </div>
