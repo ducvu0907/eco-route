@@ -15,4 +15,5 @@ import java.util.List;
 @AllArgsConstructor
 public class VrpResponse {
   List<VrpRoute> routes;
+  String error;
 }

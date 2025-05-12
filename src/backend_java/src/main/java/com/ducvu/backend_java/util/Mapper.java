@@ -37,8 +37,8 @@ public class Mapper {
   public VehicleResponse map(Vehicle vehicle) {
     return VehicleResponse.builder()
         .id(vehicle.getId())
-        .driverId(vehicle.getDriver() != null ? vehicle.getDriver().getId() : null)
-        .depotId(vehicle.getDepot() != null ? vehicle.getDepot().getId() : null)
+        .driverId(vehicle.getDriver() == null ? null : vehicle.getDriver().getId())
+        .depotId(vehicle.getDepot() == null ? null : vehicle.getDepot().getId())
         .licensePlate(vehicle.getLicensePlate())
         .capacity(vehicle.getCapacity())
         .currentLatitude(vehicle.getCurrentLatitude())
@@ -50,23 +50,11 @@ public class Mapper {
         .build();
   }
 
-  public NodeResponse map(Node node) {
-    return NodeResponse.builder()
-        .id(node.getId())
-        .index(node.getIndex())
-        .routeId(node.getRoute().getId())
-        .order(this.map(node.getOrder()))
-        .createdAt(node.getCreatedAt())
-        .updatedAt(node.getUpdatedAt())
-        .build();
-  }
-
   public DispatchResponse map(Dispatch dispatch) {
     return DispatchResponse.builder()
         .id(dispatch.getId())
-        .startTime(dispatch.getStartTime())
-        .endTime(dispatch.getEndTime())
         .status(dispatch.getStatus())
+        .completedAt(dispatch.getCompletedAt())
         .createdAt(dispatch.getCreatedAt())
         .updatedAt(dispatch.getUpdatedAt())
         .build();
@@ -77,14 +65,13 @@ public class Mapper {
         .id(route.getId())
         .vehicleId(route.getVehicle().getId())
         .dispatchId(route.getDispatch().getId())
-        .totalDistance(route.getTotalDistance())
-        .nodes(route.getNodes()
+        .distance(route.getDistance())
+        .orders(route.getOrders()
             .stream()
             .map(this::map)
             .toList()
         )
-        .startTime(route.getStartTime())
-        .endTime(route.getEndTime())
+        .completedAt(route.getCompletedAt())
         .createdAt(route.getCreatedAt())
         .updatedAt(route.getUpdatedAt())
         .build();
@@ -93,7 +80,9 @@ public class Mapper {
   public OrderResponse map(Order order) {
     return OrderResponse.builder()
         .id(order.getId())
+        .index(order.getIndex())
         .userId(order.getUser().getId())
+        .routeId(order.getRoute() != null ? order.getRoute().getId() : null)
         .latitude(order.getLatitude())
         .longitude(order.getLongitude())
         .address(order.getAddress())
@@ -125,6 +114,19 @@ public class Mapper {
         .build();
   }
 
+  public VrpRoute mapVrp(Route route) {
+    return VrpRoute.builder()
+        .vehicleId(route.getVehicle().getId())
+        .steps(
+            route.getOrders()
+                .stream()
+                .map(this::mapVrp)
+                .toList()
+        )
+        .distance(route.getDistance())
+        .build();
+  }
+
   public VrpJob mapVrp(Order order) {
     return VrpJob.builder()
         .id(order.getId())
@@ -133,25 +135,6 @@ public class Mapper {
         .build();
   }
 
-  public VrpRoute mapVrp(Route route) {
-    return VrpRoute.builder()
-        .vehicleId(route.getVehicle().getId())
-        .steps(
-            route.getNodes()
-                .stream()
-                .map(this::mapVrp)
-                .toList()
-        )
-        .build();
-  }
-
-  public VrpJob mapVrp(Node node) {
-    return VrpJob.builder()
-        .id(node.getOrder().getId())
-        .location(new VrpLocation(node.getOrder().getLatitude(), node.getOrder().getLongitude()))
-        .demand(node.getOrder().getWeight())
-        .build();
-  }
 
 
 }

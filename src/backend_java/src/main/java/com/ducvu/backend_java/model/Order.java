@@ -22,9 +22,15 @@ public class Order {
   @GeneratedValue(strategy = GenerationType.UUID)
   private String id; 
 
+  private Integer index;
+
   @ManyToOne
   @JoinColumn(name = "user_id")
   private User user;
+
+  @ManyToOne(fetch = FetchType.LAZY)
+  @JoinColumn(name = "route_id")
+  private Route route;
 
   private Double latitude;
 

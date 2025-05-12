@@ -8,7 +8,9 @@ import com.ducvu.backend_java.model.Order;
 import com.ducvu.backend_java.model.OrderStatus;
 import com.ducvu.backend_java.model.Role;
 import com.ducvu.backend_java.model.User;
+import com.ducvu.backend_java.repository.DispatchRepository;
 import com.ducvu.backend_java.repository.OrderRepository;
+import com.ducvu.backend_java.repository.RouteRepository;
 import com.ducvu.backend_java.util.Mapper;
 import com.ducvu.backend_java.util.Validator;
 import lombok.RequiredArgsConstructor;
@@ -23,6 +25,8 @@ import java.util.List;
 public class OrderService {
   private final UserService userService;
   private final OrderRepository orderRepository;
+  private final RouteRepository routeRepository;
+  private final DispatchRepository dispatchRepository;
   private final Validator validator;
   private final Mapper mapper;
 
@@ -82,9 +86,16 @@ public class OrderService {
     return mapper.map(orderRepository.save(order));
   }
 
-  // TODO: refactor this
-  // currently a placeholder for driver to mark the order as done
-  // and this should notify user that the order status has changed
+  // driver uses this to update order status
+  public OrderResponse markOrderAsDone(String orderId) {
+    Order order = orderRepository.findById(orderId)
+        .orElseThrow(() -> new RuntimeException("Order not found"));
+
+    order.setStatus(OrderStatus.DONE);
+    return mapper.map(orderRepository.save(order));
+  }
+
+  // TODO
   public OrderResponse updateOrder(String orderId, OrderUpdateRequest request) {
     User user = userService.getCurrentUser();
     Order order = orderRepository.findById(orderId)

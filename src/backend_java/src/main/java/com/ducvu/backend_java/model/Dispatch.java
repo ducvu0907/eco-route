@@ -24,18 +24,18 @@ public class Dispatch {
   @GeneratedValue(strategy = GenerationType.UUID) 
   private String id;
 
+  @Builder.Default
   @OneToMany(mappedBy = "dispatch", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
   private List<Route> routes = new ArrayList<>();
-
-  private LocalDateTime startTime;
-
-  private LocalDateTime endTime;
 
   @Enumerated(value = EnumType.STRING)
   private DispatchStatus status;
 
+  private LocalDateTime completedAt;
+
   @CreationTimestamp
   private LocalDateTime createdAt;
+
 
   @UpdateTimestamp
   private LocalDateTime updatedAt;

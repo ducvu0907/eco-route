@@ -31,3 +31,7 @@ springdoc:
 
 vrp:
   api-url: ${VRP_API_URL:http://localhost:8000/api/vrp}
+
+firebase:
+  credentials-path: ${FIREBASE_CREDENTIALS_PATH:firebase/firebase-adminsdk.json}
+  database-url: ${FIREBASE_DATABASE_URL:https://eco-route-d0e49-default-rtdb.asia-southeast1.firebasedatabase.app/}

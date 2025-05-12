@@ -63,7 +63,16 @@ public class OrderController {
         .build();
   }
 
-  // currently used for driver to update order status
+  @PostMapping("/orders/{orderId}/done")
+  public ApiResponse<OrderResponse> markOrderAsDone(@PathVariable("orderId") String orderId) {
+    log.info("Received mark order as done");
+    var result = orderService.markOrderAsDone(orderId);
+    return ApiResponse.<OrderResponse>builder()
+        .message("Mark order as done successfully")
+        .result(result)
+        .build();
+  }
+
   @PostMapping("/orders/{orderId}")
   public ApiResponse<OrderResponse> updateOrder(@PathVariable("orderId") String orderId, @RequestBody OrderUpdateRequest request) {
     log.info("Received order update request: {}", request);

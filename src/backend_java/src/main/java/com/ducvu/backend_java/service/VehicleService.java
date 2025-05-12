@@ -52,6 +52,9 @@ public class VehicleService {
   public VehicleResponse createVehicle(VehicleCreateRequest request) {
     validator.validate(request);
 
+    vehicleRepository.findByLicensePlate(request.getLicensePlate())
+        .ifPresent(v -> {throw new RuntimeException("Vehicle already exists");});
+
     Vehicle vehicle = Vehicle.builder()
         .licensePlate(request.getLicensePlate())
         .capacity(request.getCapacity())
@@ -86,6 +89,10 @@ public class VehicleService {
     Vehicle vehicle = vehicleRepository.findById(vehicleId)
         .orElseThrow(() -> new RuntimeException("Vehicle not found"));
 
+    if (request.getStatus() != null) {
+      vehicle.setStatus(request.getStatus());
+    }
+
     if (request.getDriverId() != null) {
       User driver = userRepository.findById(request.getDriverId())
           .orElseThrow(() -> new RuntimeException("Driver not found"));
@@ -115,9 +122,12 @@ public class VehicleService {
     Vehicle vehicle = vehicleRepository.findById(vehicleId)
         .orElseThrow(() -> new RuntimeException("Vehicle not found"));
 
+    if (vehicle.getStatus() == VehicleStatus.ACTIVE) {
+      throw new RuntimeException("Cannot delete active vehicle");
+    }
+
     if (vehicle.getDriver() != null) {
       vehicle.getDriver().setVehicle(null);
-      userRepository.save(vehicle.getDriver());
     }
 
     vehicleRepository.deleteById(vehicleId);

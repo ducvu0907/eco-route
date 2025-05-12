@@ -1,12 +1,12 @@
 package com.ducvu.backend_java.service;
 
-
 import com.ducvu.backend_java.dto.request.VrpRequest;
 import com.ducvu.backend_java.dto.response.DispatchResponse;
 import com.ducvu.backend_java.dto.response.VrpResponse;
 import com.ducvu.backend_java.model.*;
 import com.ducvu.backend_java.repository.*;
 import com.ducvu.backend_java.util.Mapper;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
@@ -20,17 +20,23 @@ import java.util.List;
 @RequiredArgsConstructor
 @Slf4j
 public class DispatchService {
+
   private final DispatchRepository dispatchRepository;
   private final OrderRepository orderRepository;
   private final VehicleRepository vehicleRepository;
   private final DepotRepository depotRepository;
   private final RouteRepository routeRepository;
-  private final NodeRepository nodeRepository;
   private final Mapper mapper;
   private final RestTemplate restTemplate;
 
   @Value("${vrp.api-url}")
   private String vrpApiUrl;
+
+  public DispatchResponse getCurrentDispatch() {
+    Dispatch dispatch = dispatchRepository.findActiveDispatch()
+        .orElseThrow(() -> new RuntimeException("No current dispatch found"));
+    return mapper.map(dispatch);
+  }
 
   public List<DispatchResponse> getDispatches() {
     return dispatchRepository.findAll()
@@ -39,27 +45,20 @@ public class DispatchService {
         .toList();
   }
 
-  // TODO
+  @Transactional
   public void createDispatch() {
-    // there should be only one or zero
-    // if there's ongoing one we use dynamic vrp
-    List<Dispatch> runningDispatches = dispatchRepository.findAll()
-        .stream()
-        .filter(d -> d.getStatus() == DispatchStatus.IN_PROGRESS)
-        .toList();
+    Dispatch runningDispatch = dispatchRepository.findActiveDispatch()
+        .orElse(null);
 
-    // pending orders are jobs
     List<Order> orders = orderRepository.findAll()
         .stream()
         .filter(o -> o.getStatus() == OrderStatus.PENDING)
         .toList();
 
-    // depots
     List<Depot> depots = depotRepository.findAll();
 
-    // request preparation
     List<VrpVehicle> vehicles = depots.stream()
-        .flatMap(depot -> depot.getVehicles().stream())
+        .flatMap(depot -> depot.getVehicles().stream().filter(v -> v.getStatus() != VehicleStatus.REPAIR))
         .map(mapper::mapVrp)
         .toList();
 
@@ -67,11 +66,11 @@ public class DispatchService {
         .map(mapper::mapVrp)
         .toList();
 
-    List<VrpRoute> routes = new ArrayList<>();
+    List<VrpRoute> existingRoutes = new ArrayList<>();
+    boolean isDynamic = runningDispatch != null;
 
-    if (!runningDispatches.isEmpty()) {
-      Dispatch ongoingDispatch = runningDispatches.get(0);
-      routes = ongoingDispatch.getRoutes()
+    if (isDynamic) {
+      existingRoutes = runningDispatch.getRoutes()
           .stream()
           .map(mapper::mapVrp)
           .toList();
@@ -79,17 +78,101 @@ public class DispatchService {
 
     VrpRequest vrpRequest = VrpRequest.builder()
         .vehicles(vehicles)
-        .routes(routes)
+        .routes(existingRoutes)
         .jobs(jobs)
         .build();
 
-    log.info("Vrp request: {}", vrpRequest);
+    log.info("Request number of vehicles: {}", vrpRequest.getVehicles().toArray().length);
+    log.info("Request number of routes: {}", vrpRequest.getRoutes().toArray().length);
+    log.info("Request number of jobs: {}", vrpRequest.getJobs().toArray().length);
 
     VrpResponse vrpResponse = restTemplate.postForObject(vrpApiUrl, vrpRequest, VrpResponse.class);
 
-    log.info("Vrp response: {}", vrpResponse);
+    if (vrpResponse == null || vrpResponse.getError() != null) {
+      throw new RuntimeException("Vrp api error");
+    }
 
+    if (vrpResponse.getRoutes().isEmpty()) {
+      throw new RuntimeException("No routes updated");
+    }
+
+    log.info("Response number of routes: {}", vrpResponse.getRoutes().toArray().length);
+
+    if (isDynamic) {
+      updateOngoingDispatch(runningDispatch, vrpResponse);
+    } else {
+      createNewDispatch(vrpResponse);
+    }
   }
 
+  private void updateOngoingDispatch(Dispatch dispatch, VrpResponse vrpResponse) {
+    List<Route> updatedRoutes = vrpResponse.getRoutes()
+        .stream()
+        .map(vrpRoute -> {
+          Vehicle vehicle = vehicleRepository.findById(vrpRoute.getVehicleId())
+              .orElseThrow(() -> new RuntimeException("Vehicle not found: " + vrpRoute.getVehicleId()));
 
+          vehicle.setStatus(VehicleStatus.ACTIVE);
+
+          Route route = routeRepository.findByDispatchIdAndVehicleId(dispatch.getId(), vehicle.getId())
+              .orElseThrow(() -> new RuntimeException("Route not found for dispatch: " + dispatch.getId()));
+
+          route.setOrders(buildOrders(vrpRoute, route));
+          route.setDistance(vrpRoute.getDistance());
+
+          return route;
+        })
+        .toList();
+
+    routeRepository.saveAll(updatedRoutes);
+  }
+
+  private void createNewDispatch(VrpResponse vrpResponse) {
+    Dispatch dispatch = Dispatch.builder()
+        .status(DispatchStatus.IN_PROGRESS)
+        .build();
+
+    List<Route> newRoutes = vrpResponse.getRoutes()
+        .stream()
+        .map(vrpRoute -> buildRouteFromVrp(vrpRoute, dispatch))
+        .toList();
+
+    dispatch.setRoutes(newRoutes);
+    dispatchRepository.save(dispatch);
+  }
+
+  private Route buildRouteFromVrp(VrpRoute vrpRoute, Dispatch dispatch) {
+    Vehicle vehicle = vehicleRepository.findById(vrpRoute.getVehicleId())
+        .orElseThrow(() -> new RuntimeException("Vehicle not found: " + vrpRoute.getVehicleId()));
+
+    vehicle.setStatus(VehicleStatus.ACTIVE);
+
+    Route route = Route.builder()
+        .vehicle(vehicle)
+        .dispatch(dispatch)
+        .distance(vrpRoute.getDistance())
+        .status(RouteStatus.IN_PROGRESS)
+        .build();
+
+    route.setOrders(buildOrders(vrpRoute, route));
+    return route;
+  }
+
+  private List<Order> buildOrders(VrpRoute vrpRoute, Route route) {
+    List<Order> orders = new ArrayList<>();
+    int index = 0;
+
+    for (VrpJob job : vrpRoute.getSteps()) {
+      Order order = orderRepository.findById(job.getId())
+          .orElseThrow(() -> new RuntimeException("Order not found: " + job.getId()));
+
+      order.setStatus(OrderStatus.IN_PROGRESS);
+      order.setIndex(index++);
+      order.setRoute(route);
+
+      orders.add(order);
+    }
+
+    return orders;
+  }
 }

@@ -22,6 +22,16 @@ import java.util.List;
 public class DispatchController {
   private final DispatchService dispatchService;
 
+  @GetMapping("/dispatches/current")
+  public ApiResponse<DispatchResponse> getCurrentDispatch() {
+    log.info("Received get current dispatch request");
+    var result = dispatchService.getCurrentDispatch();
+    return ApiResponse.<DispatchResponse>builder()
+        .message("Get current dispatch successfully")
+        .result(result)
+        .build();
+  }
+
   @GetMapping("/dispatches")
   public ApiResponse<List<DispatchResponse>> getDispatches() {
     log.info("Received get dispatches request");
@@ -32,11 +42,13 @@ public class DispatchController {
         .build();
   }
 
-
   @PostMapping("/dispatches")
-  public void createDispatch() {
+  public ApiResponse<Void> createDispatch() {
     log.info("Received create dispatches request");
     dispatchService.createDispatch();
+    return ApiResponse.<Void>builder()
+        .message("Create dispatch successfully")
+        .build();
   }
 
 }

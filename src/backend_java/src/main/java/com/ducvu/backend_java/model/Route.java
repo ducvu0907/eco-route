@@ -34,13 +34,14 @@ public class Route {
 
   @Builder.Default
   @OneToMany(mappedBy = "route", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-  private List<Node> nodes = new ArrayList<>();
+  private List<Order> orders = new ArrayList<>();
 
-  private Double totalDistance;
+  private Double distance;
 
-  private LocalDateTime startTime;
+  @Enumerated(EnumType.STRING)
+  private RouteStatus status;
 
-  private LocalDateTime endTime;
+  private LocalDateTime completedAt;
 
   @CreationTimestamp
   private LocalDateTime createdAt;

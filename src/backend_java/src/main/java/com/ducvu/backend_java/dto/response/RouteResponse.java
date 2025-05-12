@@ -1,5 +1,6 @@
 package com.ducvu.backend_java.dto.response;
 
+import com.ducvu.backend_java.model.RouteStatus;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -16,10 +17,10 @@ public class RouteResponse {
   private String id;
   private String vehicleId;
   private String dispatchId;
-  private Double totalDistance;
-  private List<NodeResponse> nodes;
-  private LocalDateTime startTime;
-  private LocalDateTime endTime;
+  private Double distance;
+  private RouteStatus status;
+  private List<OrderResponse> orders;
+  private LocalDateTime completedAt;
   private LocalDateTime createdAt;
   private LocalDateTime updatedAt;
 }

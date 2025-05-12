@@ -14,7 +14,9 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 public class OrderResponse {
   private String id;
+  private Integer index;
   private String userId;
+  private String routeId;
   private Double latitude;
   private Double longitude;
   private String address;

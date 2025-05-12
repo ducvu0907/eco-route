@@ -15,9 +15,8 @@ import java.util.List;
 @Builder
 public class DispatchResponse {
   private String id;
-  private LocalDateTime startTime;
-  private LocalDateTime endTime;
   private DispatchStatus status;
+  private LocalDateTime completedAt;
   private LocalDateTime createdAt;
   private LocalDateTime updatedAt;
 }

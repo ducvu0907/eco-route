@@ -18,4 +18,6 @@ public class VrpRoute {
   private String vehicleId;
 
   List<VrpJob> steps;
+
+  Double distance;
 }
