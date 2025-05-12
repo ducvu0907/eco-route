@@ -17,13 +17,13 @@ import { Button } from "@/components/ui/button";
 import { DialogHeader, DialogFooter } from "@/components/ui/dialog";
 import { MapPin, X } from "lucide-react";
 import { LatLngExpression } from "leaflet";
+import { defaultCenter } from "@/config/config";
 
 interface MapInputProps {
   setLatLng: (lat: number, lng: number) => void;
 }
 
 export default function MapModalInput({ setLatLng }: MapInputProps) {
-  const defaultCenter: LatLngExpression = [21.028346, 105.834131];
   const [lat, setLat] = useState<number>(defaultCenter[0]);
   const [lng, setLng] = useState<number>(defaultCenter[1]);
   const [isOpen, setIsOpen] = useState(false);
@@ -100,7 +100,7 @@ export default function MapModalInput({ setLatLng }: MapInputProps) {
           {/* Map container */}
           <div className="h-[400px] w-full rounded-md border overflow-hidden">
             <MapContainer
-              center={defaultCenter}
+              center={defaultCenter as LatLngExpression}
               zoom={15}
               scrollWheelZoom={true}
               style={{ height: "100%", width: "100%" }}

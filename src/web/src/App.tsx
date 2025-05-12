@@ -14,7 +14,7 @@ import 'leaflet/dist/leaflet.css';
 import DepotDetails from "./pages/depot/DepotDetails";
 import UserDetails from "./pages/user/UserDetails";
 import VehicleManagement from "./pages/vehicle/VehicleManagement";
-import VehicleDetails from "./pages/vehicle/VehicleDetails";
+import DispatchManagement from "./pages/dispatch/DispatchManagement";
 
 const App = () => {
   const { isAuthenticated } = useAuthContext();
@@ -32,6 +32,8 @@ const App = () => {
         <Route path="/" element={<Navigate to="/dashboard"/>}/>
         <Route path="/dashboard" element={<Dashboard />}/>
 
+        <Route path="/dispatches" element={<DispatchManagement />}/>
+
         <Route path="/vehicles" element={<VehicleManagement />}/>
 
         <Route path="/depots" element={<DepotManagement />}/>
@@ -41,8 +43,6 @@ const App = () => {
         <Route path="/users/:userId" element={<UserDetails />}/>
 
         <Route path="/orders" element={<OrderManagement />}/>
-
-        <Route path="/map" element={<Map />}/>
 
       </Route>
 

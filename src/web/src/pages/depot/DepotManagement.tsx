@@ -20,14 +20,18 @@ import { Button } from "@/components/ui/button";
 import { useNavigate } from "react-router";
 import DepotCreateModal from "@/components/depot/DepotCreateModal";
 import { useState } from "react";
+import { MapContainer, Marker, TileLayer } from "react-leaflet";
+import { Popup } from "react-leaflet";
+import { defaultCenter } from "@/config/config";
+import { LatLngExpression } from "leaflet";
 
 export default function DepotManagement() {
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
+  const [viewMode, setViewMode] = useState<'list' | 'map'>('list'); 
   const navigate = useNavigate();
   const { data, isLoading, isError } = useGetDepots();
   const { mutate: deleteDepot, isPending: isDeleting } = useDeleteDepot();
   const depots: DepotResponse[] = data?.result || [];
-
 
   const handleViewDepot = (depot: DepotResponse) => {
     navigate(`/depots/${depot.id}`);
@@ -54,15 +58,22 @@ export default function DepotManagement() {
     );
   }
 
-  return (
-    <div className="p-4 space-y-4">
-      <DepotCreateModal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} />
-      <div className="flex justify-between items-center">
-        <h2 className="text-xl font-semibold">Depot Management</h2>
+return (
+  <div className="p-4 space-y-4">
+    <DepotCreateModal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} />
+    <div className="flex justify-between items-center">
+      <h2 className="text-xl font-semibold">Depot Management</h2>
+      <div className="flex gap-2">
         <Button onClick={() => setIsModalOpen(true)}>Create Depot</Button>
+        <Button variant="outline" onClick={() => setViewMode(viewMode === 'list' ? 'map' : 'list')}>
+          {viewMode === 'list' ? 'Switch to Map View' : 'Switch to List View'}
+        </Button>
       </div>
+    </div>
 
-      {depots.length === 0 ? (
+    {viewMode === 'list' ? (
+      // List View
+      depots.length === 0 ? (
         <div className="text-muted-foreground">No depots found.</div>
       ) : (
         <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
@@ -125,7 +136,34 @@ export default function DepotManagement() {
             </Card>
           ))}
         </div>
-      )}
-    </div>
-  );
+      )
+    ) : (
+      // Map View
+      <div className="flex-grow" style={{ height: 'calc(100vh - 100px)' }}>
+        <MapContainer
+          center={defaultCenter as LatLngExpression}
+          zoom={15}
+          scrollWheelZoom={true}
+          style={{ height: "100%", width: "100%", zIndex: 0 }}
+          zoomControl={true}
+        >
+          <TileLayer
+            attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+            url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+          />
+          {depots.map((depot: DepotResponse) => (
+            <Marker key={depot.id} position={[depot.latitude, depot.longitude]}>
+              <Popup className="flex-col">
+                <p>{depot.address}</p>
+                <p>Number of vehicles: {depot.vehicles.length}</p>
+                <Button variant={"outline"} onClick={() => navigate(`/depots/${depot.id}`)}>View details</Button>
+                </Popup>
+            </Marker>
+          ))}
+        </MapContainer>
+      </div>
+    )}
+  </div>
+);
+
 }
