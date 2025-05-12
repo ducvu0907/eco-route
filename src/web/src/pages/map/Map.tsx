@@ -45,25 +45,6 @@ export default function Map() {
           </LayersControl.BaseLayer>
         </LayersControl>
 
-        {/* Render depot markers */}
-        {depots && !isDepotsLoading && !isDepotsError && depots.map((depot) => (
-          <Marker
-            key={depot.id}
-            position={[depot.latitude, depot.longitude]}
-          >
-            <Popup>{depot.address}</Popup> {/* Optional popup with depot address */}
-          </Marker>
-        ))}
-
-        {/* Render vehicle markers */}
-        {vehicles && !isVehiclesLoading && !isVehiclesError && vehicles.map((vehicle) => (
-          <Marker
-            key={vehicle.id}
-            position={[vehicle.currentLatitude, vehicle.currentLongitude]}
-          >
-            <Popup>{vehicle.licensePlate}</Popup> {/* Optional popup with vehicle license plate */}
-          </Marker>
-        ))}
       </MapContainer>
     </div>
   );

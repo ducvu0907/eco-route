@@ -57,8 +57,8 @@ export default function OrderManagement() {
         <Table>
           <TableHeader>
             <TableRow>
-              <TableHead>ID</TableHead>
-              <TableHead>User ID</TableHead>
+              {/* <TableHead>ID</TableHead>
+              <TableHead>User ID</TableHead> */}
               <TableHead>Location</TableHead>
               <TableHead>Address</TableHead>
               <TableHead>Est. Weight</TableHead>
@@ -70,8 +70,8 @@ export default function OrderManagement() {
           <TableBody>
             {orders.map((order) => (
               <TableRow key={order.id} className="cursor-pointer" onClick={() => navigate(`/orders/${order.id}`)}>
-                <TableCell>{order.id}</TableCell>
-                <TableCell>{order.userId}</TableCell>
+                {/* <TableCell>{order.id}</TableCell>
+                <TableCell>{order.userId}</TableCell> */}
                 <TableCell>
                   {order.latitude}, {order.longitude}
                 </TableCell>

@@ -5,6 +5,12 @@ export const getRouteById = async (routeId: string): Promise<ApiResponse<RouteRe
   const { data } = await axiosInstance.get(`/routes/${routeId}`);
   return data;
 }
+
+export const getVehicleActiveRoute = async (vehicleId: string): Promise<ApiResponse<RouteResponse>> => {
+  const { data } = await axiosInstance.get(`/vehicles/${vehicleId}/route`);
+  return data;
+}
+
 export const getRoutesByVehicleId = async (vehicleId: string): Promise<ApiResponse<RouteResponse[]>> => {
   const { data } = await axiosInstance.get(`/vehicles/${vehicleId}/routes`);
   return data;

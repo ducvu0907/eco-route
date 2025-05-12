@@ -1,5 +1,5 @@
 import { useQuery } from "@tanstack/react-query";
-import { getRouteById, getRoutesByVehicleId, getRoutesByDispatchId, } from "@/apis/route";
+import { getRouteById, getRoutesByVehicleId, getRoutesByDispatchId, getVehicleActiveRoute, } from "@/apis/route";
 import { ApiResponse, RouteResponse } from "@/types/types";
 
 export const useGetRouteById = (routeId: string) => {
@@ -10,13 +10,20 @@ export const useGetRouteById = (routeId: string) => {
   });
 }
 
+export const useGetVehicleActiveRoute = (vehicleId: string) => {
+  return useQuery<ApiResponse<RouteResponse>>({
+    queryKey: ["vehicles", vehicleId, "route"],
+    queryFn: () => getVehicleActiveRoute(vehicleId),
+    enabled: !!vehicleId,
+  });
+}
+
 export const useGetRoutesByVehicleId = (vehicleId: string) => {
   return useQuery<ApiResponse<RouteResponse[]>>({
     queryKey: ["vehicles", vehicleId, "routes"],
     queryFn: () => getRoutesByVehicleId(vehicleId),
     enabled: !!vehicleId,
   });
-
 }
 
 export const useGetRoutesByDispatchId = (dispatchId: string) => {

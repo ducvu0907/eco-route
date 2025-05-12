@@ -8,9 +8,11 @@ import { formatDate } from "@/utils/formatDate";
 import VehicleCreateModal from "../../components/vehicle/VehicleCreateModal";
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
+import DepotUpdatemodal from "@/components/depot/DepotUpdateModal";
 
 export default function DepotDetails() {
   const navigate = useNavigate();
+  const [isUpdateOpen, setIsUpdateOpen] = useState<boolean>(false);
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
   const { depotId } = useParams<string>();
 
@@ -49,9 +51,11 @@ export default function DepotDetails() {
   return (
     <div className="p-6 space-y-6">
       {/* Depot Info */}
+      <DepotUpdatemodal isOpen={isUpdateOpen} onClose={() => setIsUpdateOpen(false)} depot={depot}/>
       <Card>
-        <CardHeader>
+        <CardHeader className="flex flex-row justify-between">
           <CardTitle className="text-xl">Depot Details</CardTitle>
+          <Button onClick={() => setIsUpdateOpen(true)}>Edit</Button>
         </CardHeader>
         <CardContent className="space-y-2 text-sm">
           <div><strong>Address:</strong> {depot.address ?? "N/A"}</div>

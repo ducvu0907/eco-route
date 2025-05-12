@@ -63,6 +63,9 @@ export default function DriverVehicle({ driverId }: DriverVehicleProps) {
       <CardContent className="space-y-4 text-sm">
         {vehicle ? (
           <>
+            <Button variant={"secondary"} onClick={() => navigate(`/vehicles/${vehicle?.id}`)} >
+              View vehicle details
+            </Button>
             <div><strong>ID:</strong> {vehicle.id}</div>
             <div><strong>License Plate:</strong> {vehicle.licensePlate}</div>
             <div><strong>Status:</strong> {vehicle.status}</div>
@@ -90,9 +93,6 @@ export default function DriverVehicle({ driverId }: DriverVehicleProps) {
           </div>
           <Button onClick={handleAssign} disabled={!selectedVehicleId || isPending}>
             {isPending ? "Assigning..." : "Assign Vehicle"}
-          </Button>
-          <Button disabled={!vehicle} variant={"secondary"} onClick={() => navigate(`/vehicles/${vehicle?.id}`)} >
-            View vehicle details
           </Button>
         </div>
       </CardContent>

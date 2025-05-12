@@ -15,6 +15,7 @@ import DepotDetails from "./pages/depot/DepotDetails";
 import UserDetails from "./pages/user/UserDetails";
 import VehicleManagement from "./pages/vehicle/VehicleManagement";
 import DispatchManagement from "./pages/dispatch/DispatchManagement";
+import VehicleDetails from "./pages/vehicle/VehicleDetails";
 
 const App = () => {
   const { isAuthenticated } = useAuthContext();
@@ -35,6 +36,7 @@ const App = () => {
         <Route path="/dispatches" element={<DispatchManagement />}/>
 
         <Route path="/vehicles" element={<VehicleManagement />}/>
+        <Route path="/vehicles/:vehicleId" element={<VehicleDetails />}/>
 
         <Route path="/depots" element={<DepotManagement />}/>
         <Route path="/depots/:depotId" element={<DepotDetails />}/>

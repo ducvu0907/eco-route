@@ -27,6 +27,11 @@ export enum VehicleStatus {
   REPAIR = "REPAIR"
 }
 
+export enum RouteStatus {
+  IN_PROGRESS = "IN_PROGRESS",
+  COMPLETED = "COMPLETED"
+}
+
 export enum DispatchStatus {
   IN_PROGRESS = "IN_PROGRESS",
   COMPLETED = "COMPLETED"
@@ -82,6 +87,7 @@ export interface VehicleCreateRequest {
 export interface VehicleUpdateRequest {
   driverId: string | null;
   depotId: string | null;
+  status: VehicleStatus | null;
 }
 
 
@@ -174,7 +180,8 @@ export interface RouteResponse {
   id: string;
   vehicleId: string;
   dispatchId: string;
-  totalDistance: number;
+  distance: number;
+  status: RouteStatus;
   orders: OrderResponse[];
   completedAt: string;
   createdAt: string;
