@@ -3,7 +3,9 @@ import logging
 from typing import List
 
 from dotenv import load_dotenv
-from fastapi import FastAPI, HTTPException
+from fastapi import FastAPI, HTTPException, Request
+from fastapi.exceptions import RequestValidationError
+from fastapi.responses import JSONResponse
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 import uvicorn
@@ -61,18 +63,29 @@ class RoutingResponse(BaseModel):
 
 # app
 app = FastAPI()
-cors_origins_raw = os.getenv("CORS_ORIGINS", "")
-origins = [origin.strip() for origin in cors_origins_raw.split(",") if origin.strip()]
 app.add_middleware(
   CORSMiddleware,
-  allow_origins=origins,
-  allow_credentials=True,
+  allow_origins=["*"],
   allow_methods=["*"],
   allow_headers=["*"],
 )
 
 
 # api routes
+@app.exception_handler(RequestValidationError)
+async def handle_exception(request: Request, e: Exception):
+  return JSONResponse(
+    status_code=400,
+    content={"error": f"Invalid request format"},
+  )
+
+@app.exception_handler(Exception)
+async def handle_exception(request: Request, e: Exception):
+  return JSONResponse(
+    status_code=500,
+    content={"error": f"Error while solving problem: {e}"},
+  )
+
 @app.post("/api/vrp", response_model=RoutingResponse)
 def solve_vrp(request: RoutingRequest):
   """
@@ -82,11 +95,6 @@ def solve_vrp(request: RoutingRequest):
   from solver import route_request
 
   logger.info(f"Incoming VRP request: {request}")
-
-  try:
-    solution = route_request(request)
-    logger.info(f"Solver returned solution: {solution}")
-    return solution
-  except Exception as e:
-    logger.error(f"Solver failed: {str(e)}")
-    raise HTTPException(status_code=500, detail=f"Error while solving instance: {e}")
+  solution = route_request(request)
+  logger.info(f"Solver returned solution: {solution}")
+  return solution
