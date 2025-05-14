@@ -1,24 +1,37 @@
 import { useGetDepots } from "@/hooks/useDepot";
-import { Marker, MapContainer, TileLayer, LayersControl } from "react-leaflet";
+import { MapContainer, TileLayer, LayersControl } from "react-leaflet";
 import { useGetVehicles } from "@/hooks/useVehicle";
 import { LatLngExpression } from "leaflet";
-import { Popup } from "react-leaflet"; // Optional: Add a popup to show info on marker click
+import { defaultCenter } from "@/config/config";
+import { DepotResponse, VehicleResponse } from "@/types/types";
+import DepotMarker from "@/components/map/DepotMarker";
+import VehicleDynamicMarker from "@/components/map/VehicleDynamicMarker";
+import { Button } from "@/components/ui/button";
+import { useState } from "react";
 
 export default function Map() {
-  const defaultCenter: LatLngExpression = [21.028346, 105.834131];
-  
-  // Get depots data
   const { data: depotData, isLoading: isDepotsLoading, isError: isDepotsError } = useGetDepots();
   const depots = depotData?.result;
   
-  // Get vehicles data
   const { data: vehiclesData, isLoading: isVehiclesLoading, isError: isVehiclesError } = useGetVehicles();
   const vehicles = vehiclesData?.result;
 
+  const [showVehicles, setShowVehicles] = useState<boolean>(true);
+  const [showDepots, setShowDepots] = useState<boolean>(true);
+
+
   return (
     <div className="w-full h-full">
+      <div className="absolute bottom-0 z-[1000] p-4 flex gap-2">
+        <Button onClick={() => setShowVehicles(!showVehicles)}>
+          {showVehicles ? "Hide Vehicles" : "Show Vehicles"}
+        </Button>
+        <Button onClick={() => setShowDepots(!showDepots)}>
+          {showDepots ? "Hide Depots" : "Show Depots"}
+        </Button>
+      </div>
       <MapContainer
-        center={defaultCenter}
+        center={defaultCenter as LatLngExpression}
         zoom={15}
         scrollWheelZoom={true}
         style={{ height: "100%", width: "100%" }}
@@ -44,6 +57,16 @@ export default function Map() {
             />
           </LayersControl.BaseLayer>
         </LayersControl>
+
+        {showVehicles &&
+          vehicles?.map((vehicle: VehicleResponse) => (
+            <VehicleDynamicMarker key={vehicle.id} vehicle={vehicle} />
+          ))}
+
+        {showDepots &&
+          depots?.map((depot: DepotResponse) => (
+            <DepotMarker key={depot.id} depot={depot} />
+          ))}
 
       </MapContainer>
     </div>

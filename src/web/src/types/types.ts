@@ -17,7 +17,7 @@ export enum Role {
 export enum OrderStatus {
   PENDING = "PENDING",
   IN_PROGRESS = "IN_PROGRESS",
-  DONE = "DONE",
+  COMPLETED = "COMPLETED",
   CANCELLED = "CANCELLED"
 }
 
@@ -78,8 +78,8 @@ export interface OrderUpdateRequest {
 }
 
 export interface VehicleCreateRequest {
-  driverId: string | null;
-  depotId: string | null;
+  driverId: string;
+  depotId: string;
   licensePlate: string;
   capacity: number;
 }
@@ -178,8 +178,9 @@ export interface OsmResponse {
 
 export interface RouteResponse {
   id: string;
-  vehicleId: string;
+  vehicle: VehicleResponse;
   dispatchId: string;
+  depotId: string;
   distance: number;
   status: RouteStatus;
   orders: OrderResponse[];
@@ -199,14 +200,22 @@ export interface UserResponse {
 
 export interface VehicleResponse {
   id: string;
-  driverId: string | null;
-  depotId: string | null;
+  driver: UserResponse;
+  depotId: string;
   licensePlate: string;
   capacity: number;
-  currentLatitude: number | null;
-  currentLongitude: number | null;
-  currentLoad: number | null;
+  currentLatitude: number;
+  currentLongitude: number;
+  currentLoad: number;
   status: VehicleStatus;
   createdAt: string;
   updatedAt: string;
+}
+
+
+// firebase schemas
+export interface VehicleRealtimeData {
+  latitude: number;
+  longitude: number;
+  load: number;
 }

@@ -13,13 +13,6 @@ import {
 import { Skeleton } from "../ui/skeleton";
 import { VehicleStatus } from "@/types/types";
 import { Button } from "../ui/button";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue
-} from "../ui/select";
 import { useNavigate } from "react-router";
 
 interface DriverVehicleProps {
@@ -28,7 +21,7 @@ interface DriverVehicleProps {
 
 export default function DriverVehicle({ driverId }: DriverVehicleProps) {
   const navigate = useNavigate();
-  const { mutate: updateVehicle, isPending } = useUpdateVehicle();
+  // const { mutate: updateVehicle, isPending } = useUpdateVehicle();
   const {
     data: allVehiclesData,
     isLoading: isVehiclesLoading
@@ -43,13 +36,13 @@ export default function DriverVehicle({ driverId }: DriverVehicleProps) {
 
   const [selectedVehicleId, setSelectedVehicleId] = useState<string | null>(null);
 
-  const handleAssign = () => {
-    if (!selectedVehicleId) return;
-    updateVehicle({
-      vehicleId: selectedVehicleId,
-      payload: { driverId, depotId: null }
-    });
-  };
+  // const handleAssign = () => {
+  //   if (!selectedVehicleId) return;
+  //   updateVehicle({
+  //     vehicleId: selectedVehicleId,
+  //     payload: { driverId, depotId: null }
+  //   });
+  // };
 
   if (isLoading || isVehiclesLoading) {
     return <Skeleton className="w-full h-24" />
@@ -76,7 +69,7 @@ export default function DriverVehicle({ driverId }: DriverVehicleProps) {
         ) : (
           <div><strong>No vehicle assigned.</strong></div>
         )}
-        <div className="space-y-4">
+        {/* <div className="space-y-4">
           <div className="w-full">
             <Select onValueChange={setSelectedVehicleId}>
               <SelectTrigger className="w-full">
@@ -94,7 +87,7 @@ export default function DriverVehicle({ driverId }: DriverVehicleProps) {
           <Button onClick={handleAssign} disabled={!selectedVehicleId || isPending}>
             {isPending ? "Assigning..." : "Assign Vehicle"}
           </Button>
-        </div>
+        </div> */}
       </CardContent>
     </Card>
   );

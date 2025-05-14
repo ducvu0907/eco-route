@@ -10,10 +10,10 @@ import { Toaster } from 'sonner'
 const queryClient = new QueryClient({
   defaultOptions: {
     queries: {
-      retry: 1
+      retry: 0
     },
     mutations: {
-      retry: 1
+      retry: 0
     }
   },
 });

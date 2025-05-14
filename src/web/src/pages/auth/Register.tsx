@@ -21,6 +21,7 @@ import {
 import { useRegister } from "@/hooks/useAuth";
 import { Role } from "@/types/types";
 import { useNavigate } from "react-router";
+import { useAuthContext } from "@/hooks/useAuthContext";
 
 const registerSchema = z.object({
   username: z.string().min(1, "Username is required"),
@@ -35,6 +36,7 @@ const registerSchema = z.object({
 type RegisterForm = z.infer<typeof registerSchema>;
 
 export default function Register() {
+  const { fcmToken } = useAuthContext();
   const navigate = useNavigate();
 
   const form = useForm<RegisterForm>({
@@ -44,7 +46,7 @@ export default function Register() {
       password: "",
       phone: "",
       role: undefined,
-      fcmToken: null,
+      fcmToken: fcmToken,
     },
   });
 

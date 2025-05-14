@@ -1,6 +1,14 @@
-import { createDispatch, getCurrentDispatch, getDispatches } from "@/apis/dispatch";
+import { createDispatch, getCurrentDispatch, getDispatchById, getDispatches } from "@/apis/dispatch";
 import { ApiResponse, DispatchResponse } from "@/types/types"
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
+
+export const useGetDispatchById = (dispatchId: string) => {
+  return useQuery<ApiResponse<DispatchResponse>>({
+    queryKey: ["dispatches", dispatchId],
+    queryFn: () => getDispatchById(dispatchId),
+    enabled: !!dispatchId
+  });
+}
 
 export const useGetCurrentDispatch = () => {
   return useQuery<ApiResponse<DispatchResponse>>({

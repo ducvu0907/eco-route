@@ -4,8 +4,11 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { formatDate } from "@/utils/formatDate";
+import { Button } from "@/components/ui/button";
+import { useNavigate } from "react-router";
 
 export default function DispatchManagement() {
+  const navigate = useNavigate();
   const { data, isLoading, isError } = useGetDispatches();
   const dispatches = data?.result;
 
@@ -33,9 +36,10 @@ export default function DispatchManagement() {
 
   return (
     <Card>
-      <CardHeader>
-        <CardTitle>Dispatch Management</CardTitle>
-      </CardHeader>
+      <div className="flex flex-row justify-between px-3">
+        <h1 className="text-2xl font-bold">Dispatch Management</h1>
+        <Button onClick={() => navigate("/dispatches/current")}>Current dispatch</Button>
+      </div>
       <CardContent>
         {dispatches && dispatches.length > 0 ? (
           <Table>
@@ -50,7 +54,7 @@ export default function DispatchManagement() {
             </TableHeader>
             <TableBody>
               {dispatches.map((dispatch) => (
-                <TableRow key={dispatch.id}>
+                <TableRow key={dispatch.id} className="cursor-pointer" onClick={() => navigate(`/dispatches/${dispatch.id}`)}>
                   <TableCell>{dispatch.id}</TableCell>
                   <TableCell>{dispatch.status}</TableCell>
                   <TableCell>{formatDate(dispatch.completedAt)}</TableCell>

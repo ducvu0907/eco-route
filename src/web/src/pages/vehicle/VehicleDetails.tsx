@@ -2,16 +2,29 @@ import { useParams } from "react-router";
 import NotFound from "../NotFound";
 import { useGetVehicleById } from "@/hooks/useVehicle";
 import { useGetRoutesByVehicleId } from "@/hooks/useRoute";
-import { useGetUserById } from "@/hooks/useUser";
-import { useGetDepotById } from "@/hooks/useDepot";
-import { useState } from "react";
-import { MapContainer, TileLayer, Marker, Polyline } from "react-leaflet";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { useEffect, useState } from "react";
+import {
+  MapContainer,
+  TileLayer,
+  Marker,
+  Polyline,
+  Popup,
+} from "react-leaflet";
+import {
+  Card,
+  CardContent,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { RouteResponse, VehicleResponse, OrderResponse } from "@/types/types";
+import { RouteResponse, VehicleResponse, OrderResponse, RouteStatus } from "@/types/types";
 import { Button } from "@/components/ui/button";
 import VehicleUpdateModal from "@/components/vehicle/VehicleUpdateModal";
+import { LatLngExpression } from "leaflet";
+import { useGetDepotById } from "@/hooks/useDepot";
+import SingleRouteStaticMap from "@/components/map/SingleRouteStaticMap";
+import SingleRouteDynamicMap from "@/components/map/SingleRouteDynamicMap";
 
 export default function VehicleDetails() {
   const [modalOpen, setModalOpen] = useState<boolean>(false);
@@ -35,15 +48,8 @@ export default function VehicleDetails() {
   const vehicle: VehicleResponse | null = vehicleData?.result ?? null;
   const routes: RouteResponse[] = routesData?.result ?? [];
 
-  const {
-    data: driverData,
-    isLoading: isDriverLoading,
-  } = useGetUserById(vehicle?.driverId ?? "");
-
-  const {
-    data: depotData,
-    isLoading: isDepotLoading,
-  } = useGetDepotById(vehicle?.depotId ?? "");
+  const { data: depotData, isLoading: isDepotLoading } = useGetDepotById(vehicle?.depotId || "");
+  const depot = depotData?.result;
 
   if (isVehicleLoading || isRoutesLoading) {
     return (
@@ -57,7 +63,7 @@ export default function VehicleDetails() {
     );
   }
 
-  if (isVehicleError || isRoutesError || !vehicle) {
+  if (isVehicleError || isRoutesError || !vehicle || !depot) {
     return <NotFound />;
   }
 
@@ -79,19 +85,8 @@ export default function VehicleDetails() {
           <p><strong>License Plate:</strong> {vehicle.licensePlate}</p>
           <p><strong>Status:</strong> {vehicle.status}</p>
           <p><strong>Capacity:</strong> {vehicle.capacity} kg</p>
-          <p><strong>Current Load:</strong> {vehicle.currentLoad ?? 0} kg</p>
-          <p>
-            <strong>Driver:</strong>{" "}
-            {isDriverLoading
-              ? "Loading..."
-              : driverData?.result?.username ?? "N/A"}
-          </p>
-          <p>
-            <strong>Depot:</strong>{" "}
-            {isDepotLoading
-              ? "Loading..."
-              : depotData?.result?.address ?? "N/A"}
-          </p>
+          <p><strong>Driver:</strong> {vehicle.driver.username}</p>
+          <p><strong>Depot:</strong> {depot.address}</p>
         </CardContent>
       </Card>
 
@@ -112,15 +107,15 @@ export default function VehicleDetails() {
                     <li
                       key={route.id}
                       onClick={() => setSelectedRoute(route)}
-                      className={`p-2 border rounded cursor-pointer ${
-                        selectedRoute?.id === route.id
+                      className={`p-2 border rounded cursor-pointer ${selectedRoute?.id === route.id
                           ? "bg-primary text-white"
                           : "hover:bg-muted"
-                      }`}
+                        }`}
                     >
                       <p className="font-semibold">Route ID: {route.id}</p>
-                      <p>Total Distance: {route.distance} km</p>
+                      <p>Distance: {route.distance} km</p>
                       <p>Orders: {route.orders.length}</p>
+                      <p>Status: {route.status}</p>
                     </li>
                   ))}
                 </ul>
@@ -130,47 +125,17 @@ export default function VehicleDetails() {
         </Card>
 
         {/* Map Section */}
-        <Card>
-          <CardHeader>
-            <CardTitle>Route Map</CardTitle>
-          </CardHeader>
-          <CardContent className="h-[300px] p-0">
-            {selectedRoute && selectedRoute.orders.length > 0 ? (
-              <MapContainer
-                center={[
-                  selectedRoute.orders[0].latitude,
-                  selectedRoute.orders[0].longitude,
-                ]}
-                zoom={13}
-                className="h-full w-full"
-              >
-                <TileLayer
-                  url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-                  attribution="&copy; OpenStreetMap contributors"
-                />
-                {selectedRoute.orders.map((order: OrderResponse) => (
-                  <Marker
-                    key={order.id}
-                    position={[order.latitude, order.longitude]}
-                  />
-                ))}
-                <Polyline
-                  positions={selectedRoute.orders.map((order) => [
-                    order.latitude,
-                    order.longitude,
-                  ])}
-                  color="blue"
-                />
-              </MapContainer>
-            ) : (
-              <div className="flex items-center justify-center h-full text-muted-foreground">
-                {selectedRoute
-                  ? "No orders in this route."
-                  : "Select a route to view map."}
-              </div>
-            )}
-          </CardContent>
-        </Card>
+        {selectedRoute ? (
+          <>
+            {selectedRoute && selectedRoute.status === RouteStatus.COMPLETED && <SingleRouteDynamicMap route={selectedRoute} />}
+            {selectedRoute && selectedRoute.status === RouteStatus.IN_PROGRESS && <SingleRouteStaticMap route={selectedRoute} />}
+          </>
+        ) : (
+          <Card className="flex items-center justify-center h-full text-muted-foreground">
+            Select a route to view map.
+          </Card>
+        )}
+
       </div>
     </div>
   );

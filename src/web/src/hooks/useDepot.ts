@@ -13,6 +13,7 @@ export const useGetDepotById = (depotId: string) => {
   return useQuery<ApiResponse<DepotResponse>>({
     queryKey: ["depots", depotId],
     queryFn: () => getDepotById(depotId),
+    enabled: !!depotId
   });
 };
 

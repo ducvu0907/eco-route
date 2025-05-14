@@ -13,6 +13,7 @@ export const useGetVehicleByDriverId = (driverId: string) => {
   return useQuery<ApiResponse<VehicleResponse>>({
     queryKey: ["users", driverId, "vehicle"],
     queryFn: () => getVehicleByDriverId(driverId),
+    enabled: !!driverId
   });
 };
 
@@ -20,6 +21,7 @@ export const useGetVehicleById = (vehicleId: string) => {
   return useQuery<ApiResponse<VehicleResponse>>({
     queryKey: ["vehicles", vehicleId],
     queryFn: () => getVehicleById(vehicleId),
+    enabled: !!vehicleId
   });
 };
 

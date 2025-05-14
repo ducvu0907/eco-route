@@ -87,13 +87,6 @@ export default function VehicleManagement() {
               <CardContent className="text-sm text-muted-foreground space-y-1">
                 <div>Status: {vehicle.status}</div>
                 <div>Capacity: {vehicle.capacity} kg</div>
-                <div>Current Load: {vehicle.currentLoad ?? 0} kg</div>
-                <div>
-                  Location:{" "}
-                  {vehicle.currentLatitude && vehicle.currentLongitude
-                    ? `${vehicle.currentLatitude.toFixed(5)}, ${vehicle.currentLongitude.toFixed(5)}`
-                    : "Unknown"}
-                </div>
                 <div>Created: {formatDate(vehicle.createdAt)}</div>
               </CardContent>
               <CardFooter className="flex justify-end gap-2">

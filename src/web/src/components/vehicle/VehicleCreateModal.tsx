@@ -27,7 +27,7 @@ import {
   SelectItem,
 } from "@/components/ui/select";
 import { useGetDepots } from "@/hooks/useDepot";
-import { useGetUsers } from "@/hooks/useUser";
+import { useGetDriversNotAssigned, useGetUsers } from "@/hooks/useUser";
 import { useEffect, useState } from "react";
 import { DepotResponse, Role, UserResponse } from "@/types/types";
 import { useCreateVehicle } from "@/hooks/useVehicle";
@@ -40,8 +40,8 @@ interface VehicleCreateModalProps {
 }
 
 const vehicleSchema = z.object({
-  depotId: z.string().nullable(),
-  driverId: z.string().nullable(),
+  depotId: z.string().min(1, "Depot is required"),
+  driverId: z.string().min(1, "Driver is required"),
   licensePlate: z.string().min(1, "License plate is required"),
   capacity: z.coerce.number().positive("Capacity must be positive"),
 });
@@ -50,22 +50,18 @@ type VehicleFormValues = z.infer<typeof vehicleSchema>;
 
 export default function VehicleCreateModal({ isOpen, onClose, depot, driver }: VehicleCreateModalProps) {
   const { mutate: createVehicle, isPending } = useCreateVehicle();
-  const [depots, setDepots] = useState<DepotResponse[]>([]);
-  const [drivers, setDrivers] = useState<UserResponse[]>([]);
 
   const { data: depotsData } = useGetDepots();
-  const { data: usersData } = useGetUsers();
+  const depots = depotsData?.result || [];
 
-  useEffect(() => {
-    if (!depot && depotsData?.result) setDepots(depotsData.result);
-    if (!driver && usersData?.result) setDrivers(usersData.result);
-  }, [depotsData, usersData, depot, driver]);
+  const { data: driversData } = useGetDriversNotAssigned();
+  const drivers = driversData?.result || [];
 
   const form = useForm<VehicleFormValues>({
     resolver: zodResolver(vehicleSchema),
     defaultValues: {
-      depotId: depot?.id || null,
-      driverId: driver?.id || null,
+      depotId: depot?.id || "",
+      driverId: driver?.id || "",
       licensePlate: "",
       capacity: 0,
     },

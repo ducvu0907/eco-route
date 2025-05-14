@@ -12,6 +12,7 @@ import {
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { useLogin } from "@/hooks/useAuth";
+import { useAuthContext } from "@/hooks/useAuthContext";
 
 const formSchema = z.object({
   username: z.string().min(1, "Username is required"),
@@ -22,12 +23,13 @@ const formSchema = z.object({
 type LoginForm = z.infer<typeof formSchema>;
 
 export default function Login() {
+  const { fcmToken } = useAuthContext();
   const form = useForm<LoginForm>({
     resolver: zodResolver(formSchema),
     defaultValues: {
       username: "",
       password: "",
-      fcmToken: null,
+      fcmToken: fcmToken,
     },
   });
 

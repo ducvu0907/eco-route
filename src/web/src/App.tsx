@@ -9,16 +9,38 @@ import { useAuthContext } from "./hooks/useAuthContext";
 import DepotManagement from "./pages/depot/DepotManagement";
 import UserManagement from "./pages/user/UserManagement";
 import OrderManagement from "./pages/order/OrderManagement";
-import Map from "./pages/map/Map";
 import 'leaflet/dist/leaflet.css';
 import DepotDetails from "./pages/depot/DepotDetails";
 import UserDetails from "./pages/user/UserDetails";
 import VehicleManagement from "./pages/vehicle/VehicleManagement";
 import DispatchManagement from "./pages/dispatch/DispatchManagement";
 import VehicleDetails from "./pages/vehicle/VehicleDetails";
+import OrderDetails from "./pages/order/OrderDetails";
+import { useEffect, useState } from "react";
+import DispatchDetails from "./pages/dispatch/DispatchDetails";
+import Map from "./pages/map/Map";
+import CurrentDispatchDetails from "./pages/dispatch/CurrentDispatchDetails";
+import { getToken, onMessage } from "firebase/messaging";
+import { generateToken, messaging } from "./firebase";
 
 const App = () => {
-  const { isAuthenticated } = useAuthContext();
+  const { token, username, userId, role, setAuth, isAuthenticated } = useAuthContext();
+
+  useEffect(() => {
+    generateToken()
+      .then((fcmToken) => {
+        if (fcmToken) {
+          setAuth({token, username, userId, role, fcmToken});
+        }
+      });
+
+    // TODO
+    onMessage(messaging, (payload) => {
+      console.log(payload);
+    });
+
+  }, []);
+
 
   return (
     <Routes>
@@ -34,6 +56,8 @@ const App = () => {
         <Route path="/dashboard" element={<Dashboard />}/>
 
         <Route path="/dispatches" element={<DispatchManagement />}/>
+        <Route path="/dispatches/:dispatchId" element={<DispatchDetails />}/>
+        <Route path="/dispatches/current" element={<CurrentDispatchDetails />}/>
 
         <Route path="/vehicles" element={<VehicleManagement />}/>
         <Route path="/vehicles/:vehicleId" element={<VehicleDetails />}/>
@@ -45,6 +69,9 @@ const App = () => {
         <Route path="/users/:userId" element={<UserDetails />}/>
 
         <Route path="/orders" element={<OrderManagement />}/>
+        <Route path="/orders/:orderId" element={<OrderDetails />}/>
+
+        <Route path="/map" element={<Map />} />
 
       </Route>
 

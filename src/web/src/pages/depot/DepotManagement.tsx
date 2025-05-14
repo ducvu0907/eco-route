@@ -24,6 +24,8 @@ import { MapContainer, Marker, TileLayer } from "react-leaflet";
 import { Popup } from "react-leaflet";
 import { defaultCenter } from "@/config/config";
 import { LatLngExpression } from "leaflet";
+import { DepotIcon } from "@/lib/leaflet-icons";
+import DepotsMap from "@/components/depot/DepotsMap";
 
 export default function DepotManagement() {
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
@@ -105,13 +107,15 @@ return (
                   </Button>
                   <AlertDialog>
                     <AlertDialogTrigger asChild>
-                      <Button
-                        variant="destructive"
-                        size="sm"
-                        disabled={isDeleting}
-                      >
-                        Delete
-                      </Button>
+                      <span>
+                        <Button
+                          variant="destructive"
+                          size="sm"
+                          disabled={isDeleting}
+                        >
+                          Delete
+                        </Button>
+                      </span>
                     </AlertDialogTrigger>
                     <AlertDialogContent>
                       <AlertDialogHeader>
@@ -135,35 +139,15 @@ return (
               </CardContent>
             </Card>
           ))}
+          </div>
+        )
+      ) : (
+        // Map View
+        <div className="flex-grow" style={{ height: 'calc(100vh - 100px)' }}>
+          <DepotsMap depots={depots} />
         </div>
-      )
-    ) : (
-      // Map View
-      <div className="flex-grow" style={{ height: 'calc(100vh - 100px)' }}>
-        <MapContainer
-          center={defaultCenter as LatLngExpression}
-          zoom={15}
-          scrollWheelZoom={true}
-          style={{ height: "100%", width: "100%", zIndex: 0 }}
-          zoomControl={true}
-        >
-          <TileLayer
-            attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-            url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-          />
-          {depots.map((depot: DepotResponse) => (
-            <Marker key={depot.id} position={[depot.latitude, depot.longitude]}>
-              <Popup className="flex-col">
-                <p>{depot.address}</p>
-                <p>Number of vehicles: {depot.vehicles.length}</p>
-                <Button variant={"outline"} onClick={() => navigate(`/depots/${depot.id}`)}>View details</Button>
-                </Popup>
-            </Marker>
-          ))}
-        </MapContainer>
-      </div>
-    )}
-  </div>
-);
+      )}
+    </div>
+  );
 
 }
