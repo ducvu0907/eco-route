@@ -1,10 +1,21 @@
-import { ApiResponse, RouteResponse } from "@/types/types";
-import axiosInstance from ".";
+import { ApiResponse, RouteResponse } from "@/types/types"
+import axiosInstance from "."
+
+export const markRouteAsDone = async (routeId: string): Promise<ApiResponse<RouteResponse>> => {
+  const { data } = await axiosInstance.post(`/routes/${routeId}/done`);
+  return data;
+}
 
 export const getRouteById = async (routeId: string): Promise<ApiResponse<RouteResponse>> => {
   const { data } = await axiosInstance.get(`/routes/${routeId}`);
   return data;
 }
+
+export const getVehicleActiveRoute = async (vehicleId: string): Promise<ApiResponse<RouteResponse>> => {
+  const { data } = await axiosInstance.get(`/vehicles/${vehicleId}/route`);
+  return data;
+}
+
 export const getRoutesByVehicleId = async (vehicleId: string): Promise<ApiResponse<RouteResponse[]>> => {
   const { data } = await axiosInstance.get(`/vehicles/${vehicleId}/routes`);
   return data;

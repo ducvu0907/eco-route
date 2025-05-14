@@ -17,12 +17,7 @@ export enum Role {
 export enum OrderStatus {
   PENDING = "PENDING",
   IN_PROGRESS = "IN_PROGRESS",
-  DONE = "DONE",
-  CANCELLED = "CANCELLED"
-}
-
-export enum SubscriptionStatus {
-  ACTIVE = "ACTIVE",
+  COMPLETED = "COMPLETED",
   CANCELLED = "CANCELLED"
 }
 
@@ -32,12 +27,15 @@ export enum VehicleStatus {
   REPAIR = "REPAIR"
 }
 
-export enum DispatchStatus {
-  PLANNED = "PLANNED",
+export enum RouteStatus {
   IN_PROGRESS = "IN_PROGRESS",
   COMPLETED = "COMPLETED"
 }
 
+export enum DispatchStatus {
+  IN_PROGRESS = "IN_PROGRESS",
+  COMPLETED = "COMPLETED"
+}
 
 
 
@@ -59,25 +57,24 @@ export interface LoginRequest {
 export interface DepotCreateRequest {
   latitude: number;
   longitude: number;
-  address: string | null;
+  address: string;
+}
+
+export interface DepotUpdateRequest {
+  latitude: number;
+  longitude: number;
+  address: string;
 }
 
 export interface OrderCreateRequest {
   latitude: number;
   longitude: number;
-  address: string | null;
-  estimatedWeight: number;
+  address: string;
+  weight: number;
 }
 
 export interface OrderUpdateRequest {
   status: OrderStatus;
-}
-
-export interface SubscriptionCreateRequest {
-  latitude: number;
-  longitude: number;
-  address: string | null;
-  estimatedWeight: number;
 }
 
 export interface VehicleCreateRequest {
@@ -88,10 +85,9 @@ export interface VehicleCreateRequest {
 }
 
 export interface VehicleUpdateRequest {
-  driverId: string;
-  depotId: string;
-  licensePlate: string;
-  capacity: number;
+  driverId: string | null;
+  depotId: string | null;
+  status: VehicleStatus | null;
 }
 
 
@@ -111,7 +107,7 @@ export interface DepotResponse {
   id: string;
   latitude: number;
   longitude: number;
-  address: string | null;
+  address: string;
   vehicles: VehicleResponse[];
   createdAt: string;
   updatedAt: string;
@@ -119,23 +115,8 @@ export interface DepotResponse {
 
 export interface DispatchResponse {
   id: string;
-  startTime: string | null;
-  endTime: string | null;
   status: DispatchStatus;
-  createdAt: string;
-  updatedAt: string;
-}
-
-export interface NodeResponse {
-  id: string;
-  sequenceNumber: number;
-  routeId: string;
-  orderId: string | null;
-  subscriptionId: string | null;
-  latitude: number;
-  longitude: number;
-  address: string | null;
-  estimatedWeight: number;
+  completedAt: string;
   createdAt: string;
   updatedAt: string;
 }
@@ -150,54 +131,60 @@ export interface NotificationResponse {
 
 export interface OrderResponse {
   id: string;
+  index: number | null;
   userId: string;
+  routeId: string | null;
   latitude: number;
   longitude: number;
-  address: string | null;
-  estimatedWeight: number;
+  address: string;
+  weight: number;
   status: OrderStatus;
   completedAt: string | null;
   createdAt: string;
   updatedAt: string;
 }
 
+// export interface OsmAddress {
+//   amenity?: string;
+//   house_number?: string;
+//   road?: string;
+//   neighbourhood?: string;
+//   suburb?: string;
+//   city?: string;
+//   postcode?: string;
+//   country?: string;
+//   country_code?: string;
+//   [key: string]: string | undefined; // for extra dynamic fields like ISO3166-2-lvl4
+// }
+
 export interface OsmResponse {
-  placeId?: number;
+  place_id?: number;
   licence?: string;
-  osmType?: string;
-  osmId?: number;
+  osm_type?: string;
+  osm_id?: number;
   lat?: string;
   lon?: string;
-  classType?: string;
+  class?: string;
   type?: string;
-  placeRank?: number;
+  place_rank?: number;
   importance?: number;
   addresstype?: string;
   name?: string;
-  displayName?: string;
+  display_name?: string;
   boundingbox?: string[];
-  error?: string; // if there's not field error then it succeeds
+  // address?: OsmAddress;
+  error?: string;
 }
 
 export interface RouteResponse {
   id: string;
-  vehicleId: string;
+  vehicle: VehicleResponse;
   dispatchId: string;
-  totalDistance: number;
-  nodes: NodeResponse[];
-  startTime: string | null;
-  endTime: string | null;
-  createdAt: string;
-  updatedAt: string;
-}
-
-export interface SubscriptionResponse {
-  id: string;
-  userId: string;
-  latitude: number;
-  longitude: number;
-  address: string | null;
-  estimatedWeight: number;
+  depotId: string;
+  distance: number;
+  status: RouteStatus;
+  orders: OrderResponse[];
+  completedAt: string;
   createdAt: string;
   updatedAt: string;
 }
@@ -213,14 +200,22 @@ export interface UserResponse {
 
 export interface VehicleResponse {
   id: string;
-  driverId: string;
+  driver: UserResponse;
   depotId: string;
   licensePlate: string;
   capacity: number;
-  currentLatitude: number | null;
-  currentLongitude: number | null;
-  currentLoad: number | null;
+  currentLatitude: number;
+  currentLongitude: number;
+  currentLoad: number;
   status: VehicleStatus;
   createdAt: string;
   updatedAt: string;
+}
+
+
+// firebase schemas
+export interface VehicleRealtimeData {
+  latitude: number;
+  longitude: number;
+  load: number;
 }

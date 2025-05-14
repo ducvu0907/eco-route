@@ -1,4 +1,4 @@
-import { ApiResponse, VehicleCreateRequest, VehicleResponse, VehicleUpdateRequest } from "@/types/types";
+import { ApiResponse, VehicleResponse, VehicleCreateRequest, VehicleUpdateRequest, RouteResponse, } from "@/types/types";
 import axiosInstance from ".";
 
 export const getVehicles = async (): Promise<ApiResponse<VehicleResponse[]>> => {
@@ -23,5 +23,10 @@ export const createVehicle = async (payload: VehicleCreateRequest): Promise<ApiR
 
 export const updateVehicle = async (vehicleId: string, payload: VehicleUpdateRequest): Promise<ApiResponse<VehicleResponse>> => {
   const { data } = await axiosInstance.post(`/vehicles/${vehicleId}`, payload);
+  return data;
+};
+
+export const deleteVehicle = async (vehicleId: string): Promise<ApiResponse<void>> => {
+  const { data } = await axiosInstance.delete(`/vehicles/${vehicleId}`);
   return data;
 };

@@ -1,5 +1,20 @@
-import { ApiResponse, OrderCreateRequest, OrderResponse, OrderUpdateRequest, } from "@/types/types";
+import { ApiResponse, OrderResponse, OrderCreateRequest, OrderUpdateRequest, } from "@/types/types";
 import axiosInstance from ".";
+
+export const markOrderAsDone = async (orderId: string): Promise<ApiResponse<OrderResponse>> => {
+  const { data } = await axiosInstance.post(`/orders/${orderId}/done`);
+  return data;
+};
+
+export const getOngoingOrders = async (): Promise<ApiResponse<OrderResponse[]>> => {
+  const { data } = await axiosInstance.get("/orders/in-progress");
+  return data;
+};
+
+export const getPendingOrders = async (): Promise<ApiResponse<OrderResponse[]>> => {
+  const { data } = await axiosInstance.get("/orders/pending");
+  return data;
+};
 
 export const getOrders = async (): Promise<ApiResponse<OrderResponse[]>> => {
   const { data } = await axiosInstance.get("/orders");

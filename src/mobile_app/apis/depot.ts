@@ -1,4 +1,4 @@
-import { ApiResponse, DepotCreateRequest, DepotResponse } from "@/types/types";
+import { ApiResponse, DepotResponse, DepotCreateRequest } from "@/types/types";
 import axiosInstance from ".";
 
 export const getDepots = async (): Promise<ApiResponse<DepotResponse[]>> => {
@@ -8,6 +8,11 @@ export const getDepots = async (): Promise<ApiResponse<DepotResponse[]>> => {
 
 export const getDepotById = async (depotId: string): Promise<ApiResponse<DepotResponse>> => {
   const { data } = await axiosInstance.get(`/depots/${depotId}`);
+  return data;
+};
+
+export const updateDepot = async (depotId: string, payload: DepotCreateRequest): Promise<ApiResponse<DepotResponse>> => {
+  const { data } = await axiosInstance.post(`/depots/${depotId}`, payload);
   return data;
 };
 

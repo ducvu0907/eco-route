@@ -1,9 +1,10 @@
 import { useAuthContext } from "@/hooks/useAuthContext";
+import { Role } from "@/types/types";
 import { Redirect } from "expo-router";
 import { ActivityIndicator, View } from "react-native";
 
 export default function Index() {
-  const { isAuthenticated, isLoading } = useAuthContext();
+  const { role, isAuthenticated, isLoading } = useAuthContext();
   
   if (isLoading) {
     return (
@@ -13,5 +14,10 @@ export default function Index() {
     );
   }
 
-  return <Redirect href={isAuthenticated ? "/personal-info" : "/login"} />;
+  if (isAuthenticated) {
+    return <Redirect href={role === Role.CUSTOMER ? "/(tabs-customer)/orders" : "/(tabs-driver)/vehicle"} />;
+  }
+
+  return <Redirect href={"/login"}/>
+
 }

@@ -1,5 +1,10 @@
-import { ApiResponse, UserResponse } from "@/types/types";
-import axiosInstance from ".";
+import { ApiResponse, UserResponse } from "@/types/types"
+import axiosInstance from "."
+
+export const getDriversNotAssigned = async (): Promise<ApiResponse<UserResponse[]>> => {
+  const { data } = await axiosInstance.get("/drivers/not-assigned");
+  return data;
+}
 
 export const getUsers = async (): Promise<ApiResponse<UserResponse[]>> => {
   const { data } = await axiosInstance.get("/users");

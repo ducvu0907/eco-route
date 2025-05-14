@@ -19,7 +19,7 @@ const formSchema = z.object({
 
 type RegisterForm = z.infer<typeof formSchema>;
 
-export default function RegisterScreen() {
+export default function Register() {
   const { mutate: register, isPending } = useRegister();
   const router = useRouter();
   const {

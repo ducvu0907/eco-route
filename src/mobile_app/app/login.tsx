@@ -13,7 +13,7 @@ const formSchema = z.object({
 
 type LoginForm = z.infer<typeof formSchema>;
 
-export default function LoginScreen() {
+export default function Login() {
   const { mutate: login, isPending } = useLogin();
   const router = useRouter();
   const {
