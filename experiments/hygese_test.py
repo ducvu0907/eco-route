@@ -29,42 +29,12 @@
 # granular search parameter
 # target proportion of feasible individuals for penalty adaptation
 
-# test hygese
-# hygese is a wrapper for HGS-CVRP
+# hygese is a wrapper for the original implementation
+# A CVRP from https://developers.google.com/optimization/routing/cvrp
 import numpy as np 
-import hygese as hgs
+import hygese as hgs 
+from vrplib import read_instance, read_solution
 
-n = 20
-x = (np.random.rand(n) * 1000)
-y = (np.random.rand(n) * 1000)
-
-# Solver initialization
-ap = hgs.AlgorithmParameters(timeLimit=3.2)  # seconds
-hgs_solver = hgs.Solver(parameters=ap, verbose=True)
-
-# data preparation
-data = dict()
-data['x_coordinates'] = x
-data['y_coordinates'] = y
-
-# You may also supply distance_matrix instead of coordinates, or in addition to coordinates
-# If you supply distance_matrix, it will be used for cost calculation.
-# The additional coordinates will be helpful in speeding up the algorithm.
-# data['distance_matrix'] = dist_mtx
-
-data['service_times'] = np.zeros(n)
-demands = np.ones(n)
-demands[0] = 0 # depot demand = 0
-data['demands'] = demands
-data['vehicle_capacity'] = np.ceil(n/3).astype(int)
-data['num_vehicles'] = 3
-data['depot'] = 0
-
-result = hgs_solver.solve_cvrp(data)
-print(result.cost)
-print(result.routes)
-
-# A CVRP instance from https://developers.google.com/optimization/routing/cvrp
 data = dict()
 data['distance_matrix'] = [
     [0, 548, 776, 696, 582, 274, 502, 194, 308, 194, 536, 502, 388, 354, 468, 776, 662],
@@ -88,15 +58,59 @@ data['distance_matrix'] = [
 data['num_vehicles'] = 4
 data['depot'] = 0
 data['demands'] = [0, 1, 1, 2, 4, 2, 4, 8, 8, 1, 2, 1, 2, 4, 4, 8, 8]
-# data['vehicle_capacities'] = [15, 15, 15, 15]
 data['vehicle_capacity'] = 15  # different from OR-Tools: homogeneous capacity
 data['service_times'] = np.zeros(len(data['demands']))
 
 # Solver initialization
-ap = hgs.AlgorithmParameters(timeLimit=3.2)  # seconds
+ap = hgs.AlgorithmParameters(timeLimit=0.2)  # seconds
 hgs_solver = hgs.Solver(parameters=ap, verbose=True)
 
 # Solve
-result = hgs_solver.solve_cvrp(data)
+# result = hgs_solver.solve_cvrp(data)
+# print(result.cost)
+# print(result.routes)
+
+instance = read_instance("/home/ducvu/work/projects/eco-route/data/benchmark/CVRP/X-n101-k25.vrp")
+solution = read_solution("/home/ducvu/work/projects/eco-route/data/benchmark/CVRP/X-n101-k25.sol")
+
+print(instance.keys())
+
+# data['distance_matrix'] = [
+#     [0,1,1],
+#     [1,0,1],
+#     [1,1,0],
+# ]
+# data['num_vehicles'] = 4
+# data['depot'] = 0
+# data['demands'] = [0, 1, 1]
+# data['vehicle_capacity'] = 15  # different from OR-Tools: homogeneous capacity
+# data['service_times'] = np.zeros(len(data['demands']))
+# result = hgs_solver.solve_cvrp(data)
+# print(result.cost)
+# print(result.routes)
+
+data = dict()
+data['distance_matrix'] = [
+    [0, 2451, 713, 1018, 1631, 1374, 2408, 213, 2571, 875, 1420, 2145, 1972],
+    [2451, 0, 1745, 1524, 831, 1240, 959, 2596, 403, 1589, 1374, 357, 579],
+    [713, 1745, 0, 355, 920, 803, 1737, 851, 1858, 262, 940, 1453, 1260],
+    [1018, 1524, 355, 0, 700, 862, 1395, 1123, 1584, 466, 1056, 1280, 987],
+    [1631, 831, 920, 700, 0, 663, 1021, 1769, 949, 796, 879, 586, 371],
+    [1374, 1240, 803, 862, 663, 0, 1681, 1551, 1765, 547, 225, 887, 999],
+    [2408, 959, 1737, 1395, 1021, 1681, 0, 2493, 678, 1724, 1891, 1114, 701],
+    [213, 2596, 851, 1123, 1769, 1551, 2493, 0, 2699, 1038, 1605, 2300, 2099],
+    [2571, 403, 1858, 1584, 949, 1765, 678, 2699, 0, 1744, 1645, 653, 600],
+    [875, 1589, 262, 466, 796, 547, 1724, 1038, 1744, 0, 679, 1272, 1162],
+    [1420, 1374, 940, 1056, 879, 225, 1891, 1605, 1645, 679, 0, 1017, 1200],
+    [2145, 357, 1453, 1280, 586, 887, 1114, 2300, 653, 1272, 1017, 0, 504],
+    [1972, 579, 1260, 987, 371, 999, 701, 2099, 600, 1162, 1200, 504, 0],
+] 
+
+# Solver initialization
+ap = hgs.AlgorithmParameters(timeLimit=0.8)  # seconds
+hgs_solver = hgs.Solver(parameters=ap, verbose=True)
+
+# Solve
+result = hgs_solver.solve_tsp(data)
 print(result.cost)
 print(result.routes)
