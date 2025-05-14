@@ -32,6 +32,8 @@ public class Route {
   @JoinColumn(name = "dispatch_id")
   private Dispatch dispatch;
 
+  private String depotId;
+
   @Builder.Default
   @OneToMany(mappedBy = "route", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
   private List<Order> orders = new ArrayList<>();

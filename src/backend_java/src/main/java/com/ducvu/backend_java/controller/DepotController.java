@@ -26,10 +26,10 @@ public class DepotController {
 
   @GetMapping("/depots/{depotId}")
   public ApiResponse<DepotResponse> getDepotById(@PathVariable("depotId") String depotId) {
-    log.info("Received get depot request");
-    var result = depotService.getDepot(depotId);
+    log.info("Received get depot by id request");
+    var result = depotService.getDepotById(depotId);
     return ApiResponse.<DepotResponse>builder()
-        .message("Get depot successfully")
+        .message("Get depot by id successfully")
         .result(result)
         .build();
   }

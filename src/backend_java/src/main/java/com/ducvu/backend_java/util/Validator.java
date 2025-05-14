@@ -68,7 +68,9 @@ public class Validator {
 
   private boolean isValid(VehicleCreateRequest request) {
     return StringUtils.hasText(request.getLicensePlate())
-        && request.getCapacity() != null;
+        && request.getCapacity() != null
+        && request.getDriverId() != null
+        && request.getDepotId() != null;
   }
 
   private boolean isValid(OrderCreateRequest request) {

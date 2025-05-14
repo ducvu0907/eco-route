@@ -21,7 +21,7 @@ application:
   security:
     jwt:
       secret-key: ${SECRET_KEY:1af670eff96448b0c64d3ee1ae5939a25a9522ec6ae1fa192732b43e9fe8c29d}
-      access-token-expiration: ${ACCESS_TOKEN_EXPIRATION:3600000} # milliseconds
+      access-token-expiration: ${ACCESS_TOKEN_EXPIRATION:36000000} # milliseconds
 
 springdoc:
   api-docs:

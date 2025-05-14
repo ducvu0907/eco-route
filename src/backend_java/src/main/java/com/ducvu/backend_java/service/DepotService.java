@@ -25,7 +25,7 @@ public class DepotService {
   private final Validator validator;
   private final Mapper mapper;
 
-  public DepotResponse getDepot(String depotId) {
+  public DepotResponse getDepotById(String depotId) {
     Depot depot = depotRepository.findById(depotId)
         .orElseThrow(() -> new RuntimeException("Depot not found"));
     return mapper.map(depot);

@@ -32,6 +32,16 @@ public class DispatchController {
         .build();
   }
 
+  @GetMapping("/dispatches/{dispatchId}")
+  public ApiResponse<DispatchResponse> getDispatchById(@PathVariable("dispatchId") String dispatchId) {
+    log.info("Received get dispatch by id request");
+    var result = dispatchService.getDispatchById(dispatchId);
+    return ApiResponse.<DispatchResponse>builder()
+        .message("Get dispatch by id successfully")
+        .result(result)
+        .build();
+  }
+
   @GetMapping("/dispatches")
   public ApiResponse<List<DispatchResponse>> getDispatches() {
     log.info("Received get dispatches request");

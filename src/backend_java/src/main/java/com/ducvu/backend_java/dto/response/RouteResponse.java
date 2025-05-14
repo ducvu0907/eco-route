@@ -15,8 +15,9 @@ import java.util.List;
 @Builder
 public class RouteResponse {
   private String id;
-  private String vehicleId;
+  private VehicleResponse vehicle;
   private String dispatchId;
+  private String depotId;
   private Double distance;
   private RouteStatus status;
   private List<OrderResponse> orders;

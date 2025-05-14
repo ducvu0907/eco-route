@@ -20,7 +20,7 @@ import java.util.List;
 public class RouteController {
   private final RouteService routeService;
 
-  @PostMapping("/routes/{routeId}")
+  @PostMapping("/routes/{routeId}/done")
   public ApiResponse<RouteResponse> markRouteAsDone(@PathVariable("routeId") String routeId) {
     log.info("Received mark route as done request");
     var result = routeService.markRouteAsDone(routeId);

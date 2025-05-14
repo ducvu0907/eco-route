@@ -3,6 +3,7 @@ package com.ducvu.backend_java.config;
 import com.google.auth.oauth2.GoogleCredentials;
 import com.google.firebase.FirebaseApp;
 import com.google.firebase.FirebaseOptions;
+import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.messaging.FirebaseMessaging;
 import jakarta.annotation.PostConstruct;
@@ -48,8 +49,10 @@ public class FirebaseConfig {
     return FirebaseMessaging.getInstance(FirebaseApp.getInstance());
   }
 
+  // real-time db for storing vehicles current state (lat/lon/load)
   @Bean
-  public FirebaseDatabase firebaseDatabase() {
-    return FirebaseDatabase.getInstance(FirebaseApp.getInstance());
+  public DatabaseReference databaseReference() {
+    return FirebaseDatabase.getInstance().getReference("/vehicles");
   }
+
 }

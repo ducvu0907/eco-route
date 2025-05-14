@@ -6,6 +6,8 @@ import com.ducvu.backend_java.dto.response.VrpResponse;
 import com.ducvu.backend_java.model.*;
 import com.ducvu.backend_java.repository.*;
 import com.ducvu.backend_java.util.Mapper;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -31,6 +33,13 @@ public class DispatchService {
 
   @Value("${vrp.api-url}")
   private String vrpApiUrl;
+
+
+  public DispatchResponse getDispatchById(String dispatchId) {
+    Dispatch dispatch = dispatchRepository.findById(dispatchId)
+        .orElseThrow(() -> new RuntimeException("Dispatch not found"));
+    return mapper.map(dispatch);
+  }
 
   public DispatchResponse getCurrentDispatch() {
     Dispatch dispatch = dispatchRepository.findActiveDispatch()
@@ -150,6 +159,7 @@ public class DispatchService {
     Route route = Route.builder()
         .vehicle(vehicle)
         .dispatch(dispatch)
+        .depotId(vehicle.getDepot().getId())
         .distance(vrpRoute.getDistance())
         .status(RouteStatus.IN_PROGRESS)
         .build();

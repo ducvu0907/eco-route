@@ -43,6 +43,22 @@ public class OrderService {
         .toList();
   }
 
+  public List<OrderResponse> getOngoingOrders() {
+    return orderRepository.findAll()
+        .stream()
+        .filter(order -> order.getStatus() == OrderStatus.IN_PROGRESS)
+        .map(mapper::map)
+        .toList();
+  }
+
+  public List<OrderResponse> getPendingOrders() {
+    return orderRepository.findAll()
+        .stream()
+        .filter(order -> order.getStatus() == OrderStatus.PENDING)
+        .map(mapper::map)
+        .toList();
+  }
+
   public List<OrderResponse> getOrders() {
     return orderRepository.findAll()
         .stream()
@@ -91,7 +107,7 @@ public class OrderService {
     Order order = orderRepository.findById(orderId)
         .orElseThrow(() -> new RuntimeException("Order not found"));
 
-    order.setStatus(OrderStatus.DONE);
+    order.setStatus(OrderStatus.COMPLETED);
     return mapper.map(orderRepository.save(order));
   }
 

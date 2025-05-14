@@ -23,6 +23,26 @@ import java.util.List;
 public class OrderController {
   private final OrderService orderService;
 
+  @GetMapping("/orders/in-progress")
+  public ApiResponse<List<OrderResponse>> getOngoingOrders() {
+    log.info("Received get ongoing orders request");
+    var result = orderService.getOngoingOrders();
+    return ApiResponse.<List<OrderResponse>>builder()
+        .message("Get ongoing orders successfully")
+        .result(result)
+        .build();
+  }
+
+  @GetMapping("/orders/pending")
+  public ApiResponse<List<OrderResponse>> getPendingOrders() {
+    log.info("Received get pending orders request");
+    var result = orderService.getPendingOrders();
+    return ApiResponse.<List<OrderResponse>>builder()
+        .message("Get pending orders successfully")
+        .result(result)
+        .build();
+  }
+
   @GetMapping("/orders")
   public ApiResponse<List<OrderResponse>> getOrders() {
     log.info("Received get orders request");

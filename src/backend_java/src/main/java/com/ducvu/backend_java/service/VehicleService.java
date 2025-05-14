@@ -3,6 +3,7 @@ package com.ducvu.backend_java.service;
 
 import com.ducvu.backend_java.dto.request.VehicleCreateRequest;
 import com.ducvu.backend_java.dto.request.VehicleUpdateRequest;
+import com.ducvu.backend_java.dto.response.VehicleRealtimeData;
 import com.ducvu.backend_java.dto.response.VehicleResponse;
 import com.ducvu.backend_java.model.Depot;
 import com.ducvu.backend_java.model.User;
@@ -13,10 +14,12 @@ import com.ducvu.backend_java.repository.UserRepository;
 import com.ducvu.backend_java.repository.VehicleRepository;
 import com.ducvu.backend_java.util.Mapper;
 import com.ducvu.backend_java.util.Validator;
+import com.google.firebase.database.*;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
+import javax.annotation.PostConstruct;
 import java.util.List;
 import java.util.Optional;
 
@@ -29,6 +32,23 @@ public class VehicleService {
   private final DepotRepository depotRepository;
   private final Validator validator;
   private final Mapper mapper;
+  private final DatabaseReference db;
+
+  // TODO: this listens to all vehicles update but i think it's not necessary right now
+  @PostConstruct
+  public void listenToVehiclesUpdate() {
+    db.addValueEventListener(new ValueEventListener() {
+      @Override
+      public void onDataChange(DataSnapshot snapshot) {
+        log.info("Vehicles got updated");
+      }
+
+      @Override
+      public void onCancelled(DatabaseError error) {
+        log.error("Firebase error: {}", error.getMessage());
+      }
+    });
+  }
 
   public VehicleResponse getVehicleByDriverId(String driverId) {
     Vehicle vehicle = vehicleRepository.findByDriverId(driverId)
@@ -77,42 +97,50 @@ public class VehicleService {
     if (request.getDepotId() != null) {
       Depot depot = depotRepository.findById(request.getDepotId())
           .orElseThrow(() -> new RuntimeException("Depot not found"));
+
       vehicle.setDepot(depot);
       vehicle.setCurrentLatitude(depot.getLatitude());
       vehicle.setCurrentLongitude(depot.getLongitude());
     }
 
-    return mapper.map(vehicleRepository.save(vehicle));
+    Vehicle savedVehicle = vehicleRepository.save(vehicle);
+    syncVehicleToFirebase(savedVehicle);
+
+    return mapper.map(savedVehicle);
+
   }
 
   public VehicleResponse updateVehicle(String vehicleId, VehicleUpdateRequest request) {
     Vehicle vehicle = vehicleRepository.findById(vehicleId)
         .orElseThrow(() -> new RuntimeException("Vehicle not found"));
 
-    if (request.getStatus() != null) {
+    if (vehicle.getStatus() == VehicleStatus.ACTIVE) {
+      throw new RuntimeException("Vehicle is active, cannot update info");
+    }
+
+    if (request.getStatus() != null && !request.getStatus().equals(vehicle.getStatus())) {
       vehicle.setStatus(request.getStatus());
     }
 
-    if (request.getDriverId() != null) {
+    if (request.getDriverId() != null
+        && (vehicle.getDriver() == null || !vehicle.getDriver().getId().equals(request.getDriverId()))
+    ) {
       User driver = userRepository.findById(request.getDriverId())
           .orElseThrow(() -> new RuntimeException("Driver not found"));
 
       vehicleRepository.findByDriverId(request.getDriverId())
           .ifPresent(v -> {
-            v.setDriver(null);
-            vehicleRepository.save(v);
+            throw new RuntimeException("Driver is already assigned");
           });
 
       vehicle.setDriver(driver);
     }
 
-    if (request.getDepotId() != null) {
+    if (request.getDepotId() != null && !request.getDepotId().equals(vehicle.getDepot().getId())) {
       Depot depot = depotRepository.findById(request.getDepotId())
           .orElseThrow(() -> new RuntimeException("Depot not found"));
 
       vehicle.setDepot(depot);
-      vehicle.setCurrentLongitude(depot.getLatitude());
-      vehicle.setCurrentLongitude(depot.getLongitude());
     }
 
     return mapper.map(vehicleRepository.save(vehicle));
@@ -132,5 +160,21 @@ public class VehicleService {
 
     vehicleRepository.deleteById(vehicleId);
   }
+
+  // sync to real-time db after creating
+  // because client would subscribe to this to read positions
+  private void syncVehicleToFirebase(Vehicle vehicle) {
+    DatabaseReference vehicleRef = db.child(vehicle.getId());
+
+    VehicleRealtimeData data = VehicleRealtimeData
+        .builder()
+        .latitude(vehicle.getCurrentLatitude())
+        .longitude(vehicle.getCurrentLongitude())
+        .load(vehicle.getCurrentLoad())
+        .build();
+
+    vehicleRef.setValueAsync(data);
+  }
+
 }
 

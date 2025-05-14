@@ -22,6 +22,14 @@ public class UserService {
   private final Validator validator;
   private final Mapper mapper;
 
+  public List<UserResponse> getDriversNotAssigned() {
+    return userRepository.findAll()
+        .stream()
+        .filter(u -> u.getRole() == Role.DRIVER && u.getVehicle() == null)
+        .map(mapper::map)
+        .toList();
+  }
+
   public List<UserResponse> getUsers() {
     return userRepository.findAll()
         .stream()

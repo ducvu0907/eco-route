@@ -9,6 +9,6 @@ import java.util.Optional;
 
 @Repository
 public interface DispatchRepository extends JpaRepository<Dispatch, String> {
-  @NativeQuery("SELECT * FROM dispatches WHERE status = 'ACTIVE' LIMIT 1")
+  @NativeQuery("SELECT * FROM dispatches WHERE status = 'IN_PROGRESS' LIMIT 1")
   Optional<Dispatch> findActiveDispatch();
 }

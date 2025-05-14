@@ -1,6 +1,7 @@
 package com.ducvu.backend_java.dto.response;
 
 
+import com.ducvu.backend_java.model.Depot;
 import com.ducvu.backend_java.model.VehicleStatus;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -15,7 +16,7 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 public class VehicleResponse {
   private String id;
-  private String driverId;
+  private UserResponse driver;
   private String depotId;
   private String licensePlate;
   private Double capacity;

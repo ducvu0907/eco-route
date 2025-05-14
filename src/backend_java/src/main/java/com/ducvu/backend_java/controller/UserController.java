@@ -18,6 +18,16 @@ import java.util.List;
 public class UserController {
   private final UserService userService;
 
+  @GetMapping("/drivers/not-assigned")
+  public ApiResponse<List<UserResponse>> getDriversNotAssigned() {
+    log.info("Received get drivers not assigned request");
+    var result = userService.getUsers();
+    return ApiResponse.<List<UserResponse>>builder()
+        .message("Get users successfully")
+        .result(result)
+        .build();
+  }
+
   @GetMapping("/users")
   public ApiResponse<List<UserResponse>> getUsers() {
     log.info("Received get users request");
