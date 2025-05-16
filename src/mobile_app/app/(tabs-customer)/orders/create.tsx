@@ -63,7 +63,6 @@ export default function OrderCreate() {
     });
   };
 
-  // Function to handle location selection from modal
   const handleLocationSelect = (latitude: number, longitude: number) => {
     setLocation({ latitude, longitude });
     setValue("latitude", latitude);
@@ -188,17 +187,19 @@ export default function OrderCreate() {
         </View>
       </TouchableWithoutFeedback>
 
-      {/* <DemoLocationPicker
+      <DemoLocationPicker
+        isVisible={isLocationPickerVisible}
+        setLocation={handleLocationSelect}
+        onClose={() => setLocationPickerVisible(false)}
+      />
+
+      {/* 
+      <LocationPicker
         isVisible={isLocationPickerVisible}
         setLocation={handleLocationSelect}
         onClose={() => setLocationPickerVisible(false)}
       /> */}
 
-      <LocationPicker
-        isVisible={isLocationPickerVisible}
-        setLocation={handleLocationSelect}
-        onClose={() => setLocationPickerVisible(false)}
-      />
     </SafeAreaView>
   );
 }

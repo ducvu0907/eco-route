@@ -2,14 +2,6 @@ import { Role } from '@/types/types'
 import * as SecureStore from 'expo-secure-store'
 import { createContext, ReactNode, useEffect, useState } from 'react'
 
-export interface AuthState {
-  token: string | null
-  userId: string | null
-  username: string | null
-  fcmToken: string | null
-  role: Role | null
-}
-
 const keys = {
   token: 'token',
   userId: 'userId',
@@ -18,39 +10,26 @@ const keys = {
   role: 'role',
 }
 
-export const saveAuthState = async (state: AuthState) => {
-  await Promise.all([
-    SecureStore.setItemAsync(keys.token, state.token ?? ''),
-    SecureStore.setItemAsync(keys.userId, state.userId ?? ''),
-    SecureStore.setItemAsync(keys.username, state.username ?? ''),
-    SecureStore.setItemAsync(keys.fcmToken, state.fcmToken ?? ''),
-    SecureStore.setItemAsync(keys.role, state.role ?? ''),
-  ])
-}
+const getItem = async (key: string) => (await SecureStore.getItemAsync(key)) || null
+const setItem = async (key: string, value: string | null) =>
+  SecureStore.setItemAsync(key, value ?? '')
 
-export const clearAuthState = async () => {
-  await Promise.all(Object.values(keys).map(key => SecureStore.deleteItemAsync(key)))
-}
+export interface AuthContextType {
+  token: string | null
+  setToken: (value: string | null) => void
 
-export const getInitialAuthState = async (): Promise<AuthState> => {
-  const [token, userId, username, fcmToken, role] = await Promise.all([
-    SecureStore.getItemAsync(keys.token),
-    SecureStore.getItemAsync(keys.userId),
-    SecureStore.getItemAsync(keys.username),
-    SecureStore.getItemAsync(keys.fcmToken),
-    SecureStore.getItemAsync(keys.role),
-  ])
-  return {
-    token: token || null,
-    userId: userId || null,
-    username: username || null,
-    fcmToken: fcmToken || null,
-    role: (role as Role) || null,
-  }
-}
+  userId: string | null
+  setUserId: (value: string | null) => void
 
-export interface AuthContextType extends AuthState {
-  setAuth: (data: AuthState) => void
+  username: string | null
+  setUsername: (value: string | null) => void
+
+  fcmToken: string | null
+  setFcmToken: (value: string | null) => void
+
+  role: Role | null
+  setRole: (value: Role | null) => void
+
   clearAuth: () => void
   isAuthenticated: boolean
   isLoading: boolean
@@ -59,40 +38,97 @@ export interface AuthContextType extends AuthState {
 export const AuthContext = createContext<AuthContextType | undefined>(undefined)
 
 export const AuthProvider = ({ children }: { children: ReactNode }) => {
-  const [auth, setAuthState] = useState<AuthState>({
-    token: null,
-    userId: null,
-    username: null,
-    fcmToken: null,
-    role: null,
-  })
+  const [token, setTokenState] = useState<string | null>(null)
+  const [userId, setUserIdState] = useState<string | null>(null)
+  const [username, setUsernameState] = useState<string | null>(null)
+  const [fcmToken, setFcmTokenState] = useState<string | null>(null)
+  const [role, setRoleState] = useState<Role | null>(null)
+
   const [isLoading, setIsLoading] = useState(true)
 
   useEffect(() => {
     (async () => {
-      try {
-        const storedAuth = await getInitialAuthState()
-        setAuthState(storedAuth)
-      } finally {
-        setIsLoading(false)
-      }
+      const [storedToken, storedUserId, storedUsername, storedFcmToken, storedRole] =
+        await Promise.all([
+          getItem(keys.token),
+          getItem(keys.userId),
+          getItem(keys.username),
+          getItem(keys.fcmToken),
+          getItem(keys.role),
+        ])
+
+      setTokenState(storedToken)
+      setUserIdState(storedUserId)
+      setUsernameState(storedUsername)
+      setFcmTokenState(storedFcmToken)
+      setRoleState(storedRole as Role | null)
+
+      setIsLoading(false)
     })()
   }, [])
 
-  const setAuth = (data: AuthState) => {
-    setAuthState(data)
-    saveAuthState(data)
+  const setToken = (value: string | null) => {
+    setTokenState(value)
+    setItem(keys.token, value)
   }
 
-  const clearAuth = () => {
-    setAuthState({ token: null, userId: null, username: null, fcmToken: null, role: null })
-    clearAuthState()
+  const setUserId = (value: string | null) => {
+    setUserIdState(value)
+    setItem(keys.userId, value)
   }
 
-  const isAuthenticated = !!auth.token;
+  const setUsername = (value: string | null) => {
+    setUsernameState(value)
+    setItem(keys.username, value)
+  }
+
+  const setFcmToken = (value: string | null) => {
+    setFcmTokenState(value)
+    setItem(keys.fcmToken, value)
+  }
+
+  const setRole = (value: Role | null) => {
+    setRoleState(value)
+    setItem(keys.role, value)
+  }
+
+  const clearAuth = async () => {
+    setTokenState(null)
+    setUserIdState(null)
+    setUsernameState(null)
+    // retain fcmToken if needed
+    setRoleState(null)
+
+    await Promise.all([
+      SecureStore.deleteItemAsync(keys.token),
+      SecureStore.deleteItemAsync(keys.userId),
+      SecureStore.deleteItemAsync(keys.username),
+      SecureStore.deleteItemAsync(keys.role),
+      // comment out if you want to keep fcmToken
+      // SecureStore.deleteItemAsync(keys.fcmToken),
+    ])
+  }
+
+  const isAuthenticated = !!token
 
   return (
-    <AuthContext.Provider value={{ ...auth, setAuth, clearAuth, isAuthenticated, isLoading }}>
+    <AuthContext.Provider
+      value={{
+        token,
+        setToken,
+        userId,
+        setUserId,
+        username,
+        setUsername,
+        fcmToken,
+        setFcmToken,
+        role,
+        setRole,
+        clearAuth,
+        isAuthenticated,
+        isLoading,
+      }}
+    >
       {children}
     </AuthContext.Provider>
   )

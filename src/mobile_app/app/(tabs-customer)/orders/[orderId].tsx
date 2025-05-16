@@ -1,3 +1,4 @@
+import DemoInProgressCustomerMap from "@/components/DemoInProgressCustomerMap";
 import InProgressCustomerMap from "@/components/InProgressCustomerMap";
 import OrderInfo from "@/components/OrderInfo";
 import { useGetOrderById } from "@/hooks/useOrder";
@@ -38,7 +39,8 @@ export default function OrderDetails() {
       </TouchableOpacity>
       <View className="w-full h-full">
         <OrderInfo orderId={order.id} />
-        {order.status === OrderStatus.IN_PROGRESS && <InProgressCustomerMap order={order} />}
+        {/* {order.status === OrderStatus.IN_PROGRESS && <InProgressCustomerMap order={order} />} */}
+        {order.status === OrderStatus.IN_PROGRESS && <DemoInProgressCustomerMap order={order} />}
       </View>
     </SafeAreaView>
   );

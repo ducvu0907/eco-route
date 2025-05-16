@@ -1,7 +1,7 @@
 import { useGetVehicleActiveRoute } from "@/hooks/useRoute";
 import { OrderResponse, VehicleResponse } from "@/types/types";
 import { View, ActivityIndicator, Text } from "react-native";
-import MapView from "react-native-maps";
+import MapView, { UrlTile } from "react-native-maps";
 import OrderMarker from "./OrderMarker";
 import VehicleDynamicMarker from "./VehicleDynamicMarker";
 import { useEffect } from "react";
@@ -72,6 +72,7 @@ export default function InProgressDriverMap({vehicle}: InProgressDriverMapProps)
 
   return (
     <MapView
+      mapType="none"
       style={{ flex: 1 }}
       initialRegion={{
         latitude: vehicle.currentLatitude,
@@ -80,6 +81,12 @@ export default function InProgressDriverMap({vehicle}: InProgressDriverMapProps)
         longitudeDelta: 0.01,
       }}
     >
+      <UrlTile
+        urlTemplate="https://openstreetmap.keannu1.duckdns.org/tile/{z}/{x}/{y}.png?"
+        maximumZ={19}
+        flipY={false}
+      />
+
       <VehicleMarker vehicle={vehicle}/>
 
       {route.orders.map((order: OrderResponse) => (

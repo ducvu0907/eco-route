@@ -6,6 +6,8 @@ import { Controller, useForm } from "react-hook-form";
 import { ActivityIndicator, Keyboard, KeyboardAvoidingView, Pressable, Text, TextInput, TouchableWithoutFeedback, View } from "react-native";
 import { z } from "zod";
 import {Picker} from '@react-native-picker/picker';
+import { useAuthContext } from "@/hooks/useAuthContext";
+import { useEffect } from "react";
 
 const formSchema = z.object({
   username: z.string().min(1, "Username is required"),
@@ -20,11 +22,13 @@ const formSchema = z.object({
 type RegisterForm = z.infer<typeof formSchema>;
 
 export default function Register() {
+  const {fcmToken} = useAuthContext();
   const { mutate: register, isPending } = useRegister();
   const router = useRouter();
   const {
     control,
     handleSubmit,
+    setValue,
     formState: { errors },
   } = useForm<RegisterForm>({
     resolver: zodResolver(formSchema),
@@ -32,7 +36,7 @@ export default function Register() {
       username: "",
       password: "",
       phone: "",
-      fcmToken: null,
+      fcmToken: fcmToken,
       role: undefined,
     },
   });

@@ -1,6 +1,8 @@
 import { useLogin } from "@/hooks/useAuth";
+import { useAuthContext } from "@/hooks/useAuthContext";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useRouter } from "expo-router";
+import { useLocalSearchParams, useRouter } from "expo-router";
+import { useEffect } from "react";
 import { Controller, useForm } from "react-hook-form";
 import { ActivityIndicator, Pressable, Text, TextInput, View, KeyboardAvoidingView, TouchableWithoutFeedback, Keyboard } from "react-native";
 import { z } from "zod";
@@ -14,22 +16,25 @@ const formSchema = z.object({
 type LoginForm = z.infer<typeof formSchema>;
 
 export default function Login() {
+  const { fcmToken } = useAuthContext();
   const { mutate: login, isPending } = useLogin();
   const router = useRouter();
   const {
     control,
     handleSubmit,
+    setValue,
     formState: { errors },
   } = useForm<LoginForm>({
     resolver: zodResolver(formSchema),
     defaultValues: {
       username: "",
       password: "",
-      fcmToken: null,
+      fcmToken: fcmToken as string || null,
     },
   });
 
   const onSubmit = (data: LoginForm) => {
+    console.log(data);
     login(data);
   };
 

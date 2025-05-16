@@ -14,6 +14,13 @@ export default function DriverInfo() {
       <View className="flex-1 justify-center items-center bg-white">
         <ActivityIndicator size="large" />
         <Text className="mt-2 text-gray-700">Loading user info...</Text>
+
+        <Pressable
+          onPress={logout}
+          className="bg-red-500 py-3 rounded-xl mt-10 items-center"
+        >
+          <Text className="text-white font-semibold text-base">Log Out</Text>
+        </Pressable>
       </View>
     );
   }
@@ -22,6 +29,13 @@ export default function DriverInfo() {
     return (
       <View className="flex-1 justify-center items-center bg-white">
         <Text className="text-red-500">Failed to load user info.</Text>
+
+        <Pressable
+          onPress={logout}
+          className="bg-red-500 py-3 rounded-xl mt-10 items-center"
+        >
+          <Text className="text-white font-semibold text-base">Log Out</Text>
+        </Pressable>
       </View>
     );
   }

@@ -1,4 +1,5 @@
 import { useGetDepotById } from "@/hooks/useDepot";
+import { useVehicleRealtimeData } from "@/hooks/useVehicleRealtimeData";
 import { RouteResponse, VehicleResponse } from "@/types/types";
 import { Polyline } from "react-native-maps";
 

@@ -8,6 +8,7 @@ import { VehicleStatus } from "@/types/types";
 import InProgressDriverMap from "@/components/InProgressDriverMap";
 import { Ionicons } from "@expo/vector-icons";
 import { useRouter } from "expo-router";
+import DemoInProgressDriverMap from "@/components/DemoInProgressDriverMap";
 
 export default function VehicleDetails() {
   const router = useRouter();
@@ -36,7 +37,8 @@ export default function VehicleDetails() {
     <SafeAreaView className="flex-1 bg-white">
       <View className="w-full h-full">
         <VehicleInfo vehicle={vehicle} />
-        {vehicle.status === VehicleStatus.ACTIVE && <InProgressDriverMap vehicle={vehicle}/>}
+        {/* {vehicle.status === VehicleStatus.ACTIVE && <InProgressDriverMap vehicle={vehicle}/>} */}
+        {vehicle.status === VehicleStatus.ACTIVE && <DemoInProgressDriverMap vehicle={vehicle}/>}
       </View>
     </SafeAreaView>
   );

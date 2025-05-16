@@ -1,5 +1,5 @@
 import { View, Text, Button, TouchableOpacity, Modal, StyleSheet } from "react-native";
-import MapView, { Marker, MapPressEvent, Callout } from "react-native-maps";
+import MapView, { Marker, MapPressEvent, Callout, UrlTile } from "react-native-maps";
 import * as Location from "expo-location";
 import { useState, useEffect } from "react";
 import { Ionicons } from "@expo/vector-icons";
@@ -55,6 +55,7 @@ export default function LocationPicker({ isVisible, setLocation, onClose, }: Loc
 
           {/* Map */}
           <MapView
+            mapType="none"
             style={{ flex: 1 }}
             initialRegion={{
               ...currentLocation,
@@ -63,6 +64,13 @@ export default function LocationPicker({ isVisible, setLocation, onClose, }: Loc
             }}
             onPress={handleMapPress}
           >
+
+            <UrlTile
+              urlTemplate="https://openstreetmap.keannu1.duckdns.org/tile/{z}/{x}/{y}.png?"
+              maximumZ={19}
+              flipY={false}
+            />
+
             {selectedLocation && (
               <Marker coordinate={selectedLocation}>
                 <Callout>

@@ -16,9 +16,11 @@ export function useVehicleRealtimeData(vehicleId: string) {
     const ref = database().ref(`/vehicles/${vehicleId}`);
 
     const onValueChange = ref.on("value", snapshot => {
+      console.log("Vehicle updated data: ", snapshot.val());
       setData(snapshot.val());
       setLoading(false);
     }, err => {
+      console.log(err);
       setError(err);
       setLoading(false);
     });

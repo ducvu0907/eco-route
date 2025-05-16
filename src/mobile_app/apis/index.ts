@@ -1,9 +1,8 @@
 import { useToast } from '@/hooks/useToast';
 import { ApiResponse } from '@/types/types';
+import { apiUrl } from '@/utils/config';
 import axios, { AxiosResponse } from 'axios';
 import * as SecureStorage from "expo-secure-store";
-
-const apiUrl = process.env.EXPO_PUBLIC_API_URL;
 
 const axiosInstance = axios.create({
   baseURL: apiUrl

@@ -18,20 +18,17 @@ export const useRegister = () => {
 }
 
 export const useLogin = () => {
-  const { setAuth } = useAuthContext();
+  const { setToken, setRole, setUserId, setUsername, setFcmToken } = useAuthContext();
   const router = useRouter();
 
   return useMutation({
     mutationFn: (payload: LoginRequest) => login(payload),
     onSuccess: (response: ApiResponse<AuthResponse>) => {
       const result = response.result as AuthResponse;
-      setAuth({
-        token: result.token,
-        userId: result.userId,
-        username: result.username,
-        fcmToken: null,
-        role: result.role
-      });
+        setToken(result.token);
+        setUserId(result.userId);
+        setUsername(result.username);
+        setRole(result.role);
       router.replace("/");
     },
   });

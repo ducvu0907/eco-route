@@ -3,14 +3,19 @@ import { View, Text, ActivityIndicator, Image } from "react-native";
 import { Callout, Marker } from "react-native-maps";
 import { VehicleResponse } from "@/types/types";
 import { useVehicleRealtimeData } from "@/hooks/useVehicleRealtimeData";
+import { isBackgroundLocationAvailableAsync } from "expo-location";
 
 interface VehicleDynamicMarkerProps {
   vehicle: VehicleResponse;
 }
 
 export default function VehicleDynamicMarker({ vehicle }: VehicleDynamicMarkerProps) {
-  const { data } = useVehicleRealtimeData(vehicle.id);
+  const { data, loading } = useVehicleRealtimeData(vehicle.id);
 
+  if (loading) {
+    return <ActivityIndicator />;
+  }
+  
   return (
     <Marker
       coordinate={{

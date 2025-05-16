@@ -1,16 +1,21 @@
 import { useGetRouteById } from "@/hooks/useRoute";
 import { OrderResponse } from "@/types/types";
-import MapView, { UrlTile } from "react-native-maps";
+import { Camera, MapView, MarkerView } from "@maplibre/maplibre-react-native";
 import OrderMarker from "./OrderMarker";
 import VehicleDynamicMarker from "./VehicleDynamicMarker";
 import { View, ActivityIndicator, Text } from "react-native";
 import VehicleMarker from "./VehicleMarker";
+import DemoOrderMarker from "./DemoOrderMarker";
+import DemoVehicleMarker from "./DemoVehicleMarker";
+import { defaultMapZoom, mapTileUrl } from "@/utils/config";
+import DemoVehicleDynamicMarker from "./DemoVehicleDynamicMarker";
+import VehicleDrawer from "./VehicleDrawer";
 
 interface InProgressMapProps {
   order: OrderResponse;
 }
 
-export default function InProgressCustomerMap({order}: InProgressMapProps) {
+export default function DemoInProgressCustomerMap({order}: InProgressMapProps) {
   const {data, isLoading} = useGetRouteById(order.routeId || "");
   const route = data?.result;
   const vehicle = route?.vehicle;
@@ -32,24 +37,24 @@ export default function InProgressCustomerMap({order}: InProgressMapProps) {
   }
 
   return (
-    <MapView
-      mapType="none"
-      style={{ flex: 1 }}
-      initialRegion={{
-        latitude: order.latitude,
-        longitude: order.longitude,
-        latitudeDelta: 0.01,
-        longitudeDelta: 0.01,
-      }}
-    >
-      <UrlTile
-        urlTemplate="https://openstreetmap.keannu1.duckdns.org/tile/{z}/{x}/{y}.png?"
-        maximumZ={19}
-        flipY={false}
-      />
+    <View className="flex-1">
+      <MapView
+        style={{ flex: 1 }}
+        mapStyle={mapTileUrl}
+      >
 
-      <OrderMarker order={order} />
-      <VehicleMarker vehicle={vehicle} />
-    </MapView>
+        <Camera
+          centerCoordinate={[order.longitude, order.latitude]}
+          zoomLevel={defaultMapZoom}
+        />
+
+        <DemoOrderMarker order={order} />
+
+        <DemoVehicleDynamicMarker vehicle={vehicle} />
+
+      </MapView>
+
+      <VehicleDrawer vehicle={vehicle}/>
+    </View>
   );
 }

@@ -2,7 +2,8 @@ import React, { useState, useEffect } from "react";
 import { View, Text, Modal, StyleSheet, Button, TouchableOpacity } from "react-native";
 import * as Location from "expo-location";
 import { Ionicons } from "@expo/vector-icons";
-import {Annotation, MapView, Camera, PointAnnotation, MarkerView} from "@maplibre/maplibre-react-native";
+import {Annotation, MapView, Camera, PointAnnotation, MarkerView, Callout} from "@maplibre/maplibre-react-native";
+import { defaultMapZoom, mapTileUrl } from "@/utils/config";
 
 type LocationPickerProps = {
   isVisible: boolean;
@@ -21,6 +22,7 @@ export default function DemoLocationPicker({ isVisible, setLocation, onClose }: 
 
       const loc = await Location.getCurrentPositionAsync({});
       const coords: [number, number] = [loc.coords.longitude, loc.coords.latitude];
+      console.log(coords);
       setCurrentLocation(coords);
       setSelectedLocation(coords);
     })();
@@ -28,12 +30,13 @@ export default function DemoLocationPicker({ isVisible, setLocation, onClose }: 
 
   const handleMapPress = async (event: any) => {
     const coords = event.geometry.coordinates as [number, number];
+    console.log(coords);
     setSelectedLocation(coords);
   };
 
   const handleSelectLocation = () => {
     if (!selectedLocation) return;
-    setLocation(selectedLocation[1], selectedLocation[0]); // [lat, lng]
+    setLocation(selectedLocation[1], selectedLocation[0]); // [lat, lon]
     onClose();
   };
 
@@ -51,15 +54,23 @@ export default function DemoLocationPicker({ isVisible, setLocation, onClose }: 
           <MapView
             style={styles.map}
             onPress={handleMapPress}
+            mapStyle={mapTileUrl}
           >
             <Camera
-              centerCoordinate={currentLocation}
-              zoomLevel={14}
+              centerCoordinate={selectedLocation || currentLocation}
+              zoomLevel={defaultMapZoom}
             />
 
             {selectedLocation && (
               <MarkerView coordinate={selectedLocation}>
-                <View></View>
+                <View style={{
+                  backgroundColor: "red",
+                  width: 20,
+                  height: 20,
+                  borderRadius: 10,
+                  borderWidth: 2,
+                  borderColor: "white"
+                }} />
               </MarkerView>
             )}
           </MapView>
