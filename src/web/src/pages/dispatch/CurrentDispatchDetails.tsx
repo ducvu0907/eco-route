@@ -1,4 +1,4 @@
-import { useCreateDispatch, useGetCurrentDispatch } from "@/hooks/useDispatch";
+import { useCreateDispatch, useGetCurrentDispatch, useMarkDispatchAsDone } from "@/hooks/useDispatch";
 import { useGetPendingOrders } from "@/hooks/useOrder";
 import { useGetRoutesByDispatchId } from "@/hooks/useRoute";
 import MultiRoutesDynamicMap from "@/components/map/MultiRoutesDynamicMap";
@@ -9,9 +9,11 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import NoDispatch from "./NoDispatch";
+import { markDispatchAsDone } from "@/apis/dispatch";
 
 export default function CurrentDispatchDetails() {
   const {mutate: createDispatch, isPending} = useCreateDispatch();
+  const {mutate: markAsDone, isPending: isMarking} = useMarkDispatchAsDone();
   const [tab, setTab] = useState("routes");
 
   const {
@@ -118,6 +120,7 @@ export default function CurrentDispatchDetails() {
       <div>
 
         <Button onClick={() => createDispatch()} disabled={isPending}>Reroute</Button>
+        <Button variant={"outline"} onClick={() => markDispatchAsDone(dispatch.id)} disabled={isMarking}>Mark as Done</Button>
       </div>
     </div>
   );

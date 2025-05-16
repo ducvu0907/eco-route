@@ -31,6 +31,7 @@ import { useGetDriversNotAssigned, useGetUsers } from "@/hooks/useUser";
 import { useEffect, useState } from "react";
 import { DepotResponse, Role, UserResponse } from "@/types/types";
 import { useCreateVehicle } from "@/hooks/useVehicle";
+import { useQueryClient } from "@tanstack/react-query";
 
 interface VehicleCreateModalProps {
   isOpen: boolean;
@@ -49,6 +50,7 @@ const vehicleSchema = z.object({
 type VehicleFormValues = z.infer<typeof vehicleSchema>;
 
 export default function VehicleCreateModal({ isOpen, onClose, depot, driver }: VehicleCreateModalProps) {
+  const queryClient = useQueryClient();
   const { mutate: createVehicle, isPending } = useCreateVehicle();
 
   const { data: depotsData } = useGetDepots();
@@ -70,6 +72,7 @@ export default function VehicleCreateModal({ isOpen, onClose, depot, driver }: V
   const onSubmit = (data: VehicleFormValues) => {
     createVehicle(data, {
       onSuccess: () => {
+        queryClient.invalidateQueries({queryKey: ["depots", data.depotId]})
         onClose();
       },
     });

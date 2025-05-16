@@ -12,10 +12,9 @@ interface RoutePolylinePropps {
   vehicle: VehicleResponse;
 }
 
-export default function RoutePolyline({ orders, depotId, vehicle }: RoutePolylinePropps) {
+export default function StaticRoutePolyline({ orders, depotId }: RoutePolylinePropps) {
   const map = useMap();
   const { data, isLoading } = useGetDepotById(depotId);
-  const realtimeData = useVehicleRealtimeData(vehicle.id);
 
   if (isLoading) {
     return (
@@ -25,15 +24,11 @@ export default function RoutePolyline({ orders, depotId, vehicle }: RoutePolylin
 
   const depot = data?.result;
 
-  const lat = realtimeData?.latitude || vehicle.currentLatitude;
-  const lng = realtimeData?.longitude || vehicle.currentLongitude;
-
   const sortedOrders = orders
-    .filter((order) => order.status !== OrderStatus.COMPLETED)
     .sort((a, b) => (a.index as number) - (b.index as number))
     .map(o => [o.latitude, o.longitude] as LatLngExpression);
 
-  const positions: LatLngExpression[] = [[lat, lng], ...sortedOrders, [depot?.latitude, depot?.longitude] as LatLngExpression];
+  const positions: LatLngExpression[] = [[depot?.latitude, depot?.longitude] as LatLngExpression, ...sortedOrders, [depot?.latitude, depot?.longitude] as LatLngExpression];
   // const positions: LatLngExpression[] = [[lat, lng], ...sortedOrders];
   // const positions: LatLngExpression[] = [...sortedOrders, [depot?.latitude, depot?.longitude] as LatLngExpression];
 
@@ -50,9 +45,6 @@ export default function RoutePolyline({ orders, depotId, vehicle }: RoutePolylin
   });
 
   return (
-    <>
-      {/* <Polyline positions={[[lat, lng], sortedOrders[0]]} color="blue" /> */}
-      <Polyline positions={positions} color="blue" />
-    </>
+    <Polyline positions={positions} color="blue" />
   );
 }

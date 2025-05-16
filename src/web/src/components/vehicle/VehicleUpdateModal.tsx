@@ -25,10 +25,11 @@ import {
   SelectItem,
 } from "@/components/ui/select";
 import { useGetDepots } from "@/hooks/useDepot";
-import { useGetUsers } from "@/hooks/useUser";
+import { useGetDriversNotAssigned, useGetUsers } from "@/hooks/useUser";
 import { useEffect, useState } from "react";
 import { DepotResponse, Role, UserResponse, VehicleResponse, VehicleStatus } from "@/types/types";
 import { useUpdateVehicle } from "@/hooks/useVehicle";
+import { useQueryClient } from "@tanstack/react-query";
 
 interface VehicleUpdateModalProps {
   isOpen: boolean;
@@ -45,23 +46,20 @@ const vehicleSchema = z.object({
 type VehicleFormValues = z.infer<typeof vehicleSchema>;
 
 export default function VehicleUpdateModal({ isOpen, onClose, vehicle }: VehicleUpdateModalProps) {
+  const queryClient = useQueryClient();
   const { mutate: updateVehicle, isPending } = useUpdateVehicle();
-  const [depots, setDepots] = useState<DepotResponse[]>([]);
-  const [drivers, setDrivers] = useState<UserResponse[]>([]);
 
-  const { data: depotsData } = useGetDepots();
-  const { data: usersData } = useGetUsers();
+  const { data: depotsData, isLoading: isDepotsLoading, isError: isDepotsError } = useGetDepots();
+  const depots = depotsData?.result;
 
-  useEffect(() => {
-    if (depotsData?.result) setDepots(depotsData.result);
-    if (usersData?.result) setDrivers(usersData.result.filter(u => u.role === Role.DRIVER));
-  }, [depotsData, usersData]);
+  const { data: driversData, isLoading: isDriversLoading, isError: isDriversError } = useGetDriversNotAssigned();
+  const drivers = driversData?.result;
 
   const form = useForm<VehicleFormValues>({
     resolver: zodResolver(vehicleSchema),
     defaultValues: {
-      depotId: vehicle.depotId ?? null,
-      driverId: vehicle.driverId ?? null,
+      depotId: vehicle.depotId || null,
+      driverId: vehicle.driver.id ||null, 
       status: vehicle.status,
     },
   });
@@ -71,6 +69,7 @@ export default function VehicleUpdateModal({ isOpen, onClose, vehicle }: Vehicle
       { vehicleId: vehicle.id, payload: data},
       {
         onSuccess: () => {
+          queryClient.invalidateQueries({ queryKey: ["drivers", "not-assigned"] })
           onClose();
         },
       }
@@ -82,6 +81,37 @@ export default function VehicleUpdateModal({ isOpen, onClose, vehicle }: Vehicle
     onClose();
     form.reset();
   };
+
+  if (isDepotsLoading || isDriversLoading) {
+    return (
+      <Dialog open={isOpen} onOpenChange={onOpenChange}>
+        <DialogContent className="lg:max-w-2xl">
+          <DialogHeader>
+            <DialogTitle>Loading...</DialogTitle>
+          </DialogHeader>
+          <div className="p-4 text-center">Fetching data, please wait...</div>
+        </DialogContent>
+      </Dialog>
+    );
+  }
+
+  if (isDepotsError || isDriversError) {
+    return (
+      <Dialog open={isOpen} onOpenChange={onOpenChange}>
+        <DialogContent className="lg:max-w-2xl">
+          <DialogHeader>
+            <DialogTitle>Error</DialogTitle>
+          </DialogHeader>
+          <div className="p-4 text-center text-red-500">
+            Failed to load data. Please try again later.
+          </div>
+          <DialogFooter>
+            <Button onClick={onClose}>Close</Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+    );
+  }
 
   return (
     <Dialog open={isOpen} onOpenChange={onOpenChange}>
@@ -107,7 +137,7 @@ export default function VehicleUpdateModal({ isOpen, onClose, vehicle }: Vehicle
                       </SelectTrigger>
                     </FormControl>
                     <SelectContent>
-                      {depots.map((d) => (
+                      {depots?.map((d) => (
                         <SelectItem key={d.id} value={d.id}>
                           {d.address}
                         </SelectItem>
@@ -133,7 +163,7 @@ export default function VehicleUpdateModal({ isOpen, onClose, vehicle }: Vehicle
                       </SelectTrigger>
                     </FormControl>
                     <SelectContent>
-                      {drivers.map((d) => (
+                      {drivers?.map((d) => (
                         <SelectItem key={d.id} value={d.id}>
                           {d.username}
                         </SelectItem>

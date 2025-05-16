@@ -23,8 +23,10 @@ import CurrentDispatchDetails from "./pages/dispatch/CurrentDispatchDetails";
 import { getToken, onMessage } from "firebase/messaging";
 import { generateToken, messaging } from "./firebase";
 import { useToast } from "./hooks/useToast";
+import { useQueryClient } from "@tanstack/react-query";
 
 const App = () => {
+  const queryClient = useQueryClient();
   const {showToast} = useToast();
   const { token, username, userId, role, setAuth, isAuthenticated } = useAuthContext();
 
@@ -37,10 +39,11 @@ const App = () => {
       });
 
     onMessage(messaging, (payload) => {
-      console.log("Received foreground message: ", payload);
+      queryClient.invalidateQueries(); // no args = invalidating all
       showToast(payload.notification?.body as string, "success");
+      console.log("Received foreground message: ", payload);
     });
-
+    
   }, []);
 
 
