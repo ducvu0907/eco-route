@@ -28,12 +28,12 @@ export default function VehicleDrawer({ vehicle }: VehicleDrawerProps) {
       </Text>
 
       <Text style={{ fontSize: 14, marginBottom: 4 }}>
-        <Text style={{ fontWeight: "bold" }}>Name: </Text>
+        <Text style={{ fontWeight: "bold" }}>Driver Name: </Text>
         {vehicle.driver.username}
       </Text>
 
       <Text style={{ fontSize: 14, marginBottom: 4 }}>
-        <Text style={{ fontWeight: "bold" }}>Phone: </Text>
+        <Text style={{ fontWeight: "bold" }}>Driver Phone: </Text>
         {vehicle.driver.phone}
       </Text>
 
@@ -42,20 +42,6 @@ export default function VehicleDrawer({ vehicle }: VehicleDrawerProps) {
         {vehicle.licensePlate}
       </Text>
 
-      <Text style={{ fontSize: 14, marginBottom: 4 }}>
-        <Text style={{ fontWeight: "bold" }}>Capacity: </Text>
-        {vehicle.capacity} kg
-      </Text>
-
-      <Text style={{ fontSize: 14, marginBottom: 4 }}>
-        <Text style={{ fontWeight: "bold" }}>Current Load: </Text>
-        {vehicle.currentLoad} kg
-      </Text>
-
-      <Text style={{ fontSize: 14 }}>
-        <Text style={{ fontWeight: "bold" }}>Status: </Text>
-        {vehicle.status}
-      </Text>
     </View>
   );
 }

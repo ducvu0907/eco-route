@@ -5,8 +5,10 @@ import { ActivityIndicator, View } from "react-native";
 import messaging from '@react-native-firebase/messaging';
 import { useEffect, useState } from "react";
 import { useToast } from "@/hooks/useToast";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 
 export default function Index() {
+  const queryClient = useQueryClient();
   const { showToast } = useToast();
   const { role, isAuthenticated, isLoading, setFcmToken } = useAuthContext();
 
@@ -47,12 +49,12 @@ export default function Index() {
       console.log('Background message handler', remoteMessage);
     });
 
-    const unsubscribe = messaging().onMessage(async remoteMessage => {
+    messaging().onMessage(async remoteMessage => {
       showToast(remoteMessage.notification?.body as string, "success");
+      queryClient.invalidateQueries(); // no args = invalidating all
       console.log('Notification received in foreground:', remoteMessage);
     });
 
-    return unsubscribe;
   }, []);
 
   if (isLoading) {
