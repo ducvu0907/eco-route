@@ -36,6 +36,18 @@ public class DispatchService {
   private String vrpApiUrl;
 
 
+  public DispatchResponse markDispatchAsDone(String dispatchId) {
+    Dispatch dispatch = dispatchRepository.findById(dispatchId)
+        .orElseThrow(() -> new RuntimeException("Dispatch not found"));
+
+    if (!routeRepository.findByDispatchId(dispatchId).isEmpty()) {
+      throw new RuntimeException("Routes are not completed");
+    }
+
+    dispatch.setStatus(DispatchStatus.COMPLETED);
+    return mapper.map(dispatchRepository.save(dispatch));
+  }
+
   public DispatchResponse getDispatchById(String dispatchId) {
     Dispatch dispatch = dispatchRepository.findById(dispatchId)
         .orElseThrow(() -> new RuntimeException("Dispatch not found"));

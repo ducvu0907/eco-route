@@ -11,6 +11,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Service
@@ -29,6 +30,9 @@ public class RouteService {
         .orElseThrow(() -> new RuntimeException("Route not found"));
 
     route.setStatus(RouteStatus.COMPLETED);
+    route.getVehicle().setStatus(VehicleStatus.IDLE);
+    route.setCompletedAt(LocalDateTime.now());
+
     notifyCompletedRoute(route);
     return mapper.map(routeRepository.save(route));
   }

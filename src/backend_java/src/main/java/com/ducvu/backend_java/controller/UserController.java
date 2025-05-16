@@ -21,9 +21,9 @@ public class UserController {
   @GetMapping("/drivers/not-assigned")
   public ApiResponse<List<UserResponse>> getDriversNotAssigned() {
     log.info("Received get drivers not assigned request");
-    var result = userService.getUsers();
+    var result = userService.getDriversNotAssigned();
     return ApiResponse.<List<UserResponse>>builder()
-        .message("Get users successfully")
+        .message("Get drivers not assigned successfully")
         .result(result)
         .build();
   }

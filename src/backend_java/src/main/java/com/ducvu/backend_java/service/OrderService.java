@@ -18,6 +18,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Service
@@ -112,6 +113,8 @@ public class OrderService {
         .orElseThrow(() -> new RuntimeException("Order not found"));
 
     order.setStatus(OrderStatus.COMPLETED);
+    order.setCompletedAt(LocalDateTime.now());
+
     notifyOrderCompleted(order);
     return mapper.map(orderRepository.save(order));
   }

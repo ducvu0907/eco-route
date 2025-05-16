@@ -52,6 +52,15 @@ public class DispatchController {
         .build();
   }
 
+  @PostMapping("/dispatches/{dispatchId}/done")
+  public ApiResponse<DispatchResponse> markDispatchAsDone(@PathVariable("dispatchId") String dispatchId) {
+    log.info("Received mark dispatch as done request");
+    var result = dispatchService.markDispatchAsDone(dispatchId);
+    return ApiResponse.<DispatchResponse>builder()
+        .message("Mark dispatch as done successfully")
+        .build();
+  }
+
   @PostMapping("/dispatches")
   public ApiResponse<Void> createDispatch() {
     log.info("Received create dispatches request");
