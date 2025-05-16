@@ -30,6 +30,7 @@ public class DispatchService {
   private final RouteRepository routeRepository;
   private final Mapper mapper;
   private final RestTemplate restTemplate;
+  private final NotificationService notificationService;
 
   @Value("${vrp.api-url}")
   private String vrpApiUrl;
@@ -133,6 +134,8 @@ public class DispatchService {
         })
         .toList();
 
+    notifyNewRoutes(updatedRoutes);
+
     routeRepository.saveAll(updatedRoutes);
   }
 
@@ -147,6 +150,9 @@ public class DispatchService {
         .toList();
 
     dispatch.setRoutes(newRoutes);
+
+    notifyNewRoutes(newRoutes);
+
     dispatchRepository.save(dispatch);
   }
 
@@ -185,4 +191,12 @@ public class DispatchService {
 
     return orders;
   }
+
+  private void notifyNewRoutes(List<Route> routes) {
+    List<String> fcmTokens = routes.stream()
+        .map(route -> route.getVehicle().getDriver().getFcmToken())
+        .toList();
+    notificationService.sendBatchNotifications("New route created", fcmTokens);
+  }
+
 }

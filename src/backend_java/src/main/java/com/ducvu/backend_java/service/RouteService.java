@@ -21,12 +21,15 @@ public class RouteService {
   private final RouteRepository routeRepository;
   private final VehicleRepository vehicleRepository;
   private final Mapper mapper;
+  private final NotificationService notificationService;
+  private final UserService userService;
 
   public RouteResponse markRouteAsDone(String routeId) {
     Route route = routeRepository.findById(routeId)
         .orElseThrow(() -> new RuntimeException("Route not found"));
 
     route.setStatus(RouteStatus.COMPLETED);
+    notifyCompletedRoute(route);
     return mapper.map(routeRepository.save(route));
   }
 
@@ -67,6 +70,11 @@ public class RouteService {
         .stream()
         .map(mapper::map)
         .toList();
+  }
+
+  private void notifyCompletedRoute(Route route) {
+    User manager = userService.getManager();
+    notificationService.sendSingleNotification(String.format("Route %s is completed", route.getId()), manager.getFcmToken());
   }
 
 }

@@ -29,7 +29,7 @@ import java.util.Arrays;
 public class SecurityConfig {
   private final AuthenticationProvider authenticationProvider;
   private final JwtAuthFilter jwtAuthFilter;
-  private final CustomerAuthenticationEntryPoint customerAuthenticationEntryPoint;
+  private final CustomAuthenticationEntryPoint customAuthenticationEntryPoint;
 
   @Bean
   public SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity) throws Exception {
@@ -42,7 +42,7 @@ public class SecurityConfig {
                 .anyRequest()
                 .authenticated()
         )
-        .exceptionHandling(e -> e.authenticationEntryPoint(customerAuthenticationEntryPoint))
+        .exceptionHandling(e -> e.authenticationEntryPoint(customAuthenticationEntryPoint))
         .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
         .authenticationProvider(authenticationProvider)
         .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class)

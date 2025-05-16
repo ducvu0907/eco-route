@@ -56,4 +56,9 @@ public class UserService {
         .orElseThrow(() -> new UsernameNotFoundException("User not found"));
   }
 
+  public User getManager() {
+    return userRepository.findManager()
+        .orElseThrow(() -> new RuntimeException("Manager doesn't exist"));
+  }
+
 }

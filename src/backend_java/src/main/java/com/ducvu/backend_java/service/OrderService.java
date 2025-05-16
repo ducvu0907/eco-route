@@ -11,6 +11,7 @@ import com.ducvu.backend_java.model.User;
 import com.ducvu.backend_java.repository.DispatchRepository;
 import com.ducvu.backend_java.repository.OrderRepository;
 import com.ducvu.backend_java.repository.RouteRepository;
+import com.ducvu.backend_java.repository.UserRepository;
 import com.ducvu.backend_java.util.Mapper;
 import com.ducvu.backend_java.util.Validator;
 import lombok.RequiredArgsConstructor;
@@ -29,6 +30,8 @@ public class OrderService {
   private final DispatchRepository dispatchRepository;
   private final Validator validator;
   private final Mapper mapper;
+  private final NotificationService notificationService;
+  private final UserRepository userRepository;
 
   public List<OrderResponse> getOrdersByUserId(String userId) {
     User user = userService.getCurrentUser();
@@ -99,6 +102,7 @@ public class OrderService {
 //      }
 //    }
 
+    notifyNewOrder();
     return mapper.map(orderRepository.save(order));
   }
 
@@ -108,6 +112,7 @@ public class OrderService {
         .orElseThrow(() -> new RuntimeException("Order not found"));
 
     order.setStatus(OrderStatus.COMPLETED);
+    notifyOrderCompleted(order);
     return mapper.map(orderRepository.save(order));
   }
 
@@ -123,6 +128,15 @@ public class OrderService {
 
     order.setStatus(request.getStatus());
     return mapper.map(orderRepository.save(order));
+  }
+
+  private void notifyNewOrder() {
+    User manager = userService.getManager();
+    notificationService.sendSingleNotification("New order created", manager.getFcmToken());
+  }
+
+  private void notifyOrderCompleted(Order order) {
+    notificationService.sendSingleNotification("Order is completed", order.getUser().getFcmToken());
   }
 
 }
