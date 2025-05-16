@@ -89,6 +89,7 @@ export default function CurrentDispatchDetails() {
                   <div key={route.id} className="text-sm border-b pb-2">
                     <div><strong>Vehicle:</strong> {route.vehicle?.licensePlate || "N/A"}</div>
                     <div><strong>Stops:</strong> {route.orders?.length ?? 0}</div>
+                    <div><strong>Distance:</strong> {route.distance.toFixed(3)} km</div>
                   </div>
                 ))}
               </CardContent>

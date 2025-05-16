@@ -22,8 +22,10 @@ import Map from "./pages/map/Map";
 import CurrentDispatchDetails from "./pages/dispatch/CurrentDispatchDetails";
 import { getToken, onMessage } from "firebase/messaging";
 import { generateToken, messaging } from "./firebase";
+import { useToast } from "./hooks/useToast";
 
 const App = () => {
+  const {showToast} = useToast();
   const { token, username, userId, role, setAuth, isAuthenticated } = useAuthContext();
 
   useEffect(() => {
@@ -34,9 +36,9 @@ const App = () => {
         }
       });
 
-    // TODO
     onMessage(messaging, (payload) => {
-      console.log(payload);
+      console.log("Received foreground message: ", payload);
+      showToast(payload.notification?.body as string, "success");
     });
 
   }, []);

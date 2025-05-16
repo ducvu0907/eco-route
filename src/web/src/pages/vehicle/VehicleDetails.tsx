@@ -127,8 +127,8 @@ export default function VehicleDetails() {
         {/* Map Section */}
         {selectedRoute ? (
           <>
-            {selectedRoute && selectedRoute.status === RouteStatus.COMPLETED && <SingleRouteDynamicMap route={selectedRoute} />}
-            {selectedRoute && selectedRoute.status === RouteStatus.IN_PROGRESS && <SingleRouteStaticMap route={selectedRoute} />}
+            {selectedRoute && selectedRoute.status === RouteStatus.IN_PROGRESS && <SingleRouteDynamicMap route={selectedRoute} />}
+            {selectedRoute && selectedRoute.status === RouteStatus.COMPLETED && <SingleRouteStaticMap route={selectedRoute} />}
           </>
         ) : (
           <Card className="flex items-center justify-center h-full text-muted-foreground">

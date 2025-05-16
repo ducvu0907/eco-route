@@ -39,7 +39,7 @@ export default function MultiRoutesDynamicMap({ routes }: MultiRoutesDynamicMapP
                 {route.orders.map((order) => (
                   <OrderMarker key={order.id} order={order} />
                 ))}
-                {/* <DepotDynamicMarker key={`depot-${route.vehicle.depotId}`} depotId={route.vehicle.depotId} /> */}
+                <DepotDynamicMarker key={`depot-${route.vehicle.depotId}`} depotId={route.vehicle.depotId} />
                 <RoutePolyline key={`polyline-${route.id}`} vehicle={route.vehicle} depotId={route.depotId} orders={route.orders} />
               </div>
             );

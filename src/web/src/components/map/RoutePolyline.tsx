@@ -1,6 +1,6 @@
 import { useGetDepotById } from "@/hooks/useDepot";
 import { useVehicleRealtimeData } from "@/hooks/useVehicleRealtimeData";
-import { OrderResponse, VehicleResponse } from "@/types/types";
+import { OrderResponse, OrderStatus, VehicleResponse } from "@/types/types";
 import L, { LatLngExpression } from "leaflet";
 import { Loader2 } from "lucide-react";
 import { Polyline, useMap } from "react-leaflet";
@@ -25,14 +25,17 @@ export default function RoutePolyline({ orders, depotId, vehicle }: RoutePolylin
 
   const depot = data?.result;
 
-  const lat = realtimeData?.latitude ?? vehicle.currentLatitude;
-  const lng = realtimeData?.longitude ?? vehicle.currentLongitude;
+  const lat = realtimeData?.latitude || vehicle.currentLatitude;
+  const lng = realtimeData?.longitude || vehicle.currentLongitude;
 
   const sortedOrders = orders
+    .filter((order) => order.status !== OrderStatus.COMPLETED)
     .sort((a, b) => (a.index as number) - (b.index as number))
     .map(o => [o.latitude, o.longitude] as LatLngExpression);
 
-  const positions: LatLngExpression[] = [[lat, lng], ...sortedOrders, [depot?.latitude, depot?.longitude] as LatLngExpression];
+  // const positions: LatLngExpression[] = [[lat, lng], ...sortedOrders, [depot?.latitude, depot?.longitude] as LatLngExpression];
+  // const positions: LatLngExpression[] = [[lat, lng], ...sortedOrders];
+  const positions: LatLngExpression[] = [...sortedOrders, [depot?.latitude, depot?.longitude] as LatLngExpression];
 
   // Create the polyline
   const polyline = L.polyline(positions, { color: "blue" }).addTo(map);
@@ -47,6 +50,9 @@ export default function RoutePolyline({ orders, depotId, vehicle }: RoutePolylin
   });
 
   return (
-    <Polyline positions={positions} color="blue" />
+    <>
+      <Polyline positions={[[lat, lng], sortedOrders[0]]} color="blue" />
+      <Polyline positions={positions} color="blue" />
+    </>
   );
 }

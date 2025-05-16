@@ -54,7 +54,7 @@ export default function OrderDetails() {
   }
 
   return (
-    <div className="p-6 w-full mx-auto space-y-6">
+    <div className="h-full p-6 w-full mx-auto space-y-6">
       <Card>
         <CardHeader>
           <CardTitle className="text-xl">Order #{order.id}</CardTitle>
