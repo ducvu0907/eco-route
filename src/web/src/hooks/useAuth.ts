@@ -14,7 +14,7 @@ export const useRegister = () => {
 }
 
 export const useLogin = () => {
-  const { setAuth } = useAuthContext();
+  const { fcmToken, setAuth } = useAuthContext();
 
   return useMutation({
     mutationFn: (payload: LoginRequest) => login(payload),
@@ -24,7 +24,7 @@ export const useLogin = () => {
         token: result.token,
         userId: result.userId,
         username: result.username,
-        fcmToken: null,
+        fcmToken: fcmToken, // persist fcmToken
         role: result.role
       });
     },

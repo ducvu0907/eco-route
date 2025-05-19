@@ -20,14 +20,14 @@ import { useEffect, useState } from "react";
 import DispatchDetails from "./pages/dispatch/DispatchDetails";
 import Map from "./pages/map/Map";
 import CurrentDispatchDetails from "./pages/dispatch/CurrentDispatchDetails";
-import { getToken, onMessage } from "firebase/messaging";
 import { generateToken, messaging } from "./firebase";
 import { useToast } from "./hooks/useToast";
 import { useQueryClient } from "@tanstack/react-query";
+import { onMessage } from "firebase/messaging";
 
 const App = () => {
   const queryClient = useQueryClient();
-  const {showToast} = useToast();
+  const { showToast } = useToast();
   const { token, username, userId, role, setAuth, isAuthenticated } = useAuthContext();
 
   useEffect(() => {
@@ -38,12 +38,12 @@ const App = () => {
         }
       });
 
-    onMessage(messaging, (payload) => {
-      queryClient.invalidateQueries(); // no args = invalidating all
-      showToast(payload.notification?.body as string, "success");
-      console.log("Received foreground message: ", payload);
-    });
     
+    onMessage(messaging, (payload) => {
+      queryClient.invalidateQueries();
+      console.log("Foreground message: ", payload);
+      showToast(payload.notification?.body as string, "success");
+    });
   }, []);
 
 

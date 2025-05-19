@@ -1,6 +1,5 @@
 import { initializeApp } from "firebase/app";
-import { getToken, MessagePayload, onMessage } from "firebase/messaging";
-import { getMessaging } from "firebase/messaging/sw";
+import { getToken, getMessaging } from "firebase/messaging";
 import { getDatabase } from "firebase/database";
 import { firebaseConfig } from "./config/config";
 
@@ -29,4 +28,3 @@ export const generateToken = async () => {
     console.log("An error occurred while retrieving fcm token: ", error);
   }
 };
-

@@ -38,11 +38,10 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   }
 
   const clearAuth = () => {
-    setAuthState({ token: null, userId: null, username: null, fcmToken: null, role: null })
+    setAuthState((prev) => ({...prev,  token: null, userId: null, username: null, role: null })) // persist fcm token
     localStorage.removeItem('token')
     localStorage.removeItem('userId')
     localStorage.removeItem('username')
-    localStorage.removeItem('fcmToken')
     localStorage.removeItem('role')
   }
 
