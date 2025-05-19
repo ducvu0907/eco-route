@@ -201,7 +201,16 @@ public class DispatchService {
       orders.add(order);
     }
 
+    notifyOrdersInProgress(orders);
+
     return orders;
+  }
+
+  private void notifyOrdersInProgress(List<Order> orders) {
+    List<String> fcmTokens = orders.stream()
+        .map(order -> order.getUser().getFcmToken())
+        .toList();
+    notificationService.sendBatchNotifications("Order is in progress", fcmTokens);
   }
 
   private void notifyNewRoutes(List<Route> routes) {

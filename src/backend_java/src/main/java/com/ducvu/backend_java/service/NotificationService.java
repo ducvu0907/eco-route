@@ -21,6 +21,7 @@ public class NotificationService {
   private final FirebaseMessaging firebaseMessaging;
 
   public void sendBatchNotifications(String content, List<String> fcmTokens) {
+    log.info("Sending notifications to {}", fcmTokens);
     if (fcmTokens == null || fcmTokens.isEmpty()) {
       log.warn("No FCM tokens provided for batch notification.");
       return;
@@ -29,11 +30,11 @@ public class NotificationService {
     MulticastMessage message = MulticastMessage.builder()
         .putData("title", "Notification")
         .putData("body", content)
-        .addAllTokens(fcmTokens)
+        .addToken(fcmTokens.getFirst())
         .build();
 
     try {
-      BatchResponse response = firebaseMessaging.sendMulticast(message);
+      BatchResponse response = firebaseMessaging.sendEachForMulticast(message);
       log.info("Batch notification sent. Success: {}, Failure: {}",
           response.getSuccessCount(), response.getFailureCount());
 
@@ -48,6 +49,7 @@ public class NotificationService {
   }
 
   public void sendSingleNotification(String content, String fcmToken) {
+    log.info("Sending notification to {}", fcmToken);
     if (fcmToken == null || fcmToken.isEmpty()) {
       log.warn("FCM token is null or empty. Notification not sent.");
       return;

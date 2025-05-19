@@ -29,4 +29,18 @@ public class NotificationController {
         .build();
   }
 
+
+  @PostMapping("/notifications/test")
+  public ApiResponse<Void> testCloudMessaging(@RequestBody String fcmToken) {
+    notificationService.sendSingleNotification("test", fcmToken);
+    return ApiResponse.<Void>builder()
+        .build();
+  }
+
+  @PostMapping("/notifications/test/batch")
+  public ApiResponse<Void> testBatchCloudMessaging(@RequestBody List<String> fcmTokens) {
+    notificationService.sendBatchNotifications("test batch", fcmTokens);
+    return ApiResponse.<Void>builder()
+        .build();
+  }
 }
