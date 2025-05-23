@@ -20,5 +20,6 @@ public class VrpRequest {
   List<VrpVehicle> vehicles;
   List<VrpRoute> routes;
   List<VrpJob> jobs;
+  String profile; // driving-car or driving-hgv
 }
 

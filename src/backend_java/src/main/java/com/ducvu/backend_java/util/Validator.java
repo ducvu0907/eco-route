@@ -68,15 +68,17 @@ public class Validator {
 
   private boolean isValid(VehicleCreateRequest request) {
     return StringUtils.hasText(request.getLicensePlate())
-        && request.getCapacity() != null
         && request.getDriverId() != null
-        && request.getDepotId() != null;
+        && request.getDepotId() != null
+        && request.getType() != null
+        && request.getCategory() != null;
   }
 
   private boolean isValid(OrderCreateRequest request) {
     return request.getLatitude() != null
         && request.getLongitude() != null
         && request.getAddress() != null
-        && request.getWeight() != null;
+        && request.getWeight() != null
+        && request.getCategory() != null;
   }
 }

@@ -17,6 +17,7 @@ import com.ducvu.backend_java.util.Validator;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -33,6 +34,7 @@ public class OrderService {
   private final Mapper mapper;
   private final NotificationService notificationService;
   private final UserRepository userRepository;
+  private final MinioService minioService;
 
   public List<OrderResponse> getOrdersByUserId(String userId) {
     User user = userService.getCurrentUser();
@@ -47,10 +49,23 @@ public class OrderService {
         .toList();
   }
 
-  public List<OrderResponse> getOngoingOrders() {
+  public List<OrderResponse> getInProgressOrdersSorted() {
+    return orderRepository.findAllInProgressOrdersSorted()
+        .stream()
+        .map(mapper::map)
+        .toList();
+  }
+
+  public List<OrderResponse> getInProgressOrders() {
     return orderRepository.findAll()
         .stream()
-        .filter(order -> order.getStatus() == OrderStatus.IN_PROGRESS)
+        .map(mapper::map)
+        .toList();
+  }
+
+  public List<OrderResponse> getPendingOrdersSorted() {
+    return orderRepository.findAllPendingOrdersSorted()
+        .stream()
         .map(mapper::map)
         .toList();
   }
@@ -59,6 +74,13 @@ public class OrderService {
     return orderRepository.findAll()
         .stream()
         .filter(order -> order.getStatus() == OrderStatus.PENDING)
+        .map(mapper::map)
+        .toList();
+  }
+
+  public List<OrderResponse> getOrdersSorted() {
+    return orderRepository.findAllOrdersSorted()
+        .stream()
         .map(mapper::map)
         .toList();
   }
@@ -82,7 +104,7 @@ public class OrderService {
     return mapper.map(order);
   }
 
-  public OrderResponse createOrder(OrderCreateRequest request) {
+  public OrderResponse createOrder(OrderCreateRequest request, MultipartFile file) {
     validator.validate(request);
     User user = userService.getCurrentUser();
 
@@ -91,23 +113,34 @@ public class OrderService {
         .latitude(request.getLatitude())
         .longitude(request.getLongitude())
         .address(request.getAddress())
+        .category(request.getCategory())
+        .description(request.getDescription())
         .weight(request.getWeight())
         .status(OrderStatus.PENDING) // default to pending
         .build();
 
-//    if (order.getAddress() == null) {
-//      OsmResponse osmResponse = helper.reverseGeocode(request.getLatitude(), request.getLongitude());
-//      if (osmResponse.getError() != null) {
-//        order.setAddress(osmResponse.getDisplayName());
-//        log.info("Get OSM response successfully: {}", osmResponse);
-//      }
-//    }
+    if (file != null) {
+      String imageUrl = minioService.uploadFile(file); // save into minio
+      order.setImageUrl(imageUrl);
+    }
+
 
     notifyNewOrder();
     return mapper.map(orderRepository.save(order));
   }
 
   // driver uses this to update order status
+  public OrderResponse markOrderAsCancelled(String orderId) {
+    Order order = orderRepository.findById(orderId)
+        .orElseThrow(() -> new RuntimeException("Order not found"));
+
+    order.setStatus(OrderStatus.CANCELLED);
+    order.setCompletedAt(LocalDateTime.now());
+
+    notifyOrderCancelled(order);
+    return mapper.map(orderRepository.save(order));
+  }
+
   public OrderResponse markOrderAsDone(String orderId) {
     Order order = orderRepository.findById(orderId)
         .orElseThrow(() -> new RuntimeException("Order not found"));
@@ -138,8 +171,16 @@ public class OrderService {
     notificationService.sendSingleNotification("New order created", manager.getFcmToken());
   }
 
+  private void notifyOrderCancelled(Order order) {
+    User manager = userService.getManager();
+    notificationService.sendSingleNotification("Order is cancelled", order.getUser().getFcmToken());
+    notificationService.sendSingleNotification("Order is cancelled", manager.getFcmToken());
+  }
+
   private void notifyOrderCompleted(Order order) {
+    User manager = userService.getManager();
     notificationService.sendSingleNotification("Order is completed", order.getUser().getFcmToken());
+    notificationService.sendSingleNotification("Order is completed", manager.getFcmToken());
   }
 
 }

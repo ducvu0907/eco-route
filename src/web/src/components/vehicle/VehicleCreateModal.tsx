@@ -27,9 +27,8 @@ import {
   SelectItem,
 } from "@/components/ui/select";
 import { useGetDepots } from "@/hooks/useDepot";
-import { useGetDriversNotAssigned, useGetUsers } from "@/hooks/useUser";
-import { useEffect, useState } from "react";
-import { DepotResponse, Role, UserResponse } from "@/types/types";
+import { useGetDriversNotAssigned } from "@/hooks/useUser";
+import { DepotResponse, Role, TrashCategory, UserResponse, VehicleType } from "@/types/types";
 import { useCreateVehicle } from "@/hooks/useVehicle";
 import { useQueryClient } from "@tanstack/react-query";
 
@@ -44,7 +43,9 @@ const vehicleSchema = z.object({
   depotId: z.string().min(1, "Depot is required"),
   driverId: z.string().min(1, "Driver is required"),
   licensePlate: z.string().min(1, "License plate is required"),
-  capacity: z.coerce.number().positive("Capacity must be positive"),
+  // capacity: z.coerce.number().positive("Capacity must be positive"),
+  type: z.nativeEnum(VehicleType),
+  category: z.nativeEnum(TrashCategory)
 });
 
 type VehicleFormValues = z.infer<typeof vehicleSchema>;
@@ -65,7 +66,9 @@ export default function VehicleCreateModal({ isOpen, onClose, depot, driver }: V
       depotId: depot?.id || "",
       driverId: driver?.id || "",
       licensePlate: "",
-      capacity: 0,
+      // capacity: 0,
+      type: VehicleType.THREE_WHEELER,
+      category: TrashCategory.GENERAL
     },
   });
 
@@ -95,13 +98,7 @@ export default function VehicleCreateModal({ isOpen, onClose, depot, driver }: V
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
 
             {/* Depot Field */}
-            {depot ? (
-              <div>
-                <FormLabel>Depot</FormLabel>
-                <Input value={depot.id} disabled />
-                <p className="text-sm text-muted-foreground">{depot.address}</p>
-              </div>
-            ) : (
+            {!depot && (
               <FormField
                 control={form.control}
                 name="depotId"
@@ -169,7 +166,7 @@ export default function VehicleCreateModal({ isOpen, onClose, depot, driver }: V
                 <FormItem>
                   <FormLabel>License Plate</FormLabel>
                   <FormControl>
-                    <Input {...field} />
+                    <Input placeholder="Vehicle license plate" {...field} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -177,7 +174,7 @@ export default function VehicleCreateModal({ isOpen, onClose, depot, driver }: V
             />
 
             {/* Capacity */}
-            <FormField
+            {/* <FormField
               control={form.control}
               name="capacity"
               render={({ field }) => (
@@ -186,6 +183,58 @@ export default function VehicleCreateModal({ isOpen, onClose, depot, driver }: V
                   <FormControl>
                     <Input type="number" step="any" {...field} />
                   </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            /> */}
+
+            {/* Vehicle Type */}
+            <FormField
+              control={form.control}
+              name="type"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Vehicle Type</FormLabel>
+                  <Select value={field.value} onValueChange={field.onChange}>
+                    <FormControl>
+                      <SelectTrigger>
+                        <SelectValue placeholder="Select vehicle type" />
+                      </SelectTrigger>
+                    </FormControl>
+                    <SelectContent>
+                      {Object.values(VehicleType).map((type) => (
+                        <SelectItem key={type} value={type}>
+                          {type}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
+            {/* Trash Category */}
+            <FormField
+              control={form.control}
+              name="category"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Trash Category</FormLabel>
+                  <Select value={field.value} onValueChange={field.onChange}>
+                    <FormControl>
+                      <SelectTrigger>
+                        <SelectValue placeholder="Select trash category" />
+                      </SelectTrigger>
+                    </FormControl>
+                    <SelectContent>
+                      {Object.values(TrashCategory).map((category) => (
+                        <SelectItem key={category} value={category}>
+                          {category}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
                   <FormMessage />
                 </FormItem>
               )}

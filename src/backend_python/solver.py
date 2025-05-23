@@ -7,6 +7,7 @@ from api import Route, RoutingRequest, RoutingResponse, logger
 from typing import List, Dict
 from collections import defaultdict
 from vrplib import read_instance, read_solution
+from ors import get_distance_matrix, get_directions
 
 
 def solve_with_pyvrp(instance_path, time_limit=3, seed=0, verbose=1):
@@ -84,9 +85,12 @@ def route_request(request: RoutingRequest):
 
 def insert_jobs_best_cost(request: RoutingRequest):
   """Insert jobs into existing routes by minimizing cost increase."""
-  all_routes = {route.vehicle_id: list(route.steps) for route in request.routes}
+  # all_routes = {route.vehicle_id: list(route.steps) for route in request.routes}
+  all_routes = {route.vehicle_id: route for route in request.routes}
   modified_vehicle_ids = set() # track which routes got updated
   new_dists = {} # map vehicle_id to new distance
+  new_durations = {} # map vehicle_id to new duration
+  new_geometries = {} # map vehicle_id to new geometry
 
   for job in request.jobs:
     best_insertion = None
@@ -96,29 +100,35 @@ def insert_jobs_best_cost(request: RoutingRequest):
       if vehicle.load + job.demand > vehicle.capacity:
         continue
 
-      route_steps = all_routes.get(vehicle.id, [])
+      # route_steps = all_routes.get(vehicle.id, [])
+      route_steps = all_routes[vehicle.id].steps if vehicle.id in all_routes else []
+      old_dist = all_routes[vehicle.id].distance if vehicle.id in all_routes else 0.0
+
       current_points = [(vehicle.start.lat, vehicle.start.lon)] + [
         (step.location.lat, step.location.lon) for step in route_steps
-      ]
+      ] + [(vehicle.end.lat, vehicle.end.lon)]
 
-      for i in range(len(route_steps) + 1):
-        new_points = current_points[:i+1] + [(job.location.lat, job.location.lon)] + current_points[i+1:]
-        new_dist = _calculate_route_distance(new_points)
-        old_dist = _calculate_route_distance(current_points)
+      for i in range(1, len(current_points)):
+        new_points = current_points[:i] + [(job.location.lat, job.location.lon)] + current_points[i:]
+        # new_dist = _calculate_route_distance(new_points)
+        # old_dist = _calculate_route_distance(current_points)
+        new_geometry, new_dist, new_duration = get_directions(new_points, request.profile)
         cost_increase = new_dist - old_dist
 
         if cost_increase < best_cost_increase:
           best_cost_increase = cost_increase
-          best_insertion = (vehicle.id, i, new_dist)
+          best_insertion = (vehicle.id, i, new_dist, new_duration, new_geometry)
 
     if not best_insertion:
       raise RuntimeError(f"No feasible insertion for job {job.id}")
 
-    vehicle_id, insert_pos, route_dist = best_insertion
-    all_routes.setdefault(vehicle_id, [])
-    all_routes[vehicle_id].insert(insert_pos, job)
+    vehicle_id, insert_pos, route_dist, route_duration, route_geometry = best_insertion
+    all_routes.setdefault(vehicle_id, Route(vehicle_id=vehicle_id, steps=[]))
+    all_routes[vehicle_id].steps.insert(insert_pos, job)
     modified_vehicle_ids.add(vehicle_id)
     new_dists[vehicle_id] = route_dist
+    new_durations[vehicle_id] = route_duration
+    new_geometries[vehicle_id] = route_geometry
 
   # this one return full routes
   # response_routes = [
@@ -127,7 +137,8 @@ def insert_jobs_best_cost(request: RoutingRequest):
 
   # return only updated routes
   response_routes = [
-    Route(vehicle_id=vid, steps=all_routes[vid], distance=new_dists[vid]) for vid in modified_vehicle_ids
+    Route(vehicle_id=vid, steps=all_routes[vid].steps, distance=new_dists[vid], duration=new_durations[vid], geometry=new_geometries[vid])
+    for vid in modified_vehicle_ids
   ]
 
   return RoutingResponse(routes=response_routes)
@@ -250,7 +261,8 @@ def solve_static_mdvrp(request: RoutingRequest):
   customer_demand = [customers_jobs[c].demand for c in customer_coords]
 
   logger.info(f"Parsed {len(depot_coords)} depot(s) and {len(customer_coords)} customer(s).")
-  clusters = _cluster_customers_by_distance_with_capacity(depot_coords, customer_coords, depot_capacity, customer_demand)
+  # clusters = _cluster_customers_by_distance_with_capacity(depot_coords, customer_coords, depot_capacity, customer_demand)
+  clusters = _cluster_customers_by_distance_with_capacity_with_profile(depot_coords, customer_coords, depot_capacity, customer_demand, request.profile)
   logger.info(f"Generated {len(clusters)} cluster(s) based on depots.")
 
   all_routes = []
@@ -275,7 +287,9 @@ def solve_static_mdvrp(request: RoutingRequest):
       continue
 
     # params for solver
-    distance_matrix = _build_distance_matrix_from_coords(depot, customers)
+    # distance_matrix = _build_distance_matrix_from_coords(depot, customers)
+    points = [depot] + customers
+    distance_matrix = get_distance_matrix(points=points, profile=request.profile)
     num_vehicles = len(depots_vehicles[depot])
     demands = [0] + [customers_jobs[c].demand for c in customers] # demand[depot] set to 0
     vehicle_capacity = sum([v.capacity for v in depots_vehicles[depot]]) / num_vehicles # taking average capacity
@@ -292,20 +306,26 @@ def solve_static_mdvrp(request: RoutingRequest):
     # also note that we might not use all of the vehicles
     vehicles = depots_vehicles[depot]
     for i, route in enumerate(result.routes):
-      point = (vehicles[i].start.lat, vehicles[i].start.lon)
-      distance = 0.0
+      # point = (vehicles[i].start.lat, vehicles[i].start.lon)
+      # distance = 0.0
       steps = []
       for r in route:
         customer = customers[r - 1]
-        next_point = (customers_jobs[customer].location.lat, customers_jobs[customer].location.lon)
-        distance += _calculate_haversine_distance(point[0], point[1], next_point[0], next_point[1])
-        point = next_point
+        # next_point = (customers_jobs[customer].location.lat, customers_jobs[customer].location.lon)
+        # distance += _calculate_haversine_distance(point[0], point[1], next_point[0], next_point[1])
+        # point = next_point
         steps.append(customers_jobs[customer])
         
+      vehicle = vehicles[i]
+      points = [(vehicle.start.lat, vehicle.start.lon)] + [(job.location.lat, job.location.lon) for job in steps] + [(vehicle.end.lat, vehicle.end.lon)]
+      geometry, distance, duration = get_directions(points, request.profile)
+
       route_response = Route(
-        vehicle_id=vehicles[i].id, 
+        vehicle_id=vehicle.id,
         steps=steps,
-        distance=distance
+        distance=distance,
+        duration=duration,
+        geometry=geometry
         )
 
       all_routes.append(route_response)
@@ -359,6 +379,42 @@ def _extract_depots_and_jobs(request: RoutingRequest):
   return depots_vehicles, customers_jobs
 
 
+
+def _cluster_customers_by_distance_with_capacity_with_profile(
+  depot_coords: List[List[float]],
+  customer_coords: List[List[float]],
+  depot_capacity: List[List[float]],
+  customer_demand: List[List[float]],
+  profile: str
+):
+  """Cluster customers to closest depots considering capacity and using routing profile-based distance matrix."""
+  clusters = defaultdict(list)
+  points = depot_coords + customer_coords
+  distance_matrix = get_distance_matrix(points=points, profile=profile)
+
+  num_depots = len(depot_coords)
+
+  for i, coord in enumerate(customer_coords):
+    customer_index = num_depots + i
+    min_distance = float('inf')
+    closest_depot = None
+    closest_depot_index = -1
+
+    for j in range(num_depots):
+      if depot_capacity[j] <= customer_demand[i]:
+        continue
+      distance = distance_matrix[customer_index][j]
+      if distance < min_distance:
+        min_distance = distance
+        closest_depot = depot_coords[j]
+        closest_depot_index = j
+
+      if closest_depot:
+        clusters[closest_depot].append(coord)
+        depot_capacity[closest_depot_index] -= customer_demand[i]
+
+  logger.info(f"Clustering result: {dict((k, len(v)) for k, v in clusters.items())}")
+  return clusters
 
 def _cluster_customers_by_distance_with_capacity(depot_coords: List[List[float]], customer_coords: List[List[float]], depot_capacity: List[List[float]], customer_demand: List[List[float]]):
   """Cluster customers to closest depots considering capacity."""

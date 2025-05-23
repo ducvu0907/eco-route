@@ -44,6 +44,8 @@ public class Mapper {
         .currentLatitude(vehicle.getCurrentLatitude())
         .currentLongitude(vehicle.getCurrentLongitude())
         .currentLoad(vehicle.getCurrentLoad())
+        .type(vehicle.getType())
+        .category(vehicle.getCategory())
         .status(vehicle.getStatus())
         .createdAt(vehicle.getCreatedAt())
         .updatedAt(vehicle.getUpdatedAt())
@@ -72,6 +74,8 @@ public class Mapper {
             .map(this::map)
             .toList()
         )
+        .duration(route.getDuration())
+        .coordinates(route.getGeometry().getCoordinates())
         .status(route.getStatus())
         .completedAt(route.getCompletedAt())
         .createdAt(route.getCreatedAt())
@@ -88,6 +92,9 @@ public class Mapper {
         .latitude(order.getLatitude())
         .longitude(order.getLongitude())
         .address(order.getAddress())
+        .imageUrl(order.getImageUrl())
+        .description(order.getDescription())
+        .category(order.getCategory())
         .weight(order.getWeight())
         .status(order.getStatus())
         .completedAt(order.getCompletedAt())
@@ -110,7 +117,7 @@ public class Mapper {
     return VrpVehicle.builder()
         .id(vehicle.getId())
         .start(new VrpLocation(vehicle.getCurrentLatitude(), vehicle.getCurrentLongitude())) // this should be the same as depot if not running
-        .end(new VrpLocation(vehicle.getCurrentLatitude(), vehicle.getCurrentLongitude()))
+        .end(new VrpLocation(vehicle.getDepot().getLatitude(), vehicle.getDepot().getLongitude()))
         .load(vehicle.getCurrentLoad())
         .capacity(vehicle.getCapacity())
         .build();
@@ -126,6 +133,8 @@ public class Mapper {
                 .toList()
         )
         .distance(route.getDistance())
+        .duration(route.getDuration())
+        .geometry(route.getGeometry())
         .build();
   }
 

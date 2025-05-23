@@ -1,6 +1,6 @@
 import os
 import logging
-from typing import List
+from typing import List, Literal, Optional
 
 from dotenv import load_dotenv
 from fastapi import FastAPI, HTTPException, Request
@@ -27,6 +27,10 @@ logger.addHandler(console_handler)
 
 
 # models
+class Geometry(BaseModel):
+  type: str
+  coordinates: List[List[float]] # this should be in lon/lat
+
 class Location(BaseModel):
   lat: float
   lon: float
@@ -49,13 +53,16 @@ class Vehicle(BaseModel):
 class Route(BaseModel):
   vehicle_id: str
   steps: List[Job]
-  distance: float = 0.0
+  distance: Optional[float] = 0.0
+  duration: Optional[float] = 0.0
+  geometry: Optional[Geometry] = None
 
 
 class RoutingRequest(BaseModel):
   vehicles: List[Vehicle]
   routes: List[Route] = [] # this should only contain unfinished steps in the dynamic request
   jobs: List[Job]
+  profile: Literal["driving-car", "driving-hgv"]
 
 
 class RoutingResponse(BaseModel):
@@ -77,7 +84,7 @@ app.add_middleware(
 async def handle_exception(request: Request, e: Exception):
   return JSONResponse(
     status_code=400,
-    content={"error": f"Invalid request format"},
+    content={"error": f"Invalid request format {e}"},
   )
 
 @app.exception_handler(Exception)

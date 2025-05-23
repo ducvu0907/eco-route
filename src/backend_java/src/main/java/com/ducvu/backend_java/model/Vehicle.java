@@ -53,4 +53,10 @@ public class Vehicle {
 
   @UpdateTimestamp
   private LocalDateTime updatedAt;
+
+  @Enumerated(value = EnumType.STRING)
+  private VehicleType type;
+
+  @Enumerated(value = EnumType.STRING)
+  private TrashCategory category;
 }

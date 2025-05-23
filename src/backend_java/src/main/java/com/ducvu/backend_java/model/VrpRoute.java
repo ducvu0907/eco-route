@@ -20,4 +20,8 @@ public class VrpRoute {
   List<VrpJob> steps;
 
   Double distance;
+
+  Double duration;
+
+  Geometry geometry;
 }

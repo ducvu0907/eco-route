@@ -1,6 +1,8 @@
 package com.ducvu.backend_java.dto.request;
 
 
+import com.ducvu.backend_java.model.TrashCategory;
+import com.ducvu.backend_java.model.VehicleType;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -14,5 +16,6 @@ public class VehicleCreateRequest {
   private String driverId;
   private String depotId;
   private String licensePlate;
-  private Double capacity;
+  private VehicleType type;
+  private TrashCategory category;
 }

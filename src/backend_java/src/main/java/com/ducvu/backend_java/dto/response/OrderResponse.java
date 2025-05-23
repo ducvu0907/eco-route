@@ -1,6 +1,7 @@
 package com.ducvu.backend_java.dto.response;
 
 import com.ducvu.backend_java.model.OrderStatus;
+import com.ducvu.backend_java.model.TrashCategory;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -19,6 +20,9 @@ public class OrderResponse {
   private String routeId;
   private Double latitude;
   private Double longitude;
+  private String imageUrl;
+  private String description;
+  private TrashCategory category;
   private String address;
   private Double weight;
   private OrderStatus status;

@@ -4,14 +4,18 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
+import io.hypersistence.utils.hibernate.type.json.JsonBinaryType;
 import jakarta.persistence.*;
 import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.JdbcTypeCode;
+import org.hibernate.annotations.Type;
 import org.hibernate.annotations.UpdateTimestamp;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.hibernate.type.SqlTypes;
 
 @Entity
 @Table(name = "routes")
@@ -50,4 +54,11 @@ public class Route {
 
   @UpdateTimestamp
   private LocalDateTime updatedAt;
+
+  @Type(JsonBinaryType.class)
+  @JdbcTypeCode(SqlTypes.JSON)
+  @Column(name = "geometry", columnDefinition = "jsonb")
+  private Geometry geometry;
+
+  private Double duration;
 }

@@ -1,5 +1,6 @@
 package com.ducvu.backend_java.dto.response;
 
+import com.ducvu.backend_java.model.Geometry;
 import com.ducvu.backend_java.model.RouteStatus;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -24,4 +25,6 @@ public class RouteResponse {
   private LocalDateTime completedAt;
   private LocalDateTime createdAt;
   private LocalDateTime updatedAt;
+  private Double duration;
+  private List<List<Double>> coordinates;
 }

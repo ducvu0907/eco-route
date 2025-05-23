@@ -5,15 +5,13 @@ import com.ducvu.backend_java.dto.request.VehicleCreateRequest;
 import com.ducvu.backend_java.dto.request.VehicleUpdateRequest;
 import com.ducvu.backend_java.dto.response.VehicleRealtimeData;
 import com.ducvu.backend_java.dto.response.VehicleResponse;
-import com.ducvu.backend_java.model.Depot;
-import com.ducvu.backend_java.model.User;
-import com.ducvu.backend_java.model.Vehicle;
-import com.ducvu.backend_java.model.VehicleStatus;
+import com.ducvu.backend_java.model.*;
 import com.ducvu.backend_java.repository.DepotRepository;
 import com.ducvu.backend_java.repository.UserRepository;
 import com.ducvu.backend_java.repository.VehicleRepository;
 import com.ducvu.backend_java.util.Mapper;
 import com.ducvu.backend_java.util.Validator;
+import com.google.api.core.ApiFuture;
 import com.google.firebase.database.*;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -77,8 +75,10 @@ public class VehicleService {
 
     Vehicle vehicle = Vehicle.builder()
         .licensePlate(request.getLicensePlate())
-        .capacity(request.getCapacity())
         .status(VehicleStatus.IDLE)
+        .type(request.getType())
+        .category(request.getCategory())
+        .capacity(request.getType() == VehicleType.THREE_WHEELER ? 300.0 : 1000.0) // map vehicle type to capacity
         .currentLoad(0.)
         .build();
 

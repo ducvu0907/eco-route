@@ -29,6 +29,12 @@ public class RouteService {
     Route route = routeRepository.findById(routeId)
         .orElseThrow(() -> new RuntimeException("Route not found"));
 
+    for (Order order : route.getOrders()) {
+      if (order.getStatus() != OrderStatus.COMPLETED) {
+        throw new RuntimeException("There's unfinished order");
+      }
+    }
+
     route.setStatus(RouteStatus.COMPLETED);
     route.getVehicle().setStatus(VehicleStatus.IDLE);
     route.setCompletedAt(LocalDateTime.now());

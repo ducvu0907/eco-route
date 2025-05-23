@@ -24,7 +24,7 @@ public class Order {
 
   private Integer index;
 
-  @ManyToOne
+  @ManyToOne(fetch = FetchType.LAZY)
   @JoinColumn(name = "user_id")
   private User user;
 
@@ -50,4 +50,11 @@ public class Order {
 
   @UpdateTimestamp
   private LocalDateTime updatedAt;
+
+  private String imageUrl;
+
+  private String description;
+
+  @Enumerated(value = EnumType.STRING)
+  private TrashCategory category;
 }

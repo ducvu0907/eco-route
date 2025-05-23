@@ -8,6 +8,19 @@ export interface ApiResponse<T> {
 
 
 // enums
+export enum TrashCategory {
+  GENERAL = "GENERAL",
+  ORGANIC = "ORGANIC",
+  RECYCLABLE = "RECYCLABLE",
+  HAZARDOUS = "HAZARDOUS",
+  ELECTRONIC = "ELECTRONIC"
+}
+
+export enum VehicleType {
+  THREE_WHEELER = "THREE_WHEELER",
+  COMPACTOR_TRUCK = "COMPACTOR_TRUCK"
+}
+
 export enum Role {
   CUSTOMER = "CUSTOMER", 
   DRIVER = "DRIVER", 
@@ -69,6 +82,8 @@ export interface DepotUpdateRequest {
 export interface OrderCreateRequest {
   latitude: number;
   longitude: number;
+  description: string | null;
+  category: TrashCategory;
   address: string;
   weight: number;
 }
@@ -82,6 +97,8 @@ export interface VehicleCreateRequest {
   depotId: string;
   licensePlate: string;
   capacity: number;
+  type: VehicleType;
+  category: TrashCategory;
 }
 
 export interface VehicleUpdateRequest {
@@ -137,6 +154,9 @@ export interface OrderResponse {
   latitude: number;
   longitude: number;
   address: string;
+  imageUrl: string;
+  description: string | null;
+  category: TrashCategory; 
   weight: number;
   status: OrderStatus;
   completedAt: string | null;
@@ -207,6 +227,8 @@ export interface VehicleResponse {
   currentLatitude: number;
   currentLongitude: number;
   currentLoad: number;
+  type: VehicleType;
+  category: TrashCategory;
   status: VehicleStatus;
   createdAt: string;
   updatedAt: string;

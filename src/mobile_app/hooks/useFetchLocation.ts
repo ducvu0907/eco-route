@@ -17,6 +17,9 @@ export const useReverseLocation = () => {
           lon,
           format: "json"
         },
+        headers: {
+          "User-Agent": "'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/132.0.0.0 Safari/537.36'"
+        }
       });
       setData(response.data);
 
@@ -54,8 +57,8 @@ export const useSearchLocation = () => {
           limit: 5,
         },
         headers: {
-          "User-Agent": "EcoRoute/1.0"
-        },
+          "User-Agent": "'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/132.0.0.0 Safari/537.36'"
+        }
       });
       console.log(response.data);
       setData(response.data);
