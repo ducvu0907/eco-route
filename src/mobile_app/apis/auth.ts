@@ -1,5 +1,5 @@
-import { ApiResponse, AuthResponse, LoginRequest, RegisterRequest, UserResponse } from "@/types/types";
-import axiosInstance from ".";
+import { ApiResponse, AuthResponse, LoginRequest, RegisterRequest, UserResponse } from "@/types/types"
+import axiosInstance from "."
 
 export const register = async (payload: RegisterRequest): Promise<ApiResponse<UserResponse>> => {
   const { data } = await axiosInstance.post("/auth/register", payload);
