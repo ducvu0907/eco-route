@@ -35,3 +35,13 @@ export const updateOrder = async (orderId: string, payload: OrderUpdateRequest):
   const { data } = await axiosInstance.post(`/orders/${orderId}`, payload);
   return data;
 };
+
+export const markOrderAsDone = async (orderId: string): Promise<ApiResponse<OrderResponse>> => {
+  const { data } = await axiosInstance.post(`/orders/${orderId}/done`);
+  return data;
+};
+
+export const markOrderAsCancelled = async (orderId: string): Promise<ApiResponse<OrderResponse>> => {
+  const { data } = await axiosInstance.post(`/orders/${orderId}/cancelled`);
+  return data;
+};

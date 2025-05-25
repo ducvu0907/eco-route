@@ -88,18 +88,20 @@ export interface OrderCreateRequest {
   weight: number;
 }
 
+// TODO: fix this
 export interface OrderUpdateRequest {
   status: OrderStatus;
 }
+
 
 export interface VehicleCreateRequest {
   driverId: string;
   depotId: string;
   licensePlate: string;
-  // capacity: number;
   type: VehicleType;
   category: TrashCategory;
 }
+
 
 export interface VehicleUpdateRequest {
   driverId: string | null;
@@ -154,7 +156,7 @@ export interface OrderResponse {
   latitude: number;
   longitude: number;
   address: string;
-  imageUrl: string;
+  imageUrl: string | null;
   description: string | null;
   category: TrashCategory; 
   weight: number;
@@ -164,18 +166,18 @@ export interface OrderResponse {
   updatedAt: string;
 }
 
-// export interface OsmAddress {
-//   amenity?: string;
-//   house_number?: string;
-//   road?: string;
-//   neighbourhood?: string;
-//   suburb?: string;
-//   city?: string;
-//   postcode?: string;
-//   country?: string;
-//   country_code?: string;
-//   [key: string]: string | undefined; // for extra dynamic fields like ISO3166-2-lvl4
-// }
+export interface OsmAddress {
+  amenity?: string;
+  house_number?: string;
+  road?: string;
+  neighbourhood?: string;
+  suburb?: string;
+  city?: string;
+  postcode?: string;
+  country?: string;
+  country_code?: string;
+  [key: string]: string | undefined; // for extra dynamic fields like ISO3166-2-lvl4
+}
 
 export interface OsmResponse {
   place_id?: number;
@@ -192,7 +194,7 @@ export interface OsmResponse {
   name?: string;
   display_name?: string;
   boundingbox?: string[];
-  // address?: OsmAddress;
+  address?: OsmAddress;
   error?: string;
 }
 
@@ -207,6 +209,8 @@ export interface RouteResponse {
   completedAt: string;
   createdAt: string;
   updatedAt: string;
+  duration: number;
+  coordinates: number[][]; // list of points (lat,lon]) to draw the route with precision
 }
 
 export interface UserResponse {
@@ -235,7 +239,7 @@ export interface VehicleResponse {
 }
 
 
-// firebase schemas
+// firebase realtime vehicle schemas
 export interface VehicleRealtimeData {
   latitude: number;
   longitude: number;

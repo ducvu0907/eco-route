@@ -1,5 +1,5 @@
-import { useQuery } from "@tanstack/react-query";
-import { getRouteById, getRoutesByVehicleId, getRoutesByDispatchId, getVehicleActiveRoute, } from "@/apis/route";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { getRouteById, getRoutesByVehicleId, getRoutesByDispatchId, getVehicleCurrentRoute, markRouteAsDone, } from "@/apis/route";
 import { ApiResponse, RouteResponse } from "@/types/types";
 
 export const useGetRouteById = (routeId: string) => {
@@ -10,10 +10,21 @@ export const useGetRouteById = (routeId: string) => {
   });
 }
 
+export const useMarkRouteAsDone = (routeId: string) => {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: (routeId: string) => markRouteAsDone(routeId),
+    onSuccess: (_data, routeId) => {
+      queryClient.invalidateQueries({queryKey: ["routes", routeId]});
+    }
+  });
+}
+
 export const useGetVehicleActiveRoute = (vehicleId: string) => {
   return useQuery<ApiResponse<RouteResponse>>({
-    queryKey: ["vehicles", vehicleId, "route"],
-    queryFn: () => getVehicleActiveRoute(vehicleId),
+    queryKey: ["vehicles", vehicleId, "current", "route"],
+    queryFn: () => getVehicleCurrentRoute(vehicleId),
     enabled: !!vehicleId,
   });
 }
