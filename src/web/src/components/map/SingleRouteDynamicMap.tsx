@@ -8,6 +8,7 @@ import OrderMarker from "@/components/map/OrderMarker";
 import DepotDynamicMarker from "./DepotDynamicMarker";
 import RoutePolyline from "./RoutePolyline";
 import VehicleDynamicMarker from "./VehicleDynamicMarker";
+import UpdatedRoutePolyline from "./UpdatedRoutePolyline";
 
 interface SingleRouteDynamicMapProps {
   route: RouteResponse;
@@ -43,7 +44,8 @@ export default function SingleRouteDynamicMap({ route }: SingleRouteDynamicMapPr
 
           <DepotDynamicMarker depotId={vehicle.depotId}/>
 
-          <RoutePolyline depotId={route.depotId} vehicle={vehicle} orders={route.orders}/>
+          {/* <RoutePolyline depotId={route.depotId} vehicle={vehicle} orders={route.orders}/> */}
+          <UpdatedRoutePolyline route={route} />
 
         </MapContainer>
       </CardContent>

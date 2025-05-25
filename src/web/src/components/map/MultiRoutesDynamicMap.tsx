@@ -1,5 +1,5 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { MapContainer, TileLayer } from "react-leaflet";
+import { MapContainer, Polyline, TileLayer } from "react-leaflet";
 import "leaflet/dist/leaflet.css";
 import { LatLngExpression } from "leaflet";
 import { RouteResponse } from "@/types/types";
@@ -7,6 +7,7 @@ import OrderMarker from "@/components/map/OrderMarker";
 import DepotDynamicMarker from "@/components/map/DepotDynamicMarker";
 import RoutePolyline from "./RoutePolyline";
 import VehicleDynamicMarker from "./VehicleDynamicMarker";
+import UpdatedRoutePolyline from "./UpdatedRoutePolyline";
 
 interface MultiRoutesDynamicMapProps {
   routes: RouteResponse[];
@@ -40,7 +41,8 @@ export default function MultiRoutesDynamicMap({ routes }: MultiRoutesDynamicMapP
                   <OrderMarker key={order.id} order={order} />
                 ))}
                 <DepotDynamicMarker key={`depot-${route.vehicle.depotId}`} depotId={route.vehicle.depotId} />
-                <RoutePolyline key={`polyline-${route.id}`} vehicle={route.vehicle} depotId={route.depotId} orders={route.orders} />
+                {/* <RoutePolyline key={`polyline-${route.id}`} vehicle={route.vehicle} depotId={route.depotId} orders={route.orders} /> */}
+                <UpdatedRoutePolyline route={route}/>
               </div>
             );
           })}

@@ -10,6 +10,7 @@ import OrderMarker from "@/components/map/OrderMarker";
 import DepotDynamicMarker from "@/components/map/DepotDynamicMarker";
 import RoutePolyline from "./RoutePolyline";
 import StaticRoutePolyline from "./StaticRoutePolyline";
+import UpdatedRoutePolyline from "./UpdatedRoutePolyline";
 
 interface MultiRoutesStaticMapProps {
   routes: RouteResponse[];
@@ -44,7 +45,7 @@ export default function MultiRoutesStaticMap({ routes }: MultiRoutesStaticMapPro
                   <OrderMarker key={order.id} order={order} />
                 ))}
                 <DepotDynamicMarker key={`depot-${route.vehicle.depotId}`} depotId={route.vehicle.depotId} />
-                <StaticRoutePolyline key={`polyline-${route.id}`} depotId={route.depotId} vehicle={route.vehicle} orders={route.orders} />
+                <UpdatedRoutePolyline route={route} />
               </div>
             );
           })}
