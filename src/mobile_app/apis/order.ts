@@ -36,7 +36,7 @@ export const getOrderByUserId = async (userId: string): Promise<ApiResponse<Orde
   return data;
 };
 
-export const createOrder = async (payload: OrderCreateRequest, file: {uri: string, name: string, type: string}): Promise<ApiResponse<OrderResponse>> => {
+export const createOrder = async (payload: OrderCreateRequest, file?: {uri: string, name: string, type: string}): Promise<ApiResponse<OrderResponse>> => {
   console.log(payload, file);
 
   const formData = new FormData();
@@ -46,7 +46,9 @@ export const createOrder = async (payload: OrderCreateRequest, file: {uri: strin
     type: "application/json"
   } as any);
 
-  formData.append("file", file as any);
+  if (file) {
+    formData.append("file", file as any);
+  }
 
   const { data } = await axiosInstance.post("/orders", formData, {
     headers: {

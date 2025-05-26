@@ -15,14 +15,15 @@ export default function DemoVehicleDynamicMarker({ vehicle }: VehicleDynamicMark
     <MarkerView
       coordinate={[data?.longitude || vehicle.currentLongitude, data?.latitude || vehicle.currentLatitude]}
     >
+
       <View className="flex-1">
         <Image
           source={require("@/assets/images/truck-icon.png")}
           style={{ width: 30, height: 30 }}
           resizeMode="contain"
         />
-
       </View>
+
     </MarkerView>
   );
 }

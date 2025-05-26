@@ -10,7 +10,7 @@ export const useGetRouteById = (routeId: string) => {
   });
 }
 
-export const useMarkRouteAsDone = (routeId: string) => {
+export const useMarkRouteAsDone = () => {
   const queryClient = useQueryClient();
 
   return useMutation({

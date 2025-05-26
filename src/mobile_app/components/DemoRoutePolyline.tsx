@@ -4,33 +4,11 @@ import MapView, { ShapeSource, LineLayer } from "@maplibre/maplibre-react-native
 import type { FeatureCollection, LineString } from 'geojson';
 
 interface RoutePolylineProps {
-  lon?: number;
-  lat?: number;
-  vehicle: VehicleResponse;
   route: RouteResponse;
 }
 
-export default function DemoRoutePolyline({ lon, lat, vehicle, route }: RoutePolylineProps) {
-  const { data, isLoading, isError } = useGetDepotById(route.depotId);
-  const depot = data?.result;
-
-  if (isLoading || isError || !depot) {
-    return null;
-  }
-
-  const sortedOrders = [...route.orders]
-    .filter(order => order.status !== OrderStatus.COMPLETED)
-    .sort((a, b) => {
-      if (a.index === null) return 1;
-      if (b.index === null) return -1;
-      return a.index - b.index;
-    });
-
-  const coordinates = [
-    [lon || vehicle.currentLongitude, lat || vehicle.currentLatitude],
-    ...sortedOrders.map((order) => [order.longitude, order.latitude]),
-    [depot.longitude, depot.latitude],
-  ];
+export default function DemoRoutePolyline({route}: RoutePolylineProps) {
+  const coordinates = route.coordinates.map((coord) => coord.reverse());
 
   const routeGeoJSON: FeatureCollection<LineString> = {
     type: "FeatureCollection",
@@ -53,7 +31,6 @@ export default function DemoRoutePolyline({ lon, lat, vehicle, route }: RoutePol
         style={{
           lineColor: "#2F80ED",
           lineWidth: 4,
-          lineDasharray: [6, 3],
         }}
       />
     </ShapeSource>

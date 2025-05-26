@@ -1,9 +1,10 @@
-import { OsmResponse } from "@/types/types";
+import { Feature } from "@/types/types";
+import { orsApiKey } from "@/utils/config";
 import axios from "axios";
 import { useState } from "react";
 
 export const useReverseLocation = () => {
-  const [data, setData] = useState<OsmResponse | null>(null);
+  const [data, setData] = useState<string | null>(null);
   const [loading, setLoading] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -11,21 +12,20 @@ export const useReverseLocation = () => {
     setLoading(true);
     setError(null);
     try {
-      const response = await axios.get("https://nominatim.openstreetmap.org/reverse", {
+      const response = await axios.get("https://api.openrouteservice.org/geocode/reverse", {
         params: {
-          lat,
-          lon,
-          format: "json"
-        },
-        headers: {
-          "User-Agent": "'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/132.0.0.0 Safari/537.36'"
+          "api_key": orsApiKey,
+          "point.lon": lon,
+          "point.lat": lat, 
         }
       });
-      setData(response.data);
+
+      const feature = response.data?.features?.[0];
+      setData(feature?.properties?.label ?? null);
+
 
     } catch (err) {
-      console.log("Reversing location: ", err);
-      setError("Failed to fetch locations");
+      setError("Failed to reverse locations");
 
     } finally {
       setLoading(false);
@@ -41,7 +41,7 @@ export const useReverseLocation = () => {
 };
 
 export const useSearchLocation = () => {
-  const [data, setData] = useState<OsmResponse[]>([]);
+  const [data, setData] = useState<Feature[]>([]);
   const [loading, setLoading] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -49,23 +49,20 @@ export const useSearchLocation = () => {
     setLoading(true);
     setError(null);
     try {
-      const response = await axios.get("https://nominatim.openstreetmap.org/search", {
+      const response = await axios.get("https://api.openrouteservice.org/geocode/search", {
         params: {
-          q: query,
-          format: "json",
-          addressdetails: 1,
-          limit: 5,
-        },
-        headers: {
-          "User-Agent": "'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/132.0.0.0 Safari/537.36'"
+          "api_key": orsApiKey,
+          "text": query,
+          "size": 5
         }
       });
-      console.log(response.data);
-      setData(response.data);
+
+      const features = response.data?.features;
+      const data = features;
+      setData(data);
 
     } catch (err) {
-      console.log("Searching locations error: ", err);
-      setError("Failed to fetch location");
+      setError("Failed to search locations");
 
     } finally {
       setLoading(false);

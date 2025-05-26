@@ -117,11 +117,7 @@ export default function DemoInProgressDriverMap({vehicle}: InProgressDriverMapPr
         
         {depot && <DemoDepotMarker depot={depot} />}
 
-        <DemoRoutePolyline
-          lon={vehicleData?.longitude}
-          lat={vehicleData?.latitude}
-          vehicle={vehicle}
-          route={route} />
+        <DemoRoutePolyline route={route} />
 
 
       </MapView>

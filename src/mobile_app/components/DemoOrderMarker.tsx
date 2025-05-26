@@ -12,12 +12,14 @@ export default function DemoOrderMarker({ order }: OrderMarkerProps) {
     <MarkerView
       coordinate={[order.longitude, order.latitude]}
     >
+      <View className="flex-1">
         <Image
           source={require("@/assets/images/order-icon.png")}
           style={{ width: 30, height: 30 }}
           resizeMode="contain"
         />
 
+      </View>
     </MarkerView>
   );
 }

@@ -16,6 +16,7 @@ import { useQueryClient } from "@tanstack/react-query";
 import { useAuthContext } from "@/hooks/useAuthContext";
 import { TrashCategory, OrderCreateRequest } from "@/types/types";
 import * as ImagePicker from "expo-image-picker";
+import { useToast } from "@/hooks/useToast";
 
 // Schema based on OrderCreateRequest interface
 const formSchema = z.object({
@@ -25,9 +26,10 @@ const formSchema = z.object({
   category: z.nativeEnum(TrashCategory),
   address: z.string().min(1, "Address is required"),
   weight: z.number().min(0.1, "Weight must be at least 0.1 kg").max(1000, "Weight cannot exceed 1000 kg"),
+  file: z.any().nullable()
 });
 
-type OrderForm = z.infer<typeof formSchema> & { file?: any };
+type OrderForm = z.infer<typeof formSchema>;
 
 const CATEGORY_INFO = {
   [TrashCategory.GENERAL]: { 
@@ -58,6 +60,7 @@ const CATEGORY_INFO = {
 };
 
 export default function OrderCreate() {
+  const {showToast} = useToast();
   const { userId } = useAuthContext();
   const queryClient = useQueryClient();
   const router = useRouter();
@@ -93,17 +96,12 @@ export default function OrderCreate() {
   }, [location]);
 
   useEffect(() => {
-    if (reverseData?.display_name) {
-      setValue("address", reverseData.display_name);
+    if (reverseData) {
+      setValue("address", reverseData);
     }
   }, [reverseData]);
 
   const onSubmit = (data: OrderForm) => {
-    if (!location) {
-      Alert.alert("Error", "Please select a location on the map");
-      return;
-    }
-
     const orderData: OrderCreateRequest = {
       latitude: data.latitude,
       longitude: data.longitude,
@@ -116,12 +114,7 @@ export default function OrderCreate() {
     createOrder({ payload: orderData, file: data.file }, {
       onSuccess: () => {
         queryClient.invalidateQueries({ queryKey: ["users", userId, "orders"] });
-        Alert.alert("Success", "Order created successfully!", [
-          { text: "OK", onPress: () => router.back() }
-        ]);
-      },
-      onError: (error) => {
-        Alert.alert("Error", "Failed to create order. Please try again.");
+        router.back();
       }
     });
   };
@@ -136,7 +129,7 @@ export default function OrderCreate() {
   const pickImage = async () => {
     const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
     if (status !== 'granted') {
-      Alert.alert('Permission needed', 'Sorry, we need camera roll permissions to upload images.');
+      showToast("Camera permission not granted", "error");
       return;
     }
 

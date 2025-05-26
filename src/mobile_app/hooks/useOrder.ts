@@ -43,7 +43,7 @@ export const useCreateOrder = () => {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: ({ payload, file }: { payload: OrderCreateRequest, file: any}) => createOrder(payload, file),
+    mutationFn: ({ payload, file }: { payload: OrderCreateRequest, file?: any}) => createOrder(payload, file),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["orders"] });
     },
