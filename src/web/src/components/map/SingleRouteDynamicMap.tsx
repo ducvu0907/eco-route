@@ -26,29 +26,26 @@ export default function SingleRouteDynamicMap({ route }: SingleRouteDynamicMapPr
   const center: LatLngExpression = orderPositions[0];
 
   return (
-    <Card className="w-full h-full">
-      <CardHeader>
-        <CardTitle>Route Map</CardTitle>
-      </CardHeader>
+    <div className="w-full h-full">
       <CardContent className="h-full">
         <MapContainer center={center} zoom={13} scrollWheelZoom={true} className="h-full w-full rounded-md z-0">
           <TileLayer
             attribution='&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
             url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
           />
-          <VehicleDynamicMarker vehicle={vehicle}/>
+          <VehicleDynamicMarker vehicle={vehicle} />
 
           {orders.map((order) => (
-            <OrderMarker order={order}/>
+            <OrderMarker order={order} />
           ))}
 
-          <DepotDynamicMarker depotId={vehicle.depotId}/>
+          <DepotDynamicMarker depotId={vehicle.depotId} />
 
           {/* <RoutePolyline depotId={route.depotId} vehicle={vehicle} orders={route.orders}/> */}
           <UpdatedRoutePolyline route={route} />
 
         </MapContainer>
       </CardContent>
-    </Card>
+    </div>
   );
 }

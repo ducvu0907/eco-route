@@ -34,7 +34,8 @@ import {
   Wrench,
   Clock,
   Package,
-  Gauge
+  Gauge,
+  TruckIcon
 } from "lucide-react";
 import { formatDate } from "@/utils/formatDate";
 import { useNavigate } from "react-router";
@@ -135,15 +136,18 @@ export default function VehicleManagement() {
         <div className="max-w-7xl mx-auto px-6 py-8">
           <div className="flex items-center justify-between">
             <div className="space-y-1">
-              <h1 className="text-3xl font-bold tracking-tight text-gray-900">
-                Vehicle Management
-              </h1>
+              <div className="flex flex-row items-center">
+                <TruckIcon />
+                <h1 className="text-3xl font-bold tracking-tight text-gray-900 ml-3">
+                  Vehicle Management
+                </h1>
+              </div>
               <p className="text-gray-600">
                 Manage your fleet of {vehicles.length} vehicles
               </p>
             </div>
-            <Button 
-              onClick={() => setIsModalOpen(true)} 
+            <Button
+              onClick={() => setIsModalOpen(true)}
               className="bg-blue-600 hover:bg-blue-700 text-white shadow-sm"
               size="lg"
             >

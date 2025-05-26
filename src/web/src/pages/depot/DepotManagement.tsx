@@ -108,7 +108,7 @@ export default function DepotManagement() {
                 <Plus className="w-4 h-4 mr-2" />
                 Create Depot
               </Button>
-              <Button 
+              {/* <Button 
                 variant="outline" 
                 onClick={() => setViewMode(viewMode === 'list' ? 'map' : 'list')}
                 className="border-slate-200 hover:bg-slate-50 transition-all duration-200"
@@ -124,7 +124,7 @@ export default function DepotManagement() {
                     List View
                   </>
                 )}
-              </Button>
+              </Button> */}
             </div>
           </div>
         </div>

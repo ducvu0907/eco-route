@@ -1,4 +1,4 @@
-import { ApiResponse, VehicleResponse, VehicleCreateRequest, VehicleUpdateRequest, RouteResponse, } from "@/types/types";
+import { ApiResponse, VehicleResponse, VehicleCreateRequest, VehicleUpdateRequest } from "@/types/types";
 import axiosInstance from ".";
 
 export const getVehicles = async (): Promise<ApiResponse<VehicleResponse[]>> => {

@@ -3,7 +3,6 @@ import { useGetUserById } from "@/hooks/useUser";
 import { Role } from "@/types/types";
 import NotFound from "../NotFound";
 import DriverVehicle from "@/components/user/DriverVehicle";
-import UserOrders from "@/components/user/UserOrders";
 import { formatDate } from "@/utils/formatDate";
 import {
   User,
@@ -30,6 +29,7 @@ import {
   AlertDescription,
   AlertTitle,
 } from "@/components/ui/alert";
+import CustomerOrders from "@/components/user/CustomerOrders";
 
 export default function UserDetails() {
   const { userId } = useParams<string>();
@@ -210,9 +210,10 @@ export default function UserDetails() {
             <ShoppingCart className="h-5 w-5 text-muted-foreground" />
             <h2 className="text-xl font-semibold tracking-tight">Order History</h2>
           </div>
-          <UserOrders userId={userId} />
+          <CustomerOrders userId={userId} />
         </div>
       )}
+
     </div>
   );
 }

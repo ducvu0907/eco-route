@@ -43,7 +43,7 @@ export const useCreateOrder = () => {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: (payload: OrderCreateRequest) => createOrder(payload),
+    mutationFn: ({ payload, file }: { payload: OrderCreateRequest, file: any}) => createOrder(payload, file),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["orders"] });
     },
@@ -68,21 +68,19 @@ export const useMarkOrderAsDone = () => {
 
   return useMutation({
     mutationFn: (orderId: string) => markOrderAsDone(orderId),
-    onSuccess: (_data,  orderId) => {
-      queryClient.invalidateQueries({ queryKey: ["orders"] });
+    onSuccess: (_data, orderId) => {
       queryClient.invalidateQueries({ queryKey: ["orders", orderId] });
-    },
-  });
-};
+    }
+  })
+}
 
 export const useMarkOrderAsCancelled = () => {
   const queryClient = useQueryClient();
 
   return useMutation({
     mutationFn: (orderId: string) => markOrderAsCancelled(orderId),
-    onSuccess: (_data,  orderId) => {
-      queryClient.invalidateQueries({ queryKey: ["orders"] });
+    onSuccess: (_data, orderId) => {
       queryClient.invalidateQueries({ queryKey: ["orders", orderId] });
-    },
-  });
-};
+    }
+  })
+}
