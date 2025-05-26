@@ -25,7 +25,8 @@ import MultiRoutesDynamicMap from "@/components/map/MultiRoutesDynamicMap";
 import { useGetPendingOrders } from "@/hooks/useOrder";
 import { useGetRoutesByDispatchId } from "@/hooks/useRoute";
 import NoDispatch from "./NoDispatch";
-import { DispatchStatus, RouteStatus, TrashCategory } from "@/types/types";
+import { DispatchStatus, RouteResponse, RouteStatus, TrashCategory } from "@/types/types";
+import SingleRouteDynamicMap from "@/components/map/SingleRouteDynamicMap";
 
 const getCategoryBadgeVariant = (category: TrashCategory) => {
   switch (category) {
@@ -50,6 +51,7 @@ export default function CurrentDispatchDetails() {
   const { mutate: createDispatch, isPending } = useCreateDispatch();
   const { mutate: markAsDone, isPending: isMarking } = useMarkDispatchAsDone();
   const [activeTab, setActiveTab] = useState("overview");
+  const [selectedRoute, setSelectedRoute] = useState<RouteResponse | null>(null);
 
   const {
     data: dispatchData,
@@ -78,9 +80,9 @@ export default function CurrentDispatchDetails() {
   const isError = isDispatchError || isRoutesError || isPendingError;
 
   // Calculate stats
-  const totalOrders = routes.reduce((sum, route) => sum + (route.orders?.length || 0), 0);
-  const totalDistance = routes.reduce((sum, route) => sum + route.distance, 0);
-  const totalDuration = routes.reduce((sum, route) => sum + route.duration, 0);
+  const totalOrders = selectedRoute === null ? routes.reduce((sum, route) => sum + (route.orders?.length || 0), 0) : selectedRoute.orders.length;
+  const totalDistance = selectedRoute === null ? routes.reduce((sum, route) => sum + route.distance, 0) : selectedRoute.distance;
+  const totalDuration = selectedRoute === null ? routes.reduce((sum, route) => sum + route.duration, 0) : selectedRoute.duration;
 
   if (!dispatch) {
     return <NoDispatch />;
@@ -198,7 +200,7 @@ export default function CurrentDispatchDetails() {
                   </div>
                   <div>
                     <p className="text-sm text-slate-500">Est. Duration</p>
-                    <p className="text-2xl font-bold">{totalDuration} min</p>
+                    <p className="text-2xl font-bold">{totalDuration.toFixed(2)} min</p>
                   </div>
                 </div>
               </CardContent>
@@ -208,7 +210,7 @@ export default function CurrentDispatchDetails() {
 
         {/* Map */}
         <div className="h-[calc(100%-280px)]">
-          <MultiRoutesDynamicMap routes={routes} />
+          {selectedRoute == null ? <MultiRoutesDynamicMap routes={routes} /> : <SingleRouteDynamicMap route={selectedRoute}/>}
         </div>
       </div>
 
@@ -276,7 +278,15 @@ export default function CurrentDispatchDetails() {
               
               <div className="space-y-3">
                 {routes.map((route) => (
-                  <Card key={route.id} className="border-l-4 border-l-blue-500">
+                  <Card key={route.id}
+                  className={`cursor-pointer border-l-4 ${selectedRoute && selectedRoute.id === route.id ? 'border-l-blue-600 bg-blue-50' : 'border-l-blue-300 hover:bg-blue-50'}`}
+                    onClick={() => {
+                      if (selectedRoute && selectedRoute.id === route.id) {
+                        setSelectedRoute(null);
+                      } else {
+                        setSelectedRoute(route);
+                      }
+                    }}>
                     <CardContent className="p-4">
                       <div className="space-y-3">
                         <div className="flex items-center justify-between">
@@ -284,11 +294,14 @@ export default function CurrentDispatchDetails() {
                             <Truck className="h-4 w-4 text-slate-500" />
                             <span className="font-medium">{route.vehicle?.licensePlate}</span>
                           </div>
+                          {selectedRoute && selectedRoute.id === route.id && (
+                            <CheckCircle2 className="h-4 w-4 text-blue-600 ml-1" />
+                          )}
                           <Badge variant={getStatusBadgeVariant(route.status)} className="text-xs">
                             {route.status.replace('_', ' ')}
                           </Badge>
                         </div>
-                        
+
                         <div className="text-sm text-slate-600">
                           <div className="flex items-center gap-2 mb-1">
                             <Users className="h-3 w-3" />

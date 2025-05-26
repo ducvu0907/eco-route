@@ -12,43 +12,12 @@ import { Alert, AlertTitle, AlertDescription } from "@/components/ui/alert";
 import { defaultCenter } from "@/config/config";
 import { MapPin, Package, Truck } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
+import { OrderResponse } from "@/types/types";
 
-export default function PendingOrdersMap() {
-  const { data: orderData, isLoading: isOrdersLoading, isError: isOrdersError } = useGetPendingOrders();
+export default function PendingOrdersMap({ orders }: { orders: OrderResponse[] }) {
   const { data: vehicleData, isLoading: isVehiclesLoading, isError: isVehiclesError } = useGetVehicles();
 
-  const orders = orderData?.result || [];
   const vehicles = vehicleData?.result || [];
-
-  const isLoading = isOrdersLoading || isVehiclesLoading;
-  const isError = isOrdersError || isVehiclesError;
-
-  if (isLoading) {
-    return (
-      <Card className="h-full">
-        <CardHeader>
-          <CardTitle className="flex items-center gap-2">
-            <MapPin className="w-5 h-5" />
-            Loading Map...
-          </CardTitle>
-        </CardHeader>
-        <CardContent className="h-full">
-          <Skeleton className="h-full w-full rounded-lg" />
-        </CardContent>
-      </Card>
-    );
-  }
-
-  if (isError) {
-    return (
-      <Alert variant="destructive" className="h-full flex items-center justify-center">
-        <div className="text-center">
-          <AlertTitle>Error Loading Map</AlertTitle>
-          <AlertDescription>Failed to load map data. Please try again.</AlertDescription>
-        </div>
-      </Alert>
-    );
-  }
 
   if (!orders.length && !vehicles.length) {
     return (
@@ -64,24 +33,6 @@ export default function PendingOrdersMap() {
 
   return (
     <div className="h-full">
-      {/* <CardHeader className="pb-3">
-        <div className="flex items-center justify-between">
-          <CardTitle className="flex items-center gap-2">
-            <MapPin className="w-5 h-5" />
-            Dispatch Overview
-          </CardTitle>
-          <div className="flex gap-2">
-            <Badge variant="secondary" className="flex items-center gap-1">
-              <Package className="w-3 h-3" />
-              {orders.length} Orders
-            </Badge>
-            <Badge variant="secondary" className="flex items-center gap-1">
-              <Truck className="w-3 h-3" />
-              {vehicles.length} Vehicles
-            </Badge>
-          </div>
-        </div>
-      </CardHeader> */}
       <CardContent className="h-full p-0">
         <div className="h-full rounded-lg overflow-hidden">
           <MapContainer 

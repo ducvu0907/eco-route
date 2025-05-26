@@ -1,5 +1,5 @@
 import { useDeleteVehicle, useGetVehicles } from "@/hooks/useVehicle";
-import { VehicleResponse } from "@/types/types";
+import { TrashCategory, VehicleResponse, VehicleStatus, VehicleType } from "@/types/types";
 import {
   Card,
   CardContent,
@@ -35,20 +35,44 @@ import {
   Clock,
   Package,
   Gauge,
-  TruckIcon
+  TruckIcon,
+  Filter,
+  X
 } from "lucide-react";
 import { formatDate } from "@/utils/formatDate";
-import { useNavigate } from "react-router";
+import { Link, useNavigate } from "react-router";
 import { Button } from "@/components/ui/button";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import VehicleCreateModal from "@/components/vehicle/VehicleCreateModal";
 
 export default function VehicleManagement() {
+  const [typeFilter, setTypeFilter] = useState<VehicleType | "ALL">("ALL");
+  const [categoryFilter, setCategoryFilter] = useState<TrashCategory | "ALL">("ALL");
+  const [statusFilter, setStatusFilter] = useState<VehicleStatus | "ALL">("ALL");
+  const [filteredVehicles, setFilteredVehicles] = useState<VehicleResponse[]>([]);
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
   const navigate = useNavigate();
   const { mutate: deleteVehicle, isPending } = useDeleteVehicle();
   const { data, isLoading, isError } = useGetVehicles();
   const vehicles: VehicleResponse[] = data?.result || [];
+
+  useEffect(() => {
+    const filtered = vehicles.filter((vehicle) => {
+      const matchesType = typeFilter === "ALL" || vehicle.type === typeFilter;
+      const matchesCategory = categoryFilter === "ALL" || vehicle.category === categoryFilter;
+      const matchesStatus = statusFilter === "ALL" || vehicle.status === statusFilter;
+      return matchesType && matchesCategory && matchesStatus;
+    });
+
+    setFilteredVehicles(filtered);
+  }, [typeFilter, categoryFilter, statusFilter, vehicles]);
+
+  const clearAllFilters = () => {
+    setTypeFilter("ALL");
+    setCategoryFilter("ALL");
+  };
+
+  const hasActiveFilters = typeFilter !== "ALL" || categoryFilter !== "ALL";
 
   const getStatusIcon = (status: string) => {
     switch (status) {
@@ -130,7 +154,7 @@ export default function VehicleManagement() {
   return (
     <div className="min-h-screen bg-gray-50/50">
       <VehicleCreateModal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} />
-      
+
       {/* Header */}
       <div className="border-b border-gray-200 bg-white sticky top-0 z-10">
         <div className="max-w-7xl mx-auto px-6 py-8">
@@ -158,26 +182,176 @@ export default function VehicleManagement() {
         </div>
       </div>
 
+      {/* Modern Filter Section */}
+      <div className="bg-white border-b border-gray-100 sticky top-[136px] z-10">
+        <div className="max-w-7xl mx-auto px-6 py-6">
+          <div className="flex flex-col sm:flex-row gap-4 items-start sm:items-center justify-between">
+            <div className="flex items-center gap-3">
+              <div className="flex items-center gap-2 text-gray-700">
+                <Filter className="w-5 h-5" />
+                <span className="font-medium">Filters</span>
+              </div>
+              <div className="flex flex-wrap gap-3">
+                {/* Vehicle Type Filter */}
+                <div className="relative">
+                  <select
+                    value={typeFilter}
+                    onChange={(e) => setTypeFilter(e.target.value as VehicleType | "ALL")}
+                    className="appearance-none bg-gray-50 border border-gray-200 rounded-lg px-4 py-2.5 pr-10 text-sm font-medium text-gray-700 hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all cursor-pointer min-w-[140px]"
+                  >
+                    <option value="ALL">All Types</option>
+                    {Object.values(VehicleType).map((type) => (
+                      <option key={type} value={type}>
+                        {type
+                          .split("_")
+                          .map((w) => w.charAt(0) + w.slice(1).toLowerCase())
+                          .join(" ")}
+                      </option>
+                    ))}
+                  </select>
+                  <div className="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none">
+                    <svg className="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                    </svg>
+                  </div>
+                </div>
+
+                {/* Trash Category Filter */}
+                <div className="relative">
+                  <select
+                    value={categoryFilter}
+                    onChange={(e) => setCategoryFilter(e.target.value as TrashCategory | "ALL")}
+                    className="appearance-none bg-gray-50 border border-gray-200 rounded-lg px-4 py-2.5 pr-10 text-sm font-medium text-gray-700 hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all cursor-pointer min-w-[140px]"
+                  >
+                    <option value="ALL">All Categories</option>
+                    {Object.values(TrashCategory).map((category) => (
+                      <option key={category} value={category}>
+                        {category.charAt(0) + category.slice(1).toLowerCase()}
+                      </option>
+                    ))}
+                  </select>
+                  <div className="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none">
+                    <svg className="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                    </svg>
+                  </div>
+                </div>
+
+                {/* Trash Category Filter */}
+                <div className="relative">
+                  <select
+                    value={statusFilter}
+                    onChange={(e) => setStatusFilter(e.target.value as VehicleStatus | "ALL")}
+                    className="appearance-none bg-gray-50 border border-gray-200 rounded-lg px-4 py-2.5 pr-10 text-sm font-medium text-gray-700 hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all cursor-pointer min-w-[140px]"
+                  >
+                    <option value="ALL">All Statuses</option>
+                    {Object.values(VehicleStatus).map((status) => (
+                      <option key={status} value={status}>
+                        {status.charAt(0) + status.slice(1).toLowerCase()}
+                      </option>
+                    ))}
+                  </select>
+                  <div className="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none">
+                    <svg className="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                    </svg>
+                  </div>
+                </div>
+
+              </div>
+            </div>
+
+            <div className="flex items-center gap-4">
+              {/* Active Filters & Clear Button */}
+              {hasActiveFilters && (
+                <Button
+                  variant="ghost"
+                  onClick={clearAllFilters}
+                  className="text-gray-500 hover:text-gray-700 hover:bg-gray-100 text-sm"
+                >
+                  <X className="w-4 h-4 mr-1" />
+                  Clear filters
+                </Button>
+              )}
+              
+              {/* Results Count */}
+              <div className="text-sm text-gray-500 bg-gray-50 px-3 py-2 rounded-lg border">
+                <span className="font-medium text-gray-900">{filteredVehicles.length}</span>
+                {filteredVehicles.length === 1 ? ' vehicle' : ' vehicles'}
+              </div>
+            </div>
+          </div>
+
+          {/* Active Filter Tags */}
+          {hasActiveFilters && (
+            <div className="flex flex-wrap gap-2 mt-4 pt-4 border-t border-gray-100">
+              {typeFilter !== "ALL" && (
+                <div className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-blue-50 text-blue-700 rounded-full text-sm border border-blue-200">
+                  <span className="font-medium">Type:</span>
+                  <span>{typeFilter.split("_").map(w => w.charAt(0) + w.slice(1).toLowerCase()).join(" ")}</span>
+                  <button
+                    onClick={() => setTypeFilter("ALL")}
+                    className="ml-1 hover:bg-blue-100 rounded-full p-0.5"
+                  >
+                    <X className="w-3 h-3" />
+                  </button>
+                </div>
+              )}
+              {categoryFilter !== "ALL" && (
+                <div className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-green-50 text-green-700 rounded-full text-sm border border-green-200">
+                  <span className="font-medium">Category:</span>
+                  <span>{categoryFilter.charAt(0) + categoryFilter.slice(1).toLowerCase()}</span>
+                  <button
+                    onClick={() => setCategoryFilter("ALL")}
+                    className="ml-1 hover:bg-green-100 rounded-full p-0.5"
+                  >
+                    <X className="w-3 h-3" />
+                  </button>
+                </div>
+              )}
+            </div>
+          )}
+        </div>
+      </div>
+
       {/* Content */}
       <div className="max-w-7xl mx-auto p-6">
-        {vehicles.length === 0 ? (
+        {filteredVehicles.length === 0 ? (
           <div className="text-center py-16">
             <div className="mx-auto w-24 h-24 bg-gray-100 rounded-full flex items-center justify-center mb-4">
               <Truck className="w-12 h-12 text-gray-400" />
             </div>
-            <h3 className="text-lg font-medium text-gray-900 mb-2">No vehicles found</h3>
-            <p className="text-gray-500 mb-6">Get started by adding your first vehicle to the fleet.</p>
-            <Button 
-              onClick={() => setIsModalOpen(true)}
-              className="bg-blue-600 hover:bg-blue-700"
-            >
-              <Plus className="w-4 h-4 mr-2" />
-              Add Your First Vehicle
-            </Button>
+            <h3 className="text-lg font-medium text-gray-900 mb-2">
+              {hasActiveFilters ? 'No vehicles match your filters' : 'No vehicles found'}
+            </h3>
+            <p className="text-gray-500 mb-6">
+              {hasActiveFilters 
+                ? 'Try adjusting your filters to see more results.' 
+                : 'Get started by adding your first vehicle to the fleet.'
+              }
+            </p>
+            {hasActiveFilters ? (
+              <Button 
+                onClick={clearAllFilters}
+                variant="outline"
+                className="border-gray-300"
+              >
+                <X className="w-4 h-4 mr-2" />
+                Clear All Filters
+              </Button>
+            ) : (
+              <Button 
+                onClick={() => setIsModalOpen(true)}
+                className="bg-blue-600 hover:bg-blue-700"
+              >
+                <Plus className="w-4 h-4 mr-2" />
+                Add Your First Vehicle
+              </Button>
+            )}
           </div>
         ) : (
           <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-            {vehicles.map((vehicle) => (
+            {filteredVehicles.map((vehicle) => (
               <Card key={vehicle.id} className="group hover:shadow-lg transition-all duration-200 border-0 shadow-sm bg-white">
                 <CardHeader className="pb-3">
                   <div className="flex items-center justify-between">
@@ -205,16 +379,6 @@ export default function VehicleManagement() {
                         {vehicle.capacity.toLocaleString()} kg
                       </div>
                     </div>
-                    
-                    <div className="space-y-1">
-                      <div className="flex items-center gap-2 text-sm text-gray-500">
-                        <Gauge className="w-4 h-4" />
-                        Load
-                      </div>
-                      <div className="font-semibold text-gray-900">
-                        {vehicle.currentLoad.toLocaleString()} kg
-                      </div>
-                    </div>
                   </div>
 
                   <div className="space-y-2">
@@ -227,23 +391,13 @@ export default function VehicleManagement() {
                     
                     <div className="flex items-center justify-between text-sm">
                       <span className="text-gray-500">Driver</span>
-                      <span className="font-medium text-gray-900">{vehicle.driver.username}</span>
+                      <Link className="font-medium text-gray-900 hover:underline" to={`/users/${vehicle.driver.id}`}>{vehicle.driver.username}</Link>
                     </div>
                     
                     <div className="flex items-center justify-between text-sm">
                       <span className="text-gray-500">Created</span>
                       <span className="text-gray-900">{formatDate(vehicle.createdAt)}</span>
                     </div>
-                  </div>
-
-                  <div className="w-full bg-gray-100 rounded-full h-2">
-                    <div 
-                      className="bg-blue-500 h-2 rounded-full transition-all duration-300"
-                      style={{ width: `${Math.min((vehicle.currentLoad / vehicle.capacity) * 100, 100)}%` }}
-                    />
-                  </div>
-                  <div className="text-xs text-gray-500 text-center">
-                    {Math.round((vehicle.currentLoad / vehicle.capacity) * 100)}% capacity used
                   </div>
                 </CardContent>
                 

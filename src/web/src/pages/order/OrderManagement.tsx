@@ -31,11 +31,19 @@ import {
   Trash,
   TrashIcon
 } from "lucide-react";
+import { useState } from "react";
 
 export default function OrderManagement() {
   const navigate = useNavigate();
   const { data, isLoading, isError } = useGetOrders();
   const orders: OrderResponse[] = data?.result || [];
+  const [filterCategory, setFilterCategory] = useState<TrashCategory | "ALL">("ALL");
+  const [filterStatus, setFilterStatus] = useState<OrderStatus | "ALL">("ALL");
+  const filteredOrders = orders.filter(order => {
+    const categoryMatch = filterCategory === "ALL" || order.category === filterCategory;
+    const statusMatch = filterStatus === "ALL" || order.status === filterStatus;
+    return categoryMatch && statusMatch;
+  });
 
   const getStatusIcon = (status: OrderStatus) => {
     switch (status) {
@@ -174,7 +182,7 @@ export default function OrderManagement() {
     );
   }
 
-  return (
+return (
     <div className="w-full h-full p-6">
       {/* Page Header */}
       <div className="mb-6 flex flex-row items-center">
@@ -184,8 +192,45 @@ export default function OrderManagement() {
         <div className="ml-2">
           <h1 className="text-2xl font-bold tracking-tight">Order Management</h1>
           <p className="text-muted-foreground">
-            Manage and track all waste collection orders ({orders.length} total)
+            Manage and track all waste collection orders ({filteredOrders.length} total)
           </p>
+        </div>
+      </div>
+      
+      {/* Filters */}
+      <div className="mb-4 flex flex-col flex-wrap gap-4">
+        {/* Category Filter */}
+        <div className="flex items-center gap-2 flex-wrap">
+          <span className="font-semibold">Category:</span>
+          {["ALL", ...Object.values(TrashCategory)].map((category) => (
+            <Badge
+              key={category}
+              variant={filterCategory === category ? "secondary" : "outline"}
+              className="cursor-pointer"
+              onClick={() => setFilterCategory(category as TrashCategory | "ALL")}
+            >
+              {category === "ALL"
+                ? "All"
+                : category.toLowerCase().replace(/\b\w/g, l => l.toUpperCase())}
+            </Badge>
+          ))}
+        </div>
+
+        {/* Status Filter */}
+        <div className="flex items-center gap-2 flex-wrap">
+          <span className="font-semibold">Status:</span>
+          {["ALL", ...Object.values(OrderStatus)].map((status) => (
+            <Badge
+              key={status}
+              variant={filterStatus === status ? "secondary" : "outline"}
+              className="cursor-pointer"
+              onClick={() => setFilterStatus(status as OrderStatus | "ALL")}
+            >
+              {status === "ALL"
+                ? "All"
+                : status.toLowerCase().replace(/\b\w/g, l => l.toUpperCase())}
+            </Badge>
+          ))}
         </div>
       </div>
 
@@ -193,20 +238,9 @@ export default function OrderManagement() {
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 h-[calc(100vh-160px)] min-h-0">
         {/* Left Side - Map */}
         <Card className="h-full col-span-2 p-0">
-          {/* <CardHeader className="pb-4">
-            <div className="flex items-center justify-between">
-              <div className="flex items-center gap-2">
-                <Map className="h-5 w-5 text-muted-foreground" />
-                <CardTitle>Orders Map</CardTitle>
-              </div>
-              <Badge variant="secondary" className="text-xs">
-                {orders.length} orders
-              </Badge>
-            </div>
-          </CardHeader> */}
           <CardContent className="p-0 h-full">
             <div className="h-full w-full rounded-b-lg overflow-hidden">
-              <OrdersMap orders={orders} />
+              <OrdersMap orders={filteredOrders} />
             </div>
           </CardContent>
         </Card>
@@ -240,7 +274,7 @@ export default function OrderManagement() {
           </CardHeader>
           <CardContent className="h-[calc(100%-80px)] p-0">
             <div className="h-full overflow-y-auto px-6 pb-6">
-              {orders.length === 0 ? (
+              {filteredOrders.length === 0 ? (
                 <div className="flex flex-col items-center justify-center h-full text-center space-y-4">
                   <div className="p-4 bg-muted rounded-full">
                     <Package className="h-8 w-8 text-muted-foreground" />
@@ -248,13 +282,13 @@ export default function OrderManagement() {
                   <div className="space-y-2">
                     <h3 className="font-semibold text-lg">No Orders Found</h3>
                     <p className="text-sm text-muted-foreground max-w-sm">
-                      No waste collection orders have been placed yet. Orders will appear here once customers start using the service.
+                      No orders match the selected filters.
                     </p>
                   </div>
                 </div>
               ) : (
                 <div className="space-y-3">
-                  {orders.map((order) => (
+                  {filteredOrders.map((order) => (
                     <div
                       key={order.id}
                       className="group p-4 border rounded-lg hover:bg-accent/50 transition-all hover:shadow-sm cursor-pointer"
@@ -283,7 +317,6 @@ export default function OrderManagement() {
                         </div>
 
                         <div className="flex items-center gap-2 flex-shrink-0">
-                          {getStatusIcon(order.status)}
                           {getStatusBadge(order.status)}
                         </div>
                       </div>

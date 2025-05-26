@@ -1,5 +1,5 @@
-import { TruckIcon } from "@/lib/leaflet-icons";
-import { VehicleResponse } from "@/types/types";
+import { CompactorTruckIcon, ThreeWheelerIcon } from "@/lib/leaflet-icons";
+import { VehicleResponse, VehicleType } from "@/types/types";
 import { Marker, Popup } from "react-leaflet";
 import { useNavigate } from "react-router";
 import { Button } from "../ui/button";
@@ -8,6 +8,15 @@ import { useVehicleRealtimeData } from "@/hooks/useVehicleRealtimeData";
 interface VehicleDynamicMarkerProps {
   vehicle: VehicleResponse;
 }
+
+export const getVehicleIcon = (type: VehicleType) => {
+  switch (type) {
+    case VehicleType.COMPACTOR_TRUCK:
+      return CompactorTruckIcon;
+    case VehicleType.THREE_WHEELER:
+      return ThreeWheelerIcon;
+  };
+};
 
 export default function VehicleDynamicMarker({ vehicle }: VehicleDynamicMarkerProps) {
   const navigate = useNavigate();
@@ -19,7 +28,7 @@ export default function VehicleDynamicMarker({ vehicle }: VehicleDynamicMarkerPr
   const load = realtimeData?.load ?? vehicle.currentLoad;
 
   return (
-    <Marker position={[lat, lng]} icon={TruckIcon}>
+    <Marker position={[lat, lng]} icon={getVehicleIcon(vehicle.type)}>
       <Popup>
         <strong>Vehicle:</strong> {vehicle.licensePlate} <br />
         Load: {load}kg <br />

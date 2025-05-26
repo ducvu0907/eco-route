@@ -8,13 +8,11 @@ import { Separator } from "@/components/ui/separator";
 import { Package, MapPin, Weight, Calendar, AlertCircle, CheckCircle, Clock, Eye, Loader2, Scale, Trash2, XCircle } from "lucide-react";
 import { formatDate } from "@/utils/formatDate";
 import { useNavigate } from "react-router";
-import { OrderStatus, TrashCategory } from "@/types/types";
+import { OrderResponse, OrderStatus, TrashCategory } from "@/types/types";
 import { Button } from "../ui/button";
 
-export default function PendingOrdersSidebar() {
+export default function PendingOrdersSidebar({ orders }: { orders: OrderResponse[] }) {
   const navigate = useNavigate();
-  const { data, isLoading, isError } = useGetPendingOrders();
-  const orders = data?.result || [];
 
   const getStatusIcon = (status: OrderStatus) => {
     switch (status) {
@@ -78,37 +76,6 @@ export default function PendingOrdersSidebar() {
       </Badge>
     );
   };
-
-  if (isLoading) {
-    return (
-      <div className="flex-1 p-4">
-        <Card className="h-full">
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2">
-              <Package className="w-5 h-5" />
-              Loading Orders...
-            </CardTitle>
-          </CardHeader>
-          <CardContent className="space-y-4">
-            {[...Array(5)].map((_, i) => (
-              <Skeleton key={i} className="h-20 w-full" />
-            ))}
-          </CardContent>
-        </Card>
-      </div>
-    );
-  }
-
-  if (isError) {
-    return (
-      <div className="flex-1 p-4">
-        <Alert variant="destructive">
-          <AlertTitle>Error</AlertTitle>
-          <AlertDescription>Failed to load pending orders.</AlertDescription>
-        </Alert>
-      </div>
-    );
-  }
 
   if (!orders.length) {
     return (

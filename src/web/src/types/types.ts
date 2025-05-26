@@ -179,25 +179,6 @@ export interface OsmAddress {
   [key: string]: string | undefined; // for extra dynamic fields like ISO3166-2-lvl4
 }
 
-export interface OsmResponse {
-  place_id?: number;
-  licence?: string;
-  osm_type?: string;
-  osm_id?: number;
-  lat?: string;
-  lon?: string;
-  class?: string;
-  type?: string;
-  place_rank?: number;
-  importance?: number;
-  addresstype?: string;
-  name?: string;
-  display_name?: string;
-  boundingbox?: string[];
-  address?: OsmAddress;
-  error?: string;
-}
-
 export interface RouteResponse {
   id: string;
   vehicle: VehicleResponse;
@@ -244,4 +225,59 @@ export interface VehicleRealtimeData {
   latitude: number;
   longitude: number;
   load: number;
+}
+
+
+export interface OrsApiResponse {
+  type: "FeatureCollection";
+  geocoding?: Record<string, any>; // Add proper typing if geocoding structure is known
+  features: Feature[];
+  bbox?: [number, number, number, number]; // [minLon, minLat, maxLon, maxLat]
+}
+
+export interface Feature {
+  type: "Feature";
+  geometry: Geometry;
+  properties: Properties;
+  bbox?: [number, number, number, number];
+}
+
+export interface Geometry {
+  type: "Point" | "LineString" | "Polygon" | string; // Extend for other types if needed
+  coordinates: number[]; // e.g., [longitude, latitude]
+}
+
+export interface Properties {
+  [key: string]: any; // Use this if properties are dynamic
+
+  // Optional: define specific known fields if available, e.g.:
+  id?: string;
+  gid?: string;
+  layer?: string;
+  source?: string;
+  source_id?: string;
+  name?: string;
+  confidence?: number;
+  distance?: number;
+  accuracy?: string;
+  country?: string;
+  country_gid?: string;
+  country_a?: string;
+  macroregion?: string;
+  macroregion_gid?: string;
+  macroregion_a?: string;
+  region?: string;
+  region_gid?: string;
+  region_a?: string;
+  localadmin?: string;
+  localadmin_gid?: string;
+  locality?: string;
+  locality_gid?: string;
+  borough?: string;
+  borough_gid?: string;
+  neighbourhood?: string;
+  neighbourhood_gid?: string;
+  continent?: string;
+  continent_gid?: string;
+  label?: string;
 }

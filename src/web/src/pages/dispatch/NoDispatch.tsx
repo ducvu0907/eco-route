@@ -3,9 +3,11 @@ import PendingOrdersMap from "@/components/dispatch/PendingOrdersMap";
 import PendingOrdersSidebar from "@/components/dispatch/PendingOrdersSidebar";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
-import { Package, Truck, Zap } from "lucide-react";
+import { Badge, Package, Truck, Zap } from "lucide-react";
 import { useGetPendingOrders } from "@/hooks/useOrder";
 import { useGetVehicles } from "@/hooks/useVehicle";
+import { useState } from "react";
+import { TrashCategory } from "@/types/types";
 
 export default function NoDispatch() {
   const { mutate: createDispatch, isPending } = useCreateDispatch();
@@ -15,6 +17,12 @@ export default function NoDispatch() {
   const orders = orderData?.result || [];
   const vehicles = vehicleData?.result || [];
   const totalWeight = orders.reduce((sum, order) => sum + order.weight, 0);
+  const [filterCategory, setFilterCategory] = useState<TrashCategory | "ALL">("ALL");
+
+  // Filter orders by category
+  const filteredOrders = filterCategory === "ALL"
+    ? orders
+    : orders.filter(order => order.category === filterCategory);
 
   return (
     <div className="flex flex-col h-screen bg-background">
@@ -81,16 +89,35 @@ export default function NoDispatch() {
         </div>
       </div>
 
+      {/* Filter badges */}
+      <div className="flex flex-wrap gap-2">
+        <Badge
+          className="cursor-pointer"
+          onClick={() => setFilterCategory("ALL")}
+        >
+          All
+        </Badge>
+        {Object.values(TrashCategory).map((category) => (
+          <Badge
+            key={category}
+            className="cursor-pointer"
+            onClick={() => setFilterCategory(category)}
+          >
+            {category.toLowerCase().replace(/\b\w/g, l => l.toUpperCase())}
+          </Badge>
+        ))}
+      </div>
+
       {/* Main Content */}
       <div className="flex flex-1 overflow-hidden">
         {/* Map - Left Side */}
         <div className="w-2/3 overflow-auto">
-          <PendingOrdersMap />
+          <PendingOrdersMap orders={filteredOrders}/>
         </div>
 
         {/* Sidebar - Right Side */}
         <div className="w-1/3 overflow-auto">
-          <PendingOrdersSidebar />
+          <PendingOrdersSidebar orders={filteredOrders}/>
         </div>
       </div>
     </div>

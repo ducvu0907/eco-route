@@ -5,20 +5,19 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { Alert, AlertTitle, AlertDescription } from "@/components/ui/alert";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Separator } from "@/components/ui/separator";
 import NotFound from "../NotFound";
 import { formatDate } from "@/utils/formatDate";
 import VehicleCreateModal from "../../components/vehicle/VehicleCreateModal";
 import { useState } from "react";
 import DepotUpdatemodal from "@/components/depot/DepotUpdateModal";
-import { 
-  MapPin, 
-  Calendar, 
-  Truck, 
-  Plus, 
-  Edit, 
-  Eye, 
-  Package, 
+import {
+  MapPin,
+  Calendar,
+  Truck,
+  Plus,
+  Edit,
+  Eye,
+  Package,
   Gauge,
   Navigation,
   Clock,
@@ -79,8 +78,8 @@ export default function DepotDetails() {
 
   return (
     <div className="p-6 space-y-6">
-      <DepotUpdatemodal isOpen={isUpdateOpen} onClose={() => setIsUpdateOpen(false)} depot={depot}/>
-      
+      <DepotUpdatemodal isOpen={isUpdateOpen} onClose={() => setIsUpdateOpen(false)} depot={depot} />
+
       {/* Header Section */}
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
         <div>
@@ -106,7 +105,7 @@ export default function DepotDetails() {
             </div>
           </CardContent>
         </Card>
-        
+
         <Card>
           <CardContent className="p-6">
             <div className="flex items-center space-x-2">
@@ -120,7 +119,7 @@ export default function DepotDetails() {
             </div>
           </CardContent>
         </Card>
-        
+
         <Card>
           <CardContent className="p-6">
             <div className="flex items-center space-x-2">
@@ -136,159 +135,155 @@ export default function DepotDetails() {
         </Card>
       </div>
 
-      {/* Depot Information */}
-      <Card>
-        <CardHeader>
-          <CardTitle className="flex items-center gap-2">
-            <MapPin className="h-5 w-5" />
-            Depot Information
-          </CardTitle>
-        </CardHeader>
-        <CardContent className="space-y-4">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <div className="space-y-3">
-              <div className="flex items-start gap-3">
-                <MapPin className="h-4 w-4 mt-1 text-muted-foreground" />
-                <div>
-                  <p className="font-medium">Address</p>
-                  <p className="text-sm text-muted-foreground">{depot.address || "N/A"}</p>
+      <div className="grid grid-cols-1 xl:grid-cols-2 gap-6 h-[calc(100vh-10rem)]">
+        {/* Depot Info */}
+        <Card className="overflow-auto max-h-1/3">
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2">
+              <MapPin className="h-5 w-5" />
+              Depot Information
+            </CardTitle>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div className="space-y-3">
+                <div className="flex items-start gap-3">
+                  <MapPin className="h-4 w-4 mt-1 text-muted-foreground" />
+                  <div>
+                    <p className="font-medium">Address</p>
+                    <p className="text-sm text-muted-foreground">{depot.address || "N/A"}</p>
+                  </div>
                 </div>
-              </div>
-              
-              <div className="flex items-start gap-3">
-                <Navigation className="h-4 w-4 mt-1 text-muted-foreground" />
-                <div>
-                  <p className="font-medium">Coordinates</p>
-                  <p className="text-sm text-muted-foreground">
-                    {depot.latitude}, {depot.longitude}
-                  </p>
-                </div>
-              </div>
-            </div>
-            
-            <div className="space-y-3">
-              <div className="flex items-start gap-3">
-                <Calendar className="h-4 w-4 mt-1 text-muted-foreground" />
-                <div>
-                  <p className="font-medium">Created</p>
-                  <p className="text-sm text-muted-foreground">{formatDate(depot.createdAt)}</p>
-                </div>
-              </div>
-              
-              <div className="flex items-start gap-3">
-                <Clock className="h-4 w-4 mt-1 text-muted-foreground" />
-                <div>
-                  <p className="font-medium">Last Updated</p>
-                  <p className="text-sm text-muted-foreground">{formatDate(depot.updatedAt)}</p>
-                </div>
-              </div>
-            </div>
-          </div>
-        </CardContent>
-      </Card>
 
-      {/* Vehicle List */}
-      <Card>
-        <CardHeader>
-          <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
-            <div>
-              <CardTitle className="flex items-center gap-2">
-                <Truck className="h-5 w-5" />
-                Assigned Vehicles
-              </CardTitle>
-              <p className="text-sm text-muted-foreground mt-1">
-                Manage vehicles assigned to this depot
-              </p>
-            </div>
-            <Button onClick={() => setIsModalOpen(true)} className="gap-2">
-              <Plus className="h-4 w-4" />
-              Add Vehicle
-            </Button>
-          </div>
-          <VehicleCreateModal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} depot={depot} />
-        </CardHeader>
+                <div className="flex items-start gap-3">
+                  <Navigation className="h-4 w-4 mt-1 text-muted-foreground" />
+                  <div>
+                    <p className="font-medium">Coordinates</p>
+                    <p className="text-sm text-muted-foreground">
+                      {depot.latitude}, {depot.longitude}
+                    </p>
+                  </div>
+                </div>
+              </div>
 
-        <CardContent>
-          {depot.vehicles.length === 0 ? (
-            <div className="text-center py-12">
-              <Truck className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
-              <p className="text-lg font-medium">No vehicles assigned</p>
-              <p className="text-muted-foreground mb-4">Get started by adding your first vehicle to this depot.</p>
-              {/* <Button onClick={() => setIsModalOpen(true)} className="gap-2">
+              <div className="space-y-3">
+                <div className="flex items-start gap-3">
+                  <Calendar className="h-4 w-4 mt-1 text-muted-foreground" />
+                  <div>
+                    <p className="font-medium">Created</p>
+                    <p className="text-sm text-muted-foreground">{formatDate(depot.createdAt)}</p>
+                  </div>
+                </div>
+
+                <div className="flex items-start gap-3">
+                  <Clock className="h-4 w-4 mt-1 text-muted-foreground" />
+                  <div>
+                    <p className="font-medium">Last Updated</p>
+                    <p className="text-sm text-muted-foreground">{formatDate(depot.updatedAt)}</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+
+        {/* Vehicle List */}
+        <Card className="overflow-auto flex flex-col">
+          <CardHeader>
+            <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+              <div>
+                <CardTitle className="flex items-center gap-2">
+                  <Truck className="h-5 w-5" />
+                  Assigned Vehicles
+                </CardTitle>
+                <p className="text-sm text-muted-foreground mt-1">
+                  Manage vehicles assigned to this depot
+                </p>
+              </div>
+              <Button onClick={() => setIsModalOpen(true)} className="gap-2">
                 <Plus className="h-4 w-4" />
                 Add Vehicle
-              </Button> */}
+              </Button>
             </div>
-          ) : (
-            <div className="space-y-4 max-h-[500px] overflow-y-auto">
-              {depot.vehicles.map((vehicle, index) => (
-                <Card key={vehicle.id} className="border-l-4 border-l-blue-500">
-                  <CardContent className="p-6">
-                    <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4">
-                      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 flex-1">
-                        <div className="space-y-1">
-                          <p className="text-sm font-medium text-muted-foreground">License Plate</p>
-                          <p className="font-semibold">{vehicle.licensePlate}</p>
+            <VehicleCreateModal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} depot={depot} />
+          </CardHeader>
+
+          <CardContent className="overflow-y-auto flex-1 pr-2">
+            {depot.vehicles.length === 0 ? (
+              <div className="text-center py-12">
+                <Truck className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
+                <p className="text-lg font-medium">No vehicles assigned</p>
+                <p className="text-muted-foreground mb-4">Get started by adding your first vehicle to this depot.</p>
+              </div>
+            ) : (
+              <div className="space-y-4">
+                {depot.vehicles.map((vehicle) => (
+                  <Card key={vehicle.id} className="border-l-4 border-l-blue-500">
+                    <CardContent className="p-6">
+                      <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4">
+                        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 flex-1">
+                          <div className="space-y-1">
+                            <p className="text-sm font-medium text-muted-foreground">License Plate</p>
+                            <p className="font-semibold">{vehicle.licensePlate}</p>
+                          </div>
+
+                          <div className="space-y-1">
+                            <p className="text-sm font-medium text-muted-foreground">Status</p>
+                            <Badge className={getStatusColor(vehicle.status)}>{vehicle.status}</Badge>
+                          </div>
+
+                          <div className="space-y-1">
+                            <p className="text-sm font-medium text-muted-foreground">Capacity</p>
+                            <p className="font-medium">{vehicle.capacity} kg</p>
+                          </div>
+
+                          <div className="space-y-1">
+                            <p className="text-sm font-medium text-muted-foreground">Current Load</p>
+                            <p className="font-medium">
+                              {vehicle.currentLoad ?? "N/A"} kg
+                              {vehicle.currentLoad && (
+                                <span className="text-xs text-muted-foreground ml-1">
+                                  ({Math.round((vehicle.currentLoad / vehicle.capacity) * 100)}%)
+                                </span>
+                              )}
+                            </p>
+                          </div>
+
+                          <div className="space-y-1">
+                            <p className="text-sm font-medium text-muted-foreground">Location</p>
+                            <p className="text-sm">
+                              {vehicle.currentLatitude && vehicle.currentLongitude
+                                ? `${vehicle.currentLatitude.toFixed(4)}, ${vehicle.currentLongitude.toFixed(4)}`
+                                : "N/A"}
+                            </p>
+                          </div>
+
+                          <div className="space-y-1">
+                            <p className="text-sm font-medium text-muted-foreground">Created</p>
+                            <p className="text-sm">{formatDate(vehicle.createdAt)}</p>
+                          </div>
                         </div>
-                        
-                        <div className="space-y-1">
-                          <p className="text-sm font-medium text-muted-foreground">Status</p>
-                          <Badge className={getStatusColor(vehicle.status)}>
-                            {vehicle.status}
-                          </Badge>
-                        </div>
-                        
-                        <div className="space-y-1">
-                          <p className="text-sm font-medium text-muted-foreground">Capacity</p>
-                          <p className="font-medium">{vehicle.capacity} kg</p>
-                        </div>
-                        
-                        <div className="space-y-1">
-                          <p className="text-sm font-medium text-muted-foreground">Current Load</p>
-                          <p className="font-medium">
-                            {vehicle.currentLoad ?? "N/A"} kg
-                            {vehicle.currentLoad && (
-                              <span className="text-xs text-muted-foreground ml-1">
-                                ({Math.round((vehicle.currentLoad / vehicle.capacity) * 100)}%)
-                              </span>
-                            )}
-                          </p>
-                        </div>
-                        
-                        <div className="space-y-1">
-                          <p className="text-sm font-medium text-muted-foreground">Location</p>
-                          <p className="text-sm">
-                            {vehicle.currentLatitude && vehicle.currentLongitude
-                              ? `${vehicle.currentLatitude.toFixed(4)}, ${vehicle.currentLongitude.toFixed(4)}`
-                              : "N/A"}
-                          </p>
-                        </div>
-                        
-                        <div className="space-y-1">
-                          <p className="text-sm font-medium text-muted-foreground">Created</p>
-                          <p className="text-sm">{formatDate(vehicle.createdAt)}</p>
+
+                        <div className="flex gap-2 justify-end">
+                          <Button
+                            variant="outline"
+                            size="sm"
+                            onClick={() => navigate(`/vehicles/${vehicle.id}`)}
+                            className="gap-2"
+                          >
+                            <Eye className="h-4 w-4" />
+                            View Details
+                          </Button>
                         </div>
                       </div>
-                      
-                      <div className="flex gap-2 justify-end">
-                        <Button 
-                          variant="outline" 
-                          size="sm" 
-                          onClick={() => navigate(`/vehicles/${vehicle.id}`)}
-                          className="gap-2"
-                        >
-                          <Eye className="h-4 w-4" />
-                          View Details
-                        </Button>
-                      </div>
-                    </div>
-                  </CardContent>
-                </Card>
-              ))}
-            </div>
-          )}
-        </CardContent>
-      </Card>
+                    </CardContent>
+                  </Card>
+                ))}
+              </div>
+            )}
+          </CardContent>
+        </Card>
+      </div>
     </div>
   );
 }

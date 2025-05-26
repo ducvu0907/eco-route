@@ -1,4 +1,3 @@
-import { TruckIcon } from "@/lib/leaflet-icons";
 import { VehicleResponse } from "@/types/types";
 import { Marker, Popup } from "react-leaflet";
 import { useNavigate } from "react-router";

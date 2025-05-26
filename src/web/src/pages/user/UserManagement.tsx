@@ -16,6 +16,9 @@ import {
 } from "@/components/ui/table";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Alert, AlertTitle, AlertDescription } from "@/components/ui/alert";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Badge } from "@/components/ui/badge";
 import { 
   Users, 
   AlertTriangle, 
@@ -27,15 +30,29 @@ import {
   UserCheck,
   Crown,
   Truck,
-  ExternalLink
+  ExternalLink,
+  Search,
+  Filter,
+  X
 } from "lucide-react";
 import { formatDate } from "@/utils/formatDate";
 import { useNavigate } from "react-router";
+import { useState, useMemo } from "react";
 
 export default function UserManagement() {
   const navigate = useNavigate();
   const { data, isLoading, isError } = useGetUsers();
   const users: UserResponse[] = data?.result || [];
+
+  // Filter and search states
+  const [selectedRole, setSelectedRole] = useState<string | null>(null);
+  const [searchQueries, setSearchQueries] = useState({
+    username: "",
+    phone: "",
+    id: "",
+    createdAt: "",
+    updatedAt: ""
+  });
 
   const getRoleIcon = (role: string) => {
     switch (role) {
@@ -70,11 +87,50 @@ export default function UserManagement() {
     }, {} as Record<string, number>);
     
     return [
-      { label: 'Customers', count: stats.CUSTOMER || 0, color: 'text-blue-600', bg: 'bg-blue-50' },
-      { label: 'Drivers', count: stats.DRIVER || 0, color: 'text-green-600', bg: 'bg-green-50' },
-      { label: 'Managers', count: stats.MANAGER || 0, color: 'text-purple-600', bg: 'bg-purple-50' },
+      { label: 'Customers', count: stats.CUSTOMER || 0, color: 'text-blue-600', bg: 'bg-blue-50', role: 'CUSTOMER' },
+      { label: 'Drivers', count: stats.DRIVER || 0, color: 'text-green-600', bg: 'bg-green-50', role: 'DRIVER' },
+      { label: 'Managers', count: stats.MANAGER || 0, color: 'text-purple-600', bg: 'bg-purple-50', role: 'MANAGER' },
     ];
   };
+
+  // Filtered users based on role and search queries
+  const filteredUsers = useMemo(() => {
+    return users.filter(user => {
+      // Role filter
+      if (selectedRole && user.role !== selectedRole) {
+        return false;
+      }
+
+      // Search filters
+      const matchesUsername = user.username.toLowerCase().includes(searchQueries.username.toLowerCase());
+      const matchesPhone = user.phone.toLowerCase().includes(searchQueries.phone.toLowerCase());
+      const matchesId = user.id.toLowerCase().includes(searchQueries.id.toLowerCase());
+      const matchesCreatedAt = formatDate(user.createdAt).toLowerCase().includes(searchQueries.createdAt.toLowerCase());
+      const matchesUpdatedAt = formatDate(user.updatedAt).toLowerCase().includes(searchQueries.updatedAt.toLowerCase());
+
+      return matchesUsername && matchesPhone && matchesId && matchesCreatedAt && matchesUpdatedAt;
+    });
+  }, [users, selectedRole, searchQueries]);
+
+  const updateSearchQuery = (field: string, value: string) => {
+    setSearchQueries(prev => ({
+      ...prev,
+      [field]: value
+    }));
+  };
+
+  const clearAllFilters = () => {
+    setSelectedRole(null);
+    setSearchQueries({
+      username: "",
+      phone: "",
+      id: "",
+      createdAt: "",
+      updatedAt: ""
+    });
+  };
+
+  const hasActiveFilters = selectedRole || Object.values(searchQueries).some(query => query !== "");
 
   if (isLoading) {
     return (
@@ -139,6 +195,9 @@ export default function UserManagement() {
                 </div>
                 User Management
               </h1>
+              <p className="text-gray-600">
+                {filteredUsers.length} of {users.length} users shown
+              </p>
             </div>
           </div>
         </div>
@@ -146,14 +205,27 @@ export default function UserManagement() {
 
       {/* Content */}
       <div className="max-w-7xl mx-auto p-6">
-        {/* Stats Cards */}
+        {/* Stats Cards with Role Filtering */}
         <div className="grid gap-6 md:grid-cols-3 mb-8">
           {roleStats.map((stat) => (
-            <Card key={stat.label} className="border-0 shadow-sm bg-white">
+            <Card 
+              key={stat.label} 
+              className={`border-0 shadow-sm bg-white cursor-pointer transition-all hover:shadow-md ${
+                selectedRole === stat.role ? 'ring-2 ring-blue-500 bg-blue-50/30' : ''
+              }`}
+              onClick={() => setSelectedRole(selectedRole === stat.role ? null : stat.role)}
+            >
               <CardContent className="p-6">
                 <div className="flex items-center justify-between">
                   <div>
-                    <p className="text-sm font-medium text-gray-600">{stat.label}</p>
+                    <p className="text-sm font-medium text-gray-600 flex items-center gap-2">
+                      {stat.label}
+                      {selectedRole === stat.role && (
+                        <Badge variant="secondary" className="text-xs">
+                          Filtered
+                        </Badge>
+                      )}
+                    </p>
                     <p className="text-3xl font-bold text-gray-900">{stat.count}</p>
                   </div>
                   <div className={`p-3 rounded-full ${stat.bg}`}>
@@ -175,6 +247,12 @@ export default function UserManagement() {
             <CardTitle className="text-xl font-semibold text-gray-900 flex items-center gap-2">
               <Users className="w-5 h-5 text-gray-600" />
               All Users
+              {hasActiveFilters && (
+                <Badge variant="outline" className="ml-2">
+                  <Filter className="w-3 h-3 mr-1" />
+                  Filtered
+                </Badge>
+              )}
             </CardTitle>
           </CardHeader>
           <CardContent className="p-0">
@@ -192,85 +270,152 @@ export default function UserManagement() {
                   <TableHeader>
                     <TableRow className="hover:bg-transparent border-gray-100">
                       <TableHead className="font-semibold text-gray-700 py-4">
-                        <div className="flex items-center gap-2">
-                          <User className="w-4 h-4" />
-                          User
+                        <div className="space-y-2">
+                          <div className="flex items-center gap-2">
+                            <User className="w-4 h-4" />
+                            User
+                          </div>
+                          <div className="relative">
+                            <Search className="absolute left-2 top-1/2 transform -translate-y-1/2 h-3 w-3 text-gray-400" />
+                            <Input
+                              placeholder="Search username..."
+                              value={searchQueries.username}
+                              onChange={(e) => updateSearchQuery('username', e.target.value)}
+                              className="pl-7 h-8 text-xs border-gray-200 focus:border-blue-300"
+                            />
+                          </div>
                         </div>
                       </TableHead>
                       <TableHead className="font-semibold text-gray-700">
-                        <div className="flex items-center gap-2">
-                          <Phone className="w-4 h-4" />
-                          Contact
+                        <div className="space-y-2">
+                          <div className="flex items-center gap-2">
+                            <Phone className="w-4 h-4" />
+                            Contact
+                          </div>
+                          <div className="relative">
+                            <Search className="absolute left-2 top-1/2 transform -translate-y-1/2 h-3 w-3 text-gray-400" />
+                            <Input
+                              placeholder="Search phone..."
+                              value={searchQueries.phone}
+                              onChange={(e) => updateSearchQuery('phone', e.target.value)}
+                              className="pl-7 h-8 text-xs border-gray-200 focus:border-blue-300"
+                            />
+                          </div>
                         </div>
                       </TableHead>
                       <TableHead className="font-semibold text-gray-700">
-                        <div className="flex items-center gap-2">
-                          <Shield className="w-4 h-4" />
-                          Role
+                        <div className="space-y-2">
+                          <div className="flex items-center gap-2">
+                            <Shield className="w-4 h-4" />
+                            Role
+                          </div>
+                          <div className="text-xs text-gray-500">
+                            {selectedRole ? `Showing: ${selectedRole}` : 'Click stats to filter'}
+                          </div>
                         </div>
                       </TableHead>
                       <TableHead className="font-semibold text-gray-700">
-                        <div className="flex items-center gap-2">
-                          <Calendar className="w-4 h-4" />
-                          Created
+                        <div className="space-y-2">
+                          <div className="flex items-center gap-2">
+                            <Calendar className="w-4 h-4" />
+                            Created
+                          </div>
+                          <div className="relative">
+                            <Search className="absolute left-2 top-1/2 transform -translate-y-1/2 h-3 w-3 text-gray-400" />
+                            <Input
+                              placeholder="Search date..."
+                              value={searchQueries.createdAt}
+                              onChange={(e) => updateSearchQuery('createdAt', e.target.value)}
+                              className="pl-7 h-8 text-xs border-gray-200 focus:border-blue-300"
+                            />
+                          </div>
                         </div>
                       </TableHead>
                       <TableHead className="font-semibold text-gray-700">
-                        <div className="flex items-center gap-2">
-                          <Clock className="w-4 h-4" />
-                          Last Updated
+                        <div className="space-y-2">
+                          <div className="flex items-center gap-2">
+                            <Clock className="w-4 h-4" />
+                            Last Updated
+                          </div>
+                          <div className="relative">
+                            <Search className="absolute left-2 top-1/2 transform -translate-y-1/2 h-3 w-3 text-gray-400" />
+                            <Input
+                              placeholder="Search date..."
+                              value={searchQueries.updatedAt}
+                              onChange={(e) => updateSearchQuery('updatedAt', e.target.value)}
+                              className="pl-7 h-8 text-xs border-gray-200 focus:border-blue-300"
+                            />
+                          </div>
                         </div>
                       </TableHead>
                       <TableHead className="w-12"></TableHead>
                     </TableRow>
                   </TableHeader>
                   <TableBody>
-                    {users.map((user) => (
-                      <TableRow 
-                        key={user.id} 
-                        className="cursor-pointer hover:bg-gray-50/80 transition-colors border-gray-100 group" 
-                        onClick={() => navigate(`/users/${user.id}`)}
-                      >
-                        <TableCell className="py-4">
-                          <div className="flex items-center gap-3">
-                            <div className="w-10 h-10 bg-gradient-to-br from-blue-500 to-purple-600 rounded-full flex items-center justify-center text-white font-medium text-sm">
-                              {user.username.charAt(0).toUpperCase()}
+                    {filteredUsers.length === 0 ? (
+                      <TableRow>
+                        <TableCell colSpan={6} className="text-center py-12">
+                          <div className="flex flex-col items-center gap-3">
+                            <div className="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center">
+                              <Search className="w-8 h-8 text-gray-400" />
                             </div>
                             <div>
-                              <div className="font-semibold text-gray-900">{user.username}</div>
-                              <div className="text-xs text-gray-500 font-mono">ID: {user.id.slice(0, 8)}...</div>
+                              <h3 className="font-medium text-gray-900">No users match your filters</h3>
+                              <p className="text-sm text-gray-500 mt-1">
+                                Try adjusting your search criteria or clearing filters
+                              </p>
                             </div>
                           </div>
                         </TableCell>
-                        <TableCell>
-                          <div className="flex items-center gap-2">
-                            <Phone className="w-4 h-4 text-gray-400" />
-                            <span className="text-gray-900">{user.phone}</span>
-                          </div>
-                        </TableCell>
-                        <TableCell>
-                          <div className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium border ${getRoleBadge(user.role)}`}>
-                            {getRoleIcon(user.role)}
-                            {user.role}
-                          </div>
-                        </TableCell>
-                        <TableCell>
-                          <div className="flex items-center gap-2 text-gray-600">
-                            <Calendar className="w-4 h-4 text-gray-400" />
-                            {formatDate(user.createdAt)}
-                          </div>
-                        </TableCell>
-                        <TableCell>
-                          <div className="flex items-center gap-2 text-gray-600">
-                            <Clock className="w-4 h-4 text-gray-400" />
-                            {formatDate(user.updatedAt)}
-                          </div>
-                        </TableCell>
-                        <TableCell>
-                          <ExternalLink className="w-4 h-4 text-gray-400 group-hover:text-gray-600 transition-colors" />
-                        </TableCell>
                       </TableRow>
-                    ))}
+                    ) : (
+                      filteredUsers.map((user) => (
+                        <TableRow 
+                          key={user.id} 
+                          className="cursor-pointer hover:bg-gray-50/80 transition-colors border-gray-100 group" 
+                          onClick={() => navigate(`/users/${user.id}`)}
+                        >
+                          <TableCell className="py-4">
+                            <div className="flex items-center gap-3">
+                              <div className="w-10 h-10 bg-gradient-to-br from-blue-500 to-purple-600 rounded-full flex items-center justify-center text-white font-medium text-sm">
+                                {user.username.charAt(0).toUpperCase()}
+                              </div>
+                              <div>
+                                <div className="font-semibold text-gray-900">{user.username}</div>
+                                <div className="text-xs text-gray-500 font-mono">ID: {user.id.slice(0, 8)}...</div>
+                              </div>
+                            </div>
+                          </TableCell>
+                          <TableCell>
+                            <div className="flex items-center gap-2">
+                              <Phone className="w-4 h-4 text-gray-400" />
+                              <span className="text-gray-900">{user.phone}</span>
+                            </div>
+                          </TableCell>
+                          <TableCell>
+                            <div className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium border ${getRoleBadge(user.role)}`}>
+                              {getRoleIcon(user.role)}
+                              {user.role}
+                            </div>
+                          </TableCell>
+                          <TableCell>
+                            <div className="flex items-center gap-2 text-gray-600">
+                              <Calendar className="w-4 h-4 text-gray-400" />
+                              {formatDate(user.createdAt)}
+                            </div>
+                          </TableCell>
+                          <TableCell>
+                            <div className="flex items-center gap-2 text-gray-600">
+                              <Clock className="w-4 h-4 text-gray-400" />
+                              {formatDate(user.updatedAt)}
+                            </div>
+                          </TableCell>
+                          <TableCell>
+                            <ExternalLink className="w-4 h-4 text-gray-400 group-hover:text-gray-600 transition-colors" />
+                          </TableCell>
+                        </TableRow>
+                      ))
+                    )}
                   </TableBody>
                 </Table>
               </div>

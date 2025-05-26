@@ -1,6 +1,7 @@
 export const defaultCenter = [21.028346, 105.834131];
 
 export const apiUrl = import.meta.env.VITE_API_BASE_URL;
+export const orsApiKey = import.meta.env.VITE_ORS_API_KEY;
 
 export const firebaseConfig = {
   apiKey: import.meta.env.VITE_FIREBASE_API_KEY,

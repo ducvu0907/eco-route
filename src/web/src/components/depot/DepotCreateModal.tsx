@@ -1,6 +1,6 @@
 import { useCreateDepot } from "@/hooks/useDepot";
 import { useReverseLocation, useSearchLocation } from "@/hooks/useFetchLocation";
-import { DepotCreateRequest, OsmResponse } from "@/types/types";
+import { DepotCreateRequest, Feature } from "@/types/types";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
@@ -21,10 +21,13 @@ import {
   FormControl,
   FormMessage
 } from "@/components/ui/form";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
 import MapModalInput from "@/components/map/MapModalInput";
 import { Input } from "@/components/ui/input";
-import { Loader2, MapPin } from "lucide-react";
+import { Loader2, MapPin, Search, Navigation, Building2, LoaderPinwheel, Loader } from "lucide-react";
 import SearchDropdown from "@/components/depot/SearchDropdown";
+import { useToast } from "@/hooks/useToast";
 
 const formSchema = z.object({
   address: z.string(),
@@ -54,18 +57,19 @@ export default function DepotCreateModal({ isOpen, onClose }: DepotCreateModalPr
   });
 
   const { reverseLocation, data: reverseData, loading: isReversing } = useReverseLocation();
-  const { searchLocation, data: searchData } = useSearchLocation();
+  const { searchLocation, data: searchData, loading: isSearching } = useSearchLocation();
 
   const lat = form.watch("latitude");
   const lon = form.watch("longitude");
+  const address = form.watch("address");
 
   useEffect(() => {
     if (lat && lon) reverseLocation(lat, lon);
   }, [lat, lon]);
 
   useEffect(() => {
-    if (reverseData?.display_name) {
-      form.setValue("address", reverseData.display_name);
+    if (reverseData) {
+      form.setValue("address", reverseData);
     }
   }, [reverseData]);
 
@@ -107,19 +111,23 @@ export default function DepotCreateModal({ isOpen, onClose }: DepotCreateModalPr
     form.setValue("longitude", lng);
   };
 
-  const handleSelectItem = (item: OsmResponse) => {
-    form.setValue("latitude", parseFloat(item.lat ?? "0"));
-    form.setValue("longitude", parseFloat(item.lon ?? "0"));
-    form.setValue("address", item.display_name ?? "");
+  const handleSelectItem = (item: Feature) => {
+    form.setValue("latitude", item.geometry.coordinates[1]);
+    form.setValue("longitude", item.geometry.coordinates[0]);
+    form.setValue("address", item.properties.label || "");
     setShowDropdown(false);
   };
 
+  const hasLocation = lat !== 0 && lon !== 0;
+
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="lg:max-w-5xl h-1/2">
-        <DialogHeader>
-          <DialogTitle className="flex items-center gap-2">
-            <MapPin className="h-5 w-5" />
+      <DialogContent className="lg:max-w-5xl max-h-[90vh] overflow-hidden">
+        <DialogHeader className="pb-6">
+          <DialogTitle className="flex items-center gap-3 text-xl">
+            <div className="p-2 bg-blue-100 rounded-lg">
+              <Building2 className="h-5 w-5 text-blue-600" />
+            </div>
             Create New Depot
           </DialogTitle>
         </DialogHeader>
@@ -127,96 +135,163 @@ export default function DepotCreateModal({ isOpen, onClose }: DepotCreateModalPr
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-              <div className="space-y-4">
-                <div>
-                  <h3 className="text-sm font-medium mb-1">Search Location</h3>
-                  <p className="text-sm text-slate-500">Search or pick from map</p>
-                </div>
-                <div className="flex gap-2">
-                  <Input
-                    placeholder="Search address..."
-                    value={searchQuery || ""}
-                    onChange={(e) => setSearchQuery(e.target.value)}
-                    className="w-full"
-                  />
-                  <MapModalInput setLatLng={setLatLng} />
-                </div>
-                {searchData && searchData.length > 0 && showDropdown && (
+              {/* Search Section */}
+              <Card className="border-2 border-dashed border-slate-200 hover:border-slate-300 transition-colors">
+                <CardHeader className="pb-4">
+                  <CardTitle className="flex items-center gap-2 text-base">
+                    <Search className="h-4 w-4 text-slate-600" />
+                    Find Location
+                  </CardTitle>
+                </CardHeader>
+                <CardContent className="space-y-4">
                   <div className="relative">
-                    <div className="absolute z-10 w-full bg-white border border-slate-200 mt-1 rounded shadow">
-                      <SearchDropdown
-                        isOpen={showDropdown}
-                        results={searchData}
-                        onSelect={handleSelectItem}
-                      />
+                    <div className="flex gap-2">
+                      <div className="relative flex-1">
+                        {isSearching ? <Loader className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-slate-400"/> : <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-slate-400" />}
+                        <Input
+                          placeholder="Search for an address..."
+                          value={searchQuery || ""}
+                          onChange={(e) => setSearchQuery(e.target.value)}
+                          className="pl-10 pr-4 h-11 border-slate-300 focus:border-blue-500 focus:ring-blue-500"
+                        />
+                      </div>
+                      <MapModalInput setLatLng={setLatLng} />
                     </div>
+                    {searchData && searchData.length > 0 && showDropdown && (
+                      <div className="absolute z-50 w-full mt-2">
+                        <div className="bg-white border border-slate-200 rounded-lg shadow-lg overflow-hidden">
+                          <SearchDropdown
+                            isOpen={showDropdown}
+                            results={searchData}
+                            onSelect={handleSelectItem}
+                          />
+                        </div>
+                      </div>
+                    )}
                   </div>
-                )}
-              </div>
+                  
+                  {!hasLocation && (
+                    <div className="text-center py-8 text-slate-500">
+                      <MapPin className="h-12 w-12 mx-auto mb-3 text-slate-300" />
+                      <p className="text-sm">Search for a location or use the map picker</p>
+                    </div>
+                  )}
+                </CardContent>
+              </Card>
 
-              <div className="space-y-4">
-                <div>
-                  <h3 className="text-sm font-medium mb-1">Location Details</h3>
-                  <p className="text-sm text-slate-500">Coordinates and address</p>
-                </div>
+              {/* Location Details Section */}
+              <Card className={`transition-all duration-200 ${hasLocation ? 'border-green-200 bg-green-50/30' : 'border-slate-200'}`}>
+                <CardHeader className="pb-4">
+                  <CardTitle className="flex items-center gap-2 text-base">
+                    <Navigation className="h-4 w-4 text-slate-600" />
+                    Location Details
+                    {hasLocation && (
+                      <Badge variant="secondary" className="ml-auto bg-green-100 text-green-700 border-green-200">
+                        <MapPin className="h-3 w-3 mr-1" />
+                      </Badge>
+                    )}
+                  </CardTitle>
+                </CardHeader>
+                <CardContent className="space-y-4">
+                  <FormField
+                    control={form.control}
+                    name="address"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel className="text-sm font-medium text-slate-700">Address</FormLabel>
+                        <FormControl>
+                          <div className="relative">
+                            {isReversing ? (
+                              <div className="flex items-center justify-center h-11 border border-slate-300 rounded-md bg-slate-50">
+                                <Loader2 className="h-4 w-4 animate-spin text-slate-400" />
+                                <span className="ml-2 text-sm text-slate-500">Locating...</span>
+                              </div>
+                            ) : (
+                              <Input 
+                                {...field} 
+                                className={`h-11 ${address ? 'bg-white border-green-300' : 'bg-slate-50 border-slate-300'}`}
+                                placeholder="Address will appear here"
+                                readOnly={hasLocation}
+                              />
+                            )}
+                          </div>
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
 
-                <FormField
-                  control={form.control}
-                  name="address"
-                  render={({ field }) => (
-                    <>
-                      {isReversing ? <Loader2 /> : (
+                  <div className="grid grid-cols-2 gap-4">
+                    <FormField
+                      control={form.control}
+                      name="latitude"
+                      render={({ field }) => (
                         <FormItem>
-                          <FormLabel>Address</FormLabel>
+                          <FormLabel className="text-sm font-medium text-slate-700">Latitude</FormLabel>
                           <FormControl>
-                            <Input {...field} className="w-full" />
+                            <Input 
+                              type="number" 
+                              step="any" 
+                              {...field} 
+                              readOnly 
+                              className="h-11 bg-slate-50 border-slate-300 text-slate-600 font-mono text-sm"
+                              placeholder="0.000000"
+                            />
                           </FormControl>
                           <FormMessage />
                         </FormItem>
                       )}
-                    </>
-                  )}
-                />
-
-                <div className="grid grid-cols-2 gap-4">
-                  <FormField
-                    control={form.control}
-                    name="latitude"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>Latitude</FormLabel>
-                        <FormControl>
-                          <Input type="number" step="any" {...field} readOnly className="bg-slate-50" />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-                  <FormField
-                    control={form.control}
-                    name="longitude"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>Longitude</FormLabel>
-                        <FormControl>
-                          <Input type="number" step="any" {...field} readOnly className="bg-slate-50" />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-                </div>
-              </div>
+                    />
+                    <FormField
+                      control={form.control}
+                      name="longitude"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel className="text-sm font-medium text-slate-700">Longitude</FormLabel>
+                          <FormControl>
+                            <Input 
+                              type="number" 
+                              step="any" 
+                              {...field} 
+                              readOnly 
+                              className="h-11 bg-slate-50 border-slate-300 text-slate-600 font-mono text-sm"
+                              placeholder="0.000000"
+                            />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                  </div>
+                </CardContent>
+              </Card>
             </div>
 
-            <DialogFooter className="pt-4">
-              <Button type="button" variant="outline" onClick={onClose}>
+            <DialogFooter className="pt-6 border-t border-slate-200 flex gap-3">
+              <Button 
+                type="button" 
+                variant="outline" 
+                onClick={onClose}
+                className="h-11 px-6"
+              >
                 Cancel
               </Button>
-              <Button type="submit" disabled={isPending || isReversing}>
-                {isPending || isReversing ?
-                  <><Loader2 className="mr-2 h-4 w-4 animate-spin" /> Creating...</> :
-                  "Create Depot"}
+              <Button 
+                type="submit" 
+                disabled={isPending || isReversing || !hasLocation}
+                className="h-11 px-6 bg-blue-600 hover:bg-blue-700 text-white"
+              >
+                {isPending || isReversing ? (
+                  <>
+                    <Loader2 className="mr-2 h-4 w-4 animate-spin" /> 
+                    Creating...
+                  </>
+                ) : (
+                  <>
+                    <Building2 className="mr-2 h-4 w-4" />
+                    Create Depot
+                  </>
+                )}
               </Button>
             </DialogFooter>
           </form>
