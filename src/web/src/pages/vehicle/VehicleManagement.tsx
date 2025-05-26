@@ -138,7 +138,7 @@ export default function VehicleManagement() {
             <div className="space-y-1">
               <div className="flex flex-row items-center">
                 <TruckIcon />
-                <h1 className="text-3xl font-bold tracking-tight text-gray-900 ml-3">
+                <h1 className="text-2xl font-bold tracking-tight text-gray-900 ml-3">
                   Vehicle Management
                 </h1>
               </div>

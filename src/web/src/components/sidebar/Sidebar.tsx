@@ -1,4 +1,4 @@
-import { Home, Warehouse, Truck, Users, Send, ShoppingCart, Map, LogOut } from "lucide-react";
+import { Home, Warehouse, Truck, Users, Send, ShoppingCart, Map, LogOut, ChevronLeft, ChevronRight, Waypoints } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
@@ -11,6 +11,7 @@ import {
   AvatarImage,
 } from "@/components/ui/avatar";
 import { Separator } from "@/components/ui/separator";
+import { useState } from "react";
 
 type NavItem = {
   label: string;
@@ -29,49 +30,78 @@ const navItems: NavItem[] = [
   { label: "Map", icon: <Map className="w-5 h-5" />, key: "map", path: "/map" },
 ];
 
-function UserSection() {
+function UserSection({ isCollapsed }: { isCollapsed: boolean }) {
   const { username } = useAuthContext();
   const { logout } = useLogout();
 
-  return (
-    <div className="space-y-4">
-      <Separator className="bg-border/50" />
-      
-      {/* User Profile Card */}
-      <Card className="p-4 bg-gradient-to-r from-primary/5 to-primary/10 border-primary/20 hover:shadow-lg transition-all duration-300">
-        <div className="flex items-center gap-3">
-          <div className="relative">
-            <Avatar className="h-12 w-12 border-2 border-primary/30 shadow-md">
-              <AvatarImage
-                src={"https://github.com/shadcn.png"}
-                alt={"user avatar"}
-                className="rounded-full"
-              />
-              <AvatarFallback className="text-lg font-bold bg-primary/20 text-primary">
-                {username?.[0]?.toUpperCase()}
-              </AvatarFallback>
-            </Avatar>
-            <div className="absolute -bottom-1 -right-1 w-4 h-4 bg-green-500 border-2 border-background rounded-full animate-pulse"></div>
-          </div>
+  if (!username) {
+    return (
+      <div>
+        <span>Error while retrieving username</span>
+      </div>
+    );
+  }
 
+  const getInitials = (name?: string) => {
+    if (!name) return "U";
+    const words = name.split(" ");
+    if (words.length >= 2) {
+      return (words[0][0] + words[1][0]).toUpperCase();
+    }
+    return name.substring(0, 2).toUpperCase();
+  };
+
+  if (isCollapsed) {
+    return (
+      <div className="space-y-3">
+        <Separator />
+        <div className="flex flex-col items-center gap-3">
+          <Avatar className="h-8 w-8">
+            <AvatarFallback className="text-xs font-medium bg-muted">
+              {getInitials(username)}
+            </AvatarFallback>
+          </Avatar>
+          <Button
+            variant="ghost"
+            size="sm"
+            className="w-8 h-8 p-0 hover:bg-muted"
+            onClick={logout}
+          >
+            <LogOut className="w-4 h-4" />
+          </Button>
+        </div>
+      </div>
+    );
+  }
+
+  return (
+    <div className="space-y-3">
+      <Separator />
+      
+      <Card className="p-3 bg-muted/50 border-0">
+        <div className="flex items-center gap-3">
+          <Avatar className="h-8 w-8">
+            <AvatarFallback className="text-xs font-medium bg-background">
+              {getInitials(username)}
+            </AvatarFallback>
+          </Avatar>
           <div className="flex-1 min-w-0">
-            <p className="text-sm font-semibold text-foreground truncate">
+            <p className="text-sm font-medium truncate">
               {username}
             </p>
-            <p className="text-xs text-muted-foreground">
+            {/* <p className="text-xs text-muted-foreground">
               Online
-            </p>
+            </p> */}
           </div>
         </div>
       </Card>
 
-      {/* Logout Button */}
       <Button
         variant="ghost"
-        className="w-full justify-start gap-3 px-4 py-3 text-sm font-medium rounded-lg hover:bg-destructive/10 hover:text-destructive transition-all duration-200 group"
+        className="w-full justify-start gap-3 px-3 py-2 text-sm hover:bg-muted"
         onClick={logout}
       >
-        <LogOut className="w-4 h-4 transition-transform duration-200 group-hover:scale-110" />
+        <LogOut className="w-4 h-4" />
         Sign Out
       </Button>
     </div>
@@ -81,74 +111,69 @@ function UserSection() {
 export default function Sidebar() {
   const navigate = useNavigate();
   const location = useLocation();
+  const [isCollapsed, setIsCollapsed] = useState(false);
 
   return (
-    <div className="h-screen w-60 bg-gradient-to-br from-background via-background to-muted/30 border-r border-border/50 flex flex-col shadow-2xl">
+    <div className={cn(
+      "h-screen bg-background border-r flex flex-col transition-all duration-300",
+      isCollapsed ? "w-16" : "w-60"
+    )}>
       {/* Header Section */}
-      <div className="p-6 pb-8">
-        <div className="flex items-center gap-3 mb-2">
-          <div className="w-10 h-10 bg-gradient-to-br from-primary to-primary/70 rounded-xl flex items-center justify-center shadow-lg">
-            <Truck className="w-6 h-6 text-primary-foreground" />
-          </div>
-          <div>
-            <h1 className="text-2xl font-bold text-foreground tracking-tight">
-              WasteFlow
-            </h1>
-            <p className="text-xs text-muted-foreground font-medium">
-              Management System
-            </p>
-          </div>
+      <div className="p-4 border-b">
+        <div className="flex items-center justify-between">
+          {!isCollapsed && (
+            <div className="flex items-center gap-2">
+              <div className="w-8 h-8 bg-primary rounded-lg flex items-center justify-center">
+                <Waypoints className="w-5 h-5 text-primary-foreground" />
+              </div>
+              <div>
+              </div>
+            </div>
+          )}
+          
+          <Button
+            variant="ghost"
+            size="sm"
+            className="w-8 h-8 p-0 hover:bg-muted ml-auto"
+            onClick={() => setIsCollapsed(!isCollapsed)}
+          >
+            {isCollapsed ? (
+              <ChevronRight className="w-4 h-4" />
+            ) : (
+              <ChevronLeft className="w-4 h-4" />
+            )}
+          </Button>
         </div>
       </div>
 
       {/* Navigation Section */}
-      <nav className="flex-1 px-4 space-y-2 overflow-y-auto">
-        <div className="pb-4">
-          <h2 className="mb-3 px-4 text-xs font-semibold text-muted-foreground/80 uppercase tracking-wider">
-            Navigation
-          </h2>
-          <div className="space-y-1">
-            {navItems.map((item) => {
-              const isActive = location.pathname === item.path;
-              return (
-                <Button
-                  key={item.key}
-                  variant="ghost"
-                  className={cn(
-                    "w-full justify-start gap-3 px-4 py-3 text-sm font-medium rounded-xl transition-all duration-300 group relative overflow-hidden",
-                    isActive
-                      ? "bg-primary text-primary-foreground shadow-lg shadow-primary/25 hover:shadow-xl hover:shadow-primary/30 transform hover:scale-[1.02]"
-                      : "text-muted-foreground hover:bg-accent/50 hover:text-accent-foreground hover:shadow-md hover:transform hover:scale-[1.01]"
-                  )}
-                  onClick={() => navigate(item.path)}
-                >
-                  {/* Active indicator */}
-                  {isActive && (
-                    <div className="absolute left-0 top-0 bottom-0 w-1 bg-primary-foreground rounded-r-full"></div>
-                  )}
-                  
-                  <div className={cn(
-                    "transition-all duration-300 group-hover:scale-110",
-                    isActive && "drop-shadow-sm"
-                  )}>
-                    {item.icon}
-                  </div>
-                  <span className="font-medium">
-                    {item.label}
-                  </span>
-
-                  {/* Hover effect overlay */}
-                  <div className="absolute inset-0 bg-white/5 rounded-xl opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
-                </Button>
-              );
-            })}
-          </div>
-        </div>
+      <nav className="flex-1 p-2 space-y-1 overflow-y-auto">
+        {navItems.map((item) => {
+          const isActive = location.pathname === item.path;
+          return (
+            <Button
+              key={item.key}
+              variant="ghost"
+              className={cn(
+                "w-full text-sm font-medium transition-colors",
+                isCollapsed ? "justify-center px-0 h-10" : "justify-start gap-3 px-3 h-10",
+                isActive
+                  ? "bg-primary text-primary-foreground hover:bg-primary/70"
+                  : "hover:bg-muted"
+              )}
+              onClick={() => navigate(item.path)}
+              title={isCollapsed ? item.label : undefined}
+            >
+              {item.icon}
+              {!isCollapsed && <span>{item.label}</span>}
+            </Button>
+          );
+        })}
       </nav>
 
       {/* User Section */}
-      <div className="p-4 mt-auto">
-        <UserSection />
+      <div className="p-3 border-t">
+        <UserSection isCollapsed={isCollapsed} />
       </div>
     </div>
   );

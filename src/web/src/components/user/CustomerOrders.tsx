@@ -31,21 +31,6 @@ export default function CustomerOrders({ userId }: CustomerOrdersProps) {
   const orders = data?.result;
   const navigate = useNavigate();
 
-  const getStatusIcon = (status: OrderStatus) => {
-    switch (status) {
-      case OrderStatus.COMPLETED:
-        return <CheckCircle className="h-4 w-4 text-green-500" />;
-      case OrderStatus.IN_PROGRESS:
-        return <Loader2 className="h-4 w-4 text-blue-500 animate-spin" />;
-      case OrderStatus.PENDING:
-        return <Clock className="h-4 w-4 text-yellow-500" />;
-      case OrderStatus.CANCELLED:
-        return <XCircle className="h-4 w-4 text-red-500" />;
-      default:
-        return <Clock className="h-4 w-4 text-gray-400" />;
-    }
-  };
-
   const getStatusBadge = (status: OrderStatus) => {
     switch (status) {
       case OrderStatus.COMPLETED:
@@ -216,7 +201,6 @@ export default function CustomerOrders({ userId }: CustomerOrdersProps) {
                 </div>
                 
                 <div className="flex items-center gap-2 flex-shrink-0">
-                  {getStatusIcon(order.status)}
                   {getStatusBadge(order.status)}
                 </div>
               </div>

@@ -26,10 +26,7 @@ export default function MultiRoutesStaticMap({ routes }: MultiRoutesStaticMapPro
   const center: LatLngExpression = [firstOrder.latitude, firstOrder.longitude];
 
   return (
-    <Card className="w-full h-full">
-      <CardHeader>
-        <CardTitle>All Active Routes</CardTitle>
-      </CardHeader>
+    <div className="w-full h-full">
       <CardContent className="h-full">
         <MapContainer center={center} zoom={12} scrollWheelZoom={true} className="h-full w-full rounded-md z-0">
           <TileLayer
@@ -51,6 +48,6 @@ export default function MultiRoutesStaticMap({ routes }: MultiRoutesStaticMapPro
           })}
         </MapContainer>
       </CardContent>
-    </Card>
+    </div>
   );
 }

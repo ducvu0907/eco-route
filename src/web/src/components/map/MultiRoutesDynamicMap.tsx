@@ -5,7 +5,6 @@ import { LatLngExpression } from "leaflet";
 import { RouteResponse } from "@/types/types";
 import OrderMarker from "@/components/map/OrderMarker";
 import DepotDynamicMarker from "@/components/map/DepotDynamicMarker";
-import RoutePolyline from "./RoutePolyline";
 import VehicleDynamicMarker from "./VehicleDynamicMarker";
 import UpdatedRoutePolyline from "./UpdatedRoutePolyline";
 
@@ -23,9 +22,6 @@ export default function MultiRoutesDynamicMap({ routes }: MultiRoutesDynamicMapP
 
   return (
     <Card className="w-full h-full">
-      <CardHeader>
-        <CardTitle>All Active Routes</CardTitle>
-      </CardHeader>
       <CardContent className="h-full">
         <MapContainer center={center} zoom={12} scrollWheelZoom={true} className="h-full w-full rounded-md z-0">
           <TileLayer

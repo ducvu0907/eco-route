@@ -26,7 +26,10 @@ import {
   Trash2,
   Package,
   Map,
-  List
+  List,
+  ListOrderedIcon,
+  Trash,
+  TrashIcon
 } from "lucide-react";
 
 export default function OrderManagement() {
@@ -101,7 +104,7 @@ export default function OrderManagement() {
     return (
       <div className="w-full h-full p-6">
         <div className="mb-6">
-          <h1 className="text-3xl font-bold tracking-tight">Order Management</h1>
+          <h1 className="text-2xl font-bold tracking-tight">Order Management</h1>
           <p className="text-muted-foreground">Manage and track all waste collection orders</p>
         </div>
         
@@ -156,7 +159,7 @@ export default function OrderManagement() {
     return (
       <div className="w-full h-full p-6">
         <div className="mb-6">
-          <h1 className="text-3xl font-bold tracking-tight">Order Management</h1>
+          <h1 className="text-2xl font-bold tracking-tight">Order Management</h1>
           <p className="text-muted-foreground">Manage and track all waste collection orders</p>
         </div>
         
@@ -174,11 +177,16 @@ export default function OrderManagement() {
   return (
     <div className="w-full h-full p-6">
       {/* Page Header */}
-      <div className="mb-6">
-        <h1 className="text-3xl font-bold tracking-tight">Order Management</h1>
-        <p className="text-muted-foreground">
-          Manage and track all waste collection orders ({orders.length} total)
-        </p>
+      <div className="mb-6 flex flex-row items-center">
+        <div className="w-10 h-10 bg-primary rounded-lg flex items-center justify-center">
+          <ListOrderedIcon className="w-5 h-5 text-primary-foreground" />
+        </div>
+        <div className="ml-2">
+          <h1 className="text-2xl font-bold tracking-tight">Order Management</h1>
+          <p className="text-muted-foreground">
+            Manage and track all waste collection orders ({orders.length} total)
+          </p>
+        </div>
       </div>
 
       {/* Two Column Layout */}
@@ -261,7 +269,7 @@ export default function OrderManagement() {
                               {order.address || "No address provided"}
                             </span>
                           </div>
-                          
+
                           <div className="flex items-center gap-3 text-xs text-muted-foreground">
                             <div className="flex items-center gap-1">
                               {getCategoryIcon(order.category)}
@@ -273,7 +281,7 @@ export default function OrderManagement() {
                             </div>
                           </div>
                         </div>
-                        
+
                         <div className="flex items-center gap-2 flex-shrink-0">
                           {getStatusIcon(order.status)}
                           {getStatusBadge(order.status)}
@@ -297,9 +305,9 @@ export default function OrderManagement() {
                             <span>{formatDate(order.createdAt)}</span>
                           </div>
                         </div>
-                        
-                        <Button 
-                          size="sm" 
+
+                        <Button
+                          size="sm"
                           variant="outline"
                           className="h-7 px-3 opacity-0 group-hover:opacity-100 transition-opacity"
                         >
