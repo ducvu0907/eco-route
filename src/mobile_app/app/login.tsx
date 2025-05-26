@@ -44,81 +44,122 @@ export default function Login() {
       style={{ flex: 1 }}
     >
       <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
-        <View className="flex-1 bg-white p-6">
-          <View className="flex-1 justify-center">
-            <Text className="text-3xl font-bold text-center mb-8 text-blue-600">
-              Welcome Back
-            </Text>
-
-            <View className="mb-4">
-              <Text className="text-gray-700 mb-2 font-medium">Username</Text>
-              <Controller
-                control={control}
-                name="username"
-                render={({ field: { onChange, onBlur, value } }) => (
-                  <TextInput
-                    className={`bg-gray-100 px-4 py-3 rounded-lg ${errors.username ? 'border border-red-500' : ''}`}
-                    placeholder="Enter your username"
-                    onBlur={onBlur}
-                    onChangeText={onChange}
-                    value={value}
-                    autoCapitalize="none"
-                  />
-                )}
-              />
-              {errors.username && (
-                <Text className="text-red-500 text-sm mt-1">
-                  {errors.username.message}
-                </Text>
-              )}
-            </View>
-
-            <View className="mb-6">
-              <Text className="text-gray-700 mb-2 font-medium">Password</Text>
-              <Controller
-                control={control}
-                name="password"
-                render={({ field: { onChange, onBlur, value } }) => (
-                  <TextInput
-                    className={`bg-gray-100 px-4 py-3 rounded-lg ${errors.password ? 'border border-red-500' : ''}`}
-                    placeholder="Enter your password"
-                    onBlur={onBlur}
-                    onChangeText={onChange}
-                    value={value}
-                    secureTextEntry
-                  />
-                )}
-              />
-              {errors.password && (
-                <Text className="text-red-500 text-sm mt-1">
-                  {errors.password.message}
-                </Text>
-              )}
-            </View>
-
-            <Pressable
-              onPress={handleSubmit(onSubmit)}
-              disabled={isPending}
-              className={`rounded-lg py-4 ${isPending ? 'bg-blue-400' : 'bg-blue-600'}`}
-            >
-              <View className="flex-row justify-center items-center">
-                {isPending ? (
-                  <ActivityIndicator color="white" className="mr-2" />
-                ) : null}
-                <Text className="text-white font-medium text-center">
-                  {isPending ? 'Logging in...' : 'Login'}
-                </Text>
-              </View>
-            </Pressable>
-
-            <Pressable
-              onPress={() => router.replace("/register")}
-              className="mt-4"
-            >
-              <Text className="text-blue-600 text-center">
-                Don't have an account? Sign up
+        <View className="flex-1 bg-gradient-to-b from-slate-50 to-white">
+          {/* Header Section */}
+          <View className="pt-16 pb-8 px-6">
+            <View className="items-center mb-8">
+              {/* <View className="w-20 h-20 bg-blue-500 rounded-full items-center justify-center mb-4 shadow-lg">
+                <Text className="text-white text-2xl font-bold">Login</Text>
+              </View> */}
+              <Text className="text-3xl font-bold text-gray-900 mb-2">
+                Welcome Back
               </Text>
-            </Pressable>
+              <Text className="text-gray-500 text-center">
+                Sign in to continue to your account
+              </Text>
+            </View>
+          </View>
+
+          {/* Form Section */}
+          <View className="flex-1 px-6">
+            <View className="bg-white rounded-3xl shadow-xl p-6 border border-gray-100">
+              <View className="space-y-5">
+                <View>
+                  <Text className="text-gray-700 mb-3 font-semibold text-base">Username</Text>
+                  <Controller
+                    control={control}
+                    name="username"
+                    render={({ field: { onChange, onBlur, value } }) => (
+                      <TextInput
+                        className={`bg-gray-50 px-4 py-4 rounded-2xl text-base border-2 ${
+                          errors.username 
+                            ? 'border-red-300 bg-red-50' 
+                            : 'border-transparent focus:border-blue-300'
+                        }`}
+                        placeholder="Enter your username"
+                        placeholderTextColor="#9CA3AF"
+                        onBlur={onBlur}
+                        onChangeText={onChange}
+                        value={value}
+                        autoCapitalize="none"
+                      />
+                    )}
+                  />
+                  {errors.username && (
+                    <Text className="text-red-500 text-sm mt-2 ml-1">
+                      {errors.username.message}
+                    </Text>
+                  )}
+                </View>
+
+                <View>
+                  <Text className="text-gray-700 mb-3 font-semibold text-base">Password</Text>
+                  <Controller
+                    control={control}
+                    name="password"
+                    render={({ field: { onChange, onBlur, value } }) => (
+                      <TextInput
+                        className={`bg-gray-50 px-4 py-4 rounded-2xl text-base border-2 ${
+                          errors.password 
+                            ? 'border-red-300 bg-red-50' 
+                            : 'border-transparent focus:border-blue-300'
+                        }`}
+                        placeholder="Enter your password"
+                        placeholderTextColor="#9CA3AF"
+                        onBlur={onBlur}
+                        onChangeText={onChange}
+                        value={value}
+                        secureTextEntry
+                      />
+                    )}
+                  />
+                  {errors.password && (
+                    <Text className="text-red-500 text-sm mt-2 ml-1">
+                      {errors.password.message}
+                    </Text>
+                  )}
+                </View>
+
+                <Pressable
+                  onPress={handleSubmit(onSubmit)}
+                  disabled={isPending}
+                  className={`rounded-2xl py-4 mt-6 shadow-lg ${
+                    isPending 
+                      ? 'bg-blue-400' 
+                      : 'bg-blue-500 active:bg-blue-600'
+                  }`}
+                  style={{
+                    shadowColor: '#3B82F6',
+                    shadowOffset: { width: 0, height: 4 },
+                    shadowOpacity: 0.3,
+                    shadowRadius: 8,
+                    elevation: 8,
+                  }}
+                >
+                  <View className="flex-row justify-center items-center">
+                    {isPending && (
+                      <ActivityIndicator color="white" className="mr-3" />
+                    )}
+                    <Text className="text-white font-semibold text-lg">
+                      {isPending ? 'Signing In...' : 'Sign In'}
+                    </Text>
+                  </View>
+                </Pressable>
+              </View>
+            </View>
+
+            {/* Footer */}
+            <View className="items-center mt-8 mb-8">
+              <Pressable
+                onPress={() => router.replace("/register")}
+                className="py-3 px-6"
+              >
+                <Text className="text-gray-600 text-center">
+                  Don't have an account?{' '}
+                  <Text className="text-blue-500 font-semibold">Sign up</Text>
+                </Text>
+              </Pressable>
+            </View>
           </View>
         </View>
       </TouchableWithoutFeedback>

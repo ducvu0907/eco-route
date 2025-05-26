@@ -1,4 +1,3 @@
-import { useGetVehicleActiveRoute } from "@/hooks/useRoute";
 import { OrderResponse, OrderStatus, VehicleResponse } from "@/types/types";
 import { View, ActivityIndicator, Text, Modal, TouchableOpacity, Touchable } from "react-native";
 import {Camera, MapView} from "@maplibre/maplibre-react-native";
@@ -22,6 +21,7 @@ import OrderDrawer from "./OrderDrawer";
 import RouteDrawer from "./RouteDrawer";
 import DemoDepotMarker from "./DemoDepotMarker";
 import { useGetDepotById } from "@/hooks/useDepot";
+import { useGetVehicleCurrentRoute } from "@/hooks/useRoute";
 
 interface InProgressDriverMapProps {
   vehicle: VehicleResponse;
@@ -32,7 +32,7 @@ export default function DemoInProgressDriverMap({vehicle}: InProgressDriverMapPr
   const { showToast } = useToast();
   const { writeVehicleRealtimeData } = useWriteVehicleRealtimeData();
   const {data: depotData, isLoading: depotLoading} = useGetDepotById(vehicle.depotId);
-  const {data, isLoading} = useGetVehicleActiveRoute(vehicle.id); 
+  const {data, isLoading} = useGetVehicleCurrentRoute(vehicle.id); 
   const {data: vehicleData, loading} = useVehicleRealtimeData(vehicle.id);
   const route = data?.result;
   const depot = depotData?.result;

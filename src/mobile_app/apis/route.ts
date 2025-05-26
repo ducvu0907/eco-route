@@ -22,6 +22,6 @@ export const getRoutesByDispatchId = async (dispatchId: string): Promise<ApiResp
 }
 
 export const markRouteAsDone = async (routeId: string): Promise<ApiResponse<RouteResponse[]>> => {
-  const { data } = await axiosInstance.get(`/routes/${routeId}/done`);
+  const { data } = await axiosInstance.post(`/routes/${routeId}/done`);
   return data;
 }
