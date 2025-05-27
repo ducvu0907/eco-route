@@ -29,7 +29,7 @@ export default function MultiRoutesDynamicMap({ routes }: MultiRoutesDynamicMapP
             url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
           />
 
-          {routes.map((route) => {
+          {routes.map((route, idx) => {
             return (
               <div key={route.id}>
                 <VehicleDynamicMarker vehicle={route.vehicle} />
@@ -38,7 +38,7 @@ export default function MultiRoutesDynamicMap({ routes }: MultiRoutesDynamicMapP
                 ))}
                 <DepotDynamicMarker key={`depot-${route.vehicle.depotId}`} depotId={route.vehicle.depotId} />
                 {/* <RoutePolyline key={`polyline-${route.id}`} vehicle={route.vehicle} depotId={route.depotId} orders={route.orders} /> */}
-                <UpdatedRoutePolyline route={route}/>
+                <UpdatedRoutePolyline route={route} />
               </div>
             );
           })}

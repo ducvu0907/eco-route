@@ -27,6 +27,7 @@ import { useGetRoutesByDispatchId } from "@/hooks/useRoute";
 import NoDispatch from "./NoDispatch";
 import { DispatchStatus, RouteResponse, RouteStatus, TrashCategory } from "@/types/types";
 import SingleRouteDynamicMap from "@/components/map/SingleRouteDynamicMap";
+import { formatDate } from "@/utils/formatDate";
 
 const getCategoryBadgeVariant = (category: TrashCategory) => {
   switch (category) {
@@ -52,6 +53,7 @@ export default function CurrentDispatchDetails() {
   const { mutate: markAsDone, isPending: isMarking } = useMarkDispatchAsDone();
   const [activeTab, setActiveTab] = useState("overview");
   const [selectedRoute, setSelectedRoute] = useState<RouteResponse | null>(null);
+  console.log(selectedRoute);
 
   const {
     data: dispatchData,
@@ -242,7 +244,7 @@ export default function CurrentDispatchDetails() {
                   </div>
                   <div className="flex justify-between">
                     <span className="text-slate-500">Created:</span>
-                    <span>{new Date(dispatch.createdAt).toLocaleString()}</span>
+                    <span>{formatDate(dispatch.createdAt)}</span>
                   </div>
                 </div>
               </div>
@@ -322,7 +324,7 @@ export default function CurrentDispatchDetails() {
                         </div>
 
                         {/* Load Progress */}
-                        <div className="space-y-1">
+                        {/* <div className="space-y-1">
                           <div className="flex justify-between text-xs">
                             <span>Load Progress</span>
                             <span>{route.vehicle?.currentLoad || 0}/{route.vehicle?.capacity || 100} kg</span>
@@ -335,7 +337,8 @@ export default function CurrentDispatchDetails() {
                               }}
                             />
                           </div>
-                        </div>
+                        </div> */}
+
                       </div>
                     </CardContent>
                   </Card>

@@ -5,13 +5,14 @@ import "leaflet-arrowheads";
 
 interface UpdatedRoutePolylineProps {
   route: RouteResponse;
+  color?: string;
 }
 
-export default function UpdatedRoutePolyline({ route }: UpdatedRoutePolylineProps) {
+export default function UpdatedRoutePolyline({ route, color }: UpdatedRoutePolylineProps) {
   const map = useMap();
   const positions = route.coordinates as LatLngExpression[];
 
-  const polyline = L.polyline(positions, { color: "blue" }).addTo(map);
+  const polyline = L.polyline(positions, { color: color || "blue" }).addTo(map);
   polyline.arrowheads({
     frequency: 20,
     size: "5px",
@@ -21,5 +22,5 @@ export default function UpdatedRoutePolyline({ route }: UpdatedRoutePolylineProp
     weight: 2,
   });
 
-  return <Polyline positions={positions} color="blue" />;
+  return <Polyline positions={positions} />;
 }

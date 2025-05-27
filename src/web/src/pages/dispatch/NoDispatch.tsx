@@ -3,7 +3,8 @@ import PendingOrdersMap from "@/components/dispatch/PendingOrdersMap";
 import PendingOrdersSidebar from "@/components/dispatch/PendingOrdersSidebar";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
-import { Badge, Package, Truck, Zap } from "lucide-react";
+import { Badge } from "@/components/ui/badge";
+import { Package, Truck, Zap } from "lucide-react";
 import { useGetPendingOrders } from "@/hooks/useOrder";
 import { useGetVehicles } from "@/hooks/useVehicle";
 import { useState } from "react";
@@ -90,8 +91,9 @@ export default function NoDispatch() {
       </div>
 
       {/* Filter badges */}
-      <div className="flex flex-wrap gap-2">
+      <div className="flex flex-wrap gap-2 m-2">
         <Badge
+          variant={filterCategory === "ALL" ? "default" : "outline"}
           className="cursor-pointer"
           onClick={() => setFilterCategory("ALL")}
         >
@@ -99,6 +101,7 @@ export default function NoDispatch() {
         </Badge>
         {Object.values(TrashCategory).map((category) => (
           <Badge
+            variant={filterCategory === category ? "default" : "outline"}
             key={category}
             className="cursor-pointer"
             onClick={() => setFilterCategory(category)}

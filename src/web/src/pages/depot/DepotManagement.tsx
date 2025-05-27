@@ -25,12 +25,14 @@ import {
   Warehouse,
   Calendar,
   AlertTriangle,
+  Search
 } from "lucide-react";
 import { formatDate } from "@/utils/formatDate";
 import { Button } from "@/components/ui/button";
 import { useNavigate } from "react-router";
 import DepotCreateModal from "@/components/depot/DepotCreateModal";
 import { useState } from "react";
+import { Input } from "@/components/ui/input";
 
 export default function DepotManagement() {
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
@@ -103,8 +105,9 @@ export default function DepotManagement() {
               </div>
             </div>
 
-            <div className="flex gap-3 flex-wrap">
-              <input
+            <div className="flex gap-3 flex-wrap items-center">
+              <Search />
+              <Input
                 type="text"
                 placeholder="Search by address"
                 value={searchQuery}

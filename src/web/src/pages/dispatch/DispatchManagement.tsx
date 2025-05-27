@@ -21,11 +21,23 @@ import {
   Filter,
   Eye
 } from "lucide-react";
+import { useState } from "react";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 
 export default function DispatchManagement() {
   const navigate = useNavigate();
+  const [startDate, setStartDate] = useState<string | null>(null);
+  const [endDate, setEndDate] = useState<string | null>(null);
   const { data, isLoading, isError } = useGetDispatches();
   const dispatches = data?.result;
+
+  const filteredDispatches = dispatches?.filter((dispatch) => {
+    const createdDate = dispatch.createdAt.split("T")[0];
+    const fromOk = !startDate || createdDate >= startDate;
+    const toOk = !endDate || createdDate <= endDate;
+    return fromOk && toOk;
+  });
 
   const getStatusColor = (status: DispatchStatus) => {
     switch (status) {
@@ -76,7 +88,7 @@ export default function DispatchManagement() {
     );
   }
 
-  if (isError) {
+  if (isError || !dispatches) {
     return (
       <div className="container mx-auto p-6">
         <Alert variant="destructive" className="max-w-2xl mx-auto">
@@ -167,6 +179,41 @@ export default function DispatchManagement() {
         </div>
       )}
 
+      <div className="flex flex-row items-center">
+        <div className="flex items-center space-x-2 py-4 w-sm">
+          <Label className="text-sm font-medium text-gray-700">From:</Label>
+          <Input
+            type="date"
+            value={startDate || ""}
+            onChange={(e) => setStartDate(e.target.value)}
+            className="border rounded px-2 py-1 text-sm"
+          />
+
+          <Label className="text-sm font-medium text-gray-700">To:</Label>
+          <Input
+            type="date"
+            value={endDate || ""}
+            onChange={(e) => setEndDate(e.target.value)}
+            className="border rounded px-2 py-1 text-sm"
+          />
+        </div>
+        {
+          (startDate || endDate) && (
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => {
+                setEndDate(null);
+                setStartDate(null);
+              }}
+              className="ml-2"
+            >
+              Clear Filters
+            </Button>
+          )
+        }
+      </div>
+
       {/* Main Content Card */}
       <Card>
         <CardHeader className="border-b">
@@ -197,9 +244,9 @@ export default function DispatchManagement() {
                   </TableRow>
                 </TableHeader>
                 <TableBody>
-                  {dispatches.map((dispatch) => (
-                    <TableRow 
-                      key={dispatch.id} 
+                  {filteredDispatches?.map((dispatch) => (
+                    <TableRow
+                      key={dispatch.id}
                       className="cursor-pointer hover:bg-gray-50 transition-colors"
                       onClick={() => navigate(`/dispatches/${dispatch.id}`)}
                     >
@@ -267,12 +314,12 @@ export default function DispatchManagement() {
               <p className="text-gray-600 text-center mb-6 max-w-md">
                 There are currently no dispatches in the system. Dispatches will appear here once they are created and assigned to vehicles.
               </p>
-              <Button 
+              <Button
                 onClick={() => navigate("/dispatches/current")}
                 className="flex items-center space-x-2"
               >
                 <Plus className="h-4 w-4" />
-                <span>View Current Dispatch</span>
+                <span>Create New Dispatch</span>
               </Button>
             </div>
           )}

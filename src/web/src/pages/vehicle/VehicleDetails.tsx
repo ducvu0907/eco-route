@@ -1,4 +1,4 @@
-import { useParams } from "react-router";
+import { useNavigate, useParams } from "react-router";
 import NotFound from "../NotFound";
 import { useGetVehicleById } from "@/hooks/useVehicle";
 import { useGetRoutesByVehicleId } from "@/hooks/useRoute";
@@ -42,8 +42,10 @@ import {
   Calendar,
   Activity
 } from "lucide-react";
+import { formatDate } from "@/utils/formatDate";
 
 export default function VehicleDetails() {
+  const navigate = useNavigate();
   const [modalOpen, setModalOpen] = useState<boolean>(false);
   const { vehicleId } = useParams<{ vehicleId: string }>();
   const [selectedRoute, setSelectedRoute] = useState<RouteResponse | null>(null);
@@ -273,8 +275,14 @@ export default function VehicleDetails() {
                               </div>
                             )}
                           </Badge>
+                          <Button
+                            variant={"outline"}
+                            onClick={() => navigate(`/dispatches/${route.dispatchId}`)}
+                          >
+                            Go to dispatch
+                          </Button>
                         </div>
-                        
+
                         <div className="grid grid-cols-3 gap-4 text-sm">
                           <div className="flex items-center space-x-2">
                             <Navigation className="h-4 w-4 text-gray-500" />
@@ -283,7 +291,7 @@ export default function VehicleDetails() {
                               <p className="font-medium">{route.distance} km</p>
                             </div>
                           </div>
-                          
+
                           <div className="flex items-center space-x-2">
                             <Package className="h-4 w-4 text-gray-500" />
                             <div>
@@ -291,7 +299,7 @@ export default function VehicleDetails() {
                               <p className="font-medium">{route.orders.length}</p>
                             </div>
                           </div>
-                          
+
                           <div className="flex items-center space-x-2">
                             <Clock className="h-4 w-4 text-gray-500" />
                             <div>
@@ -300,12 +308,12 @@ export default function VehicleDetails() {
                             </div>
                           </div>
                         </div>
-                        
+
                         {route.completedAt && (
                           <div className="mt-3 pt-3 border-t">
                             <div className="flex items-center space-x-2 text-sm text-gray-500">
                               <Calendar className="h-4 w-4" />
-                              <span>Completed: {new Date(route.completedAt).toLocaleDateString()}</span>
+                              <span>Completed: {formatDate(route.completedAt)}</span>
                             </div>
                           </div>
                         )}

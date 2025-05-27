@@ -8,7 +8,6 @@ import { useAuthContext } from "@/hooks/useAuthContext";
 import {
   Avatar,
   AvatarFallback,
-  AvatarImage,
 } from "@/components/ui/avatar";
 import { Separator } from "@/components/ui/separator";
 import { useState } from "react";
@@ -27,7 +26,7 @@ const navItems: NavItem[] = [
   { label: "Users", icon: <Users className="w-5 h-5" />, key: "users", path: "/users" },
   { label: "Dispatches", icon: <Send className="w-5 h-5" />, key: "dispatches", path: "/dispatches" },
   { label: "Orders", icon: <ShoppingCart className="w-5 h-5" />, key: "orders", path: "/orders" },
-  { label: "Map", icon: <Map className="w-5 h-5" />, key: "map", path: "/map" },
+  // { label: "Map", icon: <Map className="w-5 h-5" />, key: "map", path: "/map" },
 ];
 
 function UserSection({ isCollapsed }: { isCollapsed: boolean }) {

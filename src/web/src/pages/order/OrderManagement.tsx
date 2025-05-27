@@ -13,11 +13,11 @@ import { Button } from "@/components/ui/button";
 import { formatDate } from "@/utils/formatDate";
 import { useNavigate } from "react-router";
 import OrdersMap from "@/components/order/OrdersMap";
-import { 
-  MapPin, 
-  Scale, 
-  Calendar, 
-  Eye, 
+import {
+  MapPin,
+  Scale,
+  Calendar,
+  Eye,
   AlertCircle,
   CheckCircle,
   Clock,
@@ -39,10 +39,16 @@ export default function OrderManagement() {
   const orders: OrderResponse[] = data?.result || [];
   const [filterCategory, setFilterCategory] = useState<TrashCategory | "ALL">("ALL");
   const [filterStatus, setFilterStatus] = useState<OrderStatus | "ALL">("ALL");
+  const [startDate, setStartDate] = useState<string | null>(null);
+  const [endDate, setEndDate] = useState<string | null>(null);
   const filteredOrders = orders.filter(order => {
     const categoryMatch = filterCategory === "ALL" || order.category === filterCategory;
     const statusMatch = filterStatus === "ALL" || order.status === filterStatus;
-    return categoryMatch && statusMatch;
+    const orderDate = order.createdAt.split("T")[0];
+    const fromMatch = !startDate || orderDate >= startDate;
+    const toMatch = !endDate || orderDate <= endDate;
+
+    return categoryMatch && statusMatch && fromMatch && toMatch;
   });
 
   const getStatusIcon = (status: OrderStatus) => {
@@ -115,7 +121,7 @@ export default function OrderManagement() {
           <h1 className="text-2xl font-bold tracking-tight">Order Management</h1>
           <p className="text-muted-foreground">Manage and track all waste collection orders</p>
         </div>
-        
+
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 h-[calc(100vh-200px)]">
           {/* Map Skeleton */}
           <Card className="h-full">
@@ -129,7 +135,7 @@ export default function OrderManagement() {
               <Skeleton className="w-full h-full rounded-lg" />
             </CardContent>
           </Card>
-          
+
           {/* List Skeleton */}
           <Card className="h-full">
             <CardHeader>
@@ -170,7 +176,7 @@ export default function OrderManagement() {
           <h1 className="text-2xl font-bold tracking-tight">Order Management</h1>
           <p className="text-muted-foreground">Manage and track all waste collection orders</p>
         </div>
-        
+
         <Alert variant="destructive">
           <AlertCircle className="h-4 w-4" />
           <AlertTitle>Error Loading Orders</AlertTitle>
@@ -182,7 +188,7 @@ export default function OrderManagement() {
     );
   }
 
-return (
+  return (
     <div className="w-full h-full p-6">
       {/* Page Header */}
       <div className="mb-6 flex flex-row items-center">
@@ -196,7 +202,7 @@ return (
           </p>
         </div>
       </div>
-      
+
       {/* Filters */}
       <div className="mb-4 flex flex-col flex-wrap gap-4">
         {/* Category Filter */}
@@ -232,6 +238,35 @@ return (
             </Badge>
           ))}
         </div>
+
+        {/* Date Filter */}
+        <div className="flex items-center gap-2 flex-wrap">
+          <span className="font-semibold">From:</span>
+          <input
+            type="date"
+            className="border rounded px-2 py-1 text-sm"
+            value={startDate || ""}
+            onChange={(e) => setStartDate(e.target.value || null)}
+          />
+          <span className="font-semibold">End:</span>
+          <input
+            type="date"
+            className="border rounded px-2 py-1 text-sm"
+            value={endDate || ""}
+            onChange={(e) => setEndDate(e.target.value || null)}
+          />
+          {(startDate || endDate) && (
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={() => { setStartDate(null); setEndDate(null); }}
+              className="text-xs px-2"
+            >
+              Clear
+            </Button>
+          )}
+        </div>
+
       </div>
 
       {/* Two Column Layout */}
