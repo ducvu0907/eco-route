@@ -23,6 +23,16 @@ export default function TabsDriverLayout() {
       />
 
       <Tabs.Screen
+        name="current-route"
+        options={{
+          tabBarLabel: "Current Route",
+          tabBarIcon: ({ color, size }) => (
+            <Ionicons name="navigate-outline" size={size} color={color} />
+          ),
+        }}
+      />
+
+      <Tabs.Screen
         name="driver-info"
         options={{
           tabBarLabel: "Info",

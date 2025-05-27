@@ -1,9 +1,11 @@
-import { useMarkOrderAsDone } from "@/hooks/useOrder";
+import { useMarkOrderAsCancelled, useMarkOrderAsDone } from "@/hooks/useOrder";
 import { OrderResponse, OrderStatus, TrashCategory } from "@/types/types";
 import { View, TouchableOpacity, Text, ActivityIndicator, Animated } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { formatDate } from "@/utils/formatDate";
 import { useEffect, useRef } from "react";
+import { useWriteVehicleRealtimeData } from "@/hooks/useWriteVehicleRealtimeData";
+import { useVehicleRealtimeData } from "@/hooks/useVehicleRealtimeData";
 
 interface OrderDrawerProps {
   order: OrderResponse;
@@ -60,7 +62,8 @@ const getStatusColor = (status: OrderStatus) => {
 };
 
 export default function OrderDrawer({ order, onClose }: OrderDrawerProps) {
-  const { mutate: markAsDone, isPending } = useMarkOrderAsDone();
+  const { mutate: markAsDone, isPending: isMarkingAsDone } = useMarkOrderAsDone();
+  const { mutate: markAsCancelled, isPending: isMarkingAsCancelled } = useMarkOrderAsCancelled();
   const slideAnim = useRef(new Animated.Value(300)).current;
 
   useEffect(() => {
@@ -74,12 +77,20 @@ export default function OrderDrawer({ order, onClose }: OrderDrawerProps) {
 
   const handleClose = () => {
     Animated.spring(slideAnim, {
-      toValue: 300,
+      toValue: 0,
       useNativeDriver: true,
       tension: 100,
       friction: 8,
     }).start(() => {
       onClose();
+    });
+  };
+
+  const handleMarkAsCancelled = () => {
+    markAsCancelled(order.id, {
+      onSuccess: () => {
+        handleClose();
+      },
     });
   };
 
@@ -102,7 +113,7 @@ export default function OrderDrawer({ order, onClose }: OrderDrawerProps) {
       className="bg-white rounded-t-3xl shadow-2xl"
     >
       {/* Handle */}
-      <TouchableOpacity 
+      <TouchableOpacity
         onPress={handleClose}
         className="items-center py-4"
         activeOpacity={0.7}
@@ -123,7 +134,7 @@ export default function OrderDrawer({ order, onClose }: OrderDrawerProps) {
               </Text>
             </View>
           </View>
-          <TouchableOpacity 
+          <TouchableOpacity
             onPress={handleClose}
             className="bg-gray-100 rounded-full p-2 ml-4"
           >
@@ -153,10 +164,10 @@ export default function OrderDrawer({ order, onClose }: OrderDrawerProps) {
           <View className="flex-1 mr-2">
             <View className="bg-gray-50 rounded-2xl p-4">
               <View className="flex-row items-center mb-2">
-                <Ionicons 
-                  name={getCategoryIcon(order.category) as any} 
-                  size={18} 
-                  color={getCategoryColor(order.category)} 
+                <Ionicons
+                  name={getCategoryIcon(order.category) as any}
+                  size={18}
+                  color={getCategoryColor(order.category)}
                 />
                 <Text className="text-gray-500 text-sm font-medium ml-2">
                   Category
@@ -170,7 +181,7 @@ export default function OrderDrawer({ order, onClose }: OrderDrawerProps) {
 
           <View className="flex-1 ml-2">
             <View className="bg-orange-50 rounded-2xl p-4">
-              <View className="flex-row items-center mb-2">
+              <View className="flex-row items-center">
                 <Ionicons name="scale" size={18} color="#f97316" />
                 <Text className="text-gray-500 text-sm font-medium ml-2">
                   Weight
@@ -185,9 +196,9 @@ export default function OrderDrawer({ order, onClose }: OrderDrawerProps) {
 
         {/* Description */}
         {order.description && (
-          <View className="bg-purple-50 rounded-2xl p-4 mb-6">
+          <View className="bg-purple-50 rounded-2xl p-0 mb-2">
             <View className="flex-row items-start">
-              <View className="bg-purple-100 rounded-full p-2 mr-3">
+              <View className="bg-purple-100 rounded-full p-0 mr-3">
                 <Ionicons name="document-text" size={18} color="#8b5cf6" />
               </View>
               <View className="flex-1">
@@ -203,45 +214,58 @@ export default function OrderDrawer({ order, onClose }: OrderDrawerProps) {
         )}
 
         {/* Action Buttons */}
-        {order.status !== OrderStatus.COMPLETED && (
-          <TouchableOpacity
-            className={`rounded-2xl py-4 mb-3 ${isPending ? 'bg-gray-400' : 'bg-green-500'}`}
-            onPress={handleMarkAsDone}
-            disabled={isPending}
-            activeOpacity={0.8}
-          >
-            <View className="flex-row items-center justify-center">
-              {isPending ? (
-                <>
-                  <ActivityIndicator color="#fff" size="small" />
-                  <Text className="text-white font-semibold ml-2 text-base">
-                    Marking as Done...
-                  </Text>
-                </>
-              ) : (
-                <>
-                  <Ionicons name="checkmark-circle" size={20} color="#fff" />
-                  <Text className="text-white font-semibold ml-2 text-base">
-                    Mark Order as Done
-                  </Text>
-                </>
-              )}
-            </View>
-          </TouchableOpacity>
-        )}
-
-        <TouchableOpacity
-          className="bg-gray-100 rounded-2xl py-4"
-          onPress={handleClose}
-          activeOpacity={0.8}
-        >
-          <View className="flex-row items-center justify-center">
-            <Ionicons name="arrow-down" size={20} color="#6b7280" />
-            <Text className="text-gray-700 font-semibold ml-2 text-base">
-              Close Details
-            </Text>
+        {/* {order.status !== OrderStatus.COMPLETED && (
+          <View>
+            <TouchableOpacity
+              className={`rounded-2xl mb-1 ${isMarkingAsDone ? 'bg-gray-400' : 'bg-green-500'}`}
+              onPress={handleMarkAsDone}
+              disabled={isMarkingAsDone}
+              activeOpacity={0.8}
+            >
+              <View className="flex-row items-center justify-center py-2">
+                {isMarkingAsDone ? (
+                  <>
+                    <ActivityIndicator color="#fff" size="small" />
+                    <Text className="text-white font-semibold ml-2 text-base">
+                      Marking as Done...
+                    </Text>
+                  </>
+                ) : (
+                  <>
+                    <Ionicons name="checkmark-circle" size={20} color="#fff" />
+                    <Text className="text-white font-semibold ml-2 text-base">
+                      Mark Order as Done
+                    </Text>
+                  </>
+                )}
+              </View>
+            </TouchableOpacity>
+            <TouchableOpacity
+              className={`rounded-2xl mb-1 ${isMarkingAsCancelled ? 'bg-gray-400' : 'bg-red-500'}`}
+              onPress={handleMarkAsCancelled}
+              disabled={isMarkingAsCancelled}
+              activeOpacity={0.8}
+            >
+              <View className="flex-row items-center justify-center py-2">
+                {isMarkingAsCancelled ? (
+                  <>
+                    <ActivityIndicator color="#fff" size="small" />
+                    <Text className="text-white font-semibold ml-2 text-base">
+                      Marking as Cancelled...
+                    </Text>
+                  </>
+                ) : (
+                  <>
+                    <Ionicons name="remove-circle" size={20} color="#fff" />
+                    <Text className="text-white font-semibold ml-2 text-base">
+                      Cancel Order
+                    </Text>
+                  </>
+                )}
+              </View>
+            </TouchableOpacity>
           </View>
-        </TouchableOpacity>
+        )} */}
 
         {/* Created timestamp */}
         <View className="flex-row items-center justify-center mt-4 pt-4 border-t border-gray-100">
