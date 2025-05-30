@@ -1,6 +1,7 @@
 package com.ducvu.backend_java.dto.response;
 
 
+import com.ducvu.backend_java.model.VrpJob;
 import com.ducvu.backend_java.model.VrpRoute;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -14,6 +15,7 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 public class VrpResponse {
-  List<VrpRoute> routes;
-  String error;
+  private List<VrpRoute> routes;
+  private List<VrpJob> unassigned;
+  private String error;
 }

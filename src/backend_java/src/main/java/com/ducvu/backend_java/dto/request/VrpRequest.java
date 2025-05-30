@@ -1,6 +1,7 @@
 package com.ducvu.backend_java.dto.request;
 
 
+import com.ducvu.backend_java.model.VrpDepot;
 import com.ducvu.backend_java.model.VrpJob;
 import com.ducvu.backend_java.model.VrpRoute;
 import com.ducvu.backend_java.model.VrpVehicle;
@@ -17,9 +18,9 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 public class VrpRequest {
+  List<VrpDepot> depots;
   List<VrpVehicle> vehicles;
   List<VrpRoute> routes;
   List<VrpJob> jobs;
-  String profile; // driving-car or driving-hgv
 }
 

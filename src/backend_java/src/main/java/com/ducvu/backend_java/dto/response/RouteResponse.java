@@ -18,7 +18,6 @@ public class RouteResponse {
   private String id;
   private VehicleResponse vehicle;
   private String dispatchId;
-  private String depotId;
   private Double distance;
   private RouteStatus status;
   private List<OrderResponse> orders;

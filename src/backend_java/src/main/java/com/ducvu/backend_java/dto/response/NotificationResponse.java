@@ -13,7 +13,7 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 public class NotificationResponse {
   private String id;
-  private String message;
+  private String content;
   private Boolean isRead;
   private LocalDateTime createdAt;
   private LocalDateTime updatedAt;

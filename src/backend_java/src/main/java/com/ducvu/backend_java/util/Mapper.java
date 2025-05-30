@@ -4,6 +4,8 @@ import com.ducvu.backend_java.dto.response.*;
 import com.ducvu.backend_java.model.*;
 import org.springframework.stereotype.Component;
 
+import java.util.List;
+
 @Component
 public class Mapper {
 
@@ -67,7 +69,6 @@ public class Mapper {
         .id(route.getId())
         .vehicle(this.map(route.getVehicle()))
         .dispatchId(route.getDispatch().getId())
-        .depotId(route.getDepotId())
         .distance(route.getDistance())
         .orders(route.getOrders()
             .stream()
@@ -75,7 +76,12 @@ public class Mapper {
             .toList()
         )
         .duration(route.getDuration())
-        .coordinates(route.getGeometry().getCoordinates())
+        .coordinates(
+            route.getGeometry().getCoordinates()
+                .stream()
+                .map(List::reversed)
+                .toList()
+        )
         .status(route.getStatus())
         .completedAt(route.getCompletedAt())
         .createdAt(route.getCreatedAt())
@@ -106,7 +112,7 @@ public class Mapper {
   public NotificationResponse map(Notification notification) {
     return NotificationResponse.builder()
         .id(notification.getId())
-        .message(notification.getMessage())
+        .content(notification.getContent())
         .isRead(notification.getIsRead())
         .createdAt(notification.getCreatedAt())
         .updatedAt(notification.getUpdatedAt())
@@ -116,10 +122,10 @@ public class Mapper {
   public VrpVehicle mapVrp(Vehicle vehicle) {
     return VrpVehicle.builder()
         .id(vehicle.getId())
-        .start(new VrpLocation(vehicle.getCurrentLatitude(), vehicle.getCurrentLongitude())) // this should be the same as depot if not running
-        .end(new VrpLocation(vehicle.getDepot().getLatitude(), vehicle.getDepot().getLongitude()))
-        .load(vehicle.getCurrentLoad())
+        .depotId(vehicle.getDepot().getId())
+        .location(List.of(vehicle.getCurrentLatitude(), vehicle.getCurrentLongitude()))
         .capacity(vehicle.getCapacity())
+        .profile(vehicle.getType() == VehicleType.THREE_WHEELER ? "driving-car" : "driving-hgv")
         .build();
   }
 
@@ -138,14 +144,19 @@ public class Mapper {
         .build();
   }
 
-  public VrpJob mapVrp(Order order) {
-    return VrpJob.builder()
-        .id(order.getId())
-        .location(new VrpLocation(order.getLatitude(), order.getLongitude()))
-        .demand(order.getWeight())
+  public VrpDepot mapVrp(Depot depot) {
+    return VrpDepot.builder()
+        .id(depot.getId())
+        .location(List.of(depot.getLatitude(), depot.getLongitude()))
         .build();
   }
 
-
+  public VrpJob mapVrp(Order order) {
+    return VrpJob.builder()
+        .id(order.getId())
+        .location(List.of(order.getLatitude(), order.getLongitude()))
+        .demand(order.getWeight())
+        .build();
+  }
 
 }

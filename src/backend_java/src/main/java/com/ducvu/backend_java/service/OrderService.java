@@ -152,35 +152,21 @@ public class OrderService {
     return mapper.map(orderRepository.save(order));
   }
 
-  // TODO
-  public OrderResponse updateOrder(String orderId, OrderUpdateRequest request) {
-    User user = userService.getCurrentUser();
-    Order order = orderRepository.findById(orderId)
-        .orElseThrow(() -> new RuntimeException("Order not found"));
-
-    if (user.getRole() != Role.DRIVER) {
-      throw new RuntimeException("Unauthorized");
-    }
-
-    order.setStatus(request.getStatus());
-    return mapper.map(orderRepository.save(order));
-  }
-
   private void notifyNewOrder() {
     User manager = userService.getManager();
-    notificationService.sendSingleNotification("New order created", manager.getFcmToken());
+    notificationService.sendSingleNotification("New order created", manager);
   }
 
   private void notifyOrderCancelled(Order order) {
     User manager = userService.getManager();
-    notificationService.sendSingleNotification("Order is cancelled", order.getUser().getFcmToken());
-    notificationService.sendSingleNotification("Order is cancelled", manager.getFcmToken());
+    notificationService.sendSingleNotification("Order is cancelled", order.getUser());
+    notificationService.sendSingleNotification("Order is cancelled", manager);
   }
 
   private void notifyOrderCompleted(Order order) {
     User manager = userService.getManager();
-    notificationService.sendSingleNotification("Order is completed", order.getUser().getFcmToken());
-    notificationService.sendSingleNotification("Order is completed", manager.getFcmToken());
+    notificationService.sendSingleNotification("Order is completed", order.getUser());
+    notificationService.sendSingleNotification("Order is completed", manager);
   }
 
 }

@@ -9,15 +9,10 @@ import lombok.NoArgsConstructor;
 import java.util.List;
 
 @Data
-@Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class VrpRoute {
-
-  @JsonProperty("vehicle_id")
-  private String vehicleId;
-  private List<VrpJob> steps;
-  private Double distance;
-  private Double duration;
-  private Geometry geometry;
+@Builder
+public class VrpDepot {
+  private String id;
+  private List<Double> location;
 }

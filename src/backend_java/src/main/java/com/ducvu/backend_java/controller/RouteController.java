@@ -30,7 +30,7 @@ public class RouteController {
         .build();
   }
 
-  @GetMapping("/vehicles/{vehicleId}/route")
+  @GetMapping("/vehicles/{vehicleId}/routes/current")
   public ApiResponse<RouteResponse> getVehicleCurrentRoute(@PathVariable("vehicleId") String vehicleId) {
     log.info("Received get vehicle current route request");
     var result = routeService.getVehicleCurrentRoute(vehicleId);

@@ -84,7 +84,7 @@ public class RouteService {
 
   private void notifyCompletedRoute(Route route) {
     User manager = userService.getManager();
-    notificationService.sendSingleNotification(String.format("Route %s is completed", route.getId()), manager.getFcmToken());
+    notificationService.sendSingleNotification(String.format("Route %s is completed", route.getId()), manager);
   }
 
 }

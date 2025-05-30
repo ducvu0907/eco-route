@@ -86,7 +86,7 @@ public class OrderController {
         .build();
   }
 
-  @PostMapping("/orders/{orderId}/cancel")
+  @PostMapping("/orders/{orderId}/cancelled")
   public ApiResponse<OrderResponse> markOrderAsCancelled(@PathVariable("orderId") String orderId) {
     log.info("Received mark order as cancelled");
     var result = orderService.markOrderAsCancelled(orderId);
@@ -102,16 +102,6 @@ public class OrderController {
     var result = orderService.markOrderAsDone(orderId);
     return ApiResponse.<OrderResponse>builder()
         .message("Mark order as done successfully")
-        .result(result)
-        .build();
-  }
-
-  @PostMapping("/orders/{orderId}")
-  public ApiResponse<OrderResponse> updateOrder(@PathVariable("orderId") String orderId, @RequestBody OrderUpdateRequest request) {
-    log.info("Received order update request: {}", request);
-    var result = orderService.updateOrder(orderId, request);
-    return ApiResponse.<OrderResponse>builder()
-        .message("Update order successfully")
         .result(result)
         .build();
   }
