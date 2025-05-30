@@ -142,7 +142,7 @@ export interface DispatchResponse {
 
 export interface NotificationResponse {
   id: string;
-  message: string;
+  content: string;
   isRead: boolean;
   createdAt: string;
   updatedAt: string;
@@ -183,7 +183,6 @@ export interface RouteResponse {
   id: string;
   vehicle: VehicleResponse;
   dispatchId: string;
-  depotId: string;
   distance: number;
   status: RouteStatus;
   orders: OrderResponse[];
