@@ -27,9 +27,9 @@ logger.addHandler(console_handler)
 
 
 # models
-class Geometry(BaseModel):
+class Geometry(BaseModel): # this is in lon/lat since returned by ors api 
   type: str
-  coordinates: List[List[float]] # this should be in lon/lat
+  coordinates: List[List[float]]
 
 class Location(BaseModel):
   lat: float
@@ -44,10 +44,11 @@ class Job(BaseModel):
 
 class Vehicle(BaseModel):
   id: str
-  start: Location # can be different from end in dynamic request, this should indicate the current position of the vehicle
+  start: Location # current position of the vehicle, should be the same as end in static and different in dynamic
   end: Location
   load: float = 0 # current load of the vehicle, could be positive if dynamic request
   capacity: float
+  profile: Literal["driving-car", "driving-hgv"]
 
 
 class Route(BaseModel):
@@ -100,9 +101,9 @@ def solve_vrp(request: RoutingRequest):
   API endpoint to solve Vehicle Routing Problem (VRP).
   Delegates the computation to the solver module.
   """
-  from solver import route_request
+  from solver import solve_request
 
   logger.info(f"Incoming VRP request: {request}")
-  solution = route_request(request)
+  solution = solve_request(request)
   logger.info(f"Solver returned solution: {solution}")
   return solution

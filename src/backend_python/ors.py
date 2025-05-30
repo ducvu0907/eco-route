@@ -4,6 +4,7 @@ from openrouteservice.directions import directions
 from openrouteservice.distance_matrix import distance_matrix
 import os
 from dotenv import load_dotenv
+import json
 
 load_dotenv()
 API_KEY = os.getenv("ORS_API_KEY")
@@ -35,6 +36,7 @@ def get_directions(points: List[List[float]], profile: Literal["driving-car", "d
     geometry = route['features'][0]['geometry']
     distance_km = route['features'][0]['properties']['summary']['distance']
     duration_min = route['features'][0]['properties']['summary']['duration'] / 60
+    # print(json.dumps(route, indent=4))
 
     print(route)
     

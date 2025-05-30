@@ -3,7 +3,7 @@ import hygese as hgs
 import math
 import os
 import subprocess
-from api import Route, RoutingRequest, RoutingResponse, logger
+from api_v2 import Route, RoutingRequest, RoutingResponse, logger
 from typing import List, Dict
 from collections import defaultdict
 from vrplib import read_instance, read_solution
@@ -58,7 +58,7 @@ def solve_with_hygese(instance_path, time_limit=3, seed=0, verbose=1):
     n = len(demands)
 
     data = {
-      "service_times": np.zeros(n),
+      "service_times": np.zeros(n), # default to 0
       "distance_matrix": distance_matrix,
       "vehicle_capacity": vehicle_capacity,
       "demands": demands,
@@ -75,7 +75,7 @@ def solve_with_hygese(instance_path, time_limit=3, seed=0, verbose=1):
     raise RuntimeError(f"Reading instance path failed: {str(e)}")
 
 
-def route_request(request: RoutingRequest):
+def solve_request(request: RoutingRequest):
   """Dispatch routing request to static or dynamic solver."""
   if not request.routes:
     return solve_static_mdvrp(request)
@@ -495,3 +495,145 @@ def _solve_cvrp_with_hygese(distance_matrix: List[List[float]], demands: List[fl
   except Exception as e:
     logger.error(f"Hygese solver failed: {str(e)}")
     raise RuntimeError("CVRP solver failed to produce a valid result.") from e
+
+
+# updated impl
+from gancp.read_mdvrp import MDVRPInstance
+from gancp.genetic import solve_instance
+from collections import defaultdict, Counter
+from ors import get_directions
+
+def solve(request: RoutingRequest):
+  if not request.routes:
+    return _solve_static_mdvrp(request)
+  else:
+    return _solve_dynamic_mdvrp(request)
+
+
+# static solver
+def _solve_static_mdvrp(request:RoutingRequest):
+  instance = _parse_static_request(request)
+  job_id_to_job = {job.id:job for job in request.jobs}
+  depot_id_to_depot_idx = {d.id:i for i, d in enumerate(request.depots)}
+  depot_idx_to_vehicles = defaultdict(list)
+  for v in request.vehicles:
+    depot_idx = depot_id_to_depot_idx[v.depot_id]
+    depot_idx_to_vehicles[depot_idx].append(v)
+
+  cost, routes = solve_instance(instance, "harversine")
+  # print(routes)
+
+  all_routes = []
+  for depot_idx, depot_routes in enumerate(routes):
+    if depot_routes: # depot_routes = None - no assigned requests
+      depot = request.depots[depot_idx]
+      vehicle_idx = 0
+      for route in depot_routes:
+        vehicle = depot_idx_to_vehicles[depot_idx][vehicle_idx]
+        steps = [request.jobs[j_idx] for j_idx in route]
+
+        # update unassigned jobs
+        for job in steps:
+          del job_id_to_job[job.id]
+
+        # use ors api
+        points = [depot.location] + [s.location for s in steps] + [depot.location]
+        geometry, distance, duration = get_directions(points, vehicle.profile)
+
+        route_response = Route(vehicle_id=vehicle.id, steps=steps, distance=distance, duration=duration, geometry=geometry)
+        all_routes.append(route_response)
+        vehicle_idx += 1
+  
+  unassigned = job_id_to_job.values()
+  return RoutingResponse(routes=all_routes, unassigned=unassigned)
+
+
+# dynamic solver
+def _solve_dynamic_mdvrp(request: RoutingRequest):
+  vehicle_id_to_route = {route.vehicle_id:route for route in request.routes}
+  depot_id_to_depot = {depot.id:depot for depot in request.depots}
+  vehicle_id_to_depot = {vehicle.id:depot_id_to_depot[vehicle.depot_id] for vehicle in request.vehicles}
+  vehicle_id_to_vehicle = {vehicle.id:vehicle for vehicle in request.vehicles}
+  updated_routes = [] # only track modified routes
+  job_id_to_job = {job.id:job for job in request.jobs}
+
+  # compute current load of each route
+  vehicle_id_to_load = defaultdict(float)
+  for route in vehicle_id_to_route.values():
+    vehicle_id = route.vehicle_id 
+    load = sum(s.demand for s in route.steps)
+    vehicle_id_to_load[vehicle_id] = load
+
+  for job in request.jobs:
+    # best insertion with capacity constraint in current active routes
+    best_diff, best_route, best_pos = float("inf"), None, None
+    for route in vehicle_id_to_route.values():
+      load = vehicle_id_to_load[route.vehicle_id]
+      vehicle = vehicle_id_to_vehicle[vehicle_id]
+      if load + job.demand > vehicle.capacity:
+        continue
+
+      depot = vehicle_id_to_depot[route.vehicle_id]
+      old_dist = route.distance
+      old_points = [depot.location] + [j.location for j in route.steps] + [depot.location]
+      # best pos
+      for pos in range(len(route.steps) + 1):
+        new_points = old_points[:pos] + [job.location] + old_points[pos:]
+        new_dist = _calculate_route_distance(new_points)
+        diff = new_dist - old_dist
+        if diff < best_diff:
+          best_diff = diff
+          best_route = route
+          best_pos = pos
+    
+    if best_route and best_pos:
+      best_route.steps.insert(best_pos, job)
+      vehicle_id_to_route[best_route.vehicle_id] = best_route
+      updated_routes.append(best_route)
+      del job_id_to_job[job.id]
+  
+  # update metadata for modified routes
+  for i, route in enumerate(updated_routes):
+    depot = vehicle_id_to_depot[route.vehicle_id]
+    vehicle = vehicle_id_to_vehicle[route.vehicle_id]
+    points = [depot.location] + [s.location for s in route.steps] + [depot.location]
+    geometry, distance, duration = get_directions(points, vehicle.profile)
+    updated_routes[i] = Route(vehicle_id=route.vehicle_id, steps=route.steps, distance=distance, duration=duration, geometry=geometry)
+
+
+  # TODO: handle solving job
+  for job in job_id_to_job.values():
+    pass
+
+  
+  unassigned = job_id_to_job.values()
+  return RoutingResponse(routes=updated_routes, unassigned=unassigned)
+
+
+def _parse_static_request(request: RoutingRequest):
+  D = len(request.depots)
+  M = len(request.vehicles)
+  N = len(request.jobs)
+  vehicle_counts = Counter(v.depot_id for v in request.vehicles)
+  num_vehicles = [vehicle_counts.get(d.id, 0) for d in request.depots]
+  print(num_vehicles)
+  customers = [j.location for j in request.jobs]
+  demands = [j.demand for j in request.jobs]
+  depots = [d.location for d in request.depots]
+  num_depots = D
+  num_customers = N
+  # num_vehicles = [d.num_vehicles for d in request.depots]
+  route_durations = [0.0]*num_depots
+  service_times = [0.0]*num_customers
+  vehicle_loads = [request.vehicles[0].capacity]*num_depots # assuming homongenous capacity
+  return MDVRPInstance(
+    customers,
+    depots,
+    vehicle_loads,
+    route_durations,
+    demands,
+    service_times, M, N, D,
+    num_vehicles,
+    num_customers,
+    num_depots
+  )
