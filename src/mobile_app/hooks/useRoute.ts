@@ -23,7 +23,7 @@ export const useMarkRouteAsDone = () => {
 
 export const useGetVehicleCurrentRoute = (vehicleId: string) => {
   return useQuery<ApiResponse<RouteResponse>>({
-    queryKey: ["vehicles", vehicleId, "current", "route"],
+    queryKey: ["routes", "current"],
     queryFn: () => getVehicleCurrentRoute(vehicleId),
     enabled: !!vehicleId,
   });

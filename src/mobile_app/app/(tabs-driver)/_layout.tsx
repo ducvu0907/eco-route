@@ -33,6 +33,16 @@ export default function TabsDriverLayout() {
       />
 
       <Tabs.Screen
+        name="notifications"
+        options={{
+          tabBarLabel: "Notifications",
+          tabBarIcon: ({ color, size }) => (
+            <Ionicons name="notifications-outline" size={size} color={color} />
+          ),
+        }}
+      />
+
+      <Tabs.Screen
         name="driver-info"
         options={{
           tabBarLabel: "Info",

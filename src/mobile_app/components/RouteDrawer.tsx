@@ -4,6 +4,7 @@ import { View, TouchableOpacity, Text, ActivityIndicator, Animated, ScrollView, 
 import { Ionicons } from "@expo/vector-icons";
 import { formatDate } from "@/utils/formatDate";
 import { useEffect, useRef, useState } from "react";
+import { useQueryClient } from "@tanstack/react-query";
 
 const { height: screenHeight } = Dimensions.get('window');
 
@@ -13,6 +14,7 @@ interface RouteDrawerProps {
 }
 
 export default function RouteDrawer({ route, onSelectOrder }: RouteDrawerProps) {
+  const queryClient = useQueryClient();
   const { mutate: markAsDone, isPending } = useMarkRouteAsDone();
   const [isExpanded, setIsExpanded] = useState(false);
   const slideAnim = useRef(new Animated.Value(0)).current;
@@ -40,7 +42,7 @@ export default function RouteDrawer({ route, onSelectOrder }: RouteDrawerProps) 
     
     markAsDone(route.id, {
       onSuccess: () => {
-        // Route completed successfully
+        queryClient.invalidateQueries({queryKey: ["routes", "current"]});
       },
     });
   };

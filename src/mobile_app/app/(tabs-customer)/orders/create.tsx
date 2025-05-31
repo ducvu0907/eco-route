@@ -25,8 +25,8 @@ const formSchema = z.object({
   description: z.string().nullable(),
   category: z.nativeEnum(TrashCategory),
   address: z.string().min(1, "Address is required"),
-  weight: z.number().min(0.1, "Weight must be at least 0.1 kg").max(1000, "Weight cannot exceed 1000 kg"),
-  file: z.any().nullable()
+  weight: z.number().min(0.1, "Weight must be at least 0.1 kg"),
+  file: z.any().optional()
 });
 
 type OrderForm = z.infer<typeof formSchema>;

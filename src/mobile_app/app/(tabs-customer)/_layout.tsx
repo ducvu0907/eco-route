@@ -20,6 +20,16 @@ export default function TabsCustomerLayout() {
       />
 
       <Tabs.Screen
+        name="notifications"
+        options={{
+          tabBarLabel: "Notifications",
+          tabBarIcon: ({ color, size }) => (
+            <Ionicons name="notifications-outline" size={size} color={color} />
+          ),
+        }}
+      />
+
+      <Tabs.Screen
         name="customer-info"
         options={{
           tabBarLabel: "Info",
@@ -28,6 +38,7 @@ export default function TabsCustomerLayout() {
           ),
         }}
       />
+
     </Tabs>
   );
 }

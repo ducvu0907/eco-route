@@ -124,7 +124,7 @@ export default function DemoInProgressDriverMap({ vehicle }: InProgressDriverMap
         <DemoVehicleDynamicMarker vehicle={vehicle} />
 
         {/* Order Markers */}
-        {route.orders.map((order: OrderResponse) => (
+        {route.orders.sort((a,b) => a.index as number - (b.index as number)).map((order: OrderResponse) => (
           <TouchableOpacity 
             key={order.id} 
             onPress={() => handleOrderPress(order)}

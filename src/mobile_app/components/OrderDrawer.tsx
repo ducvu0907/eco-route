@@ -6,6 +6,7 @@ import { formatDate } from "@/utils/formatDate";
 import { useEffect, useRef } from "react";
 import { useWriteVehicleRealtimeData } from "@/hooks/useWriteVehicleRealtimeData";
 import { useVehicleRealtimeData } from "@/hooks/useVehicleRealtimeData";
+import { useQueryClient } from "@tanstack/react-query";
 
 interface OrderDrawerProps {
   order: OrderResponse;
@@ -62,6 +63,7 @@ const getStatusColor = (status: OrderStatus) => {
 };
 
 export default function OrderDrawer({ order, onClose }: OrderDrawerProps) {
+  const queryClient = useQueryClient();
   const { mutate: markAsDone, isPending: isMarkingAsDone } = useMarkOrderAsDone();
   const { mutate: markAsCancelled, isPending: isMarkingAsCancelled } = useMarkOrderAsCancelled();
   const slideAnim = useRef(new Animated.Value(300)).current;
@@ -97,6 +99,7 @@ export default function OrderDrawer({ order, onClose }: OrderDrawerProps) {
   const handleMarkAsDone = () => {
     markAsDone(order.id, {
       onSuccess: () => {
+        queryClient.invalidateQueries({queryKey: ["routes", "current"]});
         handleClose();
       },
     });
@@ -123,7 +126,7 @@ export default function OrderDrawer({ order, onClose }: OrderDrawerProps) {
 
       <View className="px-6 pb-8">
         {/* Header */}
-        <View className="flex-row items-center justify-between mb-6">
+        {/* <View className="flex-row items-center justify-between mb-6">
           <View className="flex-1">
             <Text className="text-xl font-bold text-gray-800 mb-1">
               Order #{order.index || order.id.slice(-6)}
@@ -140,7 +143,7 @@ export default function OrderDrawer({ order, onClose }: OrderDrawerProps) {
           >
             <Ionicons name="close" size={20} color="#6b7280" />
           </TouchableOpacity>
-        </View>
+        </View> */}
 
         {/* Address */}
         <View className="bg-blue-50 rounded-2xl p-4 mb-4">
@@ -214,7 +217,7 @@ export default function OrderDrawer({ order, onClose }: OrderDrawerProps) {
         )}
 
         {/* Action Buttons */}
-        {/* {order.status !== OrderStatus.COMPLETED && (
+        {order.status !== OrderStatus.COMPLETED && (
           <View>
             <TouchableOpacity
               className={`rounded-2xl mb-1 ${isMarkingAsDone ? 'bg-gray-400' : 'bg-green-500'}`}
@@ -240,7 +243,7 @@ export default function OrderDrawer({ order, onClose }: OrderDrawerProps) {
                 )}
               </View>
             </TouchableOpacity>
-            <TouchableOpacity
+            {/* <TouchableOpacity
               className={`rounded-2xl mb-1 ${isMarkingAsCancelled ? 'bg-gray-400' : 'bg-red-500'}`}
               onPress={handleMarkAsCancelled}
               disabled={isMarkingAsCancelled}
@@ -263,17 +266,18 @@ export default function OrderDrawer({ order, onClose }: OrderDrawerProps) {
                   </>
                 )}
               </View>
-            </TouchableOpacity>
+            </TouchableOpacity> */}
           </View>
-        )} */}
+        )}
 
         {/* Created timestamp */}
-        <View className="flex-row items-center justify-center mt-4 pt-4 border-t border-gray-100">
+        {/* <View className="flex-row items-center justify-center mt-4 pt-4 border-t border-gray-100">
           <Ionicons name="time" size={16} color="#9ca3af" />
           <Text className="text-gray-500 text-sm ml-2">
             Created {formatDate(order.createdAt)}
           </Text>
-        </View>
+        </View> */}
+
       </View>
     </Animated.View>
   );
