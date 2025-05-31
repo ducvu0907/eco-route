@@ -1,6 +1,6 @@
 import { useCreateDepot } from "@/hooks/useDepot";
 import { useReverseLocation, useSearchLocation } from "@/hooks/useFetchLocation";
-import { DepotCreateRequest, OsmResponse } from "@/types/types";
+import { DepotCreateRequest } from "@/types/types";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";

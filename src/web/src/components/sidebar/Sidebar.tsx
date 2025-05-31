@@ -1,4 +1,4 @@
-import { Home, Warehouse, Truck, Users, Send, ShoppingCart, Map, LogOut, ChevronLeft, ChevronRight, Waypoints } from "lucide-react";
+import { Home, Warehouse, Truck, Users, Send, ShoppingCart, Map, LogOut, ChevronLeft, ChevronRight, Waypoints, Bell, Dot, Loader2 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
@@ -11,6 +11,8 @@ import {
 } from "@/components/ui/avatar";
 import { Separator } from "@/components/ui/separator";
 import { useState } from "react";
+import React from "react";
+import NotificationDropdown from "../notification/NotificationDropdown";
 
 type NavItem = {
   label: string;
@@ -26,7 +28,6 @@ const navItems: NavItem[] = [
   { label: "Users", icon: <Users className="w-5 h-5" />, key: "users", path: "/users" },
   { label: "Dispatches", icon: <Send className="w-5 h-5" />, key: "dispatches", path: "/dispatches" },
   { label: "Orders", icon: <ShoppingCart className="w-5 h-5" />, key: "orders", path: "/orders" },
-  // { label: "Map", icon: <Map className="w-5 h-5" />, key: "map", path: "/map" },
 ];
 
 function UserSection({ isCollapsed }: { isCollapsed: boolean }) {
@@ -84,14 +85,12 @@ function UserSection({ isCollapsed }: { isCollapsed: boolean }) {
               {getInitials(username)}
             </AvatarFallback>
           </Avatar>
-          <div className="flex-1 min-w-0">
+          <div className="flex-1 min-w-0 flex flex-row items-center justify-between">
             <p className="text-sm font-medium truncate">
               {username}
             </p>
-            {/* <p className="text-xs text-muted-foreground">
-              Online
-            </p> */}
           </div>
+          <NotificationDropdown />
         </div>
       </Card>
 
@@ -114,7 +113,7 @@ export default function Sidebar() {
 
   return (
     <div className={cn(
-      "h-screen bg-background border-r flex flex-col transition-all duration-300",
+      "h-screen bg-background border-r flex flex-col transition-all duration-500",
       isCollapsed ? "w-16" : "w-60"
     )}>
       {/* Header Section */}
@@ -129,7 +128,7 @@ export default function Sidebar() {
               </div>
             </div>
           )}
-          
+
           <Button
             variant="ghost"
             size="sm"
