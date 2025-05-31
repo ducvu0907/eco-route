@@ -14,7 +14,7 @@ VALUES
 
 INSERT INTO users (id, username, phone, hashed_password, fcm_token, role, created_at, updated_at)
 VALUES
-  (gen_random_uuid(), 'manager', '+8490'||floor(random()*8999999+1000000)::text, '$2a$10$l9iB8MFx6W4PdHQr29aWQerBxie/MiIfSt6oTidL9e2uBI7oBk3Me', NULL, 'MANAGER', now(), now());
+  ('manager', 'manager', '+8490'||floor(random()*8999999+1000000)::text, '$2a$10$l9iB8MFx6W4PdHQr29aWQerBxie/MiIfSt6oTidL9e2uBI7oBk3Me', NULL, 'MANAGER', now(), now());
 
 INSERT INTO users (id, username, phone, hashed_password, fcm_token, role, created_at, updated_at)
 VALUES
@@ -128,3 +128,16 @@ completed_at, created_at, updated_at, image_url, description, category, index
 -- customer9
 ('aaaaaaaa-aaaa-aaaa-aaaa-aaaa000037', '99999999-9999-9999-9999-999999999999', NULL, 21.0175, 105.8555, 'De La Thanh, Hanoi', 1.4, 'PENDING', NULL, now(), now(), 'https://placehold.co/400x300', 'Fruit seeds', 'ORGANIC', NULL),
 ('aaaaaaaa-aaaa-aaaa-aaaa-aaaa000038', '99999999-9999-9999-9999-999999999999', NULL, 21.0185, 105.8565, 'Nguyen Chi Thanh, Hanoi', 0.7, 'PENDING', NULL, now(), now(), 'https://placehold.co/400x300', 'Food scraps', 'ORGANIC', NULL);
+
+-- Replace these user IDs with actual IDs from your users table
+INSERT INTO notifications (id, user_id, content, is_read, created_at, updated_at)
+VALUES
+(gen_random_uuid(), 'manager', 'Order has been picked up', false, now(), now()),
+(gen_random_uuid(), 'manager', 'New route assigned to you', false, now(), now()),
+(gen_random_uuid(), 'manager', 'Order #1234 is in progress', true, now(), now()),
+(gen_random_uuid(), 'manager', 'Dispatch completed successfully', true, now(), now()),
+(gen_random_uuid(), 'manager', 'Vehicle assigned for order #5678', false, now(), now()),
+(gen_random_uuid(), 'manager', 'Order delayed due to traffic', false, now(), now()),
+(gen_random_uuid(), 'manager', 'Route updated with new stops', true, now(), now()),
+(gen_random_uuid(), 'manager', 'You have unread notifications', false, now(), now()),
+(gen_random_uuid(), 'manager', 'Order #7890 has been cancelled', true, now(), now());

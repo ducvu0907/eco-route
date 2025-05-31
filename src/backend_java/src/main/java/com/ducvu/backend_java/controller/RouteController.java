@@ -20,6 +20,17 @@ import java.util.List;
 public class RouteController {
   private final RouteService routeService;
 
+
+  @GetMapping("/routes")
+  public ApiResponse<List<RouteResponse>> getRoutes() {
+    log.info("Received get routes request");
+    var result = routeService.getRoutes();
+    return ApiResponse.<List<RouteResponse>>builder()
+        .message("Get routes successfully")
+        .result(result)
+        .build();
+  }
+
   @PostMapping("/routes/{routeId}/done")
   public ApiResponse<RouteResponse> markRouteAsDone(@PathVariable("routeId") String routeId) {
     log.info("Received mark route as done request");

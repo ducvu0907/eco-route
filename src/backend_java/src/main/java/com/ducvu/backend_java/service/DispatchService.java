@@ -15,6 +15,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.aspectj.weaver.ast.Or;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.support.TransactionSynchronization;
+import org.springframework.transaction.support.TransactionSynchronizationManager;
 import org.springframework.web.client.RestTemplate;
 
 import java.util.ArrayList;
@@ -35,6 +37,8 @@ public class DispatchService {
   private final Mapper mapper;
   private final RestTemplate restTemplate;
   private final NotificationService notificationService;
+  private final List<Order> ordersToNotify = new ArrayList<>();
+  private final List<Route> routesToNotify = new ArrayList<>();
 
   @Value("${vrp.api-url}")
   private String vrpApiUrl;
@@ -117,6 +121,12 @@ public class DispatchService {
     }
 
     dispatchRepository.save(runningDispatch);
+
+    notifyOrdersInProgress(ordersToNotify);
+    notifyNewRoutes(routesToNotify);
+
+    ordersToNotify.clear();
+    routesToNotify.clear();
   }
 
   // create routes for one category
@@ -209,7 +219,8 @@ public class DispatchService {
       orders.add(order);
     }
 
-    notifyOrdersInProgress(orders);
+    ordersToNotify.addAll(orders);
+    // notifyOrdersInProgress(orders);
     return orders;
   }
 
@@ -237,7 +248,8 @@ public class DispatchService {
         })
         .toList();
 
-    notifyNewRoutes(updatedRoutes);
+    routesToNotify.addAll(updatedRoutes);
+    // notifyNewRoutes(updatedRoutes);
   }
 
   private Route buildRouteFromVrp(VrpRoute vrpRoute, Dispatch dispatch) {
@@ -263,7 +275,8 @@ public class DispatchService {
         .map(vrpRoute -> buildRouteFromVrp(vrpRoute, dispatch))
         .toList();
 
-    notifyNewRoutes(routes);
+    routesToNotify.addAll(routes);
+    // notifyNewRoutes(routes);
     dispatch.getRoutes().addAll(routes);
   }
 

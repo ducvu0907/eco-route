@@ -25,6 +25,12 @@ public class RouteService {
   private final NotificationService notificationService;
   private final UserService userService;
 
+  public List<RouteResponse> getRoutes() {
+    return routeRepository.findAll().stream()
+        .map(mapper::map)
+        .toList();
+  }
+
   public RouteResponse markRouteAsDone(String routeId) {
     Route route = routeRepository.findById(routeId)
         .orElseThrow(() -> new RuntimeException("Route not found"));

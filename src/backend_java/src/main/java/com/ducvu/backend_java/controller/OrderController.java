@@ -77,7 +77,7 @@ public class OrderController {
 
   @PostMapping(value = "/orders", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
   public ApiResponse<OrderResponse> createOrder(
-      @RequestPart("request") OrderCreateRequest request, @RequestPart("file") MultipartFile file) {
+      @RequestPart("request") OrderCreateRequest request, @RequestPart(value = "file", required = false) MultipartFile file) {
     log.info("Received order create request: {}", request);
     var result = orderService.createOrder(request, file);
     return ApiResponse.<OrderResponse>builder()
@@ -98,7 +98,7 @@ public class OrderController {
 
   @PostMapping("/orders/{orderId}/done")
   public ApiResponse<OrderResponse> markOrderAsDone(@PathVariable("orderId") String orderId) {
-    log.info("Received mark order as done");
+    log.info("Received mark order as done: {}", orderId);
     var result = orderService.markOrderAsDone(orderId);
     return ApiResponse.<OrderResponse>builder()
         .message("Mark order as done successfully")
