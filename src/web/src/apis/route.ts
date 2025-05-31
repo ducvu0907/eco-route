@@ -1,6 +1,12 @@
 import { ApiResponse, RouteResponse } from "@/types/types"
 import axiosInstance from "."
 
+
+export const getRoutes = async (): Promise<ApiResponse<RouteResponse[]>> => {
+  const { data } = await axiosInstance.get("/routes");
+  return data;
+}
+
 export const getRouteById = async (routeId: string): Promise<ApiResponse<RouteResponse>> => {
   const { data } = await axiosInstance.get(`/routes/${routeId}`);
   return data;

@@ -28,6 +28,8 @@ import NoDispatch from "./NoDispatch";
 import { DispatchStatus, RouteResponse, RouteStatus, TrashCategory } from "@/types/types";
 import SingleRouteDynamicMap from "@/components/map/SingleRouteDynamicMap";
 import { formatDate } from "@/utils/formatDate";
+import { createDropdownMenuScope } from "@radix-ui/react-dropdown-menu";
+import { useQueryClient } from "@tanstack/react-query";
 
 const getCategoryBadgeVariant = (category: TrashCategory) => {
   switch (category) {
@@ -49,6 +51,7 @@ const getStatusBadgeVariant = (status: DispatchStatus | RouteStatus) => {
 };
 
 export default function CurrentDispatchDetails() {
+  const queryClient = useQueryClient();
   const { mutate: createDispatch, isPending } = useCreateDispatch();
   const { mutate: markAsDone, isPending: isMarking } = useMarkDispatchAsDone();
   const [activeTab, setActiveTab] = useState("overview");
@@ -85,6 +88,14 @@ export default function CurrentDispatchDetails() {
   const totalOrders = selectedRoute === null ? routes.reduce((sum, route) => sum + (route.orders?.length || 0), 0) : selectedRoute.orders.length;
   const totalDistance = selectedRoute === null ? routes.reduce((sum, route) => sum + route.distance, 0) : selectedRoute.distance;
   const totalDuration = selectedRoute === null ? routes.reduce((sum, route) => sum + route.duration, 0) : selectedRoute.duration;
+
+  const onSubmit = () => {
+    createDispatch(undefined, {
+      onSuccess: () => {
+        queryClient.invalidateQueries({queryKey: ["orders", "pending"]});
+      }
+    });
+  };
 
   if (!dispatch) {
     return <NoDispatch />;
@@ -130,7 +141,7 @@ export default function CurrentDispatchDetails() {
               </Badge>
               <div className="flex gap-2">
                 <Button 
-                  onClick={() => createDispatch()} 
+                  onClick={onSubmit} 
                   disabled={isPending}
                   variant="outline"
                   size="sm"

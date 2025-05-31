@@ -1,6 +1,13 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { getRouteById, getRoutesByVehicleId, getRoutesByDispatchId, getVehicleCurrentRoute, markRouteAsDone, } from "@/apis/route";
+import { getRouteById, getRoutesByVehicleId, getRoutesByDispatchId, getVehicleCurrentRoute, markRouteAsDone, getRoutes, } from "@/apis/route";
 import { ApiResponse, RouteResponse } from "@/types/types";
+
+export const useGetRoutes = () => {
+  return useQuery<ApiResponse<RouteResponse[]>>({
+    queryKey: ["routes"],
+    queryFn: () => getRoutes()
+  });
+}
 
 export const useGetRouteById = (routeId: string) => {
   return useQuery<ApiResponse<RouteResponse>>({
@@ -10,7 +17,7 @@ export const useGetRouteById = (routeId: string) => {
   });
 }
 
-export const useMarkRouteAsDone = (routeId: string) => {
+export const useMarkRouteAsDone = () => {
   const queryClient = useQueryClient();
 
   return useMutation({

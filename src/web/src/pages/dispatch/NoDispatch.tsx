@@ -9,8 +9,10 @@ import { useGetPendingOrders } from "@/hooks/useOrder";
 import { useGetVehicles } from "@/hooks/useVehicle";
 import { useState } from "react";
 import { TrashCategory } from "@/types/types";
+import { useQueryClient } from "@tanstack/react-query";
 
 export default function NoDispatch() {
+  const queryClient = useQueryClient();
   const { mutate: createDispatch, isPending } = useCreateDispatch();
   const { data: orderData } = useGetPendingOrders();
   const { data: vehicleData } = useGetVehicles();
@@ -25,6 +27,14 @@ export default function NoDispatch() {
     ? orders
     : orders.filter(order => order.category === filterCategory);
 
+  const onSubmit = () => {
+    createDispatch(undefined, {
+      onSuccess: () => {
+        queryClient.invalidateQueries({queryKey: ["orders", "pending"]});
+      }
+    });
+  };
+
   return (
     <div className="flex flex-col h-screen bg-background">
       {/* Header Stats */}
@@ -35,7 +45,7 @@ export default function NoDispatch() {
             <p className="text-muted-foreground">Review pending orders and available vehicles</p>
           </div>
           <Button
-            onClick={() => createDispatch()}
+            onClick={onSubmit}
             disabled={isPending || orders.length === 0}
             size="lg"
             className="flex items-center gap-2"

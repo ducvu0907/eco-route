@@ -61,6 +61,7 @@ function UserSection({ isCollapsed }: { isCollapsed: boolean }) {
               {getInitials(username)}
             </AvatarFallback>
           </Avatar>
+          <NotificationDropdown />
           <Button
             variant="ghost"
             size="sm"
@@ -113,7 +114,7 @@ export default function Sidebar() {
 
   return (
     <div className={cn(
-      "h-screen bg-background border-r flex flex-col transition-all duration-500",
+      "h-screen bg-background border-r flex flex-col transition-all duration-100",
       isCollapsed ? "w-16" : "w-60"
     )}>
       {/* Header Section */}
