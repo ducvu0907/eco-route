@@ -32,6 +32,7 @@ export default function OrderMarker({ order }: OrderMarkerProps) {
         <strong>Order #{order.index}</strong><br />
         <p>Address: {order.address}</p>
         <p>Weight: {order.weight}kg</p>
+        <p>Status: {order.status}kg</p>
         <Button onClick={() => navigate(`/orders/${order.id}`)}>View details</Button>
       </Popup>
     </Marker>

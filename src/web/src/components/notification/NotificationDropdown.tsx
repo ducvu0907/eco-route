@@ -50,7 +50,7 @@ export default function NotificationDropdown() {
       </Button>
 
       {open && (
-        <div className="absolute left-10 bottom-10 mt-2 w-80 bg-white dark:bg-zinc-900 shadow-lg rounded-md border z-50 overflow-hidden">
+        <div className="max-h-[500px] absolute left-10 bottom-10 mt-2 w-80 bg-white dark:bg-zinc-900 shadow-lg rounded-md border z-50 overflow-auto">
           <div className="p-3 border-b text-sm font-semibold">Notifications</div>
           <div className="max-h-80 overflow-y-auto">
             {isLoading ? (
@@ -61,7 +61,7 @@ export default function NotificationDropdown() {
             ) : notifications.length === 0 ? (
               <div className="p-4 text-muted-foreground text-sm">No notifications.</div>
             ) : (
-              notifications.slice(0, 5).map((notification) => (
+              notifications.map((notification) => (
                 <div
                   key={notification.id}
                   className={cn(
