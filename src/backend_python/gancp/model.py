@@ -261,7 +261,8 @@ def get_knn_graph(coord=None, demand=None, q=None, cost=None,
   # g.ndata['normed_demand'] = g.ndata['demand'] / g.ndata['q']
   g.ndata['scaler'] = scaler * torch.ones(n, 1)
 
-  g.apply_edges(compute_haversine_dists)  # compute distances
+  g.apply_edges(compute_dists)
+  # g.apply_edges(compute_haversine_dists)
 
   # depot masking
   is_depot = torch.zeros(n, 1)
@@ -292,32 +293,36 @@ def get_knn_graph(coord=None, demand=None, q=None, cost=None,
   return g, metadata
 
 def get_normed_xy_and_scaler(coords, depot_center: bool = False):
-    x, y = coords[:, 0], coords[:, 1]
-    bot, left = min(y), min(x)
+  x, y = coords[:, 0].copy(), coords[:, 1].copy()
+  bot, left = np.min(y), np.min(x)
 
-    if left < 0:
-      x += left
+  if left < 0:
+    x += abs(left)
 
-    if bot < 0:  
-      y += bot
+  if bot < 0:  
+    y += abs(bot)
 
-    top, right = max(y), max(x)
-    scaler = np.sqrt(top ** 2 + right ** 2)
-    normed_x, normed_y = x / right, y / top
+  top, right = np.max(y), np.max(x)
 
-    if depot_center:
-      normed_x -= normed_x[0]
-      normed_y -= normed_y[0]
+  # Prevent division by zero
+  top = top if top != 0 else 1e-8
+  right = right if right != 0 else 1e-8
 
-    metadata = {
-      'right': right,
-      'top': top,
-      'depot': coords[0],
-      'scaler': scaler,
-    }
+  scaler = np.sqrt(top ** 2 + right ** 2)
+  normed_x, normed_y = x / right, y / top
 
-    return normed_x, normed_y, metadata
+  if depot_center:
+    normed_x -= normed_x[0]
+    normed_y -= normed_y[0]
 
+  metadata = {
+    'right': right,
+    'top': top,
+    'depot': coords[0],
+    'scaler': scaler,
+  }
+
+  return normed_x, normed_y, metadata
 
 def set_seed(seed: int, use_cuda: bool):
     random.seed(seed)

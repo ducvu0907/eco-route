@@ -75,6 +75,30 @@ def batch_fitness_cost(instance, population):
   return costs
 
 
+def single_predict_cost(instance, individual):
+  clusters = chromosome_to_clusters(instance, individual)
+
+  coords = []
+  demands = []
+  Qs = []
+
+  for depot_index, cluster in enumerate(clusters):
+    coord = list(np.array(instance.customers)[cluster].copy())
+    coord.insert(0, instance.depots[depot_index])
+    coords.append(coord)
+
+    dem = [instance.demands[cust] for cust in cluster]
+    dem.insert(0, 0.0)
+    demands.append(dem)
+
+    Qs.append(instance.vehicle_loads[depot_index])
+
+  mini_batch_len = 2
+  route_costs = batch_prediction(coords, demands, Qs, len(coords), mini_batch_len)
+
+  return sum(route_costs)
+
+
 def single_predict(coord, demand, Q):
   model.eval()
   g, meta = get_knn_graph(coord=coord, demand=demand, q=Q)
@@ -86,6 +110,19 @@ def single_predict(coord, demand, Q):
   pred_val = pred.cpu().item() * meta['cost_scaler']
   return pred_val
 
+# def single_predict_cost(instance, individual):
+#   clusters = chromosome_to_clusters(instance, individual)
+#   total_cost = 0.0
+
+#   for depot_index, cluster in enumerate(clusters):
+#     coord = list(np.array(instance.customers)[cluster].copy())
+#     coord.insert(0, instance.depots[depot_index])
+#     dem = [instance.demands[cust] for cust in cluster]
+#     dem.insert(0, 0.0)
+#     route_cost = single_predict(coord, dem, instance.vehicle_loads[depot_index])
+#     total_cost += route_cost
+
+#   return total_cost
 
 # TODO
 def single_fitness_score():
@@ -151,8 +188,8 @@ def compute_euclidean_2d_matrix(xs, ys):
   return dist_matrix
 
 
-def hgs_cvrp(instance: MDVRPInstance, hgs_time_limit=1.0, dist_type: Literal["euclidean", "harversine"] = "euclidean"):
-  ap = hgs.AlgorithmParameters(timeLimit=hgs_time_limit)
+def hgs_cvrp(instance: MDVRPInstance, hgs_time_limit = 1.0, dist_type: Literal["euclidean", "harversine"] = "euclidean"):
+  ap = hgs.AlgorithmParameters(timeLimit=hgs_time_limit, targetFeasible=0.5)
   solver = hgs.Solver(parameters=ap)
   x, y = coords_to_xy(instance.customers)
   demand = instance.demands
@@ -175,7 +212,7 @@ def hgs_cvrp(instance: MDVRPInstance, hgs_time_limit=1.0, dist_type: Literal["eu
 
 def hgs_solutions(instance, top_solutions, hgs_time_limit, dist_type: Literal["euclidean", "harversine"] = "euclidean"):
   ap = hgs.AlgorithmParameters(timeLimit=hgs_time_limit)
-  solver = hgs.Solver(parameters=ap)
+  solver = hgs.Solver(parameters=ap, verbose=True)
 
   list_len = len(top_solutions)
   customers = list(range(instance.N))
@@ -238,42 +275,21 @@ def hgs_solutions(instance, top_solutions, hgs_time_limit, dist_type: Literal["e
   return costs, mdvrp_routes
 
 
+# ===============
+# REFINED SECTION
+# ===============
+def adaptive_diversity_weight(generation, total_generations, min_w=0.3, max_w=0.95):
+  decay = 1 - (generation / total_generations)
+  return min_w + (max_w - min_w) * decay
 
-# test inference
-if __name__ == "__main__":
-  coords = np.array([
-    [10.0, 10.0],
-    [12.0, 18.0],
-    [20.0, 25.0],
-    [25.0, 12.0],
-    [30.0, 30.0],
-    [35.0, 20.0],
-    [40.0, 10.0],
-    [45.0, 25.0],
-    [50.0, 15.0],
-    [55.0, 30.0],
-  ])
+def fitness_scores_refined(costs, diversities, w1, generation, generations, excess_demands, infeas_penalty=0.2):
+  costs = np.array(costs, dtype=float)
+  costs /= np.sum(costs)
 
-  demands = np.array([0, 2, 1, 3, 2, 1, 2, 1, 3, 2])
-  Q = 10
-  n = len(demands)
+  excess_demands = np.array(excess_demands, dtype=float)
+  diversities = np.array(diversities, dtype=float)
 
-  # predict with gancp
-  pred = single_predict(coords, demands, Q)
-  
+  w2 = adaptive_diversity_weight(generation, generations)
 
-  # solve with hgs
-  ap = hgs.AlgorithmParameters(timeLimit=1.0)
-  solver = hgs.Solver(parameters=ap, verbose=False)
-
-  data = dict()
-  data["x_coordinates"] = coords[:, 0]
-  data["y_coordinates"] = coords[:, 1]
-  data["depot"] = 0
-  data["demands"] = demands
-  data["vehicle_capacity"] = Q
-  data['service_times'] = np.zeros(len(demands))
-  result = solver.solve_cvrp(data)
-
-  print(pred)
-  print(result.cost)
+  score = w1 * costs - w2 * diversities + infeas_penalty * costs * excess_demands
+  return score

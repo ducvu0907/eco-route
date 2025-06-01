@@ -39,7 +39,6 @@ def read_mdvrp_cordeau(file_name):
     lines = f.readlines()
 
   header = lines[0].split()
-  print(header)
   M = int(header[1])
   N = int(header[2])
   D = int(header[3])

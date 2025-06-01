@@ -577,10 +577,23 @@ def _solve_dynamic_mdvrp(request: RoutingRequest):
       old_dist = route.distance
       old_points = [depot.location] + [j.location for j in route.steps] + [depot.location]
       # best pos
-      for pos in range(len(route.steps) + 1):
-        new_points = old_points[:pos] + [job.location] + old_points[pos:]
-        new_dist = _calculate_route_distance(new_points)
-        diff = new_dist - old_dist
+      remaining_steps, continue_index = find_remaining_route(route)
+      remaining_points = [vehicle.location] + [s.location for s in remaining_steps] + [depot.location]
+      remaining_dist = _calculate_route_distance(remaining_points)
+
+      # for pos in range(len(route.steps) + 1):
+      #   new_points = old_points[:pos] + [job.location] + old_points[pos:]
+      #   new_dist = _calculate_route_distance(new_points)
+      #   diff = new_dist - old_dist
+      #   if diff < best_diff:
+      #     best_diff = diff
+      #     best_route = route
+      #     best_pos = pos
+
+      for pos in range(continue_index, len(route.steps) + 1):
+        new_remaining_points = remaining_points[:pos] + [job.location] + remaining_points[pos:]
+        new_remaining_dist = _calculate_route_distance(new_remaining_points)
+        diff = new_remaining_dist - remaining_dist
         if diff < best_diff:
           best_diff = diff
           best_route = route
@@ -605,7 +618,6 @@ def _solve_dynamic_mdvrp(request: RoutingRequest):
   for job in job_id_to_job.values():
     pass
 
-  
   unassigned = job_id_to_job.values()
   return RoutingResponse(routes=updated_routes, unassigned=unassigned)
 
@@ -616,7 +628,7 @@ def _parse_static_request(request: RoutingRequest):
   N = len(request.jobs)
   vehicle_counts = Counter(v.depot_id for v in request.vehicles)
   num_vehicles = [vehicle_counts.get(d.id, 0) for d in request.depots]
-  print(num_vehicles)
+  # print(num_vehicles)
   customers = [j.location for j in request.jobs]
   demands = [j.demand for j in request.jobs]
   depots = [d.location for d in request.depots]
@@ -637,3 +649,11 @@ def _parse_static_request(request: RoutingRequest):
     num_customers,
     num_depots
   )
+
+def find_remaining_route(route: Route):
+  steps = route.steps
+  i = 0
+  while i < len(steps) and steps[i].status == "completed":
+    i += 1
+
+  return steps[i:], i

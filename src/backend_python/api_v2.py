@@ -43,6 +43,7 @@ class Job(BaseModel):
   id: str
   location: List[float]
   demand: float
+  status: Literal["completed", "in_progress", "pending"]
 
 class Route(BaseModel):
   vehicle_id: str

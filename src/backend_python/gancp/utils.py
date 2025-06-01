@@ -99,3 +99,33 @@ def improve_infeasible(instance, individual):
 
 
   return clusters_to_chromosome(instance, clusters)
+
+
+# ===============
+# REFINED SECTION
+# ===============
+def compute_adaptive_repair_prob_avg_excess(generation, generations, avg_excess, base_prob=0.5, max_prob=0.8):
+    # Increase over time + respond to high excess demand
+  time_factor = generation / generations
+  excess_factor = min(1.0, avg_excess / 100.0)  # normalize based on threshold
+
+  adaptive_prob = base_prob + 0.5 * time_factor + 0.5 * excess_factor
+  return min(max_prob, adaptive_prob)
+
+def compute_adaptive_repair_prob_infeasible_ratio(generation, generations, infeasible_ratio, base=0.5, max_p=0.8):
+  slope = (max_p - base)
+  return min(max_p, base + slope * (infeasible_ratio + generation / generations))
+
+def repair_infeasibles_refined(instance, population, infeasibilities, excess_demands, generation=0, generations=10):
+  infeasible_ratio = sum(infeasibilities) / len(infeasibilities)
+  avg_excess = sum(excess_demands) / len(population)
+
+  repair_prob = compute_adaptive_repair_prob_infeasible_ratio(generation, generations, infeasible_ratio)
+  
+  for index, infeasible in enumerate(infeasibilities):
+    if infeasible and random.random() < repair_prob:
+      population[index] = improve_infeasible(instance, population[index])
+      excess_demands[index] = 0
+      infeasibilities[index] = False
+
+  return population, infeasibilities, excess_demands
