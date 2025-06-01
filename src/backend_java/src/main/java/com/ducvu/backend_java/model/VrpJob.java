@@ -16,4 +16,5 @@ public class VrpJob {
   private String id;
   private List<Double> location;
   private Double demand;
+  private String status; // completed, in_progress, pending
 }

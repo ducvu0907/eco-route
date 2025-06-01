@@ -156,6 +156,7 @@ public class Mapper {
         .id(order.getId())
         .location(List.of(order.getLatitude(), order.getLongitude()))
         .demand(order.getWeight())
+        .status(order.getStatus() == OrderStatus.COMPLETED ? "completed" : (order.getStatus() == OrderStatus.IN_PROGRESS ? "in_progress" : "pending"))
         .build();
   }
 

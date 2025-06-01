@@ -6,13 +6,10 @@ import java.util.Collection;
 import java.util.List;
 
 import jakarta.persistence.*;
+import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
@@ -22,6 +19,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
+@EqualsAndHashCode(exclude = {"orders","vehicle"})
 public class User implements UserDetails {
   @Id
   @GeneratedValue(strategy = GenerationType.UUID)
