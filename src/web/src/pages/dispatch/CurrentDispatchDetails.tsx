@@ -224,6 +224,7 @@ export default function CurrentDispatchDetails() {
         {/* Map */}
         <div className="h-[calc(100%-280px)]">
           {selectedRoute == null ? <MultiRoutesDynamicMap routes={routes} /> : <SingleRouteDynamicMap route={selectedRoute}/>}
+          {/* <MultiRoutesDynamicMap routes={selectedRoute ? [selectedRoute] : routes}/> */}
         </div>
       </div>
 

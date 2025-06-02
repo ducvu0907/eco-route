@@ -21,9 +21,7 @@ export default function SingleRouteDynamicMap({ route }: SingleRouteDynamicMapPr
     return <p className="text-muted-foreground">No orders found for this route.</p>;
   }
 
-  const orderPositions: LatLngExpression[] = orders.map(order => [order.latitude, order.longitude]);
-
-  const center: LatLngExpression = orderPositions[0];
+  const center: LatLngExpression = [route.vehicle.currentLatitude, route.vehicle.currentLongitude]
 
   return (
     <div className="w-full h-full">

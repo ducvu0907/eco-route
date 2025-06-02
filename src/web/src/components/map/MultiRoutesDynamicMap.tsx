@@ -17,8 +17,7 @@ export default function MultiRoutesDynamicMap({ routes }: MultiRoutesDynamicMapP
     return <p className="text-muted-foreground">No routes to display.</p>;
   }
 
-  const firstOrder = routes[0].orders[0];
-  const center: LatLngExpression = [firstOrder.latitude, firstOrder.longitude];
+  const center: LatLngExpression = [routes[0].vehicle.currentLatitude, routes[0].vehicle.currentLongitude];
 
   return (
     <Card className="w-full h-full">
@@ -29,7 +28,7 @@ export default function MultiRoutesDynamicMap({ routes }: MultiRoutesDynamicMapP
             url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
           />
 
-          {routes.map((route, idx) => {
+          {routes.map((route, _) => {
             return (
               <div key={route.id}>
                 <VehicleDynamicMarker vehicle={route.vehicle} />

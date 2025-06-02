@@ -9,6 +9,7 @@ import { Button } from "@/components/ui/button";
 import { formatDate } from "@/utils/formatDate";
 import { useGetRouteById } from "@/hooks/useRoute";
 import { OrderStatus, TrashCategory } from "@/types/types";
+import { AspectRatio } from "@/components/ui/aspect-ratio";
 import SingleRouteDynamicMap from "@/components/map/SingleRouteDynamicMap";
 import SingleRouteStaticMap from "@/components/map/SingleRouteStaticMap";
 import {
@@ -271,6 +272,19 @@ export default function OrderDetails() {
                   <p className="text-sm text-muted-foreground">{order.description}</p>
                 </div>
               )}
+
+              {order.imageUrl && (
+                <div className="">
+                  <AspectRatio ratio={16/9}>
+                    <img
+                      src={order.imageUrl}
+                      alt="Demo"
+                      className="rounded-md object-cover w-full h-full"
+                    />
+                  </AspectRatio>
+                </div>
+              )}
+
             </CardContent>
           </Card>
 
