@@ -38,7 +38,7 @@ def get_directions(points: List[List[float]], profile: Literal["driving-car", "d
     duration_min = route['features'][0]['properties']['summary']['duration'] / 60
     # print(json.dumps(route, indent=4))
 
-    print(route)
+    # print(route)
     
     return geometry, distance_km, duration_min
 

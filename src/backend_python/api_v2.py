@@ -52,6 +52,12 @@ class Route(BaseModel):
   duration: Optional[float]
   geometry: Optional[Geometry]
 
+  def __str__(self):
+    return (f"Route(vehicle_id='{self.vehicle_id}', "
+                f"steps={self.steps}, "
+                f"distance={self.distance}, "
+                f"duration={self.duration})")
+
 class RoutingRequest(BaseModel):
   depots: List[Depot]
   vehicles: List[Vehicle]
@@ -89,7 +95,7 @@ async def handle_exception(request: Request, e: Exception):
 @app.post("/api/vrp", response_model=RoutingResponse)
 def solve_vrp(request: RoutingRequest):
   from solver import solve
-  logger.info(f"Incoming VRP request: {request}")
+  # logger.info(f"Incoming VRP request: {request}")
   solution = solve(request)
-  logger.info(f"Solver returned solution: {solution}")
+  # logger.info(f"Solver returned solution: {solution}")
   return solution

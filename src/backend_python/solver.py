@@ -3,8 +3,9 @@ import hygese as hgs
 import math
 import os
 import subprocess
-from api_v2 import Route, RoutingRequest, RoutingResponse, logger
-from typing import List, Dict
+from api_v2 import Route, RoutingRequest, RoutingResponse, logger, Job
+from alns_solver import VRPState, alns_optimize
+from typing import List, Dict, Tuple
 from collections import defaultdict
 from vrplib import read_instance, read_solution
 from ors import get_distance_matrix, get_directions
@@ -554,8 +555,8 @@ def _solve_dynamic_mdvrp(request: RoutingRequest):
   depot_id_to_depot = {depot.id:depot for depot in request.depots}
   vehicle_id_to_depot = {vehicle.id:depot_id_to_depot[vehicle.depot_id] for vehicle in request.vehicles}
   vehicle_id_to_vehicle = {vehicle.id:vehicle for vehicle in request.vehicles}
-  updated_routes = [] # only track modified routes
-  job_id_to_job = {job.id:job for job in request.jobs}
+  all_routes = request.routes
+  job_id_to_job = {job.id:job for job in request.jobs} # hold unassigned jobs
 
   # compute current load of each route
   vehicle_id_to_load = defaultdict(float)
@@ -566,16 +567,17 @@ def _solve_dynamic_mdvrp(request: RoutingRequest):
 
   for job in request.jobs:
     # best insertion with capacity constraint in current active routes
-    best_diff, best_route, best_pos = float("inf"), None, None
-    for route in vehicle_id_to_route.values():
+    best_diff, best_route, best_pos, best_route_idx = float("inf"), None, None, -1
+    for i, route in enumerate(all_routes):
       load = vehicle_id_to_load[route.vehicle_id]
       vehicle = vehicle_id_to_vehicle[vehicle_id]
       if load + job.demand > vehicle.capacity:
         continue
 
       depot = vehicle_id_to_depot[route.vehicle_id]
-      old_dist = route.distance
-      old_points = [depot.location] + [j.location for j in route.steps] + [depot.location]
+      # old_dist = route.distance
+      # old_points = [depot.location] + [j.location for j in route.steps] + [depot.location]
+
       # best pos
       remaining_steps, continue_index = find_remaining_route(route)
       remaining_points = [vehicle.location] + [s.location for s in remaining_steps] + [depot.location]
@@ -590,35 +592,97 @@ def _solve_dynamic_mdvrp(request: RoutingRequest):
       #     best_route = route
       #     best_pos = pos
 
-      for pos in range(continue_index, len(route.steps) + 1):
-        new_remaining_points = remaining_points[:pos] + [job.location] + remaining_points[pos:]
+      for pos in range(len(remaining_steps) + 1):
+        new_remaining_steps = remaining_steps[:pos] + [job] + remaining_steps[pos:]
+        new_remaining_points = [vehicle.location] + [s.location for s in new_remaining_steps] + [depot.location]
         new_remaining_dist = _calculate_route_distance(new_remaining_points)
         diff = new_remaining_dist - remaining_dist
         if diff < best_diff:
           best_diff = diff
           best_route = route
-          best_pos = pos
+          best_pos = pos + continue_index
+          best_route_idx = i
     
-    if best_route and best_pos:
+    if best_route is not None and best_pos is not None:
       best_route.steps.insert(best_pos, job)
       vehicle_id_to_route[best_route.vehicle_id] = best_route
-      updated_routes.append(best_route)
+      all_routes[best_route_idx] = best_route
+      del job_id_to_job[job.id]
+
+    else:
+      # create new route if no insertion found
+      assigned_vehicle_ids = set(vehicle_id_to_route.keys())
+      unassigned_vehicles = [v for v in request.vehicles if v.id not in assigned_vehicle_ids and v.capacity >= job.demand]
+      if not unassigned_vehicles:
+        continue
+
+      vehicle = unassigned_vehicles[0]
+      depot = depot_id_to_depot[vehicle.depot_id]
+      steps = [job]
+      # points = [depot.location] + [job.location] + [depot.location]
+      new_route = Route(
+        vehicle_id=vehicle.id,
+        steps=steps,
+        distance=0.0,
+        duration=0.0,
+        geometry=None
+      )
+      vehicle_id_to_route[vehicle.id] = new_route
+      all_routes.append(new_route)
       del job_id_to_job[job.id]
   
-  # update metadata for modified routes
+  unassigned = list(job_id_to_job.values())
+  
+  # best insertion state
+  logger.info("Finished best insertion phase")
+  for route in all_routes:
+    print([step.id for step in route.steps])
+  for job in unassigned:
+    print("Unassigned job: ")
+    print(job.id)
+
+  # build changeable jobs (jobs that aren't completed including those in progress and pending jobs)
+  changeable_jobs = []
+  for route in request.routes:
+    for job in route.steps:
+      if job.status == "in_progress":
+        changeable_jobs.append(job)
+  changeable_jobs.extend(request.jobs)
+
+  # alns
+  initial_state = VRPState(
+    depots=request.depots,
+    routes=all_routes,
+    vehicles=request.vehicles,
+    jobs=changeable_jobs,
+    unassigned=unassigned
+  )
+  updated_routes, unassigned = alns_optimize(initial_state)
+
+  # alns state
+  logger.info("Finished ALNS phase")
+  for route in updated_routes:
+    print([step.id for step in route.steps])
+  for job in unassigned:
+    print(job.id)
+
+  # local search and update metadata for all updated routes
   for i, route in enumerate(updated_routes):
     depot = vehicle_id_to_depot[route.vehicle_id]
     vehicle = vehicle_id_to_vehicle[route.vehicle_id]
-    points = [depot.location] + [s.location for s in route.steps] + [depot.location]
+    updated_route = _intra_route_local_search(route, vehicle, depot)
+    points = [depot.location] + [s.location for s in updated_route.steps] + [depot.location]
     geometry, distance, duration = get_directions(points, vehicle.profile)
-    updated_routes[i] = Route(vehicle_id=route.vehicle_id, steps=route.steps, distance=distance, duration=duration, geometry=geometry)
+    updated_routes[i] = Route(vehicle_id=updated_route.vehicle_id, steps=updated_route.steps, distance=distance, duration=duration, geometry=geometry)
+    # updated_routes[i] = Route(vehicle_id=updated_route.vehicle_id, steps=updated_route.steps, distance=None, duration=None, geometry=None)
 
+  # local search state
+  logger.info("Finished local search phase")
+  for route in updated_routes:
+    print([step.id for step in route.steps])
+  for job in unassigned:
+    print(job.id)
 
-  # TODO: handle solving job
-  for job in job_id_to_job.values():
-    pass
-
-  unassigned = job_id_to_job.values()
   return RoutingResponse(routes=updated_routes, unassigned=unassigned)
 
 
@@ -657,3 +721,67 @@ def find_remaining_route(route: Route):
     i += 1
 
   return steps[i:], i
+
+
+# local search
+def _intra_route_local_search(route, vehicle, depot):
+  remaining_steps, remaining_idx = find_remaining_route(route)
+  fixed_prefix = route.steps[:remaining_idx]
+  segment = remaining_steps
+
+  for operator in [_two_opt, _swap, _relocate]:
+    new_segment, improved = operator(segment, vehicle, depot)
+    if improved:
+      print("Local search improved")
+      segment = new_segment
+      break  # restart operator loop on first improvement
+
+  route.steps = fixed_prefix + segment
+  return route
+
+def _two_opt(steps, vehicle, depot):
+  best = steps
+  improved = False
+  best_dist = _calculate_route_distance([vehicle.location] + [s.location for s in steps] + [depot.location])
+  for i in range(1, len(steps) - 1):
+    for j in range(i + 1, len(steps)):
+      if j - i == 1: continue
+      new_steps = steps[:i] + steps[i:j][::-1] + steps[j:]
+      new_dist = _calculate_route_distance([vehicle.location] + [s.location for s in new_steps] + [depot.location])
+      if new_dist < best_dist:
+        best = new_steps
+        best_dist = new_dist
+        improved = True
+  return best, improved
+
+def _swap(steps, vehicle, depot):
+  best = steps[:]
+  improved = False
+  best_dist = _calculate_route_distance([vehicle.location] + [s.location for s in steps] + [depot.location])
+  for i in range(len(steps) - 1):
+      for j in range(i + 1, len(steps)):
+        new_steps = steps[:]
+        new_steps[i], new_steps[j] = new_steps[j], new_steps[i]
+        new_dist = _calculate_route_distance([vehicle.location] + [s.location for s in new_steps] + [depot.location])
+        if new_dist < best_dist:
+          best = new_steps
+          best_dist = new_dist
+          improved = True
+  return best, improved
+
+def _relocate(steps, vehicle, depot):
+  best = steps[:]
+  improved = False
+  best_dist = _calculate_route_distance([vehicle.location] + [s.location for s in steps] + [depot.location])
+  for i in range(len(steps)):
+    for j in range(len(steps)):
+      if i == j: continue
+      new_steps = steps[:]
+      job = new_steps.pop(i)
+      new_steps.insert(j, job)
+      new_dist = _calculate_route_distance([vehicle.location] + [s.location for s in new_steps] + [depot.location])
+      if new_dist < best_dist:
+        best = new_steps
+        best_dist = new_dist
+        improved = True
+  return best, improved
