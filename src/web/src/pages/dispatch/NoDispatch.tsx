@@ -10,12 +10,14 @@ import { useGetVehicles } from "@/hooks/useVehicle";
 import { useState } from "react";
 import { TrashCategory } from "@/types/types";
 import { useQueryClient } from "@tanstack/react-query";
+import { useTranslation } from "react-i18next";
 
 export default function NoDispatch() {
   const queryClient = useQueryClient();
   const { mutate: createDispatch, isPending } = useCreateDispatch();
   const { data: orderData } = useGetPendingOrders();
   const { data: vehicleData } = useGetVehicles();
+  const { t } = useTranslation();
 
   const orders = orderData?.result || [];
   const vehicles = vehicleData?.result || [];
@@ -41,8 +43,8 @@ export default function NoDispatch() {
       <div className="p-6 border-b bg-muted/30">
         <div className="flex items-center justify-between mb-4">
           <div>
-            <h1 className="text-2xl font-bold">Create New Dispatch</h1>
-            <p className="text-muted-foreground">Review pending orders and available vehicles</p>
+            <h1 className="text-2xl font-bold">{t("noDispatch.header.title")}</h1>
+            <p className="text-muted-foreground">{t("noDispatch.header.subtitle")}</p>
           </div>
           <Button
             onClick={onSubmit}
@@ -51,7 +53,7 @@ export default function NoDispatch() {
             className="flex items-center gap-2"
           >
             <Zap className="w-4 h-4" />
-            {isPending ? "Creating..." : "Create Dispatch"}
+            {isPending ? t("noDispatch.header.creatingButton") : t("noDispatch.header.createButton")}
           </Button>
         </div>
 
@@ -63,7 +65,7 @@ export default function NoDispatch() {
                   <Package className="w-5 h-5 text-blue-600" />
                 </div>
                 <div>
-                  <p className="text-sm text-muted-foreground">Pending Orders</p>
+                  <p className="text-sm text-muted-foreground">{t("noDispatch.stats.pendingOrders")}</p>
                   <p className="text-2xl font-bold">{orders.length}</p>
                 </div>
               </div>
@@ -77,7 +79,7 @@ export default function NoDispatch() {
                   <Truck className="w-5 h-5 text-green-600" />
                 </div>
                 <div>
-                  <p className="text-sm text-muted-foreground">Available Vehicles</p>
+                  <p className="text-sm text-muted-foreground">{t("noDispatch.stats.availableVehicles")}</p>
                   <p className="text-2xl font-bold">{vehicles.length}</p>
                 </div>
               </div>
@@ -91,8 +93,8 @@ export default function NoDispatch() {
                   <Package className="w-5 h-5 text-orange-600" />
                 </div>
                 <div>
-                  <p className="text-sm text-muted-foreground">Total Weight</p>
-                  <p className="text-2xl font-bold">{totalWeight}kg</p>
+                  <p className="text-sm text-muted-foreground">{t("noDispatch.stats.totalWeight")}</p>
+                  <p className="text-2xl font-bold">{totalWeight}{t("noDispatch.stats.weightUnit")}</p>
                 </div>
               </div>
             </CardContent>
@@ -107,7 +109,7 @@ export default function NoDispatch() {
           className="cursor-pointer"
           onClick={() => setFilterCategory("ALL")}
         >
-          All
+          {t("noDispatch.filters.all")}
         </Badge>
         {Object.values(TrashCategory).map((category) => (
           <Badge
@@ -116,7 +118,7 @@ export default function NoDispatch() {
             className="cursor-pointer"
             onClick={() => setFilterCategory(category)}
           >
-            {category.toLowerCase().replace(/\b\w/g, l => l.toUpperCase())}
+            {t(`noDispatch.filters.category.${category.toLowerCase()}`)}
           </Badge>
         ))}
       </div>

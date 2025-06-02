@@ -25,17 +25,10 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import MapModalInput from "@/components/map/MapModalInput";
 import { Input } from "@/components/ui/input";
-import { Loader2, MapPin, Search, Navigation, Building2, LoaderPinwheel, Loader } from "lucide-react";
+import { Loader2, MapPin, Search, Navigation, Building2, Loader } from "lucide-react";
 import SearchDropdown from "@/components/depot/SearchDropdown";
 import { useToast } from "@/hooks/useToast";
-
-const formSchema = z.object({
-  address: z.string(),
-  latitude: z.coerce.number(),
-  longitude: z.coerce.number(),
-});
-
-type FormValues = z.infer<typeof formSchema>;
+import { useTranslation } from "react-i18next";
 
 interface DepotCreateModalProps {
   isOpen: boolean;
@@ -47,6 +40,16 @@ export default function DepotCreateModal({ isOpen, onClose }: DepotCreateModalPr
   const [searchQuery, setSearchQuery] = useState<string | null>(null);
   const [debouncedQuery, setDebouncedQuery] = useState<string | null>(null);
   const { mutate: createDepot, isPending } = useCreateDepot();
+  const { t } = useTranslation();
+
+  const formSchema = z.object({
+    address: z.string().min(1, t("depotCreateModal.validation.addressRequired")),
+    latitude: z.coerce.number().min(1, t("depotCreateModal.validation.latitudeRequired")),
+    longitude: z.coerce.number().min(1, t("depotCreateModal.validation.longitudeRequired")),
+  });
+
+  type FormValues = z.infer<typeof formSchema>;
+
   const form = useForm<FormValues>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -128,7 +131,7 @@ export default function DepotCreateModal({ isOpen, onClose }: DepotCreateModalPr
             <div className="p-2 bg-blue-100 rounded-lg">
               <Building2 className="h-5 w-5 text-blue-600" />
             </div>
-            Create New Depot
+            {t("depotCreateModal.title")}
           </DialogTitle>
         </DialogHeader>
 
@@ -140,7 +143,7 @@ export default function DepotCreateModal({ isOpen, onClose }: DepotCreateModalPr
                 <CardHeader className="pb-4">
                   <CardTitle className="flex items-center gap-2 text-base">
                     <Search className="h-4 w-4 text-slate-600" />
-                    Find Location
+                    {t("depotCreateModal.findLocationCard.title")}
                   </CardTitle>
                 </CardHeader>
                 <CardContent className="space-y-4">
@@ -149,7 +152,7 @@ export default function DepotCreateModal({ isOpen, onClose }: DepotCreateModalPr
                       <div className="relative flex-1">
                         {isSearching ? <Loader className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-slate-400"/> : <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-slate-400" />}
                         <Input
-                          placeholder="Search for an address..."
+                          placeholder={t("depotCreateModal.findLocationCard.searchPlaceholder")}
                           value={searchQuery || ""}
                           onChange={(e) => setSearchQuery(e.target.value)}
                           className="pl-10 pr-4 h-11 border-slate-300 focus:border-blue-500 focus:ring-blue-500"
@@ -173,7 +176,7 @@ export default function DepotCreateModal({ isOpen, onClose }: DepotCreateModalPr
                   {!hasLocation && (
                     <div className="text-center py-8 text-slate-500">
                       <MapPin className="h-12 w-12 mx-auto mb-3 text-slate-300" />
-                      <p className="text-sm">Search for a location or use the map picker</p>
+                      <p className="text-sm">{t("depotCreateModal.findLocationCard.mapPickerPlaceholder")}</p>
                     </div>
                   )}
                 </CardContent>
@@ -184,7 +187,7 @@ export default function DepotCreateModal({ isOpen, onClose }: DepotCreateModalPr
                 <CardHeader className="pb-4">
                   <CardTitle className="flex items-center gap-2 text-base">
                     <Navigation className="h-4 w-4 text-slate-600" />
-                    Location Details
+                    {t("depotCreateModal.locationDetailsCard.title")}
                     {hasLocation && (
                       <Badge variant="secondary" className="ml-auto bg-green-100 text-green-700 border-green-200">
                         <MapPin className="h-3 w-3 mr-1" />
@@ -198,19 +201,19 @@ export default function DepotCreateModal({ isOpen, onClose }: DepotCreateModalPr
                     name="address"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel className="text-sm font-medium text-slate-700">Address</FormLabel>
+                        <FormLabel className="text-sm font-medium text-slate-700">{t("depotCreateModal.locationDetailsCard.addressLabel")}</FormLabel>
                         <FormControl>
                           <div className="relative">
                             {isReversing ? (
                               <div className="flex items-center justify-center h-11 border border-slate-300 rounded-md bg-slate-50">
                                 <Loader2 className="h-4 w-4 animate-spin text-slate-400" />
-                                <span className="ml-2 text-sm text-slate-500">Locating...</span>
+                                <span className="ml-2 text-sm text-slate-500">{t("depotCreateModal.locationDetailsCard.locatingText")}</span>
                               </div>
                             ) : (
                               <Input 
                                 {...field} 
                                 className={`h-11 ${address ? 'bg-white border-green-300' : 'bg-slate-50 border-slate-300'}`}
-                                placeholder="Address will appear here"
+                                placeholder={t("depotCreateModal.locationDetailsCard.addressPlaceholder")}
                                 readOnly={hasLocation}
                               />
                             )}
@@ -227,7 +230,7 @@ export default function DepotCreateModal({ isOpen, onClose }: DepotCreateModalPr
                       name="latitude"
                       render={({ field }) => (
                         <FormItem>
-                          <FormLabel className="text-sm font-medium text-slate-700">Latitude</FormLabel>
+                          <FormLabel className="text-sm font-medium text-slate-700">{t("depotCreateModal.locationDetailsCard.latitudeLabel")}</FormLabel>
                           <FormControl>
                             <Input 
                               type="number" 
@@ -247,7 +250,7 @@ export default function DepotCreateModal({ isOpen, onClose }: DepotCreateModalPr
                       name="longitude"
                       render={({ field }) => (
                         <FormItem>
-                          <FormLabel className="text-sm font-medium text-slate-700">Longitude</FormLabel>
+                          <FormLabel className="text-sm font-medium text-slate-700">{t("depotCreateModal.locationDetailsCard.longitudeLabel")}</FormLabel>
                           <FormControl>
                             <Input 
                               type="number" 
@@ -274,7 +277,7 @@ export default function DepotCreateModal({ isOpen, onClose }: DepotCreateModalPr
                 onClick={onClose}
                 className="h-11 px-6"
               >
-                Cancel
+                {t("depotCreateModal.footer.cancelButton")}
               </Button>
               <Button 
                 type="submit" 
@@ -284,12 +287,12 @@ export default function DepotCreateModal({ isOpen, onClose }: DepotCreateModalPr
                 {isPending || isReversing ? (
                   <>
                     <Loader2 className="mr-2 h-4 w-4 animate-spin" /> 
-                    Creating...
+                    {t("depotCreateModal.footer.creatingButton")}
                   </>
                 ) : (
                   <>
                     <Building2 className="mr-2 h-4 w-4" />
-                    Create Depot
+                    {t("depotCreateModal.footer.createButton")}
                   </>
                 )}
               </Button>

@@ -29,8 +29,8 @@ import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { useGetDepots } from "@/hooks/useDepot";
-import { useGetDriversNotAssigned, useGetUsers } from "@/hooks/useUser";
-import { useEffect, useState } from "react";
+import { useGetDriversNotAssigned } from "@/hooks/useUser";
+import { useEffect } from "react";
 import { DepotResponse, Role, UserResponse, VehicleResponse, VehicleStatus } from "@/types/types";
 import { useUpdateVehicle } from "@/hooks/useVehicle";
 import { useQueryClient } from "@tanstack/react-query";
@@ -46,6 +46,7 @@ import {
   X,
   Info
 } from "lucide-react";
+import { useTranslation } from "react-i18next"; // Import useTranslation
 
 interface VehicleUpdateModalProps {
   isOpen: boolean;
@@ -64,6 +65,7 @@ type VehicleFormValues = z.infer<typeof vehicleSchema>;
 export default function VehicleUpdateModal({ isOpen, onClose, vehicle }: VehicleUpdateModalProps) {
   const queryClient = useQueryClient();
   const { mutate: updateVehicle, isPending } = useUpdateVehicle();
+  const { t } = useTranslation(); // Initialize useTranslation
 
   const { data: depotsData, isLoading: isDepotsLoading, isError: isDepotsError } = useGetDepots();
   const depots = depotsData?.result;
@@ -112,6 +114,8 @@ export default function VehicleUpdateModal({ isOpen, onClose, vehicle }: Vehicle
       {
         onSuccess: () => {
           queryClient.invalidateQueries({ queryKey: ["drivers", "not-assigned"] });
+          queryClient.invalidateQueries({ queryKey: ["vehicles"] }); // Invalidate general vehicles query
+          queryClient.invalidateQueries({ queryKey: ["depots"] }); // Invalidate depots if depotId might change
           onClose();
         },
       }
@@ -132,7 +136,7 @@ export default function VehicleUpdateModal({ isOpen, onClose, vehicle }: Vehicle
           <DialogHeader>
             <DialogTitle className="flex items-center space-x-2">
               <Loader2 className="h-5 w-5 animate-spin text-blue-600" />
-              <span>Loading Vehicle Data</span>
+              <span>{t("vehicleUpdateModal.loading.title")}</span>
             </DialogTitle>
           </DialogHeader>
           <div className="py-8">
@@ -142,7 +146,7 @@ export default function VehicleUpdateModal({ isOpen, onClose, vehicle }: Vehicle
                 <div className="w-2 h-2 bg-blue-600 rounded-full animate-bounce" style={{ animationDelay: '0.1s' }}></div>
                 <div className="w-2 h-2 bg-blue-600 rounded-full animate-bounce" style={{ animationDelay: '0.2s' }}></div>
               </div>
-              <p className="text-gray-600">Fetching depots and drivers...</p>
+              <p className="text-gray-600">{t("vehicleUpdateModal.loading.message")}</p>
             </div>
           </div>
         </DialogContent>
@@ -157,18 +161,18 @@ export default function VehicleUpdateModal({ isOpen, onClose, vehicle }: Vehicle
           <DialogHeader>
             <DialogTitle className="flex items-center space-x-2 text-red-600">
               <AlertCircle className="h-5 w-5" />
-              <span>Error Loading Data</span>
+              <span>{t("vehicleUpdateModal.error.title")}</span>
             </DialogTitle>
           </DialogHeader>
           <Alert className="border-red-200 bg-red-50">
             <AlertCircle className="h-4 w-4 text-red-600" />
             <AlertDescription className="text-red-800">
-              Failed to load depot and driver information. Please check your connection and try again.
+              {t("vehicleUpdateModal.error.description")}
             </AlertDescription>
           </Alert>
           <DialogFooter>
             <Button onClick={() => onClose()} variant="outline">
-              Close
+              {t("vehicleUpdateModal.error.closeButton")}
             </Button>
           </DialogFooter>
         </DialogContent>
@@ -185,9 +189,12 @@ export default function VehicleUpdateModal({ isOpen, onClose, vehicle }: Vehicle
               <Truck className="h-5 w-5 text-blue-600" />
             </div>
             <div>
-              <span>Update Vehicle</span>
+              <span>{t("vehicleUpdateModal.header.title")}</span>
               <div className="text-sm font-normal text-gray-600 mt-1">
-                {vehicle.licensePlate} • {vehicle.type}
+                {t("vehicleUpdateModal.header.subtitle", { 
+                  licensePlate: vehicle.licensePlate, 
+                  vehicleType: vehicle.type.replace(/_/g, ' ').toLowerCase().replace(/\b\w/g, l => l.toUpperCase()) // Format type for display
+                })}
               </div>
             </div>
           </DialogTitle>
@@ -197,29 +204,29 @@ export default function VehicleUpdateModal({ isOpen, onClose, vehicle }: Vehicle
         <div className="bg-gray-50 rounded-lg p-4 mb-6">
           <h3 className="font-medium text-gray-900 mb-3 flex items-center space-x-2">
             <Info className="h-4 w-4" />
-            <span>Current Vehicle Information</span>
+            <span>{t("vehicleUpdateModal.currentInfoCard.title")}</span>
           </h3>
           <div className="grid grid-cols-2 gap-4 text-sm">
             <div>
-              <span className="text-gray-600">License Plate:</span>
+              <span className="text-gray-600">{t("vehicleUpdateModal.currentInfoCard.licensePlate")}</span>
               <p className="font-medium">{vehicle.licensePlate}</p>
             </div>
             <div>
-              <span className="text-gray-600">Current Status:</span>
+              <span className="text-gray-600">{t("vehicleUpdateModal.currentInfoCard.currentStatus")}</span>
               <Badge className={`ml-2 mt-1 ${getStatusColor(vehicle.status)}`}>
                 <div className="flex items-center space-x-1">
                   {getStatusIcon(vehicle.status)}
-                  <span>{vehicle.status}</span>
+                  <span>{t(`vehicleUpdateModal.vehicleStatus.${vehicle.status}`)}</span>
                 </div>
               </Badge>
             </div>
             <div>
-              <span className="text-gray-600">Current Driver:</span>
+              <span className="text-gray-600">{t("vehicleUpdateModal.currentInfoCard.currentDriver")}</span>
               <p className="font-medium">{vehicle.driver.username}</p>
             </div>
             <div>
-              <span className="text-gray-600">Capacity:</span>
-              <p className="font-medium">{vehicle.capacity} kg</p>
+              <span className="text-gray-600">{t("vehicleUpdateModal.currentInfoCard.capacity")}</span>
+              <p className="font-medium">{vehicle.capacity} {t("vehicleUpdateModal.currentInfoCard.unit")}</p>
             </div>
           </div>
         </div>
@@ -236,12 +243,12 @@ export default function VehicleUpdateModal({ isOpen, onClose, vehicle }: Vehicle
                 <FormItem>
                   <FormLabel className="flex items-center space-x-2">
                     <MapPin className="h-4 w-4" />
-                    <span>Depot Assignment</span>
+                    <span>{t("vehicleUpdateModal.formFields.depotAssignment.label")}</span>
                   </FormLabel>
                   <Select onValueChange={field.onChange} value={field.value ?? ""}>
                     <FormControl>
                       <SelectTrigger className="h-11">
-                        <SelectValue placeholder="Select a depot location" />
+                        <SelectValue placeholder={t("vehicleUpdateModal.formFields.depotAssignment.placeholder")} />
                       </SelectTrigger>
                     </FormControl>
                     <SelectContent>
@@ -256,7 +263,7 @@ export default function VehicleUpdateModal({ isOpen, onClose, vehicle }: Vehicle
                     </SelectContent>
                   </Select>
                   <FormDescription>
-                    Select the depot where this vehicle will be stationed
+                    {t("vehicleUpdateModal.formFields.depotAssignment.description")}
                   </FormDescription>
                   <FormMessage />
                 </FormItem>
@@ -271,12 +278,12 @@ export default function VehicleUpdateModal({ isOpen, onClose, vehicle }: Vehicle
                 <FormItem>
                   <FormLabel className="flex items-center space-x-2">
                     <User className="h-4 w-4" />
-                    <span>Driver Assignment</span>
+                    <span>{t("vehicleUpdateModal.formFields.driverAssignment.label")}</span>
                   </FormLabel>
                   <Select onValueChange={field.onChange} value={field.value ?? ""}>
                     <FormControl>
                       <SelectTrigger className="h-11">
-                        <SelectValue placeholder="Select a driver" />
+                        <SelectValue placeholder={t("vehicleUpdateModal.formFields.driverAssignment.placeholder")} />
                       </SelectTrigger>
                     </FormControl>
                     <SelectContent>
@@ -285,7 +292,9 @@ export default function VehicleUpdateModal({ isOpen, onClose, vehicle }: Vehicle
                         <div className="flex items-center space-x-2">
                           <User className="h-4 w-4 text-blue-500" />
                           <span>{vehicle.driver.username}</span>
-                          <Badge variant="outline" className="ml-2 text-xs">Current</Badge>
+                          <Badge variant="outline" className="ml-2 text-xs">
+                            {t("vehicleUpdateModal.formFields.driverAssignment.currentDriverBadge")}
+                          </Badge>
                         </div>
                       </SelectItem>
                       {/* Available drivers */}
@@ -294,14 +303,16 @@ export default function VehicleUpdateModal({ isOpen, onClose, vehicle }: Vehicle
                           <div className="flex items-center space-x-2">
                             <User className="h-4 w-4 text-gray-400" />
                             <span>{driver.username}</span>
-                            <span className="text-xs text-gray-500 ml-2">({driver.phone})</span>
+                            <span className="text-xs text-gray-500 ml-2">
+                              {t("vehicleUpdateModal.formFields.driverAssignment.driverPhone", { phone: driver.phone })}
+                            </span>
                           </div>
                         </SelectItem>
                       ))}
                     </SelectContent>
                   </Select>
                   <FormDescription>
-                    Assign a driver to operate this vehicle. Only unassigned drivers are shown.
+                    {t("vehicleUpdateModal.formFields.driverAssignment.description")}
                   </FormDescription>
                   <FormMessage />
                 </FormItem>
@@ -316,12 +327,12 @@ export default function VehicleUpdateModal({ isOpen, onClose, vehicle }: Vehicle
                 <FormItem>
                   <FormLabel className="flex items-center space-x-2">
                     <AlertCircle className="h-4 w-4" />
-                    <span>Vehicle Status</span>
+                    <span>{t("vehicleUpdateModal.formFields.vehicleStatus.label")}</span>
                   </FormLabel>
                   <Select onValueChange={field.onChange} value={field.value}>
                     <FormControl>
                       <SelectTrigger className="h-11">
-                        <SelectValue placeholder="Select vehicle status" />
+                        <SelectValue placeholder={t("vehicleUpdateModal.formFields.vehicleStatus.placeholder")} />
                       </SelectTrigger>
                     </FormControl>
                     <SelectContent>
@@ -329,15 +340,21 @@ export default function VehicleUpdateModal({ isOpen, onClose, vehicle }: Vehicle
                         <SelectItem key={status} value={status}>
                           <div className="flex items-center space-x-2">
                             {getStatusIcon(status)}
-                            <span>{status}</span>
+                            <span>{t(`vehicleUpdateModal.vehicleStatus.${status}`)}</span>
                             {status === VehicleStatus.ACTIVE && (
-                              <span className="text-xs text-gray-500 ml-2">(Ready for routes)</span>
+                              <span className="text-xs text-gray-500 ml-2">
+                                {t("vehicleUpdateModal.formFields.vehicleStatus.descriptions.ACTIVE")}
+                              </span>
                             )}
                             {status === VehicleStatus.IDLE && (
-                              <span className="text-xs text-gray-500 ml-2">(Waiting for assignment)</span>
+                              <span className="text-xs text-gray-500 ml-2">
+                                {t("vehicleUpdateModal.formFields.vehicleStatus.descriptions.IDLE")}
+                              </span>
                             )}
                             {status === VehicleStatus.REPAIR && (
-                              <span className="text-xs text-gray-500 ml-2">(Under maintenance)</span>
+                              <span className="text-xs text-gray-500 ml-2">
+                                {t("vehicleUpdateModal.formFields.vehicleStatus.descriptions.REPAIR")}
+                              </span>
                             )}
                           </div>
                         </SelectItem>
@@ -345,7 +362,7 @@ export default function VehicleUpdateModal({ isOpen, onClose, vehicle }: Vehicle
                     </SelectContent>
                   </Select>
                   <FormDescription>
-                    Set the operational status of the vehicle
+                    {t("vehicleUpdateModal.formFields.vehicleStatus.description")}
                   </FormDescription>
                   <FormMessage />
                 </FormItem>
@@ -361,7 +378,7 @@ export default function VehicleUpdateModal({ isOpen, onClose, vehicle }: Vehicle
                 className="flex items-center space-x-2"
               >
                 <X className="h-4 w-4" />
-                <span>Cancel</span>
+                <span>{t("vehicleUpdateModal.footer.cancelButton")}</span>
               </Button>
               <Button 
                 type="submit" 
@@ -371,12 +388,12 @@ export default function VehicleUpdateModal({ isOpen, onClose, vehicle }: Vehicle
                 {isPending ? (
                   <>
                     <Loader2 className="h-4 w-4 animate-spin" />
-                    <span>Updating...</span>
+                    <span>{t("vehicleUpdateModal.footer.updatingButton")}</span>
                   </>
                 ) : (
                   <>
                     <Save className="h-4 w-4" />
-                    <span>Update Vehicle</span>
+                    <span>{t("vehicleUpdateModal.footer.updateButton")}</span>
                   </>
                 )}
               </Button>

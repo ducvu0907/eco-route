@@ -4,6 +4,7 @@ import { Role } from "@/types/types";
 import NotFound from "../NotFound";
 import DriverVehicle from "@/components/user/DriverVehicle";
 import { formatDate } from "@/utils/formatDate";
+import { useTranslation } from "react-i18next";
 import {
   User,
   Phone,
@@ -33,6 +34,8 @@ import CustomerOrders from "@/components/user/CustomerOrders";
 
 export default function UserDetails() {
   const { userId } = useParams<string>();
+  const { t } = useTranslation();
+
   if (!userId) return <NotFound />;
 
   const {
@@ -67,9 +70,9 @@ export default function UserDetails() {
       <div className="p-8">
         <Alert variant="destructive">
           <AlertCircle className="h-5 w-5" />
-          <AlertTitle className="font-semibold">Error</AlertTitle>
+          <AlertTitle className="font-semibold">{t("userDetails.error.title")}</AlertTitle>
           <AlertDescription>
-            Failed to load user details. Please try again later.
+            {t("userDetails.error.description")}
           </AlertDescription>
         </Alert>
       </div>
@@ -84,28 +87,28 @@ export default function UserDetails() {
         return (
           <Badge variant="default" className="flex items-center gap-1">
             <Shield className="w-4 h-4" />
-            Manager
+            {t("userDetails.roles.manager")}
           </Badge>
         );
       case Role.DRIVER:
         return (
           <Badge variant="secondary" className="flex items-center gap-1">
             <Truck className="w-4 h-4" />
-            Driver
+            {t("userDetails.roles.driver")}
           </Badge>
         );
       case Role.CUSTOMER:
         return (
           <Badge variant="outline" className="flex items-center gap-1">
             <ShoppingCart className="w-4 h-4" />
-            Customer
+            {t("userDetails.roles.customer")}
           </Badge>
         );
       default:
         return (
           <Badge variant="outline" className="flex items-center gap-1">
             <User className="w-4 h-4" />
-            Unknown
+            {t("userDetails.roles.unknown")}
           </Badge>
         );
     }
@@ -119,9 +122,9 @@ export default function UserDetails() {
           <User className="h-7 w-7 text-muted-foreground" />
         </div>
         <div>
-          <h1 className="text-3xl font-bold tracking-tight">User Details</h1>
+          <h1 className="text-3xl font-bold tracking-tight">{t("userDetails.header.title")}</h1>
           <p className="text-muted-foreground text-sm">
-            Manage and view full profile and data
+            {t("userDetails.header.subtitle")}
           </p>
         </div>
       </div>
@@ -131,7 +134,7 @@ export default function UserDetails() {
         <CardHeader className="pb-4">
           <div className="flex items-center justify-between">
             <CardTitle className="text-xl font-semibold text-foreground">
-              Profile Information
+              {t("userDetails.profileCard.title")}
             </CardTitle>
             {getRoleBadge(user.role)}
           </div>
@@ -144,7 +147,7 @@ export default function UserDetails() {
               </div>
               <div>
                 <p className="text-sm font-medium text-muted-foreground">
-                  Username
+                  {t("userDetails.profileCard.username")}
                 </p>
                 <p className="text-base font-semibold">{user.username}</p>
               </div>
@@ -156,7 +159,7 @@ export default function UserDetails() {
               </div>
               <div>
                 <p className="text-sm font-medium text-muted-foreground">
-                  Phone
+                  {t("userDetails.profileCard.phone")}
                 </p>
                 <p className="text-base font-semibold">{user.phone}</p>
               </div>
@@ -172,7 +175,7 @@ export default function UserDetails() {
               </div>
               <div>
                 <p className="text-sm font-medium text-muted-foreground">
-                  Account Created
+                  {t("userDetails.profileCard.accountCreated")}
                 </p>
                 <p className="text-sm font-semibold">{formatDate(user.createdAt)}</p>
               </div>
@@ -184,7 +187,7 @@ export default function UserDetails() {
               </div>
               <div>
                 <p className="text-sm font-medium text-muted-foreground">
-                  Last Updated
+                  {t("userDetails.profileCard.lastUpdated")}
                 </p>
                 <p className="text-sm font-semibold">{formatDate(user.updatedAt)}</p>
               </div>
@@ -198,7 +201,7 @@ export default function UserDetails() {
         <div className="space-y-4">
           <div className="flex items-center gap-2">
             <Truck className="h-5 w-5 text-muted-foreground" />
-            <h2 className="text-xl font-semibold tracking-tight">Vehicle Assignment</h2>
+            <h2 className="text-xl font-semibold tracking-tight">{t("userDetails.driverSection.title")}</h2>
           </div>
           <DriverVehicle driverId={userId} />
         </div>
@@ -208,7 +211,7 @@ export default function UserDetails() {
         <div className="space-y-4">
           <div className="flex items-center gap-2">
             <ShoppingCart className="h-5 w-5 text-muted-foreground" />
-            <h2 className="text-xl font-semibold tracking-tight">Order History</h2>
+            <h2 className="text-xl font-semibold tracking-tight">{t("userDetails.customerSection.title")}</h2>
           </div>
           <CustomerOrders userId={userId} />
         </div>

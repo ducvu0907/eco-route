@@ -1,0 +1,892 @@
+{
+  "orderManagement": {
+    "pageTitle": "Quản lý Đơn hàng",
+    "pageDescription": "Quản lý và theo dõi tất cả các đơn hàng thu gom rác thải ({count} tổng cộng)",
+    "filters": {
+      "category": {
+        "label": "Danh mục:",
+        "all": "Tất cả",
+        "general": "Tổng hợp",
+        "organic": "Hữu cơ",
+        "recyclable": "Tái chế",
+        "hazardous": "Nguy hại",
+        "electronic": "Điện tử"
+      },
+      "status": {
+        "label": "Trạng thái:",
+        "all": "Tất cả",
+        "completed": "Đã hoàn thành",
+        "inProgress": "Đang tiến hành",
+        "pending": "Đang chờ xử lý",
+        "cancelled": "Đã hủy"
+      },
+      "date": {
+        "from": "Từ:",
+        "end": "Đến:",
+        "clear": "Xóa"
+      }
+    },
+    "mapCard": {
+      "title": "Bản đồ Đơn hàng"
+    },
+    "listCard": {
+      "title": "Danh sách Đơn hàng",
+      "statusSummary": {
+        "completed": "Đã hoàn thành",
+        "inProgress": "Đang tiến hành",
+        "pending": "Đang chờ xử lý"
+      },
+      "noOrdersFound": {
+        "title": "Không tìm thấy Đơn hàng",
+        "description": "Không có đơn hàng nào khớp với các bộ lọc đã chọn."
+      },
+      "orderCard": {
+        "noAddressProvided": "Không có địa chỉ",
+        "descriptionLabel": "Mô tả:",
+        "weightUnit": "kg",
+        "viewButton": "Xem",
+        "completedAt": "Hoàn thành: {date}"
+      }
+    },
+    "loadingState": {
+      "title": "Quản lý Đơn hàng",
+      "description": "Quản lý và theo dõi tất cả các đơn hàng thu gom rác thải"
+    },
+    "errorState": {
+      "title": "Lỗi khi tải Đơn hàng",
+      "description": "Không thể tải đơn hàng. Vui lòng kiểm tra kết nối của bạn và thử lại."
+    }
+  },
+  "login": {
+    "welcomeBack": "Chào mừng trở lại",
+    "enterCredentials": "Nhập thông tin đăng nhập của bạn để truy cập tài khoản",
+    "usernameLabel": "Tên người dùng",
+    "usernamePlaceholder": "Nhập tên người dùng của bạn",
+    "passwordLabel": "Mật khẩu",
+    "passwordPlaceholder": "Nhập mật khẩu của bạn",
+    "signInButton": "Đăng nhập",
+    "loggingInButton": "Đang đăng nhập...",
+    "noAccountPrompt": "Chưa có tài khoản?",
+    "createAccountLink": "Tạo một tài khoản tại đây",
+    "validation": {
+      "usernameRequired": "Tên người dùng là bắt buộc",
+      "passwordRequired": "Mật khẩu là bắt buộc"
+    }
+  },
+  "register": {
+    "createAccount": "Tạo tài khoản",
+    "enterInfo": "Nhập thông tin của bạn để bắt đầu",
+    "usernameLabel": "Tên người dùng",
+    "usernamePlaceholder": "Nhập tên người dùng của bạn",
+    "passwordLabel": "Mật khẩu",
+    "passwordPlaceholder": "Nhập mật khẩu của bạn",
+    "phoneLabel": "Điện thoại",
+    "phonePlaceholder": "Nhập số điện thoại của bạn",
+    "roleLabel": "Vai trò",
+    "selectRolePlaceholder": "Chọn một vai trò",
+    "roleCustomer": "Khách hàng",
+    "roleDriver": "Tài xế",
+    "roleManager": "Quản lý",
+    "registerButton": "Tạo tài khoản",
+    "creatingAccountButton": "Đang tạo tài khoản...",
+    "alreadyHaveAccountPrompt": "Đã có tài khoản?",
+    "signInLink": "Đăng nhập tại đây",
+    "validation": {
+      "usernameRequired": "Tên người dùng là bắt buộc",
+      "passwordRequired": "Mật khẩu là bắt buộc",
+      "phoneRequired": "Số điện thoại là bắt buộc",
+      "roleRequired": "Vai trò là bắt buộc"
+    }
+  },
+  "userManagement": {
+    "header": {
+      "title": "Quản lý Người dùng",
+      "subtitle": "{{filteredCount}} trên tổng số {{totalCount}} người dùng được hiển thị"
+    },
+    "stats": {
+      "customers": "Khách hàng",
+      "drivers": "Tài xế",
+      "managers": "Quản lý",
+      "filteredBadge": "Đã lọc"
+    },
+    "table": {
+      "allUsers": "Tất cả người dùng",
+      "filtered": "Đã lọc",
+      "columns": {
+        "user": {
+          "title": "Người dùng",
+          "searchPlaceholder": "Tìm kiếm tên người dùng..."
+        },
+        "contact": {
+          "title": "Liên hệ",
+          "searchPlaceholder": "Tìm kiếm số điện thoại..."
+        },
+        "role": {
+          "title": "Vai trò",
+          "filterHint": "Nhấp vào số liệu thống kê để lọc",
+          "showing": "Đang hiển thị: {{role}}"
+        },
+        "created": {
+          "title": "Đã tạo",
+          "searchPlaceholder": "Tìm kiếm ngày..."
+        },
+        "lastUpdated": {
+          "title": "Cập nhật lần cuối",
+          "searchPlaceholder": "Tìm kiếm ngày..."
+        }
+      },
+      "empty": {
+        "noUsersFound": "Không tìm thấy người dùng",
+        "description": "Người dùng sẽ xuất hiện ở đây khi họ được thêm vào hệ thống."
+      },
+      "noFilterMatch": {
+        "title": "Không có người dùng nào khớp với bộ lọc của bạn",
+        "description": "Thử điều chỉnh tiêu chí tìm kiếm hoặc xóa bộ lọc"
+      }
+    },
+    "error": {
+      "title": "Lỗi khi tải Người dùng",
+      "description": "Không thể tải người dùng. Vui lòng kiểm tra kết nối của bạn và thử lại."
+    }
+  },
+  "depotManagement": {
+    "pageTitle": "Quản lý Kho",
+    "depotCount": "{{count}} kho có sẵn",
+    "searchPlaceholder": "Tìm kiếm theo địa chỉ",
+    "createDepotButton": "Tạo Kho",
+    "noDepotsFound": {
+      "searchMatch": "Không có kho nào khớp với tìm kiếm của bạn",
+      "noDepots": "Không tìm thấy kho nào",
+      "getDescription": "Bắt đầu bằng cách tạo kho đầu tiên của bạn",
+      "createButton": "Tạo Kho Đầu Tiên Của Bạn"
+    },
+    "card": {
+      "noAddress": "Không có địa chỉ",
+      "vehiclesLabel": "Phương tiện",
+      "createdAt": "Đã tạo",
+      "viewButton": "Xem",
+      "deleteButton": "Xóa"
+    },
+    "alertDialog": {
+      "title": "Bạn có chắc chắn không?",
+      "description": "Hành động này không thể hoàn tác. Điều này sẽ xóa vĩnh viễn kho tại ",
+      "cancelButton": "Hủy",
+      "confirmDeleteButton": "Xóa",
+      "deletingButton": "Đang xóa..."
+    },
+    "loadingState": {
+      "title": "Quản lý Kho"
+    },
+    "errorState": {
+      "title": "Lỗi",
+      "description": "Không thể tải kho. Vui lòng thử lại sau."
+    }
+  },
+  "orderDetails": {
+    "header": {
+      "title": "Chi tiết Đơn hàng",
+      "orderId": "Mã đơn hàng: {{orderId}}"
+    },
+    "status": {
+      "completed": "Đã hoàn thành",
+      "inProgress": "Đang tiến hành",
+      "pending": "Đang chờ xử lý",
+      "cancelled": "Đã hủy"
+    },
+    "infoCard": {
+      "title": "Thông tin Đơn hàng",
+      "location": "Vị trí",
+      "noAddress": "Không có địa chỉ",
+      "weight": "Trọng lượng",
+      "kg": "kg",
+      "category": "Danh mục",
+      "createdAt": "Đã tạo:",
+      "updatedAt": "Cập nhật:",
+      "completedAt": "Hoàn thành:",
+      "description": "Mô tả"
+    },
+    "mapSection": {
+      "titleInProgress": "Theo dõi Tuyến đường",
+      "titleCompleted": "Tóm tắt Tuyến đường"
+    },
+    "customerCard": {
+      "title": "Thông tin Khách hàng",
+      "unavailable": "Thông tin khách hàng không có sẵn",
+      "viewProfile": "Xem Hồ sơ Khách hàng"
+    },
+    "actionsCard": {
+      "title": "Hành động",
+      "goToDispatch": "Đi đến điều phối",
+      "viewRouteDetails": "Xem chi tiết tuyến đường",
+      "backToOrders": "Quay lại Đơn hàng"
+    },
+    "routeInfoCard": {
+      "title": "Thông tin Tuyến đường",
+      "distance": "km",
+      "duration": "phút",
+      "vehicle": "Phương tiện:",
+      "driver": "Tài xế:",
+      "stopNumber": "Điểm dừng #:"
+    },
+    "categories": {
+      "general": "Tổng hợp",
+      "organic": "Hữu cơ",
+      "recyclable": "Tái chế",
+      "hazardous": "Nguy hại",
+      "electronic": "Điện tử"
+    }
+  },
+  "userDetails": {
+    "header": {
+      "title": "Chi tiết Người dùng",
+      "subtitle": "Quản lý và xem hồ sơ đầy đủ và dữ liệu"
+    },
+    "profileCard": {
+      "title": "Thông tin Hồ sơ",
+      "username": "Tên người dùng",
+      "phone": "Điện thoại",
+      "accountCreated": "Tài khoản đã tạo",
+      "lastUpdated": "Cập nhật lần cuối"
+    },
+    "roles": {
+      "manager": "Quản lý",
+      "driver": "Tài xế",
+      "customer": "Khách hàng",
+      "unknown": "Không xác định"
+    },
+    "driverSection": {
+      "title": "Phân công Phương tiện"
+    },
+    "customerSection": {
+      "title": "Lịch sử Đơn hàng"
+    },
+    "error": {
+      "title": "Lỗi",
+      "description": "Không thể tải chi tiết người dùng. Vui lòng thử lại sau."
+    }
+  },
+  "vehicleManagement": {
+    "header": {
+      "title": "Quản lý Phương tiện",
+      "subtitle": "Quản lý đội xe {{count}} của bạn",
+      "addVehicle": "Thêm Phương tiện"
+    },
+    "filters": {
+      "title": "Bộ lọc",
+      "allTypes": "Tất cả loại",
+      "allCategories": "Tất cả danh mục",
+      "allStatuses": "Tất cả trạng thái",
+      "clearFilters": "Xóa bộ lọc",
+      "resultsCount": {
+        "one": "{{count}} phương tiện",
+        "other": "{{count}} phương tiện"
+      },
+      "activeFilters": {
+        "type": "Loại:",
+        "category": "Danh mục:"
+      }
+    },
+    "vehicleCard": {
+      "capacity": "Dung tích",
+      "kg": "kg",
+      "category": "Danh mục",
+      "driver": "Tài xế",
+      "created": "Đã tạo",
+      "view": "Xem",
+      "delete": "Xóa",
+      "deleteDialog": {
+        "title": "Xóa Phương tiện",
+        "description": "Bạn có chắc chắn muốn xóa phương tiện có biển số {{licensePlate}} không? Hành động này không thể hoàn tác và sẽ xóa vĩnh viễn tất cả dữ liệu liên quan.",
+        "cancel": "Hủy",
+        "confirm": "Xóa Phương tiện",
+        "deleting": "Đang xóa..."
+      }
+    },
+    "emptyState": {
+      "noMatchTitle": "Không có phương tiện nào khớp với bộ lọc của bạn",
+      "noMatchDescription": "Thử điều chỉnh bộ lọc của bạn để xem thêm kết quả.",
+      "noVehiclesFoundTitle": "Không tìm thấy phương tiện nào",
+      "noVehiclesFoundDescription": "Bắt đầu bằng cách thêm phương tiện đầu tiên vào đội xe.",
+      "clearFiltersButton": "Xóa Tất cả Bộ lọc",
+      "addFirstVehicleButton": "Thêm Phương tiện Đầu tiên Của Bạn"
+    },
+    "status": {
+      "ACTIVE": "Hoạt động",
+      "IDLE": "Rảnh rỗi",
+      "REPAIR": "Sửa chữa"
+    },
+    "category": {
+      "GENERAL": "Tổng hợp",
+      "ORGANIC": "Hữu cơ",
+      "RECYCLABLE": "Tái chế",
+      "HAZARDOUS": "Nguy hại",
+      "ELECTRONIC": "Điện tử"
+    },
+    "type": {
+      "THREE_WHEELER": "Xe ba bánh",
+      "COMPACTOR_TRUCK": "Xe tải ép rác"
+    },
+    "error": {
+      "title": "Lỗi khi tải Phương tiện",
+      "description": "Không thể tải phương tiện. Vui lòng kiểm tra kết nối của bạn và thử lại."
+    }
+  },
+  "vehicleDetails": {
+    "header": {
+      "title": "Chi tiết Phương tiện",
+      "subtitle": "Quản lý và giám sát thông tin phương tiện",
+      "editButton": "Chỉnh sửa Phương tiện"
+    },
+    "vehicleInfoCard": {
+      "title": "Thông tin Phương tiện",
+      "licensePlate": "Biển số xe",
+      "status": "Trạng thái",
+      "capacity": "Dung tích",
+      "currentLoad": "Tải trọng hiện tại",
+      "fullPercentage": "{{percentage}}% đầy",
+      "driver": "Tài xế",
+      "depot": "Kho",
+      "kg": "kg"
+    },
+    "routesCard": {
+      "title": "Tuyến đường ({{count}})",
+      "noRoutes": {
+        "heading": "Không có tuyến đường nào cho phương tiện này.",
+        "description": "Phương tiện này chưa được chỉ định tuyến đường nào."
+      },
+      "routeIdPrefix": "Tuyến đường #",
+      "routeStatus": {
+        "inProgress": "Đang tiến hành",
+        "completed": "Đã hoàn thành"
+      },
+      "distance": "Khoảng cách",
+      "orders": "Đơn hàng",
+      "duration": "Thời lượng",
+      "minutes": "phút",
+      "completed": "Đã hoàn thành:",
+      "goToDispatch": "Đi đến điều phối"
+    },
+    "mapSection": {
+      "title": "Bản đồ Tuyến đường",
+      "selectRouteBadge": "Tuyến đường #{{routeIdLast8}}",
+      "emptyState": {
+        "heading": "Chọn một Tuyến đường",
+        "description": "Chọn một tuyến đường từ danh sách trên để xem trên bản đồ"
+      }
+    },
+    "status": {
+      "ACTIVE": "Hoạt động",
+      "IDLE": "Rảnh rỗi",
+      "REPAIR": "Sửa chữa"
+    }
+  },
+  "depotDetails": {
+    "error": {
+      "title": "Lỗi khi tải Kho",
+      "description": "Không thể tải chi tiết kho. Vui lòng thử lại sau."
+    },
+    "overview": {
+      "title": "Chi tiết Kho",
+      "subtitle": "Tổng quan toàn diện về kho thu gom chất thải này"
+    },
+    "actions": {
+      "editDepot": "Chỉnh sửa Kho",
+      "addVehicle": "Thêm Phương tiện",
+      "addFirstVehicle": "Thêm Phương tiện Đầu tiên Của Bạn",
+      "details": "Chi tiết"
+    },
+    "metrics": {
+      "totalVehicles": "Tổng số Phương tiện",
+      "activeVehicles": "Phương tiện Đang hoạt động",
+      "totalLoad": "Tổng tải trọng (kg)",
+      "avgLoad": "Tải trọng TB (kg)"
+    },
+    "info": {
+      "title": "Thông tin Kho",
+      "address": "Địa chỉ",
+      "noAddress": "Không có địa chỉ",
+      "coordinates": "Tọa độ",
+      "created": "Đã tạo vào",
+      "updated": "Cập nhật lần cuối"
+    },
+    "vehicles": {
+      "title": "Phương tiện ({{count}})",
+      "subtitle": "Phương tiện được phân công cho kho này",
+      "empty": {
+        "title": "Chưa có Phương tiện nào ở đây",
+        "description": "Có vẻ như không có phương tiện nào được phân công cho kho này. Hãy thêm phương tiện đầu tiên của bạn để bắt đầu!"
+      }
+    },
+    "vehicle": {
+      "licensePlate": "Biển số xe",
+      "status": "Trạng thái",
+      "loadStatus": "Trạng thái tải",
+      "location": "Vị trí",
+      "unknown": "Không xác định"
+    }
+  },
+  "dispatchManagement": {
+    "error": {
+      "title": "Lỗi khi tải Điều phối",
+      "description": "Không thể tải thông tin điều phối. Vui lòng kiểm tra kết nối của bạn và thử lại."
+    },
+    "header": {
+      "title": "Quản lý Điều phối",
+      "currentDispatchButton": "Điều phối Hiện tại"
+    },
+    "stats": {
+      "totalDispatches": "Tổng số Điều phối",
+      "completed": "Đã hoàn thành",
+      "inProgress": "Đang tiến hành"
+    },
+    "filters": {
+      "fromLabel": "Từ:",
+      "toLabel": "Đến:",
+      "clearFilters": "Xóa Bộ lọc"
+    },
+    "table": {
+      "title": "Lịch sử Điều phối",
+      "totalRecords": "{{count}} tổng số bản ghi",
+      "header": {
+        "dispatchId": "Mã Điều phối",
+        "status": "Trạng thái",
+        "completedAt": "Hoàn thành vào",
+        "createdAt": "Tạo vào",
+        "lastUpdated": "Cập nhật lần cuối",
+        "actions": "Hành động"
+      },
+      "statusPending": "Đang chờ xử lý",
+      "noDispatches": {
+        "title": "Không tìm thấy Điều phối",
+        "description": "Hiện tại không có điều phối nào trong hệ thống. Các điều phối sẽ xuất hiện ở đây khi chúng được tạo và phân công cho phương tiện.",
+        "createButton": "Tạo Điều phối Mới"
+      }
+    }
+  },
+  "noDispatch": {
+    "header": {
+      "title": "Tạo Điều phối Mới",
+      "subtitle": "Xem lại các đơn hàng đang chờ xử lý và các phương tiện có sẵn",
+      "createButton": "Tạo Điều phối",
+      "creatingButton": "Đang tạo..."
+    },
+    "stats": {
+      "pendingOrders": "Đơn hàng Đang chờ xử lý",
+      "availableVehicles": "Phương tiện Có sẵn",
+      "totalWeight": "Tổng trọng lượng",
+      "weightUnit": "kg"
+    },
+    "filters": {
+      "all": "Tất cả",
+      "category": {
+        "general": "Tổng hợp",
+        "organic": "Hữu cơ",
+        "recyclable": "Tái chế",
+        "hazardous": "Nguy hại",
+        "electronic": "Điện tử"
+      }
+    }
+  },
+  "currentDispatchDetails": {
+    "error": {
+      "title": "Lỗi",
+      "description": "Không thể tải chi tiết điều phối. Vui lòng thử lại."
+    },
+    "header": {
+      "title": "Điều phối Hiện tại",
+      "rerouteButton": "Thay đổi tuyến đường",
+      "markCompleteButton": "Đánh dấu Hoàn thành",
+      "creatingButton": "Đang tạo...",
+      "markingButton": "Đang đánh dấu..."
+    },
+    "stats": {
+      "activeRoutes": "Tuyến đường Đang hoạt động",
+      "totalOrders": "Tổng số Đơn hàng",
+      "totalDistance": "Tổng Khoảng cách",
+      "estDuration": "Thời lượng Ước tính",
+      "distanceUnit": "km",
+      "durationUnit": "phút"
+    },
+    "tabs": {
+      "overview": "Tổng quan",
+      "routes": "Tuyến đường",
+      "pending": "Đang chờ xử lý"
+    },
+    "overviewTab": {
+      "dispatchInfo": "Thông tin Điều phối",
+      "status": "Trạng thái",
+      "created": "Đã tạo",
+      "quickStats": "Thống kê Nhanh",
+      "activeRoutesCount": "Số tuyến đường đang hoạt động",
+      "pendingOrdersCount": "Số đơn hàng đang chờ xử lý"
+    },
+    "routesTab": {
+      "activeRoutes": "Tuyến đường Đang hoạt động ({{count}})",
+      "driver": "Tài xế",
+      "orders": "Đơn hàng",
+      "distance": "Khoảng cách",
+      "duration": "Thời lượng"
+    },
+    "pendingOrdersTab": {
+      "pendingOrders": "Đơn hàng Đang chờ xử lý ({{count}})",
+      "orderPrefix": "Đơn hàng #"
+    },
+    "dispatchStatus": {
+      "IN_PROGRESS": "Đang tiến hành",
+      "COMPLETED": "Đã hoàn thành"
+    },
+    "routeStatus": {
+      "IN_PROGRESS": "Đang tiến hành",
+      "COMPLETED": "Đã hoàn thành"
+    },
+    "trashCategory": {
+      "GENERAL": "Tổng hợp",
+      "RECYCLABLE": "Tái chế",
+      "ORGANIC": "Hữu cơ",
+      "HAZARDOUS": "Nguy hại",
+      "ELECTRONIC": "Điện tử"
+    },
+    "orderStatus": {
+      "PENDING": "Đang chờ xử lý",
+      "COLLECTED": "Đã thu gom",
+      "CANCELLED": "Đã hủy"
+    }
+  },
+  "completedDispatchDetails": {
+    "header": {
+      "status": "Trạng thái",
+      "routes": "Tuyến đường",
+      "totalOrders": "Tổng số Đơn hàng",
+      "totalDistance": "Tổng Khoảng cách",
+      "distanceUnit": "km"
+    },
+    "dispatchInformation": {
+      "title": "Thông tin Điều phối",
+      "createdAt": "Đã tạo:",
+      "completedAt": "Hoàn thành:",
+      "totalWeight": "Tổng Trọng lượng",
+      "weightUnit": "kg",
+      "vehiclesUsed": "Phương tiện Đã sử dụng",
+      "avgDistance": "Khoảng cách TB"
+    },
+    "routesList": {
+      "title": "Tuyến đường ({{count}})",
+      "routeNumber": "Tuyến đường #",
+      "orders": "Đơn hàng"
+    },
+    "routeVisualization": {
+      "title": "Trực quan hóa Tuyến đường"
+    },
+    "statusColors": {
+      "completed": "Đã hoàn thành",
+      "in_progress": "Đang tiến hành",
+      "pending": "Đang chờ xử lý"
+    }
+  },
+  "dashboard": {
+    "header": {
+      "title": "Bảng điều khiển",
+      "subtitle": "Giám sát đội xe, đơn hàng và hoạt động của bạn trong thời gian thực"
+    },
+    "keyMetrics": {
+      "totalOrders": {
+        "title": "Tổng số Đơn hàng",
+        "completedText": "+{{count}} đã hoàn thành"
+      },
+      "activeVehicles": {
+        "title": "Phương tiện Đang hoạt động",
+        "idleText": "{{idleCount}} rảnh rỗi",
+        "repairText": "{{repairCount}} đang sửa chữa"
+      },
+      "completionRate": {
+        "title": "Tỷ lệ Hoàn thành"
+      },
+      "totalWeight": {
+        "title": "Tổng Trọng lượng",
+        "unit": "kg",
+        "description": "Đã thu gom hôm nay"
+      }
+    },
+    "chartsSection": {
+      "dailyOrdersTrend": {
+        "title": "Xu hướng Đơn hàng Hàng ngày",
+        "description": "Phân phối trạng thái đơn hàng trong tuần",
+        "completedLabel": "đã hoàn thành",
+        "inProgressLabel": "đang tiến hành",
+        "pendingLabel": "đang chờ xử lý"
+      },
+      "routeEfficiencyAnalysis": {
+        "title": "Phân tích Hiệu quả Tuyến đường",
+        "description": "Hiệu quả so với Khoảng cách cho các tuyến đường đang hoạt động",
+        "efficiencyLabel": "Hiệu quả %",
+        "distanceLabel": "Khoảng cách (km)"
+      },
+      "hourlyDispatchActivity": {
+        "title": "Hoạt động Điều phối Hàng giờ",
+        "description": "Tần suất điều phối và phân bổ phương tiện",
+        "dispatchesLabel": "điều phối",
+        "vehiclesLabel": "phương tiện"
+      },
+      "wasteCategoryDistribution": {
+        "title": "Phân phối Danh mục Chất thải",
+        "description": "Phân phối trọng lượng theo loại chất thải",
+        "tooltipWeight": "Trọng lượng"
+      },
+      "vehicleLoadUtilization": {
+        "title": "Tỷ lệ Sử dụng Tải trọng Phương tiện",
+        "description": "Tỷ lệ sử dụng dung tích tải hiện tại",
+        "tooltipUtilization": "Tỷ lệ sử dụng"
+      },
+      "routePerformanceMetrics": {
+        "title": "Số liệu Hiệu suất Tuyến đường",
+        "description": "Mức tiêu thụ nhiên liệu so với hiệu quả tuyến đường",
+        "fuelLabel": "Nhiên liệu (L)",
+        "efficiencyLabel": "Hiệu quả %"
+      }
+    },
+    "mainContentGrid": {
+      "orderStatus": {
+        "title": "Trạng thái Đơn hàng",
+        "description": "Phân phối đơn hàng hiện tại",
+        "pending": "Đang chờ xử lý",
+        "inProgress": "Đang tiến hành",
+        "completed": "Đã hoàn thành"
+      },
+      "fleetStatus": {
+        "title": "Trạng thái Đội xe",
+        "description": "Trạng thái sẵn sàng và tải trọng của phương tiện"
+      },
+      "wasteCategories": {
+        "title": "Danh mục Chất thải",
+        "description": "Phân phối theo danh mục",
+        "ordersCount": "{{count}} đơn hàng"
+      }
+    },
+    "routesAndDepots": {
+      "activeRoutes": {
+        "title": "Tuyến đường Hoạt động",
+        "description": "Hoạt động tuyến đường hiện tại",
+        "stops": "điểm dừng",
+        "duration": "Thời lượng"
+      },
+      "depotLocations": {
+        "title": "Vị trí Kho",
+        "description": "Cơ sở thu gom và lưu trữ",
+        "vehiclesCount": "Phương tiện"
+      }
+    },
+    "statuses": {
+      "ACTIVE": "Hoạt động",
+      "IN_PROGRESS": "Đang tiến hành",
+      "COMPLETED": "Đã hoàn thành",
+      "PENDING": "Đang chờ xử lý",
+      "IDLE": "Rảnh rỗi",
+      "REPAIR": "Sửa chữa",
+      "CANCELLED": "Đã hủy"
+    },
+    "categories": {
+      "RECYCLABLE": "Tái chế",
+      "ORGANIC": "Hữu cơ",
+      "HAZARDOUS": "Nguy hại",
+      "ELECTRONIC": "Điện tử",
+      "GENERAL": "Tổng hợp"
+    }
+  },
+  "depotCreateModal": {
+    "title": "Tạo Kho Mới",
+    "findLocationCard": {
+      "title": "Tìm Vị trí",
+      "searchPlaceholder": "Tìm kiếm địa chỉ...",
+      "mapPickerPlaceholder": "Tìm kiếm một vị trí hoặc sử dụng công cụ chọn bản đồ"
+    },
+    "locationDetailsCard": {
+      "title": "Chi tiết Vị trí",
+      "addressLabel": "Địa chỉ",
+      "addressPlaceholder": "Địa chỉ sẽ xuất hiện ở đây",
+      "locatingText": "Đang định vị...",
+      "latitudeLabel": "Vĩ độ",
+      "longitudeLabel": "Kinh độ"
+    },
+    "footer": {
+      "cancelButton": "Hủy",
+      "createButton": "Tạo Kho",
+      "creatingButton": "Đang tạo..."
+    },
+    "validation": {
+      "addressRequired": "Địa chỉ là bắt buộc",
+      "latitudeRequired": "Vĩ độ là bắt buộc",
+      "longitudeRequired": "Kinh độ là bắt buộc"
+    }
+  },
+  "depotUpdateModal": {
+    "title": "Cập nhật Kho",
+    "findLocationCard": {
+      "title": "Tìm Vị trí",
+      "searchPlaceholder": "Tìm kiếm địa chỉ...",
+      "mapPickerPlaceholder": "Tìm kiếm một vị trí hoặc sử dụng công cụ chọn bản đồ"
+    },
+    "locationDetailsCard": {
+      "title": "Chi tiết Vị trí",
+      "addressLabel": "Địa chỉ",
+      "addressPlaceholder": "Địa chỉ sẽ xuất hiện ở đây",
+      "locatingText": "Đang định vị...",
+      "latitudeLabel": "Vĩ độ",
+      "longitudeLabel": "Kinh độ"
+    },
+    "footer": {
+      "cancelButton": "Hủy",
+      "updateButton": "Cập nhật Kho",
+      "updatingButton": "Đang cập nhật..."
+    },
+    "validation": {
+      "addressRequired": "Địa chỉ là bắt buộc",
+      "latitudeRequired": "Vĩ độ là bắt buộc",
+      "longitudeRequired": "Kinh độ là bắt buộc"
+    }
+  },
+  "vehicleCreateModal": {
+    "header": {
+      "title": "Thêm Phương tiện Mới",
+      "subtitle": "Cấu hình chi tiết phương tiện mới của bạn"
+    },
+    "formFields": {
+      "depotLocation": {
+        "label": "Vị trí Kho",
+        "placeholder": "Chọn vị trí kho",
+        "required": "Kho là bắt buộc"
+      },
+      "driverAssignment": {
+        "label": "Phân công Tài xế",
+        "placeholder": "Chọn tài xế có sẵn",
+        "required": "Tài xế là bắt buộc",
+        "preselected": "Đã chọn trước"
+      },
+      "licensePlate": {
+        "label": "Biển số xe",
+        "placeholder": "ví dụ: ABC-1234",
+        "required": "Biển số xe là bắt buộc"
+      },
+      "vehicleType": {
+        "label": "Loại Phương tiện",
+        "placeholder": "Chọn loại phương tiện"
+      },
+      "wasteCategory": {
+        "label": "Danh mục Chất thải",
+        "placeholder": "Chọn danh mục chất thải"
+      }
+    },
+    "vehicleTypes": {
+      "THREE_WHEELER": "Xe ba bánh",
+      "COMPACTOR_TRUCK": "Xe tải ép rác"
+    },
+    "trashCategories": {
+      "GENERAL": "Tổng hợp",
+      "ORGANIC": "Hữu cơ",
+      "RECYCLABLE": "Tái chế",
+      "HAZARDOUS": "Nguy hại",
+      "ELECTRONIC": "Điện tử"
+    },
+    "footer": {
+      "cancelButton": "Hủy",
+      "createButton": "Tạo Phương tiện",
+      "creatingButton": "Đang tạo..."
+    }
+  },
+  "vehicleUpdateModal": {
+    "loading": {
+      "title": "Đang tải dữ liệu Phương tiện",
+      "message": "Đang tìm nạp kho và tài xế...",
+      "spinnerAlt": "Biểu tượng tải"
+    },
+    "error": {
+      "title": "Lỗi khi tải Dữ liệu",
+      "description": "Không thể tải thông tin kho và tài xế. Vui lòng kiểm tra kết nối của bạn và thử lại.",
+      "closeButton": "Đóng"
+    },
+    "header": {
+      "title": "Cập nhật Phương tiện",
+      "subtitle": "{licensePlate} • {vehicleType}"
+    },
+    "currentInfoCard": {
+      "title": "Thông tin Phương tiện Hiện tại",
+      "licensePlate": "Biển số xe:",
+      "currentStatus": "Trạng thái hiện tại:",
+      "currentDriver": "Tài xế hiện tại:",
+      "capacity": "Dung tích:",
+      "unit": "kg"
+    },
+    "formFields": {
+      "depotAssignment": {
+        "label": "Phân công Kho",
+        "placeholder": "Chọn vị trí kho",
+        "description": "Chọn kho nơi phương tiện này sẽ đồn trú"
+      },
+      "driverAssignment": {
+        "label": "Phân công Tài xế",
+        "placeholder": "Chọn tài xế",
+        "currentDriverBadge": "Hiện tại",
+        "driverPhone": "({phone})",
+        "description": "Phân công tài xế điều khiển phương tiện này. Chỉ hiển thị tài xế chưa được phân công."
+      },
+      "vehicleStatus": {
+        "label": "Trạng thái Phương tiện",
+        "placeholder": "Chọn trạng thái phương tiện",
+        "descriptions": {
+          "ACTIVE": "(Sẵn sàng cho các tuyến đường)",
+          "IDLE": "(Đang chờ phân công)",
+          "REPAIR": "(Đang bảo trì)"
+        },
+        "description": "Đặt trạng thái hoạt động của phương tiện"
+      }
+    },
+    "vehicleStatus": {
+      "ACTIVE": "Hoạt động",
+      "IDLE": "Rảnh rỗi",
+      "REPAIR": "Sửa chữa"
+    },
+    "footer": {
+      "cancelButton": "Hủy",
+      "updateButton": "Cập nhật Phương tiện",
+      "updatingButton": "Đang cập nhật..."
+    }
+  },
+  "sidebar": {
+    "nav": {
+      "dashboard": "Bảng điều khiển",
+      "depots": "Kho",
+      "vehicles": "Phương tiện",
+      "users": "Người dùng",
+      "dispatches": "Điều phối",
+      "orders": "Đơn hàng"
+    },
+    "userSection": {
+      "usernameError": "Lỗi khi truy xuất tên người dùng",
+      "signOut": "Đăng xuất",
+      "userAvatarFallback": "U"
+    }
+  },
+  "orderMarker": {
+    "orderNumber": "Đơn hàng #{{index}}",
+    "address": "Địa chỉ",
+    "weight": "Trọng lượng",
+    "status": "Trạng thái",
+    "viewDetails": "Xem chi tiết",
+    "statuses": {
+      "PENDING": "Đang chờ xử lý",
+      "IN_PROGRESS": "Đang tiến hành",
+      "COMPLETED": "Đã hoàn thành",
+      "CANCELLED": "Đã hủy"
+    }
+  },
+  "vehicleDynamicMarker": {
+    "vehicle": "Phương tiện",
+    "load": "Tải trọng",
+    "viewDetails": "Xem chi tiết"
+  },
+  "depotDynamicMarker": {
+    "depot": "Kho",
+    "numberOfVehicles": "Số lượng phương tiện",
+    "createdAt": "Đã tạo vào",
+    "viewDetails": "Xem chi tiết"
+  }
+}

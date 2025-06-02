@@ -33,6 +33,7 @@ import { useNavigate } from "react-router";
 import DepotCreateModal from "@/components/depot/DepotCreateModal";
 import { useState } from "react";
 import { Input } from "@/components/ui/input";
+import { useTranslation } from "react-i18next";
 
 export default function DepotManagement() {
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
@@ -41,6 +42,7 @@ export default function DepotManagement() {
   const { data, isLoading, isError } = useGetDepots();
   const { mutate: deleteDepot, isPending: isDeleting } = useDeleteDepot();
   const depots: DepotResponse[] = data?.result || [];
+  const { t } = useTranslation();
 
   const handleViewDepot = (depot: DepotResponse) => {
     navigate(`/depots/${depot.id}`);
@@ -77,8 +79,8 @@ export default function DepotManagement() {
         <div className="max-w-7xl mx-auto">
           <Alert variant="destructive" className="bg-red-50 border-red-200">
             <AlertTriangle className="h-4 w-4" />
-            <AlertTitle>Error</AlertTitle>
-            <AlertDescription>Failed to load depots. Please try again later.</AlertDescription>
+            <AlertTitle>{t("depotManagement.errorState.title")}</AlertTitle>
+            <AlertDescription>{t("depotManagement.errorState.description")}</AlertDescription>
           </Alert>
         </div>
       </div>
@@ -98,9 +100,9 @@ export default function DepotManagement() {
                 <Warehouse className="w-5 h-5 text-primary-foreground" />
               </div>
               <div>
-                <h1 className="text-2xl font-bold text-slate-900">Depot Management</h1>
+                <h1 className="text-2xl font-bold text-slate-900">{t("depotManagement.pageTitle")}</h1>
                 <p className="text-sm text-slate-600 mt-1">
-                  {depots.length} depot{depots.length !== 1 ? "s" : ""} available
+                  {t("depotManagement.depotCount", { count: depots.length })}
                 </p>
               </div>
             </div>
@@ -109,7 +111,7 @@ export default function DepotManagement() {
               <Search />
               <Input
                 type="text"
-                placeholder="Search by address"
+                placeholder={t("depotManagement.searchPlaceholder")}
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 className="px-4 py-2 border border-slate-200 rounded-lg shadow-sm text-sm w-full sm:w-64 focus:outline-none focus:ring-2 focus:ring-primary/50"
@@ -119,7 +121,7 @@ export default function DepotManagement() {
                 className="bg-primary hover:bg-primary/90 transition-all duration-200 shadow-md hover:shadow-lg"
               >
                 <Plus className="w-4 h-4 mr-2" />
-                Create Depot
+                {t("depotManagement.createDepotButton")}
               </Button>
             </div>
           </div>
@@ -132,12 +134,12 @@ export default function DepotManagement() {
           <div className="text-center py-16">
             <Warehouse className="w-16 h-16 text-slate-400 mx-auto mb-4" />
             <h3 className="text-lg font-medium text-slate-900 mb-2">
-              {searchQuery ? "No depots match your search" : "No depots found"}
+              {searchQuery ? t("depotManagement.noDepotsFound.searchMatch") : t("depotManagement.noDepotsFound.noDepots")}
             </h3>
-            <p className="text-slate-600 mb-6">Get started by creating your first depot</p>
+            <p className="text-slate-600 mb-6">{t("depotManagement.noDepotsFound.getDescription")}</p>
             <Button onClick={() => setIsModalOpen(true)}>
               <Plus className="w-4 h-4 mr-2" />
-              Create Your First Depot
+              {t("depotManagement.noDepotsFound.createButton")}
             </Button>
           </div>
         ) : (
@@ -153,7 +155,7 @@ export default function DepotManagement() {
                       <MapPin className="w-4 h-4 text-primary" />
                     </div>
                     <span className="line-clamp-2 text-left leading-6">
-                      {depot.address ?? "N/A"}
+                      {depot.address ?? t("depotManagement.card.noAddress")}
                     </span>
                   </CardTitle>
                 </CardHeader>
@@ -162,7 +164,7 @@ export default function DepotManagement() {
                   <div className="flex items-center justify-between py-3 px-4 bg-blue-50 rounded-lg">
                     <div className="flex items-center gap-2">
                       <Truck className="w-4 h-4 text-blue-600" />
-                      <span className="text-sm font-medium text-blue-900">Vehicles</span>
+                      <span className="text-sm font-medium text-blue-900">{t("depotManagement.card.vehiclesLabel")}</span>
                     </div>
                     <span className="text-lg font-bold text-blue-700">
                       {depot.vehicles.length}
@@ -171,7 +173,7 @@ export default function DepotManagement() {
 
                   <div className="flex items-center gap-2 text-sm text-slate-600">
                     <Calendar className="w-4 h-4" />
-                    <span>Created {formatDate(depot.createdAt)}</span>
+                    <span>{t("depotManagement.card.createdAt")}: {formatDate(depot.createdAt)}</span>
                   </div>
 
                   <div className="flex gap-2 pt-4 border-t border-slate-100">
@@ -182,7 +184,7 @@ export default function DepotManagement() {
                       className="flex-1 border-slate-200 hover:bg-slate-50 transition-colors"
                     >
                       <Eye className="w-4 h-4 mr-2" />
-                      View
+                      {t("depotManagement.card.viewButton")}
                     </Button>
 
                     <AlertDialog>
@@ -200,16 +202,16 @@ export default function DepotManagement() {
                         <AlertDialogHeader>
                           <AlertDialogTitle className="flex items-center gap-2">
                             <AlertTriangle className="w-5 h-5 text-red-500" />
-                            Are you sure?
+                            {t("depotManagement.alertDialog.title")}
                           </AlertDialogTitle>
                           <AlertDialogDescription>
-                            This action cannot be undone. This will permanently delete the depot at{" "}
-                            <strong className="text-slate-900">{depot.address ?? "N/A"}</strong>.
+                            {t("depotManagement.alertDialog.description")}
+                            <strong className="text-slate-900">{depot.address ?? t("depotManagement.card.noAddress")}</strong>.
                           </AlertDialogDescription>
                         </AlertDialogHeader>
                         <AlertDialogFooter>
                           <AlertDialogCancel className="border-slate-200 hover:bg-slate-50">
-                            Cancel
+                            {t("depotManagement.alertDialog.cancelButton")}
                           </AlertDialogCancel>
                           <AlertDialogAction
                             onClick={() => deleteDepot(depot.id)}
@@ -219,12 +221,12 @@ export default function DepotManagement() {
                             {isDeleting ? (
                               <div className="flex items-center gap-2">
                                 <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
-                                Deleting...
+                                {t("depotManagement.alertDialog.deletingButton")}
                               </div>
                             ) : (
                               <>
                                 <Trash2 className="w-4 h-4 mr-2" />
-                                Delete
+                                {t("depotManagement.alertDialog.confirmDeleteButton")}
                               </>
                             )}
                           </AlertDialogAction>

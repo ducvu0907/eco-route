@@ -3,7 +3,6 @@ import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import {
   Dialog,
-  DialogTrigger,
   DialogContent,
   DialogHeader,
   DialogTitle,
@@ -31,16 +30,15 @@ import {
   MapPin, 
   User, 
   Hash, 
-  Package, 
   Trash,
   Loader2,
-  X
 } from "lucide-react";
 import { useGetDepots } from "@/hooks/useDepot";
 import { useGetDriversNotAssigned } from "@/hooks/useUser";
 import { DepotResponse, Role, TrashCategory, UserResponse, VehicleType } from "@/types/types";
 import { useCreateVehicle } from "@/hooks/useVehicle";
 import { useQueryClient } from "@tanstack/react-query";
+import { useTranslation } from "react-i18next"; // Import useTranslation
 
 interface VehicleCreateModalProps {
   isOpen: boolean;
@@ -49,19 +47,20 @@ interface VehicleCreateModalProps {
   driver?: UserResponse;
 }
 
-const vehicleSchema = z.object({
-  depotId: z.string().min(1, "Depot is required"),
-  driverId: z.string().min(1, "Driver is required"),
-  licensePlate: z.string().min(1, "License plate is required"),
-  type: z.nativeEnum(VehicleType),
-  category: z.nativeEnum(TrashCategory)
-});
-
-type VehicleFormValues = z.infer<typeof vehicleSchema>;
-
 export default function VehicleCreateModal({ isOpen, onClose, depot, driver }: VehicleCreateModalProps) {
   const queryClient = useQueryClient();
   const { mutate: createVehicle, isPending } = useCreateVehicle();
+  const { t } = useTranslation(); // Initialize useTranslation
+
+  const vehicleSchema = z.object({
+    depotId: z.string().min(1, t("vehicleCreateModal.formFields.depotLocation.required")),
+    driverId: z.string().min(1, t("vehicleCreateModal.formFields.driverAssignment.required")),
+    licensePlate: z.string().min(1, t("vehicleCreateModal.formFields.licensePlate.required")),
+    type: z.nativeEnum(VehicleType),
+    category: z.nativeEnum(TrashCategory)
+  });
+
+  type VehicleFormValues = z.infer<typeof vehicleSchema>;
 
   const { data: depotsData } = useGetDepots();
   const depots = depotsData?.result || [];
@@ -95,36 +94,36 @@ export default function VehicleCreateModal({ isOpen, onClose, depot, driver }: V
     form.reset();
   };
 
-  const formatVehicleType = (type: string) => {
-    return type.replace(/_/g, ' ').toLowerCase().replace(/\b\w/g, l => l.toUpperCase());
+  const formatVehicleType = (type: VehicleType) => {
+    return t(`vehicleCreateModal.vehicleTypes.${type}`);
   };
 
-  const formatCategory = (category: string) => {
-    return category.replace(/_/g, ' ').toLowerCase().replace(/\b\w/g, l => l.toUpperCase());
+  const formatCategory = (category: TrashCategory) => {
+    return t(`vehicleCreateModal.trashCategories.${category}`);
   };
 
-  const getCategoryIcon = (category: string) => {
+  const getCategoryIcon = (category: TrashCategory) => {
     switch (category) {
-      case 'GENERAL':
+      case TrashCategory.GENERAL:
         return '🗑️';
-      case 'ORGANIC':
+      case TrashCategory.ORGANIC:
         return '🌱';
-      case 'RECYCLABLE':
+      case TrashCategory.RECYCLABLE:
         return '♻️';
-      case 'HAZARDOUS':
+      case TrashCategory.HAZARDOUS:
         return '⚠️';
-      case 'ELECTRONIC':
+      case TrashCategory.ELECTRONIC:
         return '📱';
       default:
         return '📦';
     }
   };
 
-  const getVehicleTypeIcon = (type: string) => {
+  const getVehicleTypeIcon = (type: VehicleType) => {
     switch (type) {
-      case 'THREE_WHEELER':
+      case VehicleType.THREE_WHEELER:
         return '🛺';
-      case 'COMPACTOR_TRUCK':
+      case VehicleType.COMPACTOR_TRUCK:
         return '🚛';
       default:
         return '🚚';
@@ -143,21 +142,13 @@ export default function VehicleCreateModal({ isOpen, onClose, depot, driver }: V
               </div>
               <div>
                 <DialogTitle className="text-2xl font-bold text-gray-900">
-                  Add New Vehicle
+                  {t("vehicleCreateModal.header.title")}
                 </DialogTitle>
                 <p className="text-gray-600 mt-1">
-                  Configure your new vehicle details
+                  {t("vehicleCreateModal.header.subtitle")}
                 </p>
               </div>
             </div>
-            {/* <Button 
-              variant="ghost" 
-              size="sm" 
-              onClick={onClose}
-              className="h-8 w-8 p-0 hover:bg-white/50"
-            >
-              <X className="w-4 h-4" />
-            </Button> */}
           </div>
         </DialogHeader>
 
@@ -176,12 +167,12 @@ export default function VehicleCreateModal({ isOpen, onClose, depot, driver }: V
                       <FormItem className="space-y-2">
                         <FormLabel className="text-sm font-semibold text-gray-700 flex items-center gap-2">
                           <MapPin className="w-4 h-4 text-gray-500" />
-                          Depot Location
+                          {t("vehicleCreateModal.formFields.depotLocation.label")}
                         </FormLabel>
                         <Select onValueChange={field.onChange}>
                           <FormControl>
                             <SelectTrigger className="h-11 border-gray-200 hover:border-gray-300 focus:border-blue-500 transition-colors">
-                              <SelectValue placeholder="Choose depot location" />
+                              <SelectValue placeholder={t("vehicleCreateModal.formFields.depotLocation.placeholder")} />
                             </SelectTrigger>
                           </FormControl>
                           <SelectContent>
@@ -206,13 +197,13 @@ export default function VehicleCreateModal({ isOpen, onClose, depot, driver }: V
                   <div className="space-y-2">
                     <FormLabel className="text-sm font-semibold text-gray-700 flex items-center gap-2">
                       <User className="w-4 h-4 text-gray-500" />
-                      Assigned Driver
+                      {t("vehicleCreateModal.formFields.driverAssignment.label")}
                     </FormLabel>
                     <div className="h-11 px-3 py-2 bg-gray-50 border border-gray-200 rounded-md flex items-center gap-2">
                       <User className="w-4 h-4 text-gray-400" />
                       <span className="text-gray-700 font-medium">{driver.username}</span>
                       <span className="ml-auto text-xs text-gray-500 bg-gray-200 px-2 py-1 rounded-full">
-                        Pre-selected
+                        {t("vehicleCreateModal.formFields.driverAssignment.preselected")}
                       </span>
                     </div>
                   </div>
@@ -224,12 +215,12 @@ export default function VehicleCreateModal({ isOpen, onClose, depot, driver }: V
                       <FormItem className="space-y-2">
                         <FormLabel className="text-sm font-semibold text-gray-700 flex items-center gap-2">
                           <User className="w-4 h-4 text-gray-500" />
-                          Driver Assignment
+                          {t("vehicleCreateModal.formFields.driverAssignment.label")}
                         </FormLabel>
                         <Select onValueChange={field.onChange}>
                           <FormControl>
                             <SelectTrigger className="h-11 border-gray-200 hover:border-gray-300 focus:border-blue-500 transition-colors">
-                              <SelectValue placeholder="Select available driver" />
+                              <SelectValue placeholder={t("vehicleCreateModal.formFields.driverAssignment.placeholder")} />
                             </SelectTrigger>
                           </FormControl>
                           <SelectContent>
@@ -258,13 +249,13 @@ export default function VehicleCreateModal({ isOpen, onClose, depot, driver }: V
                   <FormItem className="space-y-2">
                     <FormLabel className="text-sm font-semibold text-gray-700 flex items-center gap-2">
                       <Hash className="w-4 h-4 text-gray-500" />
-                      License Plate Number
+                      {t("vehicleCreateModal.formFields.licensePlate.label")}
                     </FormLabel>
                     <FormControl>
                       <div className="relative">
                         <Hash className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400" />
                         <Input 
-                          placeholder="e.g., ABC-1234" 
+                          placeholder={t("vehicleCreateModal.formFields.licensePlate.placeholder")} 
                           className="pl-10 h-11 border-gray-200 hover:border-gray-300 focus:border-blue-500 transition-colors uppercase"
                           {...field} 
                         />
@@ -284,12 +275,12 @@ export default function VehicleCreateModal({ isOpen, onClose, depot, driver }: V
                     <FormItem className="space-y-2">
                       <FormLabel className="text-sm font-semibold text-gray-700 flex items-center gap-2">
                         <Truck className="w-4 h-4 text-gray-500" />
-                        Vehicle Type
+                        {t("vehicleCreateModal.formFields.vehicleType.label")}
                       </FormLabel>
                       <Select value={field.value} onValueChange={field.onChange}>
                         <FormControl>
                           <SelectTrigger className="h-11 border-gray-200 hover:border-gray-300 focus:border-blue-500 transition-colors">
-                            <SelectValue placeholder="Choose vehicle type" />
+                            <SelectValue placeholder={t("vehicleCreateModal.formFields.vehicleType.placeholder")} />
                           </SelectTrigger>
                         </FormControl>
                         <SelectContent>
@@ -316,12 +307,12 @@ export default function VehicleCreateModal({ isOpen, onClose, depot, driver }: V
                     <FormItem className="space-y-2">
                       <FormLabel className="text-sm font-semibold text-gray-700 flex items-center gap-2">
                         <Trash className="w-4 h-4 text-gray-500" />
-                        Waste Category
+                        {t("vehicleCreateModal.formFields.wasteCategory.label")}
                       </FormLabel>
                       <Select value={field.value} onValueChange={field.onChange}>
                         <FormControl>
                           <SelectTrigger className="h-11 border-gray-200 hover:border-gray-300 focus:border-blue-500 transition-colors">
-                            <SelectValue placeholder="Select waste category" />
+                            <SelectValue placeholder={t("vehicleCreateModal.formFields.wasteCategory.placeholder")} />
                           </SelectTrigger>
                         </FormControl>
                         <SelectContent>
@@ -354,7 +345,7 @@ export default function VehicleCreateModal({ isOpen, onClose, depot, driver }: V
               onClick={onClose}
               className="px-6 hover:bg-gray-100"
             >
-              Cancel
+              {t("vehicleCreateModal.footer.cancelButton")}
             </Button>
             <Button 
               type="submit" 
@@ -365,12 +356,12 @@ export default function VehicleCreateModal({ isOpen, onClose, depot, driver }: V
               {isPending ? (
                 <>
                   <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-                  Creating...
+                  {t("vehicleCreateModal.footer.creatingButton")}
                 </>
               ) : (
                 <>
                   <Truck className="w-4 h-4 mr-2" />
-                  Create Vehicle
+                  {t("vehicleCreateModal.footer.createButton")}
                 </>
               )}
             </Button>

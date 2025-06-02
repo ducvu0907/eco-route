@@ -1,6 +1,6 @@
-import { useCreateDepot } from "@/hooks/useDepot";
+import { useCreateDepot, useUpdateDepot } from "@/hooks/useDepot";
 import { useReverseLocation, useSearchLocation } from "@/hooks/useFetchLocation";
-import { DepotCreateRequest, DepotResponse, Feature } from "@/types/types";
+import { DepotCreateRequest, DepotResponse, DepotUpdateRequest, Feature } from "@/types/types";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
@@ -36,17 +36,17 @@ const formSchema = z.object({
 
 type FormValues = z.infer<typeof formSchema>;
 
-interface DepotCreateModalProps {
+interface DepotUpdateModalProps {
   isOpen: boolean;
   onClose: () => void;
   depot: DepotResponse;
 }
 
-export default function DepotUpdateModal({ isOpen, onClose, depot }: DepotCreateModalProps) {
+export default function DepotUpdateModal({ isOpen, onClose, depot }: DepotUpdateModalProps) {
   const [showDropdown, setShowDropdown] = useState<boolean>(false);
   const [searchQuery, setSearchQuery] = useState<string | null>(null);
   const [debouncedQuery, setDebouncedQuery] = useState<string | null>(null);
-  const { mutate: createDepot, isPending } = useCreateDepot();
+  const { mutate: updateDepot, isPending } = useUpdateDepot();
   const form = useForm<FormValues>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -97,8 +97,8 @@ export default function DepotUpdateModal({ isOpen, onClose, depot }: DepotCreate
     }
   }, [searchData]);
 
-  const onSubmit = (data: DepotCreateRequest) => {
-    createDepot(data, {
+  const onSubmit = (data: DepotUpdateRequest) => {
+    updateDepot({ depotId: depot.id, payload: data }, {
       onSuccess: () => {
         onClose();
       },

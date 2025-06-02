@@ -8,6 +8,7 @@ import { LatLngExpression, Icon } from "leaflet";
 import { useMemo } from "react";
 import MultiRoutesStaticMap from "../map/MultiRoutesStaticMap";
 import { Truck, Package, MapPin, Clock, CheckCircle2, Calendar } from "lucide-react";
+import { useTranslation } from "react-i18next";
 
 interface CompletedDispatchDetailsProps {
   dispatch: DispatchResponse;
@@ -28,6 +29,7 @@ const getStatusColor = (status: string) => {
 };
 
 export default function CompletedDispatchDetails({ dispatch, routes }: CompletedDispatchDetailsProps) {
+  const { t } = useTranslation();
   const totalDistance = routes.reduce((sum, route) => sum + route.distance, 0);
   const totalOrders = routes.reduce((sum, route) => sum + route.orders.length, 0);
   const totalWeight = routes.reduce((sum, route) => 
@@ -45,9 +47,9 @@ export default function CompletedDispatchDetails({ dispatch, routes }: Completed
                 <CheckCircle2 className="w-5 h-5 text-primary" />
               </div>
               <div>
-                <p className="text-sm text-muted-foreground">Status</p>
+                <p className="text-sm text-muted-foreground">{t("completedDispatchDetails.header.status")}</p>
                 <Badge className={getStatusColor(dispatch.status)}>
-                  {dispatch.status}
+                  {t(`completedDispatchDetails.statusColors.${dispatch.status.toLowerCase()}`)}
                 </Badge>
               </div>
             </div>
@@ -61,7 +63,7 @@ export default function CompletedDispatchDetails({ dispatch, routes }: Completed
                 <Truck className="w-5 h-5 text-blue-600" />
               </div>
               <div>
-                <p className="text-sm text-muted-foreground">Routes</p>
+                <p className="text-sm text-muted-foreground">{t("completedDispatchDetails.header.routes")}</p>
                 <p className="text-2xl font-bold">{routes.length}</p>
               </div>
             </div>
@@ -75,7 +77,7 @@ export default function CompletedDispatchDetails({ dispatch, routes }: Completed
                 <Package className="w-5 h-5 text-green-600" />
               </div>
               <div>
-                <p className="text-sm text-muted-foreground">Total Orders</p>
+                <p className="text-sm text-muted-foreground">{t("completedDispatchDetails.header.totalOrders")}</p>
                 <p className="text-2xl font-bold">{totalOrders}</p>
               </div>
             </div>
@@ -89,8 +91,8 @@ export default function CompletedDispatchDetails({ dispatch, routes }: Completed
                 <MapPin className="w-5 h-5 text-orange-600" />
               </div>
               <div>
-                <p className="text-sm text-muted-foreground">Total Distance</p>
-                <p className="text-2xl font-bold">{totalDistance.toFixed(1)} km</p>
+                <p className="text-sm text-muted-foreground">{t("completedDispatchDetails.header.totalDistance")}</p>
+                <p className="text-2xl font-bold">{totalDistance.toFixed(1)} {t("completedDispatchDetails.header.distanceUnit")}</p>
               </div>
             </div>
           </CardContent>
@@ -102,7 +104,7 @@ export default function CompletedDispatchDetails({ dispatch, routes }: Completed
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
             <Calendar className="w-5 h-5" />
-            Dispatch Information
+            {t("completedDispatchDetails.dispatchInformation.title")}
           </CardTitle>
         </CardHeader>
         <CardContent>
@@ -117,7 +119,7 @@ export default function CompletedDispatchDetails({ dispatch, routes }: Completed
             <div className="space-y-2">
               <div className="flex items-center gap-2">
                 <Clock className="w-4 h-4 text-muted-foreground" />
-                <span className="text-sm font-medium text-muted-foreground">Created:</span>
+                <span className="text-sm font-medium text-muted-foreground">{t("completedDispatchDetails.dispatchInformation.createdAt")}</span>
               </div>
               <p className="text-sm">{new Date(dispatch.createdAt).toLocaleString()}</p>
             </div>
@@ -125,7 +127,7 @@ export default function CompletedDispatchDetails({ dispatch, routes }: Completed
             <div className="space-y-2">
               <div className="flex items-center gap-2">
                 <CheckCircle2 className="w-4 h-4 text-green-600" />
-                <span className="text-sm font-medium text-muted-foreground">Completed:</span>
+                <span className="text-sm font-medium text-muted-foreground">{t("completedDispatchDetails.dispatchInformation.completedAt")}</span>
               </div>
               <p className="text-sm">{new Date(dispatch.completedAt).toLocaleString()}</p>
             </div>
@@ -135,16 +137,16 @@ export default function CompletedDispatchDetails({ dispatch, routes }: Completed
           
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4 text-sm">
             <div className="text-center p-3 bg-muted/50 rounded-lg">
-              <p className="font-medium">Total Weight</p>
-              <p className="text-lg font-bold text-primary">{totalWeight} kg</p>
+              <p className="font-medium">{t("completedDispatchDetails.dispatchInformation.totalWeight")}</p>
+              <p className="text-lg font-bold text-primary">{totalWeight} {t("completedDispatchDetails.dispatchInformation.weightUnit")}</p>
             </div>
             <div className="text-center p-3 bg-muted/50 rounded-lg">
-              <p className="font-medium">Vehicles Used</p>
+              <p className="font-medium">{t("completedDispatchDetails.dispatchInformation.vehiclesUsed")}</p>
               <p className="text-lg font-bold text-primary">{routes.length}</p>
             </div>
             <div className="text-center p-3 bg-muted/50 rounded-lg">
-              <p className="font-medium">Avg Distance</p>
-              <p className="text-lg font-bold text-primary">{(totalDistance / routes.length).toFixed(1)} km</p>
+              <p className="font-medium">{t("completedDispatchDetails.dispatchInformation.avgDistance")}</p>
+              <p className="text-lg font-bold text-primary">{(totalDistance / routes.length).toFixed(1)} {t("completedDispatchDetails.header.distanceUnit")}</p>
             </div>
           </div>
         </CardContent>
@@ -157,7 +159,7 @@ export default function CompletedDispatchDetails({ dispatch, routes }: Completed
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
                 <Truck className="w-5 h-5" />
-                Routes ({routes.length})
+                {t("completedDispatchDetails.routesList.title", { count: routes.length })}
               </CardTitle>
             </CardHeader>
             <CardContent className="p-0">
@@ -167,9 +169,9 @@ export default function CompletedDispatchDetails({ dispatch, routes }: Completed
                     <Card key={route.id} className="border-l-4 border-l-primary/50">
                       <CardHeader className="pb-3">
                         <div className="flex items-center justify-between">
-                          <CardTitle className="text-lg">Route #{i + 1}</CardTitle>
+                          <CardTitle className="text-lg">{t("completedDispatchDetails.routesList.routeNumber")}{i + 1}</CardTitle>
                           <Badge className={getStatusColor(route.status)}>
-                            {route.status}
+                            {t(`completedDispatchDetails.statusColors.${route.status.toLowerCase()}`)}
                           </Badge>
                         </div>
                       </CardHeader>
@@ -182,7 +184,7 @@ export default function CompletedDispatchDetails({ dispatch, routes }: Completed
                           
                           <div className="flex items-center gap-2 text-sm">
                             <MapPin className="w-4 h-4 text-muted-foreground" />
-                            <span>{route.distance.toFixed(1)} km</span>
+                            <span>{route.distance.toFixed(1)} {t("completedDispatchDetails.header.distanceUnit")}</span>
                           </div>
 
                           <Separator />
@@ -190,7 +192,7 @@ export default function CompletedDispatchDetails({ dispatch, routes }: Completed
                           <div>
                             <div className="flex items-center gap-2 mb-2">
                               <Package className="w-4 h-4 text-muted-foreground" />
-                              <span className="text-sm font-medium">Orders ({route.orders.length})</span>
+                              <span className="text-sm font-medium">{t("completedDispatchDetails.routesList.orders")} ({route.orders.length})</span>
                             </div>
                             
                             <div className="space-y-2">
@@ -206,7 +208,7 @@ export default function CompletedDispatchDetails({ dispatch, routes }: Completed
                                     </Badge>
                                     <div className="flex-1 min-w-0">
                                       <p className="truncate font-medium">{order.address}</p>
-                                      <p className="text-muted-foreground">{order.weight}kg</p>
+                                      <p className="text-muted-foreground">{order.weight}{t("completedDispatchDetails.dispatchInformation.weightUnit")}</p>
                                     </div>
                                   </div>
                                 ))}
@@ -228,7 +230,7 @@ export default function CompletedDispatchDetails({ dispatch, routes }: Completed
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
                 <MapPin className="w-5 h-5" />
-                Route Visualization
+                {t("completedDispatchDetails.routeVisualization.title")}
               </CardTitle>
             </CardHeader>
             <CardContent className="p-0">

@@ -28,8 +28,8 @@ import NoDispatch from "./NoDispatch";
 import { DispatchStatus, RouteResponse, RouteStatus, TrashCategory } from "@/types/types";
 import SingleRouteDynamicMap from "@/components/map/SingleRouteDynamicMap";
 import { formatDate } from "@/utils/formatDate";
-import { createDropdownMenuScope } from "@radix-ui/react-dropdown-menu";
 import { useQueryClient } from "@tanstack/react-query";
+import { useTranslation } from "react-i18next";
 
 const getCategoryBadgeVariant = (category: TrashCategory) => {
   switch (category) {
@@ -56,7 +56,7 @@ export default function CurrentDispatchDetails() {
   const { mutate: markAsDone, isPending: isMarking } = useMarkDispatchAsDone();
   const [activeTab, setActiveTab] = useState("overview");
   const [selectedRoute, setSelectedRoute] = useState<RouteResponse | null>(null);
-  console.log(selectedRoute);
+  const { t } = useTranslation();
 
   const {
     data: dispatchData,
@@ -114,8 +114,8 @@ export default function CurrentDispatchDetails() {
     return (
       <Alert variant="destructive" className="m-6">
         <AlertCircle className="h-4 w-4" />
-        <AlertTitle>Error</AlertTitle>
-        <AlertDescription>Failed to load dispatch details. Please try again.</AlertDescription>
+        <AlertTitle>{t("currentDispatchDetails.error.title")}</AlertTitle>
+        <AlertDescription>{t("currentDispatchDetails.error.description")}</AlertDescription>
       </Alert>
     );
   }
@@ -132,12 +132,12 @@ export default function CurrentDispatchDetails() {
                 <Route className="h-6 w-6 text-blue-600" />
               </div>
               <div>
-                <h1 className="text-2xl font-bold text-slate-900">Active Dispatch</h1>
+                <h1 className="text-2xl font-bold text-slate-900">{t("currentDispatchDetails.header.title")}</h1>
               </div>
             </div>
             <div className="flex items-center gap-3">
               <Badge variant={getStatusBadgeVariant(dispatch.status)}>
-                {dispatch.status.replace('_', ' ')}
+                {t(`currentDispatchDetails.dispatchStatus.${dispatch.status}`)}
               </Badge>
               <div className="flex gap-2">
                 <Button 
@@ -147,7 +147,7 @@ export default function CurrentDispatchDetails() {
                   size="sm"
                 >
                   <RotateCcw className="h-4 w-4 mr-2" />
-                  Reroute
+                  {t("currentDispatchDetails.header.rerouteButton")}
                 </Button>
                 <Button 
                   onClick={() => markAsDone(dispatch.id)} 
@@ -155,7 +155,7 @@ export default function CurrentDispatchDetails() {
                   size="sm"
                 >
                   <CheckCircle2 className="h-4 w-4 mr-2" />
-                  Mark Complete
+                  {isMarking ? t("currentDispatchDetails.header.markingButton") : t("currentDispatchDetails.header.markCompleteButton")}
                 </Button>
               </div>
             </div>
@@ -170,7 +170,7 @@ export default function CurrentDispatchDetails() {
                     <Truck className="h-5 w-5 text-green-600" />
                   </div>
                   <div>
-                    <p className="text-sm text-slate-500">Active Routes</p>
+                    <p className="text-sm text-slate-500">{t("currentDispatchDetails.stats.activeRoutes")}</p>
                     <p className="text-2xl font-bold">{routes.length}</p>
                   </div>
                 </div>
@@ -184,7 +184,7 @@ export default function CurrentDispatchDetails() {
                     <Package className="h-5 w-5 text-blue-600" />
                   </div>
                   <div>
-                    <p className="text-sm text-slate-500">Total Orders</p>
+                    <p className="text-sm text-slate-500">{t("currentDispatchDetails.stats.totalOrders")}</p>
                     <p className="text-2xl font-bold">{totalOrders}</p>
                   </div>
                 </div>
@@ -198,8 +198,8 @@ export default function CurrentDispatchDetails() {
                     <Navigation className="h-5 w-5 text-purple-600" />
                   </div>
                   <div>
-                    <p className="text-sm text-slate-500">Total Distance</p>
-                    <p className="text-2xl font-bold">{totalDistance.toFixed(1)} km</p>
+                    <p className="text-sm text-slate-500">{t("currentDispatchDetails.stats.totalDistance")}</p>
+                    <p className="text-2xl font-bold">{totalDistance.toFixed(1)} {t("currentDispatchDetails.stats.distanceUnit")}</p>
                   </div>
                 </div>
               </CardContent>
@@ -212,8 +212,8 @@ export default function CurrentDispatchDetails() {
                     <Clock className="h-5 w-5 text-orange-600" />
                   </div>
                   <div>
-                    <p className="text-sm text-slate-500">Est. Duration</p>
-                    <p className="text-2xl font-bold">{totalDuration.toFixed(2)} min</p>
+                    <p className="text-sm text-slate-500">{t("currentDispatchDetails.stats.estDuration")}</p>
+                    <p className="text-2xl font-bold">{totalDuration.toFixed(2)} {t("currentDispatchDetails.stats.durationUnit")}</p>
                   </div>
                 </div>
               </CardContent>
@@ -224,7 +224,6 @@ export default function CurrentDispatchDetails() {
         {/* Map */}
         <div className="h-[calc(100%-280px)]">
           {selectedRoute == null ? <MultiRoutesDynamicMap routes={routes} /> : <SingleRouteDynamicMap route={selectedRoute}/>}
-          {/* <MultiRoutesDynamicMap routes={selectedRoute ? [selectedRoute] : routes}/> */}
         </div>
       </div>
 
@@ -233,9 +232,9 @@ export default function CurrentDispatchDetails() {
         <Tabs value={activeTab} onValueChange={setActiveTab} className="h-full flex flex-col">
           <div className="border-b px-6 py-4">
             <TabsList className="grid w-full grid-cols-3">
-              <TabsTrigger value="overview" className="text-xs">Overview</TabsTrigger>
-              <TabsTrigger value="routes" className="text-xs">Routes</TabsTrigger>
-              <TabsTrigger value="pending" className="text-xs">Pending</TabsTrigger>
+              <TabsTrigger value="overview" className="text-xs">{t("currentDispatchDetails.tabs.overview")}</TabsTrigger>
+              <TabsTrigger value="routes" className="text-xs">{t("currentDispatchDetails.tabs.routes")}</TabsTrigger>
+              <TabsTrigger value="pending" className="text-xs">{t("currentDispatchDetails.tabs.pending")}</TabsTrigger>
             </TabsList>
           </div>
 
@@ -245,17 +244,17 @@ export default function CurrentDispatchDetails() {
               <div>
                 <h3 className="font-semibold mb-3 flex items-center gap-2">
                   <Calendar className="h-4 w-4" />
-                  Dispatch Info
+                  {t("currentDispatchDetails.overviewTab.dispatchInfo")}
                 </h3>
                 <div className="space-y-2 text-sm">
                   <div className="flex justify-between">
-                    <span className="text-slate-500">Status:</span>
+                    <span className="text-slate-500">{t("currentDispatchDetails.overviewTab.status")}:</span>
                     <Badge variant={getStatusBadgeVariant(dispatch.status)} className="text-xs">
-                      {dispatch.status.replace('_', ' ')}
+                      {t(`currentDispatchDetails.dispatchStatus.${dispatch.status}`)}
                     </Badge>
                   </div>
                   <div className="flex justify-between">
-                    <span className="text-slate-500">Created:</span>
+                    <span className="text-slate-500">{t("currentDispatchDetails.overviewTab.created")}:</span>
                     <span>{formatDate(dispatch.createdAt)}</span>
                   </div>
                 </div>
@@ -266,16 +265,16 @@ export default function CurrentDispatchDetails() {
               <div>
                 <h3 className="font-semibold mb-3 flex items-center gap-2">
                   <Users className="h-4 w-4" />
-                  Quick Stats
+                  {t("currentDispatchDetails.overviewTab.quickStats")}
                 </h3>
                 <div className="grid grid-cols-2 gap-3">
                   <div className="bg-slate-50 p-3 rounded-lg text-center">
                     <p className="text-xl font-bold text-slate-900">{routes.length}</p>
-                    <p className="text-xs text-slate-500">Active Routes</p>
+                    <p className="text-xs text-slate-500">{t("currentDispatchDetails.overviewTab.activeRoutesCount")}</p>
                   </div>
                   <div className="bg-slate-50 p-3 rounded-lg text-center">
                     <p className="text-xl font-bold text-slate-900">{pendingOrders.length}</p>
-                    <p className="text-xs text-slate-500">Pending Orders</p>
+                    <p className="text-xs text-slate-500">{t("currentDispatchDetails.overviewTab.pendingOrdersCount")}</p>
                   </div>
                 </div>
               </div>
@@ -286,7 +285,7 @@ export default function CurrentDispatchDetails() {
               <div className="flex items-center justify-between">
                 <h3 className="font-semibold flex items-center gap-2">
                   <Route className="h-4 w-4" />
-                  Active Routes ({routes.length})
+                  {t("currentDispatchDetails.routesTab.activeRoutes", { count: routes.length })}
                 </h3>
               </div>
               
@@ -312,45 +311,28 @@ export default function CurrentDispatchDetails() {
                             <CheckCircle2 className="h-4 w-4 text-blue-600 ml-1" />
                           )}
                           <Badge variant={getStatusBadgeVariant(route.status)} className="text-xs">
-                            {route.status.replace('_', ' ')}
+                            {t(`currentDispatchDetails.routeStatus.${route.status}`)}
                           </Badge>
                         </div>
 
                         <div className="text-sm text-slate-600">
                           <div className="flex items-center gap-2 mb-1">
                             <Users className="h-3 w-3" />
-                            Driver: {route.vehicle?.driver?.username}
+                            {t("currentDispatchDetails.routesTab.driver")}: {route.vehicle?.driver?.username}
                           </div>
                           <div className="flex items-center gap-2 mb-1">
                             <Package className="h-3 w-3" />
-                            Orders: {route.orders?.length ?? 0}
+                            {t("currentDispatchDetails.routesTab.orders")}: {route.orders?.length ?? 0}
                           </div>
                           <div className="flex items-center gap-2 mb-1">
                             <Navigation className="h-3 w-3" />
-                            Distance: {route.distance.toFixed(1)} km
+                            {t("currentDispatchDetails.routesTab.distance")}: {route.distance.toFixed(1)} {t("currentDispatchDetails.stats.distanceUnit")}
                           </div>
                           <div className="flex items-center gap-2">
                             <Clock className="h-3 w-3" />
-                            Duration: {route.duration} min
+                            {t("currentDispatchDetails.routesTab.duration")}: {route.duration} {t("currentDispatchDetails.stats.durationUnit")}
                           </div>
                         </div>
-
-                        {/* Load Progress */}
-                        {/* <div className="space-y-1">
-                          <div className="flex justify-between text-xs">
-                            <span>Load Progress</span>
-                            <span>{route.vehicle?.currentLoad || 0}/{route.vehicle?.capacity || 100} kg</span>
-                          </div>
-                          <div className="w-full bg-slate-200 rounded-full h-2">
-                            <div 
-                              className="bg-blue-600 h-2 rounded-full transition-all duration-300" 
-                              style={{ 
-                                width: `${((route.vehicle?.currentLoad || 0) / (route.vehicle?.capacity || 100)) * 100}%` 
-                              }}
-                            />
-                          </div>
-                        </div> */}
-
                       </div>
                     </CardContent>
                   </Card>
@@ -363,7 +345,7 @@ export default function CurrentDispatchDetails() {
               <div className="flex items-center justify-between">
                 <h3 className="font-semibold flex items-center gap-2">
                   <Package className="h-4 w-4" />
-                  Pending Orders ({pendingOrders.length})
+                  {t("currentDispatchDetails.pendingOrdersTab.pendingOrders", { count: pendingOrders.length })}
                 </h3>
               </div>
               
@@ -376,22 +358,22 @@ export default function CurrentDispatchDetails() {
                           <div className="flex-1">
                             <div className="flex items-center gap-2 mb-2">
                               <MapPin className="h-4 w-4 text-slate-500" />
-                              <span className="text-sm font-medium">Order #{order.id.slice(-6)}</span>
+                              <span className="text-sm font-medium">{t("currentDispatchDetails.pendingOrdersTab.orderPrefix")}{order.id.slice(-6)}</span>
                             </div>
                             <p className="text-sm text-slate-600 mb-2">{order.address}</p>
                           </div>
                           <Badge variant={getCategoryBadgeVariant(order.category)} className="text-xs">
-                            {order.category}
+                            {t(`currentDispatchDetails.trashCategory.${order.category}`)}
                           </Badge>
                         </div>
                         
                         <div className="flex items-center justify-between text-sm">
                           <div className="flex items-center gap-2">
                             <Weight className="h-3 w-3 text-slate-500" />
-                            <span>{order.weight} kg</span>
+                            <span>{order.weight} {t("currentDispatchDetails.stats.weightUnit")}</span>
                           </div>
                           <Badge variant="outline" className="text-xs">
-                            {order.status}
+                            {t(`currentDispatchDetails.orderStatus.${order.status}`)}
                           </Badge>
                         </div>
                       </div>

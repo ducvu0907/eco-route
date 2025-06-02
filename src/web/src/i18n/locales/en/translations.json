@@ -1,0 +1,892 @@
+{
+  "orderManagement": {
+    "pageTitle": "Order Management",
+    "pageDescription": "Manage and track all waste collection orders ({count} total)",
+    "filters": {
+      "category": {
+        "label": "Category:",
+        "all": "All",
+        "general": "General",
+        "organic": "Organic",
+        "recyclable": "Recyclable",
+        "hazardous": "Hazardous",
+        "electronic": "Electronic"
+      },
+      "status": {
+        "label": "Status:",
+        "all": "All",
+        "completed": "Completed",
+        "inProgress": "In Progress",
+        "pending": "Pending",
+        "cancelled": "Cancelled"
+      },
+      "date": {
+        "from": "From:",
+        "end": "End:",
+        "clear": "Clear"
+      }
+    },
+    "mapCard": {
+      "title": "Orders Map"
+    },
+    "listCard": {
+      "title": "Orders List",
+      "statusSummary": {
+        "completed": "Completed",
+        "inProgress": "In Progress",
+        "pending": "Pending"
+      },
+      "noOrdersFound": {
+        "title": "No Orders Found",
+        "description": "No orders match the selected filters."
+      },
+      "orderCard": {
+        "noAddressProvided": "No address provided",
+        "descriptionLabel": "Description:",
+        "weightUnit": "kg",
+        "viewButton": "View",
+        "completedAt": "Completed: {date}"
+      }
+    },
+    "loadingState": {
+      "title": "Order Management",
+      "description": "Manage and track all waste collection orders"
+    },
+    "errorState": {
+      "title": "Error Loading Orders",
+      "description": "Failed to load orders. Please check your connection and try again."
+    }
+  },
+  "login": {
+    "welcomeBack": "Welcome back",
+    "enterCredentials": "Enter your credentials to access your account",
+    "usernameLabel": "Username",
+    "usernamePlaceholder": "Enter your username",
+    "passwordLabel": "Password",
+    "passwordPlaceholder": "Enter your password",
+    "signInButton": "Sign in",
+    "loggingInButton": "Logging in...",
+    "noAccountPrompt": "Don't have an account?",
+    "createAccountLink": "Create one here",
+    "validation": {
+      "usernameRequired": "Username is required",
+      "passwordRequired": "Password is required"
+    }
+  },
+  "register": {
+    "createAccount": "Create account",
+    "enterInfo": "Enter your information to get started",
+    "usernameLabel": "Username",
+    "usernamePlaceholder": "Enter your username",
+    "passwordLabel": "Password",
+    "passwordPlaceholder": "Enter your password",
+    "phoneLabel": "Phone",
+    "phonePlaceholder": "Enter your phone number",
+    "roleLabel": "Role",
+    "selectRolePlaceholder": "Select a role",
+    "roleCustomer": "Customer",
+    "roleDriver": "Driver",
+    "roleManager": "Manager",
+    "registerButton": "Create account",
+    "creatingAccountButton": "Creating account...",
+    "alreadyHaveAccountPrompt": "Already have an account?",
+    "signInLink": "Sign in here",
+    "validation": {
+      "usernameRequired": "Username is required",
+      "passwordRequired": "Password is required",
+      "phoneRequired": "Phone is required",
+      "roleRequired": "Role is required"
+    }
+  },
+  "userManagement": {
+    "header": {
+      "title": "User Management",
+      "subtitle": "{{filteredCount}} of {{totalCount}} users shown"
+    },
+    "stats": {
+      "customers": "Customers",
+      "drivers": "Drivers",
+      "managers": "Managers",
+      "filteredBadge": "Filtered"
+    },
+    "table": {
+      "allUsers": "All Users",
+      "filtered": "Filtered",
+      "columns": {
+        "user": {
+          "title": "User",
+          "searchPlaceholder": "Search username..."
+        },
+        "contact": {
+          "title": "Contact",
+          "searchPlaceholder": "Search phone..."
+        },
+        "role": {
+          "title": "Role",
+          "filterHint": "Click stats to filter",
+          "showing": "Showing: {{role}}"
+        },
+        "created": {
+          "title": "Created",
+          "searchPlaceholder": "Search date..."
+        },
+        "lastUpdated": {
+          "title": "Last Updated",
+          "searchPlaceholder": "Search date..."
+        }
+      },
+      "empty": {
+        "noUsersFound": "No users found",
+        "description": "Users will appear here once they're added to the system."
+      },
+      "noFilterMatch": {
+        "title": "No users match your filters",
+        "description": "Try adjusting your search criteria or clearing filters"
+      }
+    },
+    "error": {
+      "title": "Error Loading Users",
+      "description": "Failed to load users. Please check your connection and try again."
+    }
+  },
+  "depotManagement": {
+    "pageTitle": "Depot Management",
+    "depotCount": "{{count}} depot(s) available",
+    "searchPlaceholder": "Search by address",
+    "createDepotButton": "Create Depot",
+    "noDepotsFound": {
+      "searchMatch": "No depots match your search",
+      "noDepots": "No depots found",
+      "getDescription": "Get started by creating your first depot",
+      "createButton": "Create Your First Depot"
+    },
+    "card": {
+      "noAddress": "N/A",
+      "vehiclesLabel": "Vehicles",
+      "createdAt": "Created",
+      "viewButton": "View",
+      "deleteButton": "Delete"
+    },
+    "alertDialog": {
+      "title": "Are you sure?",
+      "description": "This action cannot be undone. This will permanently delete the depot at ",
+      "cancelButton": "Cancel",
+      "confirmDeleteButton": "Delete",
+      "deletingButton": "Deleting..."
+    },
+    "loadingState": {
+      "title": "Depot Management"
+    },
+    "errorState": {
+      "title": "Error",
+      "description": "Failed to load depots. Please try again later."
+    }
+  },
+  "orderDetails": {
+    "header": {
+      "title": "Order Details",
+      "orderId": "Order ID: {{orderId}}"
+    },
+    "status": {
+      "completed": "Completed",
+      "inProgress": "In Progress",
+      "pending": "Pending",
+      "cancelled": "Cancelled"
+    },
+    "infoCard": {
+      "title": "Order Information",
+      "location": "Location",
+      "noAddress": "No address provided",
+      "weight": "Weight",
+      "kg": "kg",
+      "category": "Category",
+      "createdAt": "Created:",
+      "updatedAt": "Updated:",
+      "completedAt": "Completed:",
+      "description": "Description"
+    },
+    "mapSection": {
+      "titleInProgress": "Route Tracking",
+      "titleCompleted": "Route Summary"
+    },
+    "customerCard": {
+      "title": "Customer Information",
+      "unavailable": "Customer information unavailable",
+      "viewProfile": "View Customer Profile"
+    },
+    "actionsCard": {
+      "title": "Actions",
+      "goToDispatch": "Go to Dispatch",
+      "viewRouteDetails": "View Route Details",
+      "backToOrders": "Back to Orders"
+    },
+    "routeInfoCard": {
+      "title": "Route Information",
+      "distance": "km",
+      "duration": "minutes",
+      "vehicle": "Vehicle:",
+      "driver": "Driver:",
+      "stopNumber": "Stop #:"
+    },
+    "categories": {
+      "general": "General",
+      "organic": "Organic",
+      "recyclable": "Recyclable",
+      "hazardous": "Hazardous",
+      "electronic": "Electronic"
+    }
+  },
+  "userDetails": {
+    "header": {
+      "title": "User Details",
+      "subtitle": "Manage and view full profile and data"
+    },
+    "profileCard": {
+      "title": "Profile Information",
+      "username": "Username",
+      "phone": "Phone",
+      "accountCreated": "Account Created",
+      "lastUpdated": "Last Updated"
+    },
+    "roles": {
+      "manager": "Manager",
+      "driver": "Driver",
+      "customer": "Customer",
+      "unknown": "Unknown"
+    },
+    "driverSection": {
+      "title": "Vehicle Assignment"
+    },
+    "customerSection": {
+      "title": "Order History"
+    },
+    "error": {
+      "title": "Error",
+      "description": "Failed to load user details. Please try again later."
+    }
+  },
+  "vehicleManagement": {
+    "header": {
+      "title": "Vehicle Management",
+      "subtitle": "Manage your fleet of {{count}} vehicles",
+      "addVehicle": "Add Vehicle"
+    },
+    "filters": {
+      "title": "Filters",
+      "allTypes": "All Types",
+      "allCategories": "All Categories",
+      "allStatuses": "All Statuses",
+      "clearFilters": "Clear filters",
+      "resultsCount": {
+        "one": "{{count}} vehicle",
+        "other": "{{count}} vehicles"
+      },
+      "activeFilters": {
+        "type": "Type:",
+        "category": "Category:"
+      }
+    },
+    "vehicleCard": {
+      "capacity": "Capacity",
+      "kg": "kg",
+      "category": "Category",
+      "driver": "Driver",
+      "created": "Created",
+      "view": "View",
+      "delete": "Delete",
+      "deleteDialog": {
+        "title": "Delete Vehicle",
+        "description": "Are you sure you want to delete vehicle {{licensePlate}}? This action cannot be undone and will permanently remove all associated data.",
+        "cancel": "Cancel",
+        "confirm": "Delete Vehicle",
+        "deleting": "Deleting..."
+      }
+    },
+    "emptyState": {
+      "noMatchTitle": "No vehicles match your filters",
+      "noMatchDescription": "Try adjusting your filters to see more results.",
+      "noVehiclesFoundTitle": "No vehicles found",
+      "noVehiclesFoundDescription": "Get started by adding your first vehicle to the fleet.",
+      "clearFiltersButton": "Clear All Filters",
+      "addFirstVehicleButton": "Add Your First Vehicle"
+    },
+    "status": {
+      "ACTIVE": "Active",
+      "IDLE": "Idle",
+      "REPAIR": "Repair"
+    },
+    "category": {
+      "GENERAL": "General",
+      "ORGANIC": "Organic",
+      "RECYCLABLE": "Recyclable",
+      "HAZARDOUS": "Hazardous",
+      "ELECTRONIC": "Electronic"
+    },
+    "type": {
+      "THREE_WHEELER": "Three Wheeler",
+      "COMPACTOR_TRUCK": "Compactor Truck"
+    },
+    "error": {
+      "title": "Error Loading Vehicles",
+      "description": "Failed to load vehicles. Please check your connection and try again."
+    }
+  },
+  "vehicleDetails": {
+    "header": {
+      "title": "Vehicle Details",
+      "subtitle": "Manage and monitor vehicle information",
+      "editButton": "Edit Vehicle"
+    },
+    "vehicleInfoCard": {
+      "title": "Vehicle Information",
+      "licensePlate": "License Plate",
+      "status": "Status",
+      "capacity": "Capacity",
+      "currentLoad": "Current Load",
+      "fullPercentage": "{{percentage}}% full",
+      "driver": "Driver",
+      "depot": "Depot",
+      "kg": "kg"
+    },
+    "routesCard": {
+      "title": "Routes ({{count}})",
+      "noRoutes": {
+        "heading": "No routes available for this vehicle.",
+        "description": "This vehicle has not been assigned any routes yet."
+      },
+      "routeIdPrefix": "Route #",
+      "routeStatus": {
+        "inProgress": "In Progress",
+        "completed": "Completed"
+      },
+      "distance": "Distance",
+      "orders": "Orders",
+      "duration": "Duration",
+      "minutes": "min",
+      "completed": "Completed:",
+      "goToDispatch": "Go to dispatch"
+    },
+    "mapSection": {
+      "title": "Route Map",
+      "selectRouteBadge": "Route #{{routeIdLast8}}",
+      "emptyState": {
+        "heading": "Select a Route",
+        "description": "Choose a route from the list above to view it on the map"
+      }
+    },
+    "status": {
+      "ACTIVE": "Active",
+      "IDLE": "Idle",
+      "REPAIR": "Repair"
+    }
+  },
+  "depotDetails": {
+    "error": {
+      "title": "Error Loading Depot",
+      "description": "Failed to load depot details. Please try again later."
+    },
+    "overview": {
+      "title": "Depot Details",
+      "subtitle": "Comprehensive overview of this waste collection depot"
+    },
+    "actions": {
+      "editDepot": "Edit Depot",
+      "addVehicle": "Add Vehicle",
+      "addFirstVehicle": "Add Your First Vehicle",
+      "details": "Details"
+    },
+    "metrics": {
+      "totalVehicles": "Total Vehicles",
+      "activeVehicles": "Active Vehicles",
+      "totalLoad": "Total Load (kg)",
+      "avgLoad": "Avg. Load (kg)"
+    },
+    "info": {
+      "title": "Depot Information",
+      "address": "Address",
+      "noAddress": "No address provided",
+      "coordinates": "Coordinates",
+      "created": "Created At",
+      "updated": "Last Updated"
+    },
+    "vehicles": {
+      "title": "Vehicles ({{count}})",
+      "subtitle": "Vehicles assigned to this depot",
+      "empty": {
+        "title": "No Vehicles Here Yet",
+        "description": "It looks like there are no vehicles assigned to this depot. Add your first vehicle to get started!"
+      }
+    },
+    "vehicle": {
+      "licensePlate": "License Plate",
+      "status": "Status",
+      "loadStatus": "Load Status",
+      "location": "Location",
+      "unknown": "Unknown"
+    }
+  },
+  "dispatchManagement": {
+    "error": {
+      "title": "Error Loading Dispatches",
+      "description": "Failed to load dispatch information. Please check your connection and try again."
+    },
+    "header": {
+      "title": "Dispatch Management",
+      "currentDispatchButton": "Current Dispatch"
+    },
+    "stats": {
+      "totalDispatches": "Total Dispatches",
+      "completed": "Completed",
+      "inProgress": "In Progress"
+    },
+    "filters": {
+      "fromLabel": "From:",
+      "toLabel": "To:",
+      "clearFilters": "Clear Filters"
+    },
+    "table": {
+      "title": "Dispatch History",
+      "totalRecords": "{{count}} total records",
+      "header": {
+        "dispatchId": "Dispatch ID",
+        "status": "Status",
+        "completedAt": "Completed At",
+        "createdAt": "Created At",
+        "lastUpdated": "Last Updated",
+        "actions": "Actions"
+      },
+      "statusPending": "Pending",
+      "noDispatches": {
+        "title": "No Dispatches Found",
+        "description": "There are currently no dispatches in the system. Dispatches will appear here once they are created and assigned to vehicles.",
+        "createButton": "Create New Dispatch"
+      }
+    }
+  },
+  "noDispatch": {
+    "header": {
+      "title": "Create New Dispatch",
+      "subtitle": "Review pending orders and available vehicles",
+      "createButton": "Create Dispatch",
+      "creatingButton": "Creating..."
+    },
+    "stats": {
+      "pendingOrders": "Pending Orders",
+      "availableVehicles": "Available Vehicles",
+      "totalWeight": "Total Weight",
+      "weightUnit": "kg"
+    },
+    "filters": {
+      "all": "All",
+      "category": {
+        "general": "General",
+        "organic": "Organic",
+        "recyclable": "Recyclable",
+        "hazardous": "Hazardous",
+        "electronic": "Electronic"
+      }
+    }
+  },
+  "currentDispatchDetails": {
+    "error": {
+      "title": "Error",
+      "description": "Failed to load dispatch details. Please try again."
+    },
+    "header": {
+      "title": "Active Dispatch",
+      "rerouteButton": "Reroute",
+      "markCompleteButton": "Mark Complete",
+      "creatingButton": "Creating...",
+      "markingButton": "Marking..."
+    },
+    "stats": {
+      "activeRoutes": "Active Routes",
+      "totalOrders": "Total Orders",
+      "totalDistance": "Total Distance",
+      "estDuration": "Est. Duration",
+      "distanceUnit": "km",
+      "durationUnit": "min"
+    },
+    "tabs": {
+      "overview": "Overview",
+      "routes": "Routes",
+      "pending": "Pending"
+    },
+    "overviewTab": {
+      "dispatchInfo": "Dispatch Info",
+      "status": "Status",
+      "created": "Created",
+      "quickStats": "Quick Stats",
+      "activeRoutesCount": "Active Routes",
+      "pendingOrdersCount": "Pending Orders"
+    },
+    "routesTab": {
+      "activeRoutes": "Active Routes ({{count}})",
+      "driver": "Driver",
+      "orders": "Orders",
+      "distance": "Distance",
+      "duration": "Duration"
+    },
+    "pendingOrdersTab": {
+      "pendingOrders": "Pending Orders ({{count}})",
+      "orderPrefix": "Order #"
+    },
+    "dispatchStatus": {
+      "IN_PROGRESS": "In Progress",
+      "COMPLETED": "Completed"
+    },
+    "routeStatus": {
+      "IN_PROGRESS": "In Progress",
+      "COMPLETED": "Completed"
+    },
+    "trashCategory": {
+      "GENERAL": "General",
+      "RECYCLABLE": "Recyclable",
+      "ORGANIC": "Organic",
+      "HAZARDOUS": "Hazardous",
+      "ELECTRONIC": "Electronic"
+    },
+    "orderStatus": {
+      "PENDING": "Pending",
+      "COLLECTED": "Collected",
+      "CANCELLED": "Cancelled"
+    }
+  },
+  "completedDispatchDetails": {
+    "header": {
+      "status": "Status",
+      "routes": "Routes",
+      "totalOrders": "Total Orders",
+      "totalDistance": "Total Distance",
+      "distanceUnit": "km"
+    },
+    "dispatchInformation": {
+      "title": "Dispatch Information",
+      "createdAt": "Created:",
+      "completedAt": "Completed:",
+      "totalWeight": "Total Weight",
+      "weightUnit": "kg",
+      "vehiclesUsed": "Vehicles Used",
+      "avgDistance": "Avg Distance"
+    },
+    "routesList": {
+      "title": "Routes ({{count}})",
+      "routeNumber": "Route #",
+      "orders": "Orders"
+    },
+    "routeVisualization": {
+      "title": "Route Visualization"
+    },
+    "statusColors": {
+      "completed": "Completed",
+      "in_progress": "In Progress",
+      "pending": "Pending"
+    }
+  },
+  "dashboard": {
+    "header": {
+      "title": "Dashboard",
+      "subtitle": "Monitor your fleet, orders, and operations in real-time"
+    },
+    "keyMetrics": {
+      "totalOrders": {
+        "title": "Total Orders",
+        "completedText": "+{{count}} completed"
+      },
+      "activeVehicles": {
+        "title": "Active Vehicles",
+        "idleText": "{{idleCount}} idle",
+        "repairText": "{{repairCount}} in repair"
+      },
+      "completionRate": {
+        "title": "Completion Rate"
+      },
+      "totalWeight": {
+        "title": "Total Weight",
+        "unit": "kg",
+        "description": "Collected today"
+      }
+    },
+    "chartsSection": {
+      "dailyOrdersTrend": {
+        "title": "Daily Orders Trend",
+        "description": "Order status distribution over the week",
+        "completedLabel": "completed",
+        "inProgressLabel": "inProgress",
+        "pendingLabel": "pending"
+      },
+      "routeEfficiencyAnalysis": {
+        "title": "Route Efficiency Analysis",
+        "description": "Efficiency vs Distance for active routes",
+        "efficiencyLabel": "Efficiency %",
+        "distanceLabel": "Distance (km)"
+      },
+      "hourlyDispatchActivity": {
+        "title": "Hourly Dispatch Activity",
+        "description": "Dispatch frequency and vehicle allocation",
+        "dispatchesLabel": "dispatches",
+        "vehiclesLabel": "vehicles"
+      },
+      "wasteCategoryDistribution": {
+        "title": "Waste Category Distribution",
+        "description": "Weight distribution by waste type",
+        "tooltipWeight": "Weight"
+      },
+      "vehicleLoadUtilization": {
+        "title": "Vehicle Load Utilization",
+        "description": "Current load capacity utilization",
+        "tooltipUtilization": "Utilization"
+      },
+      "routePerformanceMetrics": {
+        "title": "Route Performance Metrics",
+        "description": "Fuel consumption vs route efficiency",
+        "fuelLabel": "Fuel (L)",
+        "efficiencyLabel": "Efficiency %"
+      }
+    },
+    "mainContentGrid": {
+      "orderStatus": {
+        "title": "Order Status",
+        "description": "Current order distribution",
+        "pending": "Pending",
+        "inProgress": "In Progress",
+        "completed": "Completed"
+      },
+      "fleetStatus": {
+        "title": "Fleet Status",
+        "description": "Vehicle availability and load"
+      },
+      "wasteCategories": {
+        "title": "Waste Categories",
+        "description": "Distribution by category",
+        "ordersCount": "{{count}} orders"
+      }
+    },
+    "routesAndDepots": {
+      "activeRoutes": {
+        "title": "Active Routes",
+        "description": "Current route operations",
+        "stops": "stops",
+        "duration": "Duration"
+      },
+      "depotLocations": {
+        "title": "Depot Locations",
+        "description": "Collection and storage facilities",
+        "vehiclesCount": "Vehicles"
+      }
+    },
+    "statuses": {
+      "ACTIVE": "Active",
+      "IN_PROGRESS": "In Progress",
+      "COMPLETED": "Completed",
+      "PENDING": "Pending",
+      "IDLE": "Idle",
+      "REPAIR": "Repair",
+      "CANCELLED": "Cancelled"
+    },
+    "categories": {
+      "RECYCLABLE": "Recyclable",
+      "ORGANIC": "Organic",
+      "HAZARDOUS": "Hazardous",
+      "ELECTRONIC": "Electronic",
+      "GENERAL": "General"
+    }
+  },
+  "depotCreateModal": {
+    "title": "Create New Depot",
+    "findLocationCard": {
+      "title": "Find Location",
+      "searchPlaceholder": "Search for an address...",
+      "mapPickerPlaceholder": "Search for a location or use the map picker"
+    },
+    "locationDetailsCard": {
+      "title": "Location Details",
+      "addressLabel": "Address",
+      "addressPlaceholder": "Address will appear here",
+      "locatingText": "Locating...",
+      "latitudeLabel": "Latitude",
+      "longitudeLabel": "Longitude"
+    },
+    "footer": {
+      "cancelButton": "Cancel",
+      "createButton": "Create Depot",
+      "creatingButton": "Creating..."
+    },
+    "validation": {
+      "addressRequired": "Address is required",
+      "latitudeRequired": "Latitude is required",
+      "longitudeRequired": "Longitude is required"
+    }
+  },
+  "depotUpdateModal": {
+    "title": "Update Depot",
+    "findLocationCard": {
+      "title": "Find Location",
+      "searchPlaceholder": "Search for an address...",
+      "mapPickerPlaceholder": "Search for a location or use the map picker"
+    },
+    "locationDetailsCard": {
+      "title": "Location Details",
+      "addressLabel": "Address",
+      "addressPlaceholder": "Address will appear here",
+      "locatingText": "Locating...",
+      "latitudeLabel": "Latitude",
+      "longitudeLabel": "Longitude"
+    },
+    "footer": {
+      "cancelButton": "Cancel",
+      "updateButton": "Update Depot",
+      "updatingButton": "Updating..."
+    },
+    "validation": {
+      "addressRequired": "Address is required",
+      "latitudeRequired": "Latitude is required",
+      "longitudeRequired": "Longitude is required"
+    }
+  },
+  "vehicleCreateModal": {
+    "header": {
+      "title": "Add New Vehicle",
+      "subtitle": "Configure your new vehicle details"
+    },
+    "formFields": {
+      "depotLocation": {
+        "label": "Depot Location",
+        "placeholder": "Choose depot location",
+        "required": "Depot is required"
+      },
+      "driverAssignment": {
+        "label": "Driver Assignment",
+        "placeholder": "Select available driver",
+        "required": "Driver is required",
+        "preselected": "Pre-selected"
+      },
+      "licensePlate": {
+        "label": "License Plate Number",
+        "placeholder": "e.g., ABC-1234",
+        "required": "License plate is required"
+      },
+      "vehicleType": {
+        "label": "Vehicle Type",
+        "placeholder": "Choose vehicle type"
+      },
+      "wasteCategory": {
+        "label": "Waste Category",
+        "placeholder": "Select waste category"
+      }
+    },
+    "vehicleTypes": {
+      "THREE_WHEELER": "Three Wheeler",
+      "COMPACTOR_TRUCK": "Compactor Truck"
+    },
+    "trashCategories": {
+      "GENERAL": "General",
+      "ORGANIC": "Organic",
+      "RECYCLABLE": "Recyclable",
+      "HAZARDOUS": "Hazardous",
+      "ELECTRONIC": "Electronic"
+    },
+    "footer": {
+      "cancelButton": "Cancel",
+      "createButton": "Create Vehicle",
+      "creatingButton": "Creating..."
+    }
+  },
+  "vehicleUpdateModal": {
+    "loading": {
+      "title": "Loading Vehicle Data",
+      "message": "Fetching depots and drivers...",
+      "spinnerAlt": "Loading spinner"
+    },
+    "error": {
+      "title": "Error Loading Data",
+      "description": "Failed to load depot and driver information. Please check your connection and try again.",
+      "closeButton": "Close"
+    },
+    "header": {
+      "title": "Update Vehicle",
+      "subtitle": "{licensePlate} • {vehicleType}"
+    },
+    "currentInfoCard": {
+      "title": "Current Vehicle Information",
+      "licensePlate": "License Plate:",
+      "currentStatus": "Current Status:",
+      "currentDriver": "Current Driver:",
+      "capacity": "Capacity:",
+      "unit": "kg"
+    },
+    "formFields": {
+      "depotAssignment": {
+        "label": "Depot Assignment",
+        "placeholder": "Select a depot location",
+        "description": "Select the depot where this vehicle will be stationed"
+      },
+      "driverAssignment": {
+        "label": "Driver Assignment",
+        "placeholder": "Select a driver",
+        "currentDriverBadge": "Current",
+        "driverPhone": "({phone})",
+        "description": "Assign a driver to operate this vehicle. Only unassigned drivers are shown."
+      },
+      "vehicleStatus": {
+        "label": "Vehicle Status",
+        "placeholder": "Select vehicle status",
+        "descriptions": {
+          "ACTIVE": "(Ready for routes)",
+          "IDLE": "(Waiting for assignment)",
+          "REPAIR": "(Under maintenance)"
+        },
+        "description": "Set the operational status of the vehicle"
+      }
+    },
+    "vehicleStatus": {
+      "ACTIVE": "Active",
+      "IDLE": "Idle",
+      "REPAIR": "Repair"
+    },
+    "footer": {
+      "cancelButton": "Cancel",
+      "updateButton": "Update Vehicle",
+      "updatingButton": "Updating..."
+    }
+  },
+  "sidebar": {
+    "nav": {
+      "dashboard": "Dashboard",
+      "depots": "Depots",
+      "vehicles": "Vehicles",
+      "users": "Users",
+      "dispatches": "Dispatches",
+      "orders": "Orders"
+    },
+    "userSection": {
+      "usernameError": "Error retrieving username",
+      "signOut": "Sign Out",
+      "userAvatarFallback": "U"
+    }
+  },
+  "orderMarker": {
+    "orderNumber": "Order #{{index}}",
+    "address": "Address",
+    "weight": "Weight",
+    "status": "Status",
+    "viewDetails": "View details",
+    "statuses": {
+      "PENDING": "Pending",
+      "IN_PROGRESS": "In Progress",
+      "COMPLETED": "Completed",
+      "CANCELLED": "Cancelled"
+    }
+  },
+  "vehicleDynamicMarker": {
+    "vehicle": "Vehicle",
+    "load": "Load",
+    "viewDetails": "View details"
+  },
+  "depotDynamicMarker": {
+    "depot": "Depot",
+    "numberOfVehicles": "Number of vehicles",
+    "createdAt": "Created At",
+    "viewDetails": "View details"
+  }
+}

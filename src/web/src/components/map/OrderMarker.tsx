@@ -1,15 +1,16 @@
 import { GeneralTrashIcon, HazardousTrashIcon, ElectronicTrashIcon, OrganicTrashIcon, RecyclableTrashIcon } from "@/lib/leaflet-icons"
-import { OrderResponse, TrashCategory } from "@/types/types";
+import { OrderResponse, TrashCategory, OrderStatus } from "@/types/types";
 import { Marker, Popup } from "react-leaflet";
 import { useNavigate } from "react-router";
 import { Button } from "../ui/button";
+import { useTranslation } from "react-i18next";
 
 interface OrderMarkerProps {
   order: OrderResponse;
 }
 
 export const getOrderIcon = (category: TrashCategory) => {
-  switch(category) {
+  switch (category) {
     case TrashCategory.GENERAL:
       return GeneralTrashIcon;
     case TrashCategory.HAZARDOUS:
@@ -20,20 +21,21 @@ export const getOrderIcon = (category: TrashCategory) => {
       return RecyclableTrashIcon;
     case TrashCategory.ORGANIC:
       return OrganicTrashIcon;
-  };
+  }
 }
 
 export default function OrderMarker({ order }: OrderMarkerProps) {
   const navigate = useNavigate();
+  const { t } = useTranslation();
 
   return (
     <Marker key={order.id} position={[order.latitude, order.longitude]} icon={getOrderIcon(order.category)}>
       <Popup>
-        <strong>Order #{order.index}</strong><br />
-        <p>Address: {order.address}</p>
-        <p>Weight: {order.weight}kg</p>
-        <p>Status: {order.status}kg</p>
-        <Button onClick={() => navigate(`/orders/${order.id}`)}>View details</Button>
+        <strong>{t("orderMarker.orderNumber", { index: order.index })}</strong><br />
+        <p>{t("orderMarker.address")}: {order.address}</p>
+        <p>{t("orderMarker.weight")}: {order.weight}kg</p>
+        <p>{t("orderMarker.status")}: {t(`orderMarker.statuses.${order.status}`)}</p>
+        <Button onClick={() => navigate(`/orders/${order.id}`)}>{t("orderMarker.viewDetails")}</Button>
       </Popup>
     </Marker>
   );

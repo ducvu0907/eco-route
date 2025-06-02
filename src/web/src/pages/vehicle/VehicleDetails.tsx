@@ -27,6 +27,7 @@ import { LatLngExpression } from "leaflet";
 import { useGetDepotById } from "@/hooks/useDepot";
 import SingleRouteStaticMap from "@/components/map/SingleRouteStaticMap";
 import SingleRouteDynamicMap from "@/components/map/SingleRouteDynamicMap";
+import { useTranslation } from "react-i18next";
 import { 
   Truck, 
   User, 
@@ -46,6 +47,7 @@ import { formatDate } from "@/utils/formatDate";
 
 export default function VehicleDetails() {
   const navigate = useNavigate();
+  const { t } = useTranslation();
   const [modalOpen, setModalOpen] = useState<boolean>(false);
   const { vehicleId } = useParams<{ vehicleId: string }>();
   const [selectedRoute, setSelectedRoute] = useState<RouteResponse | null>(null);
@@ -142,13 +144,13 @@ export default function VehicleDetails() {
             <Truck className="h-8 w-8 text-blue-600" />
           </div>
           <div>
-            <h1 className="text-3xl font-bold text-gray-900">Vehicle Details</h1>
-            <p className="text-gray-600 mt-1">Manage and monitor vehicle information</p>
+            <h1 className="text-3xl font-bold text-gray-900">{t("vehicleDetails.header.title")}</h1>
+            <p className="text-gray-600 mt-1">{t("vehicleDetails.header.subtitle")}</p>
           </div>
         </div>
         <Button onClick={() => setModalOpen(true)} className="flex items-center space-x-2">
           <Edit className="h-4 w-4" />
-          <span>Edit Vehicle</span>
+          <span>{t("vehicleDetails.header.editButton")}</span>
         </Button>
       </div>
 
@@ -159,12 +161,12 @@ export default function VehicleDetails() {
           <CardHeader className="pb-3">
             <CardTitle className="flex items-center space-x-2">
               <Truck className="h-5 w-5" />
-              <span>Vehicle Information</span>
+              <span>{t("vehicleDetails.vehicleInfoCard.title")}</span>
             </CardTitle>
           </CardHeader>
           <CardContent className="space-y-4">
             <div className="flex items-center justify-between">
-              <span className="text-sm font-medium text-gray-600">License Plate</span>
+              <span className="text-sm font-medium text-gray-600">{t("vehicleDetails.vehicleInfoCard.licensePlate")}</span>
               <Badge variant="outline" className="font-mono">
                 {vehicle.licensePlate}
               </Badge>
@@ -173,11 +175,11 @@ export default function VehicleDetails() {
             <Separator />
             
             <div className="flex items-center justify-between">
-              <span className="text-sm font-medium text-gray-600">Status</span>
+              <span className="text-sm font-medium text-gray-600">{t("vehicleDetails.vehicleInfoCard.status")}</span>
               <Badge className={`text-white ${getStatusColor(vehicle.status)}`}>
                 <div className="flex items-center space-x-1">
                   {getStatusIcon(vehicle.status)}
-                  <span>{vehicle.status}</span>
+                  <span>{t(`vehicleDetails.status.${vehicle.status}`)}</span>
                 </div>
               </Badge>
             </div>
@@ -187,9 +189,9 @@ export default function VehicleDetails() {
             <div className="flex items-center justify-between">
               <span className="text-sm font-medium text-gray-600 flex items-center space-x-1">
                 <Weight className="h-4 w-4" />
-                <span>Capacity</span>
+                <span>{t("vehicleDetails.vehicleInfoCard.capacity")}</span>
               </span>
-              <span className="font-semibold">{vehicle.capacity} kg</span>
+              <span className="font-semibold">{vehicle.capacity} {t("vehicleDetails.vehicleInfoCard.kg")}</span>
             </div>
             
             <Separator />
@@ -197,12 +199,12 @@ export default function VehicleDetails() {
             <div className="flex items-center justify-between">
               <span className="text-sm font-medium text-gray-600 flex items-center space-x-1">
                 <Package className="h-4 w-4" />
-                <span>Current Load</span>
+                <span>{t("vehicleDetails.vehicleInfoCard.currentLoad")}</span>
               </span>
               <div className="text-right">
-                <span className="font-semibold">{vehicle.currentLoad} kg</span>
+                <span className="font-semibold">{vehicle.currentLoad} {t("vehicleDetails.vehicleInfoCard.kg")}</span>
                 <div className="text-xs text-gray-500">
-                  {((vehicle.currentLoad / vehicle.capacity) * 100).toFixed(1)}% full
+                  {t("vehicleDetails.vehicleInfoCard.fullPercentage", { percentage: ((vehicle.currentLoad / vehicle.capacity) * 100).toFixed(1) })}
                 </div>
               </div>
             </div>
@@ -212,7 +214,7 @@ export default function VehicleDetails() {
             <div className="space-y-2">
               <span className="text-sm font-medium text-gray-600 flex items-center space-x-1">
                 <User className="h-4 w-4" />
-                <span>Driver</span>
+                <span>{t("vehicleDetails.vehicleInfoCard.driver")}</span>
               </span>
               <div className="pl-5">
                 <p className="font-medium">{vehicle.driver.username}</p>
@@ -225,7 +227,7 @@ export default function VehicleDetails() {
             <div className="space-y-2">
               <span className="text-sm font-medium text-gray-600 flex items-center space-x-1">
                 <MapPin className="h-4 w-4" />
-                <span>Depot</span>
+                <span>{t("vehicleDetails.vehicleInfoCard.depot")}</span>
               </span>
               <p className="text-sm pl-5">{depot.address}</p>
             </div>
@@ -237,7 +239,7 @@ export default function VehicleDetails() {
           <CardHeader className="pb-3">
             <CardTitle className="flex items-center space-x-2">
               <Route className="h-5 w-5" />
-              <span>Routes ({routes.length})</span>
+              <span>{t("vehicleDetails.routesCard.title", { count: routes.length })}</span>
             </CardTitle>
           </CardHeader>
           <CardContent>
@@ -245,7 +247,7 @@ export default function VehicleDetails() {
               {routes.length === 0 ? (
                 <div className="flex flex-col items-center justify-center h-32 text-center">
                   <Route className="h-12 w-12 text-gray-300 mb-2" />
-                  <p className="text-gray-500">No routes available for this vehicle.</p>
+                  <p className="text-gray-500">{t("vehicleDetails.routesCard.noRoutes.heading")}</p>
                 </div>
               ) : (
                 <div className="space-y-3">
@@ -261,17 +263,17 @@ export default function VehicleDetails() {
                     >
                       <CardContent className="p-4">
                         <div className="flex items-center justify-between mb-3">
-                          <h3 className="font-semibold text-lg">Route #{route.id.slice(-8)}</h3>
+                          <h3 className="font-semibold text-lg">{t("vehicleDetails.routesCard.routeIdPrefix")}{route.id.slice(-8)}</h3>
                           <Badge className={`text-white ${getRouteStatusColor(route.status)}`}>
                             {route.status === RouteStatus.IN_PROGRESS ? (
                               <div className="flex items-center space-x-1">
                                 <Activity className="h-3 w-3" />
-                                <span>In Progress</span>
+                                <span>{t("vehicleDetails.routesCard.routeStatus.inProgress")}</span>
                               </div>
                             ) : (
                               <div className="flex items-center space-x-1">
                                 <CheckCircle className="h-3 w-3" />
-                                <span>Completed</span>
+                                <span>{t("vehicleDetails.routesCard.routeStatus.completed")}</span>
                               </div>
                             )}
                           </Badge>
@@ -279,7 +281,7 @@ export default function VehicleDetails() {
                             variant={"outline"}
                             onClick={() => navigate(`/dispatches/${route.dispatchId}`)}
                           >
-                            Go to dispatch
+                            {t("vehicleDetails.routesCard.goToDispatch")}
                           </Button>
                         </div>
 
@@ -287,7 +289,7 @@ export default function VehicleDetails() {
                           <div className="flex items-center space-x-2">
                             <Navigation className="h-4 w-4 text-gray-500" />
                             <div>
-                              <p className="text-gray-600">Distance</p>
+                              <p className="text-gray-600">{t("vehicleDetails.routesCard.distance")}</p>
                               <p className="font-medium">{route.distance} km</p>
                             </div>
                           </div>
@@ -295,7 +297,7 @@ export default function VehicleDetails() {
                           <div className="flex items-center space-x-2">
                             <Package className="h-4 w-4 text-gray-500" />
                             <div>
-                              <p className="text-gray-600">Orders</p>
+                              <p className="text-gray-600">{t("vehicleDetails.routesCard.orders")}</p>
                               <p className="font-medium">{route.orders.length}</p>
                             </div>
                           </div>
@@ -303,8 +305,8 @@ export default function VehicleDetails() {
                           <div className="flex items-center space-x-2">
                             <Clock className="h-4 w-4 text-gray-500" />
                             <div>
-                              <p className="text-gray-600">Duration</p>
-                              <p className="font-medium">{Math.round(route.duration / 60)} min</p>
+                              <p className="text-gray-600">{t("vehicleDetails.routesCard.duration")}</p>
+                              <p className="font-medium">{Math.round(route.duration / 60)} {t("vehicleDetails.routesCard.minutes")}</p>
                             </div>
                           </div>
                         </div>
@@ -313,7 +315,7 @@ export default function VehicleDetails() {
                           <div className="mt-3 pt-3 border-t">
                             <div className="flex items-center space-x-2 text-sm text-gray-500">
                               <Calendar className="h-4 w-4" />
-                              <span>Completed: {formatDate(route.completedAt)}</span>
+                              <span>{t("vehicleDetails.routesCard.completed")} {formatDate(route.completedAt)}</span>
                             </div>
                           </div>
                         )}
@@ -332,10 +334,10 @@ export default function VehicleDetails() {
         <CardHeader>
           <CardTitle className="flex items-center space-x-2">
             <MapPin className="h-5 w-5" />
-            <span>Route Map</span>
+            <span>{t("vehicleDetails.mapSection.title")}</span>
             {selectedRoute && (
               <Badge variant="outline" className="ml-2">
-                Route #{selectedRoute.id.slice(-8)}
+                {t("vehicleDetails.mapSection.selectRouteBadge", { routeIdLast8: selectedRoute.id.slice(-8) })}
               </Badge>
             )}
           </CardTitle>
@@ -354,8 +356,8 @@ export default function VehicleDetails() {
             <div className="h-[500px] flex items-center justify-center bg-gray-50 rounded-lg border-2 border-dashed border-gray-300">
               <div className="text-center">
                 <MapPin className="h-16 w-16 text-gray-300 mx-auto mb-4" />
-                <h3 className="text-lg font-medium text-gray-600 mb-2">Select a Route</h3>
-                <p className="text-gray-500">Choose a route from the list above to view it on the map</p>
+                <h3 className="text-lg font-medium text-gray-600 mb-2">{t("vehicleDetails.mapSection.emptyState.heading")}</h3>
+                <p className="text-gray-500">{t("vehicleDetails.mapSection.emptyState.description")}</p>
               </div>
             </div>
           )}

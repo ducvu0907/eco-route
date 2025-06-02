@@ -17,13 +17,12 @@ import {
   AlertCircle,
   Plus,
   ExternalLink,
-  Search,
-  Filter,
   Eye
 } from "lucide-react";
 import { useState } from "react";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { useTranslation } from "react-i18next";
 
 export default function DispatchManagement() {
   const navigate = useNavigate();
@@ -31,6 +30,7 @@ export default function DispatchManagement() {
   const [endDate, setEndDate] = useState<string | null>(null);
   const { data, isLoading, isError } = useGetDispatches();
   const dispatches = data?.result;
+  const { t } = useTranslation();
 
   const filteredDispatches = dispatches?.filter((dispatch) => {
     const createdDate = dispatch.createdAt.split("T")[0];
@@ -93,9 +93,9 @@ export default function DispatchManagement() {
       <div className="container mx-auto p-6">
         <Alert variant="destructive" className="max-w-2xl mx-auto">
           <AlertCircle className="h-4 w-4" />
-          <AlertTitle>Error Loading Dispatches</AlertTitle>
+          <AlertTitle>{t("dispatchManagement.error.title")}</AlertTitle>
           <AlertDescription>
-            Failed to load dispatch information. Please check your connection and try again.
+            {t("dispatchManagement.error.description")}
           </AlertDescription>
         </Alert>
       </div>
@@ -111,7 +111,7 @@ export default function DispatchManagement() {
             <Truck className="h-8 w-8 text-blue-600" />
           </div>
           <div>
-            <h1 className="text-2xl font-bold text-gray-900">Dispatch Management</h1>
+            <h1 className="text-2xl font-bold text-gray-900">{t("dispatchManagement.header.title")}</h1>
             {/* <p className="text-gray-600 mt-1">Monitor and manage all dispatch operations</p> */}
           </div>
         </div>
@@ -122,7 +122,7 @@ export default function DispatchManagement() {
             className="flex items-center space-x-2"
           >
             <Activity className="h-4 w-4" />
-            <span>Current Dispatch</span>
+            <span>{t("dispatchManagement.header.currentDispatchButton")}</span>
             <ExternalLink className="h-3 w-3" />
           </Button>
         </div>
@@ -138,7 +138,7 @@ export default function DispatchManagement() {
                   <Truck className="h-6 w-6 text-blue-600" />
                 </div>
                 <div>
-                  <p className="text-sm font-medium text-gray-600">Total Dispatches</p>
+                  <p className="text-sm font-medium text-gray-600">{t("dispatchManagement.stats.totalDispatches")}</p>
                   <p className="text-2xl font-bold text-gray-900">{dispatches.length}</p>
                 </div>
               </div>
@@ -152,7 +152,7 @@ export default function DispatchManagement() {
                   <CheckCircle className="h-6 w-6 text-green-600" />
                 </div>
                 <div>
-                  <p className="text-sm font-medium text-gray-600">Completed</p>
+                  <p className="text-sm font-medium text-gray-600">{t("dispatchManagement.stats.completed")}</p>
                   <p className="text-2xl font-bold text-gray-900">
                     {dispatches.filter(d => d.status === DispatchStatus.COMPLETED).length}
                   </p>
@@ -168,7 +168,7 @@ export default function DispatchManagement() {
                   <Activity className="h-6 w-6 text-yellow-600" />
                 </div>
                 <div>
-                  <p className="text-sm font-medium text-gray-600">In Progress</p>
+                  <p className="text-sm font-medium text-gray-600">{t("dispatchManagement.stats.inProgress")}</p>
                   <p className="text-2xl font-bold text-gray-900">
                     {dispatches.filter(d => d.status === DispatchStatus.IN_PROGRESS).length}
                   </p>
@@ -181,7 +181,7 @@ export default function DispatchManagement() {
 
       <div className="flex flex-row items-center">
         <div className="flex items-center space-x-2 py-4 w-sm">
-          <Label className="text-sm font-medium text-gray-700">From:</Label>
+          <Label className="text-sm font-medium text-gray-700">{t("dispatchManagement.filters.fromLabel")}</Label>
           <Input
             type="date"
             value={startDate || ""}
@@ -189,7 +189,7 @@ export default function DispatchManagement() {
             className="border rounded px-2 py-1 text-sm"
           />
 
-          <Label className="text-sm font-medium text-gray-700">To:</Label>
+          <Label className="text-sm font-medium text-gray-700">{t("dispatchManagement.filters.toLabel")}</Label>
           <Input
             type="date"
             value={endDate || ""}
@@ -208,7 +208,7 @@ export default function DispatchManagement() {
               }}
               className="ml-2"
             >
-              Clear Filters
+              {t("dispatchManagement.filters.clearFilters")}
             </Button>
           )
         }
@@ -220,11 +220,11 @@ export default function DispatchManagement() {
           <div className="flex items-center justify-between">
             <CardTitle className="flex items-center space-x-2">
               <Calendar className="h-5 w-5" />
-              <span>Dispatch History</span>
+              <span>{t("dispatchManagement.table.title")}</span>
             </CardTitle>
             {dispatches && dispatches.length > 0 && (
               <Badge variant="outline" className="text-sm">
-                {dispatches.length} total records
+                {t("dispatchManagement.table.totalRecords", { count: dispatches.length })}
               </Badge>
             )}
           </div>
@@ -235,12 +235,12 @@ export default function DispatchManagement() {
               <Table>
                 <TableHeader>
                   <TableRow className="bg-gray-50">
-                    <TableHead className="font-semibold">Dispatch ID</TableHead>
-                    <TableHead className="font-semibold">Status</TableHead>
-                    <TableHead className="font-semibold">Completed At</TableHead>
-                    <TableHead className="font-semibold">Created At</TableHead>
-                    <TableHead className="font-semibold">Last Updated</TableHead>
-                    <TableHead className="font-semibold w-20">Actions</TableHead>
+                    <TableHead className="font-semibold">{t("dispatchManagement.table.header.dispatchId")}</TableHead>
+                    <TableHead className="font-semibold">{t("dispatchManagement.table.header.status")}</TableHead>
+                    <TableHead className="font-semibold">{t("dispatchManagement.table.header.completedAt")}</TableHead>
+                    <TableHead className="font-semibold">{t("dispatchManagement.table.header.createdAt")}</TableHead>
+                    <TableHead className="font-semibold">{t("dispatchManagement.table.header.lastUpdated")}</TableHead>
+                    <TableHead className="font-semibold w-20">{t("dispatchManagement.table.header.actions")}</TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
@@ -271,7 +271,7 @@ export default function DispatchManagement() {
                         ) : (
                           <div className="flex items-center space-x-2">
                             <Clock className="h-4 w-4 text-gray-400" />
-                            <span className="text-gray-400">Pending</span>
+                            <span className="text-gray-400">{t("dispatchManagement.table.statusPending")}</span>
                           </div>
                         )}
                       </TableCell>
@@ -310,16 +310,16 @@ export default function DispatchManagement() {
               <div className="w-24 h-24 bg-gray-100 rounded-full flex items-center justify-center mb-6">
                 <Truck className="h-12 w-12 text-gray-400" />
               </div>
-              <h3 className="text-xl font-semibold text-gray-900 mb-2">No Dispatches Found</h3>
+              <h3 className="text-xl font-semibold text-gray-900 mb-2">{t("dispatchManagement.table.noDispatches.title")}</h3>
               <p className="text-gray-600 text-center mb-6 max-w-md">
-                There are currently no dispatches in the system. Dispatches will appear here once they are created and assigned to vehicles.
+                {t("dispatchManagement.table.noDispatches.description")}
               </p>
               <Button
                 onClick={() => navigate("/dispatches/current")}
                 className="flex items-center space-x-2"
               >
                 <Plus className="h-4 w-4" />
-                <span>Create New Dispatch</span>
+                <span>{t("dispatchManagement.table.noDispatches.createButton")}</span>
               </Button>
             </div>
           )}

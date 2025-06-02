@@ -38,9 +38,11 @@ import {
 import { formatDate } from "@/utils/formatDate";
 import { useNavigate } from "react-router";
 import { useState, useMemo } from "react";
+import { useTranslation } from "react-i18next";
 
 export default function UserManagement() {
   const navigate = useNavigate();
+  const { t } = useTranslation();
   const { data, isLoading, isError } = useGetUsers();
   const users: UserResponse[] = data?.result || [];
 
@@ -87,9 +89,9 @@ export default function UserManagement() {
     }, {} as Record<string, number>);
     
     return [
-      { label: 'Customers', count: stats.CUSTOMER || 0, color: 'text-blue-600', bg: 'bg-blue-50', role: 'CUSTOMER' },
-      { label: 'Drivers', count: stats.DRIVER || 0, color: 'text-green-600', bg: 'bg-green-50', role: 'DRIVER' },
-      { label: 'Managers', count: stats.MANAGER || 0, color: 'text-purple-600', bg: 'bg-purple-50', role: 'MANAGER' },
+      { label: t("userManagement.stats.customers"), count: stats.CUSTOMER || 0, color: 'text-blue-600', bg: 'bg-blue-50', role: 'CUSTOMER' },
+      { label: t("userManagement.stats.drivers"), count: stats.DRIVER || 0, color: 'text-green-600', bg: 'bg-green-50', role: 'DRIVER' },
+      { label: t("userManagement.stats.managers"), count: stats.MANAGER || 0, color: 'text-purple-600', bg: 'bg-purple-50', role: 'MANAGER' },
     ];
   };
 
@@ -170,9 +172,9 @@ export default function UserManagement() {
         <div className="max-w-7xl mx-auto">
           <Alert variant="destructive" className="border-red-200 bg-red-50">
             <AlertTriangle className="h-5 w-5" />
-            <AlertTitle className="text-red-800">Error Loading Users</AlertTitle>
+            <AlertTitle className="text-red-800">{t("userManagement.error.title")}</AlertTitle>
             <AlertDescription className="text-red-700">
-              Failed to load users. Please check your connection and try again.
+              {t("userManagement.error.description")}
             </AlertDescription>
           </Alert>
         </div>
@@ -193,10 +195,10 @@ export default function UserManagement() {
                 <div className="p-2 bg-blue-50 rounded-lg">
                   <Users className="w-8 h-8 text-blue-600" />
                 </div>
-                User Management
+                {t("userManagement.header.title")}
               </h1>
               <p className="text-gray-600">
-                {filteredUsers.length} of {users.length} users shown
+                {t("userManagement.header.subtitle", { filteredCount: filteredUsers.length, totalCount: users.length })}
               </p>
             </div>
           </div>
@@ -222,7 +224,7 @@ export default function UserManagement() {
                       {stat.label}
                       {selectedRole === stat.role && (
                         <Badge variant="secondary" className="text-xs">
-                          Filtered
+                          {t("userManagement.stats.filteredBadge")}
                         </Badge>
                       )}
                     </p>
@@ -230,9 +232,9 @@ export default function UserManagement() {
                   </div>
                   <div className={`p-3 rounded-full ${stat.bg}`}>
                     <div className={`w-6 h-6 ${stat.color}`}>
-                      {stat.label === 'Customers' && <User className="w-6 h-6" />}
-                      {stat.label === 'Drivers' && <Truck className="w-6 h-6" />}
-                      {stat.label === 'Managers' && <Crown className="w-6 h-6" />}
+                      {stat.label === t("userManagement.stats.customers") && <User className="w-6 h-6" />}
+                      {stat.label === t("userManagement.stats.drivers") && <Truck className="w-6 h-6" />}
+                      {stat.label === t("userManagement.stats.managers") && <Crown className="w-6 h-6" />}
                     </div>
                   </div>
                 </div>
@@ -246,11 +248,11 @@ export default function UserManagement() {
           <CardHeader className="border-b border-gray-100 bg-gray-50/50">
             <CardTitle className="text-xl font-semibold text-gray-900 flex items-center gap-2">
               <Users className="w-5 h-5 text-gray-600" />
-              All Users
+              {t("userManagement.table.allUsers")}
               {hasActiveFilters && (
                 <Badge variant="outline" className="ml-2">
                   <Filter className="w-3 h-3 mr-1" />
-                  Filtered
+                  {t("userManagement.table.filtered")}
                 </Badge>
               )}
             </CardTitle>
@@ -261,8 +263,8 @@ export default function UserManagement() {
                 <div className="mx-auto w-24 h-24 bg-gray-100 rounded-full flex items-center justify-center mb-4">
                   <Users className="w-12 h-12 text-gray-400" />
                 </div>
-                <h3 className="text-lg font-medium text-gray-900 mb-2">No users found</h3>
-                <p className="text-gray-500">Users will appear here once they're added to the system.</p>
+                <h3 className="text-lg font-medium text-gray-900 mb-2">{t("userManagement.table.empty.noUsersFound")}</h3>
+                <p className="text-gray-500">{t("userManagement.table.empty.description")}</p>
               </div>
             ) : (
               <div className="overflow-x-auto">
@@ -273,12 +275,12 @@ export default function UserManagement() {
                         <div className="space-y-2">
                           <div className="flex items-center gap-2">
                             <User className="w-4 h-4" />
-                            User
+                            {t("userManagement.table.columns.user.title")}
                           </div>
                           <div className="relative">
                             <Search className="absolute left-2 top-1/2 transform -translate-y-1/2 h-3 w-3 text-gray-400" />
                             <Input
-                              placeholder="Search username..."
+                              placeholder={t("userManagement.table.columns.user.searchPlaceholder")}
                               value={searchQueries.username}
                               onChange={(e) => updateSearchQuery('username', e.target.value)}
                               className="pl-7 h-8 text-xs border-gray-200 focus:border-blue-300"
@@ -290,12 +292,12 @@ export default function UserManagement() {
                         <div className="space-y-2">
                           <div className="flex items-center gap-2">
                             <Phone className="w-4 h-4" />
-                            Contact
+                            {t("userManagement.table.columns.contact.title")}
                           </div>
                           <div className="relative">
                             <Search className="absolute left-2 top-1/2 transform -translate-y-1/2 h-3 w-3 text-gray-400" />
                             <Input
-                              placeholder="Search phone..."
+                              placeholder={t("userManagement.table.columns.contact.searchPlaceholder")}
                               value={searchQueries.phone}
                               onChange={(e) => updateSearchQuery('phone', e.target.value)}
                               className="pl-7 h-8 text-xs border-gray-200 focus:border-blue-300"
@@ -307,10 +309,10 @@ export default function UserManagement() {
                         <div className="space-y-2">
                           <div className="flex items-center gap-2">
                             <Shield className="w-4 h-4" />
-                            Role
+                            {t("userManagement.table.columns.role.title")}
                           </div>
                           <div className="text-xs text-gray-500">
-                            {selectedRole ? `Showing: ${selectedRole}` : 'Click stats to filter'}
+                            {selectedRole ? t("userManagement.table.columns.role.showing", { role: selectedRole }) : t("userManagement.table.columns.role.filterHint")}
                           </div>
                         </div>
                       </TableHead>
@@ -318,12 +320,12 @@ export default function UserManagement() {
                         <div className="space-y-2">
                           <div className="flex items-center gap-2">
                             <Calendar className="w-4 h-4" />
-                            Created
+                            {t("userManagement.table.columns.created.title")}
                           </div>
                           <div className="relative">
                             <Search className="absolute left-2 top-1/2 transform -translate-y-1/2 h-3 w-3 text-gray-400" />
                             <Input
-                              placeholder="Search date..."
+                              placeholder={t("userManagement.table.columns.created.searchPlaceholder")}
                               value={searchQueries.createdAt}
                               onChange={(e) => updateSearchQuery('createdAt', e.target.value)}
                               className="pl-7 h-8 text-xs border-gray-200 focus:border-blue-300"
@@ -335,12 +337,12 @@ export default function UserManagement() {
                         <div className="space-y-2">
                           <div className="flex items-center gap-2">
                             <Clock className="w-4 h-4" />
-                            Last Updated
+                            {t("userManagement.table.columns.lastUpdated.title")}
                           </div>
                           <div className="relative">
                             <Search className="absolute left-2 top-1/2 transform -translate-y-1/2 h-3 w-3 text-gray-400" />
                             <Input
-                              placeholder="Search date..."
+                              placeholder={t("userManagement.table.columns.lastUpdated.searchPlaceholder")}
                               value={searchQueries.updatedAt}
                               onChange={(e) => updateSearchQuery('updatedAt', e.target.value)}
                               className="pl-7 h-8 text-xs border-gray-200 focus:border-blue-300"
@@ -360,9 +362,9 @@ export default function UserManagement() {
                               <Search className="w-8 h-8 text-gray-400" />
                             </div>
                             <div>
-                              <h3 className="font-medium text-gray-900">No users match your filters</h3>
+                              <h3 className="font-medium text-gray-900">{t("userManagement.table.noFilterMatch.title")}</h3>
                               <p className="text-sm text-gray-500 mt-1">
-                                Try adjusting your search criteria or clearing filters
+                                {t("userManagement.table.noFilterMatch.description")}
                               </p>
                             </div>
                           </div>

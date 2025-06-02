@@ -4,6 +4,7 @@ import { Marker, Popup } from "react-leaflet";
 import { useNavigate } from "react-router";
 import { Button } from "../ui/button";
 import { useVehicleRealtimeData } from "@/hooks/useVehicleRealtimeData";
+import { useTranslation } from "react-i18next";
 
 interface VehicleDynamicMarkerProps {
   vehicle: VehicleResponse;
@@ -15,11 +16,12 @@ export const getVehicleIcon = (type: VehicleType) => {
       return CompactorTruckIcon;
     case VehicleType.THREE_WHEELER:
       return ThreeWheelerIcon;
-  };
+  }
 };
 
 export default function VehicleDynamicMarker({ vehicle }: VehicleDynamicMarkerProps) {
   const navigate = useNavigate();
+  const { t } = useTranslation();
 
   const realtimeData = useVehicleRealtimeData(vehicle.id);
 
@@ -30,10 +32,10 @@ export default function VehicleDynamicMarker({ vehicle }: VehicleDynamicMarkerPr
   return (
     <Marker position={[lat, lng]} icon={getVehicleIcon(vehicle.type)}>
       <Popup>
-        <strong>Vehicle:</strong> {vehicle.licensePlate} <br />
-        Load: {load}kg <br />
+        <strong>{t("vehicleDynamicMarker.vehicle")}</strong>: {vehicle.licensePlate} <br />
+        {t("vehicleDynamicMarker.load")}: {load}kg <br />
         <Button onClick={() => navigate(`/vehicles/${vehicle.id}`)} className="mt-2">
-          View details
+          {t("vehicleDynamicMarker.viewDetails")}
         </Button>
       </Popup>
     </Marker>

@@ -28,10 +28,9 @@ import {
   Map,
   List,
   ListOrderedIcon,
-  Trash,
-  TrashIcon
 } from "lucide-react";
 import { useState } from "react";
+import { useTranslation } from "react-i18next";
 
 export default function OrderManagement() {
   const navigate = useNavigate();
@@ -41,6 +40,8 @@ export default function OrderManagement() {
   const [filterStatus, setFilterStatus] = useState<OrderStatus | "ALL">("ALL");
   const [startDate, setStartDate] = useState<string | null>(null);
   const [endDate, setEndDate] = useState<string | null>(null);
+  const { t } = useTranslation();
+
   const filteredOrders = orders.filter(order => {
     const categoryMatch = filterCategory === "ALL" || order.category === filterCategory;
     const statusMatch = filterStatus === "ALL" || order.status === filterStatus;
@@ -69,13 +70,13 @@ export default function OrderManagement() {
   const getStatusBadge = (status: OrderStatus) => {
     switch (status) {
       case OrderStatus.COMPLETED:
-        return <Badge variant="default" className="bg-green-100 text-green-800 border-green-200">Completed</Badge>;
+        return <Badge variant="default" className="bg-green-100 text-green-800 border-green-200">{t("orderManagement.filters.status.completed")}</Badge>;
       case OrderStatus.IN_PROGRESS:
-        return <Badge variant="secondary" className="bg-blue-100 text-blue-800 border-blue-200">In Progress</Badge>;
+        return <Badge variant="secondary" className="bg-blue-100 text-blue-800 border-blue-200">{t("orderManagement.filters.status.inProgress")}</Badge>;
       case OrderStatus.PENDING:
-        return <Badge variant="outline" className="bg-yellow-50 text-yellow-800 border-yellow-200">Pending</Badge>;
+        return <Badge variant="outline" className="bg-yellow-50 text-yellow-800 border-yellow-200">{t("orderManagement.filters.status.pending")}</Badge>;
       case OrderStatus.CANCELLED:
-        return <Badge variant="destructive">Cancelled</Badge>;
+        return <Badge variant="destructive">{t("orderManagement.filters.status.cancelled")}</Badge>;
       default:
         return <Badge variant="outline">{status}</Badge>;
     }
@@ -109,7 +110,7 @@ export default function OrderManagement() {
 
     return (
       <Badge variant="outline" className={`text-xs ${categoryColors[category]}`}>
-        {category.toLowerCase().replace(/\b\w/g, l => l.toUpperCase())}
+        {t(`orderManagement.filters.category.${category.toLowerCase()}`)}
       </Badge>
     );
   };
@@ -118,8 +119,8 @@ export default function OrderManagement() {
     return (
       <div className="w-full h-full p-6">
         <div className="mb-6">
-          <h1 className="text-2xl font-bold tracking-tight">Order Management</h1>
-          <p className="text-muted-foreground">Manage and track all waste collection orders</p>
+          <h1 className="text-2xl font-bold tracking-tight">{t("orderManagement.loadingState.title")}</h1>
+          <p className="text-muted-foreground">{t("orderManagement.loadingState.description")}</p>
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 h-[calc(100vh-200px)]">
@@ -128,7 +129,7 @@ export default function OrderManagement() {
             <CardHeader>
               <div className="flex items-center gap-2">
                 <Map className="h-5 w-5" />
-                <CardTitle>Orders Map</CardTitle>
+                <CardTitle>{t("orderManagement.mapCard.title")}</CardTitle>
               </div>
             </CardHeader>
             <CardContent className="h-full">
@@ -141,7 +142,7 @@ export default function OrderManagement() {
             <CardHeader>
               <div className="flex items-center gap-2">
                 <List className="h-5 w-5" />
-                <CardTitle>Orders List</CardTitle>
+                <CardTitle>{t("orderManagement.listCard.title")}</CardTitle>
               </div>
             </CardHeader>
             <CardContent>
@@ -173,15 +174,15 @@ export default function OrderManagement() {
     return (
       <div className="w-full h-full p-6">
         <div className="mb-6">
-          <h1 className="text-2xl font-bold tracking-tight">Order Management</h1>
-          <p className="text-muted-foreground">Manage and track all waste collection orders</p>
+          <h1 className="text-2xl font-bold tracking-tight">{t("orderManagement.pageTitle")}</h1>
+          <p className="text-muted-foreground">{t("orderManagement.pageDescription", { count: orders.length })}</p>
         </div>
 
         <Alert variant="destructive">
           <AlertCircle className="h-4 w-4" />
-          <AlertTitle>Error Loading Orders</AlertTitle>
+          <AlertTitle>{t("orderManagement.errorState.title")}</AlertTitle>
           <AlertDescription>
-            Failed to load orders. Please check your connection and try again.
+            {t("orderManagement.errorState.description")}
           </AlertDescription>
         </Alert>
       </div>
@@ -196,9 +197,9 @@ export default function OrderManagement() {
           <ListOrderedIcon className="w-5 h-5 text-primary-foreground" />
         </div>
         <div className="ml-2">
-          <h1 className="text-2xl font-bold tracking-tight">Order Management</h1>
+          <h1 className="text-2xl font-bold tracking-tight">{t("orderManagement.pageTitle")}</h1>
           <p className="text-muted-foreground">
-            Manage and track all waste collection orders ({filteredOrders.length} total)
+            {t("orderManagement.pageDescription", { count: filteredOrders.length })}
           </p>
         </div>
       </div>
@@ -207,7 +208,7 @@ export default function OrderManagement() {
       <div className="mb-4 flex flex-col flex-wrap gap-4">
         {/* Category Filter */}
         <div className="flex items-center gap-2 flex-wrap">
-          <span className="font-semibold">Category:</span>
+          <span className="font-semibold">{t("orderManagement.filters.category.label")}</span>
           {["ALL", ...Object.values(TrashCategory)].map((category) => (
             <Badge
               key={category}
@@ -216,15 +217,15 @@ export default function OrderManagement() {
               onClick={() => setFilterCategory(category as TrashCategory | "ALL")}
             >
               {category === "ALL"
-                ? "All"
-                : category.toLowerCase().replace(/\b\w/g, l => l.toUpperCase())}
+                ? t("orderManagement.filters.category.all")
+                : t(`orderManagement.filters.category.${category.toLowerCase()}`)}
             </Badge>
           ))}
         </div>
 
         {/* Status Filter */}
         <div className="flex items-center gap-2 flex-wrap">
-          <span className="font-semibold">Status:</span>
+          <span className="font-semibold">{t("orderManagement.filters.status.label")}</span>
           {["ALL", ...Object.values(OrderStatus)].map((status) => (
             <Badge
               key={status}
@@ -233,22 +234,22 @@ export default function OrderManagement() {
               onClick={() => setFilterStatus(status as OrderStatus | "ALL")}
             >
               {status === "ALL"
-                ? "All"
-                : status.toLowerCase().replace(/\b\w/g, l => l.toUpperCase())}
+                ? t("orderManagement.filters.status.all")
+                : t(`orderManagement.filters.status.${status.toLowerCase()}`)}
             </Badge>
           ))}
         </div>
 
         {/* Date Filter */}
         <div className="flex items-center gap-2 flex-wrap">
-          <span className="font-semibold">From:</span>
+          <span className="font-semibold">{t("orderManagement.filters.date.from")}</span>
           <input
             type="date"
             className="border rounded px-2 py-1 text-sm"
             value={startDate || ""}
             onChange={(e) => setStartDate(e.target.value || null)}
           />
-          <span className="font-semibold">End:</span>
+          <span className="font-semibold">{t("orderManagement.filters.date.end")}</span>
           <input
             type="date"
             className="border rounded px-2 py-1 text-sm"
@@ -262,7 +263,7 @@ export default function OrderManagement() {
               onClick={() => { setStartDate(null); setEndDate(null); }}
               className="text-xs px-2"
             >
-              Clear
+              {t("orderManagement.filters.date.clear")}
             </Button>
           )}
         </div>
@@ -286,7 +287,7 @@ export default function OrderManagement() {
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-2">
                 <List className="h-5 w-5 text-muted-foreground" />
-                <CardTitle>Orders List</CardTitle>
+                <CardTitle>{t("orderManagement.listCard.title")}</CardTitle>
               </div>
               <div className="flex items-center gap-2">
                 {/* Status Summary */}
@@ -315,9 +316,9 @@ export default function OrderManagement() {
                     <Package className="h-8 w-8 text-muted-foreground" />
                   </div>
                   <div className="space-y-2">
-                    <h3 className="font-semibold text-lg">No Orders Found</h3>
+                    <h3 className="font-semibold text-lg">{t("orderManagement.listCard.noOrdersFound.title")}</h3>
                     <p className="text-sm text-muted-foreground max-w-sm">
-                      No orders match the selected filters.
+                      {t("orderManagement.listCard.noOrdersFound.description")}
                     </p>
                   </div>
                 </div>
@@ -335,18 +336,18 @@ export default function OrderManagement() {
                           <div className="flex items-center gap-2">
                             <MapPin className="h-4 w-4 text-muted-foreground flex-shrink-0" />
                             <span className="text-sm font-medium line-clamp-1 group-hover:text-foreground">
-                              {order.address || "No address provided"}
+                              {order.address || t("orderManagement.listCard.orderCard.noAddressProvided")}
                             </span>
                           </div>
 
                           <div className="flex items-center gap-3 text-xs text-muted-foreground">
                             <div className="flex items-center gap-1">
                               {getCategoryIcon(order.category)}
-                              <span>{order.category.toLowerCase().replace(/\b\w/g, l => l.toUpperCase())}</span>
+                              <span>{t(`orderManagement.filters.category.${order.category.toLowerCase()}`)}</span>
                             </div>
                             <div className="flex items-center gap-1">
                               <Scale className="h-3 w-3" />
-                              <span>{order.weight} kg</span>
+                              <span>{order.weight} {t("orderManagement.listCard.orderCard.weightUnit")}</span>
                             </div>
                           </div>
                         </div>
@@ -359,7 +360,7 @@ export default function OrderManagement() {
                       {/* Order Description */}
                       {order.description && (
                         <div className="mb-3 p-2 bg-muted/30 rounded text-xs">
-                          <span className="text-muted-foreground">Description: </span>
+                          <span className="text-muted-foreground">{t("orderManagement.listCard.orderCard.descriptionLabel")} </span>
                           <span className="text-foreground">{order.description}</span>
                         </div>
                       )}
@@ -380,14 +381,14 @@ export default function OrderManagement() {
                           className="h-7 px-3 opacity-0 group-hover:opacity-100 transition-opacity"
                         >
                           <Eye className="h-3 w-3 mr-1" />
-                          View
+                          {t("orderManagement.listCard.orderCard.viewButton")}
                         </Button>
                       </div>
 
                       {/* Completion Info */}
                       {order.completedAt && (
                         <div className="mt-2 pt-2 border-t border-muted text-xs text-muted-foreground">
-                          Completed: {formatDate(order.completedAt)}
+                          {t("orderManagement.listCard.orderCard.completedAt", { date: formatDate(order.completedAt) })}
                         </div>
                       )}
                     </div>

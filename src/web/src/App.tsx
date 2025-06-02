@@ -24,6 +24,7 @@ import { generateToken, messaging } from "./firebase";
 import { useToast } from "./hooks/useToast";
 import { useQueryClient } from "@tanstack/react-query";
 import { onMessage } from "firebase/messaging";
+import "./i18n/config";
 
 const App = () => {
   const queryClient = useQueryClient();

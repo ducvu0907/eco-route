@@ -44,8 +44,10 @@ import { Link, useNavigate } from "react-router";
 import { Button } from "@/components/ui/button";
 import { useEffect, useState } from "react";
 import VehicleCreateModal from "@/components/vehicle/VehicleCreateModal";
+import { useTranslation } from "react-i18next";
 
 export default function VehicleManagement() {
+  const { t } = useTranslation();
   const [typeFilter, setTypeFilter] = useState<VehicleType | "ALL">("ALL");
   const [categoryFilter, setCategoryFilter] = useState<TrashCategory | "ALL">("ALL");
   const [statusFilter, setStatusFilter] = useState<VehicleStatus | "ALL">("ALL");
@@ -70,9 +72,10 @@ export default function VehicleManagement() {
   const clearAllFilters = () => {
     setTypeFilter("ALL");
     setCategoryFilter("ALL");
+    setStatusFilter("ALL");
   };
 
-  const hasActiveFilters = typeFilter !== "ALL" || categoryFilter !== "ALL";
+  const hasActiveFilters = typeFilter !== "ALL" || categoryFilter !== "ALL" || statusFilter !== "ALL";
 
   const getStatusIcon = (status: string) => {
     switch (status) {
@@ -141,9 +144,9 @@ export default function VehicleManagement() {
         <div className="max-w-7xl mx-auto">
           <Alert variant="destructive" className="border-red-200 bg-red-50">
             <AlertTriangle className="h-5 w-5" />
-            <AlertTitle className="text-red-800">Error Loading Vehicles</AlertTitle>
+            <AlertTitle className="text-red-800">{t("vehicleManagement.error.title")}</AlertTitle>
             <AlertDescription className="text-red-700">
-              Failed to load vehicles. Please check your connection and try again.
+              {t("vehicleManagement.error.description")}
             </AlertDescription>
           </Alert>
         </div>
@@ -163,11 +166,11 @@ export default function VehicleManagement() {
               <div className="flex flex-row items-center">
                 <TruckIcon />
                 <h1 className="text-2xl font-bold tracking-tight text-gray-900 ml-3">
-                  Vehicle Management
+                  {t("vehicleManagement.header.title")}
                 </h1>
               </div>
               <p className="text-gray-600">
-                Manage your fleet of {vehicles.length} vehicles
+                {t("vehicleManagement.header.subtitle", { count: vehicles.length })}
               </p>
             </div>
             <Button
@@ -176,7 +179,7 @@ export default function VehicleManagement() {
               size="lg"
             >
               <Plus className="w-4 h-4 mr-2" />
-              Add Vehicle
+              {t("vehicleManagement.header.addVehicle")}
             </Button>
           </div>
         </div>
@@ -189,7 +192,7 @@ export default function VehicleManagement() {
             <div className="flex items-center gap-3">
               <div className="flex items-center gap-2 text-gray-700">
                 <Filter className="w-5 h-5" />
-                <span className="font-medium">Filters</span>
+                <span className="font-medium">{t("vehicleManagement.filters.title")}</span>
               </div>
               <div className="flex flex-wrap gap-3">
                 {/* Vehicle Type Filter */}
@@ -199,13 +202,10 @@ export default function VehicleManagement() {
                     onChange={(e) => setTypeFilter(e.target.value as VehicleType | "ALL")}
                     className="appearance-none bg-gray-50 border border-gray-200 rounded-lg px-4 py-2.5 pr-10 text-sm font-medium text-gray-700 hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all cursor-pointer min-w-[140px]"
                   >
-                    <option value="ALL">All Types</option>
+                    <option value="ALL">{t("vehicleManagement.filters.allTypes")}</option>
                     {Object.values(VehicleType).map((type) => (
                       <option key={type} value={type}>
-                        {type
-                          .split("_")
-                          .map((w) => w.charAt(0) + w.slice(1).toLowerCase())
-                          .join(" ")}
+                        {t(`vehicleManagement.type.${type}`)}
                       </option>
                     ))}
                   </select>
@@ -223,10 +223,10 @@ export default function VehicleManagement() {
                     onChange={(e) => setCategoryFilter(e.target.value as TrashCategory | "ALL")}
                     className="appearance-none bg-gray-50 border border-gray-200 rounded-lg px-4 py-2.5 pr-10 text-sm font-medium text-gray-700 hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all cursor-pointer min-w-[140px]"
                   >
-                    <option value="ALL">All Categories</option>
+                    <option value="ALL">{t("vehicleManagement.filters.allCategories")}</option>
                     {Object.values(TrashCategory).map((category) => (
                       <option key={category} value={category}>
-                        {category.charAt(0) + category.slice(1).toLowerCase()}
+                        {t(`vehicleManagement.category.${category}`)}
                       </option>
                     ))}
                   </select>
@@ -237,17 +237,17 @@ export default function VehicleManagement() {
                   </div>
                 </div>
 
-                {/* Trash Category Filter */}
+                {/* Vehicle Status Filter */}
                 <div className="relative">
                   <select
                     value={statusFilter}
                     onChange={(e) => setStatusFilter(e.target.value as VehicleStatus | "ALL")}
                     className="appearance-none bg-gray-50 border border-gray-200 rounded-lg px-4 py-2.5 pr-10 text-sm font-medium text-gray-700 hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all cursor-pointer min-w-[140px]"
                   >
-                    <option value="ALL">All Statuses</option>
+                    <option value="ALL">{t("vehicleManagement.filters.allStatuses")}</option>
                     {Object.values(VehicleStatus).map((status) => (
                       <option key={status} value={status}>
-                        {status.charAt(0) + status.slice(1).toLowerCase()}
+                        {t(`vehicleManagement.status.${status}`)}
                       </option>
                     ))}
                   </select>
@@ -270,14 +270,13 @@ export default function VehicleManagement() {
                   className="text-gray-500 hover:text-gray-700 hover:bg-gray-100 text-sm"
                 >
                   <X className="w-4 h-4 mr-1" />
-                  Clear filters
+                  {t("vehicleManagement.filters.clearFilters")}
                 </Button>
               )}
               
               {/* Results Count */}
               <div className="text-sm text-gray-500 bg-gray-50 px-3 py-2 rounded-lg border">
-                <span className="font-medium text-gray-900">{filteredVehicles.length}</span>
-                {filteredVehicles.length === 1 ? ' vehicle' : ' vehicles'}
+                <span className="font-medium text-gray-900">{t("vehicleManagement.filters.resultsCount.other", { count: filteredVehicles.length })}</span>
               </div>
             </div>
           </div>
@@ -287,8 +286,8 @@ export default function VehicleManagement() {
             <div className="flex flex-wrap gap-2 mt-4 pt-4 border-t border-gray-100">
               {typeFilter !== "ALL" && (
                 <div className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-blue-50 text-blue-700 rounded-full text-sm border border-blue-200">
-                  <span className="font-medium">Type:</span>
-                  <span>{typeFilter.split("_").map(w => w.charAt(0) + w.slice(1).toLowerCase()).join(" ")}</span>
+                  <span className="font-medium">{t("vehicleManagement.filters.activeFilters.type")}</span>
+                  <span>{t(`vehicleManagement.type.${typeFilter}`)}</span>
                   <button
                     onClick={() => setTypeFilter("ALL")}
                     className="ml-1 hover:bg-blue-100 rounded-full p-0.5"
@@ -299,11 +298,23 @@ export default function VehicleManagement() {
               )}
               {categoryFilter !== "ALL" && (
                 <div className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-green-50 text-green-700 rounded-full text-sm border border-green-200">
-                  <span className="font-medium">Category:</span>
-                  <span>{categoryFilter.charAt(0) + categoryFilter.slice(1).toLowerCase()}</span>
+                  <span className="font-medium">{t("vehicleManagement.filters.activeFilters.category")}</span>
+                  <span>{t(`vehicleManagement.category.${categoryFilter}`)}</span>
                   <button
                     onClick={() => setCategoryFilter("ALL")}
                     className="ml-1 hover:bg-green-100 rounded-full p-0.5"
+                  >
+                    <X className="w-3 h-3" />
+                  </button>
+                </div>
+              )}
+              {statusFilter !== "ALL" && (
+                <div className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-purple-50 text-purple-700 rounded-full text-sm border border-purple-200">
+                  <span className="font-medium">{t("vehicleManagement.filters.activeFilters.status")}</span>
+                  <span>{t(`vehicleManagement.status.${statusFilter}`)}</span>
+                  <button
+                    onClick={() => setStatusFilter("ALL")}
+                    className="ml-1 hover:bg-purple-100 rounded-full p-0.5"
                   >
                     <X className="w-3 h-3" />
                   </button>
@@ -322,12 +333,12 @@ export default function VehicleManagement() {
               <Truck className="w-12 h-12 text-gray-400" />
             </div>
             <h3 className="text-lg font-medium text-gray-900 mb-2">
-              {hasActiveFilters ? 'No vehicles match your filters' : 'No vehicles found'}
+              {hasActiveFilters ? t("vehicleManagement.emptyState.noMatchTitle") : t("vehicleManagement.emptyState.noVehiclesFoundTitle")}
             </h3>
             <p className="text-gray-500 mb-6">
               {hasActiveFilters 
-                ? 'Try adjusting your filters to see more results.' 
-                : 'Get started by adding your first vehicle to the fleet.'
+                ? t("vehicleManagement.emptyState.noMatchDescription") 
+                : t("vehicleManagement.emptyState.noVehiclesFoundDescription")
               }
             </p>
             {hasActiveFilters ? (
@@ -337,7 +348,7 @@ export default function VehicleManagement() {
                 className="border-gray-300"
               >
                 <X className="w-4 h-4 mr-2" />
-                Clear All Filters
+                {t("vehicleManagement.emptyState.clearFiltersButton")}
               </Button>
             ) : (
               <Button 
@@ -345,7 +356,7 @@ export default function VehicleManagement() {
                 className="bg-blue-600 hover:bg-blue-700"
               >
                 <Plus className="w-4 h-4 mr-2" />
-                Add Your First Vehicle
+                {t("vehicleManagement.emptyState.addFirstVehicleButton")}
               </Button>
             )}
           </div>
@@ -363,7 +374,7 @@ export default function VehicleManagement() {
                     </CardTitle>
                     <div className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium border ${getStatusColor(vehicle.status)}`}>
                       {getStatusIcon(vehicle.status)}
-                      {vehicle.status}
+                      {t(`vehicleManagement.status.${vehicle.status}`)}
                     </div>
                   </div>
                 </CardHeader>
@@ -373,29 +384,29 @@ export default function VehicleManagement() {
                     <div className="space-y-1">
                       <div className="flex items-center gap-2 text-sm text-gray-500">
                         <Package className="w-4 h-4" />
-                        Capacity
+                        {t("vehicleManagement.vehicleCard.capacity")}
                       </div>
                       <div className="font-semibold text-gray-900">
-                        {vehicle.capacity.toLocaleString()} kg
+                        {vehicle.capacity.toLocaleString()} {t("vehicleManagement.vehicleCard.kg")}
                       </div>
                     </div>
                   </div>
 
                   <div className="space-y-2">
                     <div className="flex items-center justify-between text-sm">
-                      <span className="text-gray-500">Category</span>
+                      <span className="text-gray-500">{t("vehicleManagement.vehicleCard.category")}</span>
                       <span className={`px-2 py-1 rounded-md text-xs font-medium ${getCategoryColor(vehicle.category)}`}>
-                        {vehicle.category}
+                        {t(`vehicleManagement.category.${vehicle.category}`)}
                       </span>
                     </div>
                     
                     <div className="flex items-center justify-between text-sm">
-                      <span className="text-gray-500">Driver</span>
+                      <span className="text-gray-500">{t("vehicleManagement.vehicleCard.driver")}</span>
                       <Link className="font-medium text-gray-900 hover:underline" to={`/users/${vehicle.driver.id}`}>{vehicle.driver.username}</Link>
                     </div>
                     
                     <div className="flex items-center justify-between text-sm">
-                      <span className="text-gray-500">Created</span>
+                      <span className="text-gray-500">{t("vehicleManagement.vehicleCard.created")}</span>
                       <span className="text-gray-900">{formatDate(vehicle.createdAt)}</span>
                     </div>
                   </div>
@@ -409,7 +420,7 @@ export default function VehicleManagement() {
                       className="flex-1 border-gray-200 hover:bg-gray-50"
                     >
                       <Eye className="w-4 h-4 mr-2" />
-                      View
+                      {t("vehicleManagement.vehicleCard.view")}
                     </Button>
 
                     <AlertDialog>
@@ -424,19 +435,19 @@ export default function VehicleManagement() {
                       </AlertDialogTrigger>
                       <AlertDialogContent>
                         <AlertDialogHeader>
-                          <AlertDialogTitle>Delete Vehicle</AlertDialogTitle>
+                          <AlertDialogTitle>{t("vehicleManagement.vehicleCard.deleteDialog.title")}</AlertDialogTitle>
                           <AlertDialogDescription>
-                            Are you sure you want to delete vehicle {vehicle.licensePlate}? This action cannot be undone and will permanently remove all associated data.
+                            {t("vehicleManagement.vehicleCard.deleteDialog.description", { licensePlate: vehicle.licensePlate })}
                           </AlertDialogDescription>
                         </AlertDialogHeader>
                         <AlertDialogFooter>
-                          <AlertDialogCancel>Cancel</AlertDialogCancel>
+                          <AlertDialogCancel>{t("vehicleManagement.vehicleCard.deleteDialog.cancel")}</AlertDialogCancel>
                           <AlertDialogAction
                             onClick={() => deleteVehicle(vehicle.id)}
                             disabled={isPending}
                             className="bg-red-600 hover:bg-red-700"
                           >
-                            {isPending ? 'Deleting...' : 'Delete Vehicle'}
+                            {isPending ? t("vehicleManagement.vehicleCard.deleteDialog.deleting") : t("vehicleManagement.vehicleCard.deleteDialog.confirm")}
                           </AlertDialogAction>
                         </AlertDialogFooter>
                       </AlertDialogContent>

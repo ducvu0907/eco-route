@@ -1,4 +1,4 @@
-import { Home, Warehouse, Truck, Users, Send, ShoppingCart, Map, LogOut, ChevronLeft, ChevronRight, Waypoints, Bell, Dot, Loader2 } from "lucide-react";
+import { Home, Warehouse, Truck, Users, Send, ShoppingCart, Map, LogOut, ChevronLeft, ChevronRight, Waypoints, Bell, Dot, Loader2, Languages, LanguagesIcon } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
@@ -13,43 +13,38 @@ import { Separator } from "@/components/ui/separator";
 import { useState } from "react";
 import React from "react";
 import NotificationDropdown from "../notification/NotificationDropdown";
+import { useTranslation } from "react-i18next";
 
 type NavItem = {
-  label: string;
+  labelKey: string;
   icon: React.ReactNode;
   key: string;
   path: string;
 };
 
-const navItems: NavItem[] = [
-  { label: "Dashboard", icon: <Home className="w-5 h-5" />, key: "dashboard", path: "/dashboard" },
-  { label: "Depots", icon: <Warehouse className="w-5 h-5" />, key: "depots", path: "/depots" },
-  { label: "Vehicles", icon: <Truck className="w-5 h-5" />, key: "vehicles", path: "/vehicles" },
-  { label: "Users", icon: <Users className="w-5 h-5" />, key: "users", path: "/users" },
-  { label: "Dispatches", icon: <Send className="w-5 h-5" />, key: "dispatches", path: "/dispatches" },
-  { label: "Orders", icon: <ShoppingCart className="w-5 h-5" />, key: "orders", path: "/orders" },
-];
-
 function UserSection({ isCollapsed }: { isCollapsed: boolean }) {
   const { username } = useAuthContext();
   const { logout } = useLogout();
+  const { t, i18n } = useTranslation();
 
   if (!username) {
     return (
       <div>
-        <span>Error while retrieving username</span>
+        <span>{t("sidebar.userSection.usernameError")}</span>
       </div>
     );
   }
 
   const getInitials = (name?: string) => {
-    if (!name) return "U";
+    if (!name) return t("sidebar.userSection.userAvatarFallback"); // Translate fallback
     const words = name.split(" ");
     if (words.length >= 2) {
       return (words[0][0] + words[1][0]).toUpperCase();
     }
     return name.substring(0, 2).toUpperCase();
   };
+
+  const handleChangeLanguage = () => i18n.language == "en" ? i18n.changeLanguage("vi") : i18n.changeLanguage("en");
 
   if (isCollapsed) {
     return (
@@ -67,6 +62,7 @@ function UserSection({ isCollapsed }: { isCollapsed: boolean }) {
             size="sm"
             className="w-8 h-8 p-0 hover:bg-muted"
             onClick={logout}
+            title={t("sidebar.userSection.signOut")}
           >
             <LogOut className="w-4 h-4" />
           </Button>
@@ -91,6 +87,7 @@ function UserSection({ isCollapsed }: { isCollapsed: boolean }) {
               {username}
             </p>
           </div>
+          <LanguagesIcon className="w-5 h-5" onClick={handleChangeLanguage}/>
           <NotificationDropdown />
         </div>
       </Card>
@@ -101,7 +98,7 @@ function UserSection({ isCollapsed }: { isCollapsed: boolean }) {
         onClick={logout}
       >
         <LogOut className="w-4 h-4" />
-        Sign Out
+        {t("sidebar.userSection.signOut")}
       </Button>
     </div>
   );
@@ -111,6 +108,19 @@ export default function Sidebar() {
   const navigate = useNavigate();
   const location = useLocation();
   const [isCollapsed, setIsCollapsed] = useState(false);
+  const { t, i18n } = useTranslation(); // Initialize useTranslation
+
+  // Define navItems with labelKey for translation
+  const navItems: NavItem[] = [
+    { labelKey: "dashboard", icon: <Home className="w-5 h-5" />, key: "dashboard", path: "/dashboard" },
+    { labelKey: "depots", icon: <Warehouse className="w-5 h-5" />, key: "depots", path: "/depots" },
+    { labelKey: "vehicles", icon: <Truck className="w-5 h-5" />, key: "vehicles", path: "/vehicles" },
+    { labelKey: "users", icon: <Users className="w-5 h-5" />, key: "users", path: "/users" },
+    { labelKey: "dispatches", icon: <Send className="w-5 h-5" />, key: "dispatches", path: "/dispatches" },
+    { labelKey: "orders", icon: <ShoppingCart className="w-5 h-5" />, key: "orders", path: "/orders" },
+  ];
+
+  const handleChangeLanguage = () => i18n.language === "en" ? i18n.changeLanguage("vi") : i18n.changeLanguage("en");
 
   return (
     <div className={cn(
@@ -126,6 +136,7 @@ export default function Sidebar() {
                 <Waypoints className="w-5 h-5 text-primary-foreground" />
               </div>
               <div>
+                {/* Potentially add a logo or app name here, if not just icons */}
               </div>
             </div>
           )}
@@ -135,6 +146,7 @@ export default function Sidebar() {
             size="sm"
             className="w-8 h-8 p-0 hover:bg-muted ml-auto"
             onClick={() => setIsCollapsed(!isCollapsed)}
+            title={isCollapsed ? "Expand Sidebar" : "Collapse Sidebar"}
           >
             {isCollapsed ? (
               <ChevronRight className="w-4 h-4" />
@@ -161,10 +173,10 @@ export default function Sidebar() {
                   : "hover:bg-muted"
               )}
               onClick={() => navigate(item.path)}
-              title={isCollapsed ? item.label : undefined}
+              title={isCollapsed ? t(`sidebar.nav.${item.labelKey}`) : undefined} // Translated title
             >
               {item.icon}
-              {!isCollapsed && <span>{item.label}</span>}
+              {!isCollapsed && <span>{t(`sidebar.nav.${item.labelKey}`)}</span>} {/* Translated label */}
             </Button>
           );
         })}
@@ -172,6 +184,7 @@ export default function Sidebar() {
 
       {/* User Section */}
       <div className="p-3 border-t">
+        {/* User Section */}
         <UserSection isCollapsed={isCollapsed} />
       </div>
     </div>

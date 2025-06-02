@@ -11,6 +11,7 @@ import { formatDate } from "@/utils/formatDate";
 import VehicleCreateModal from "../../components/vehicle/VehicleCreateModal";
 import { useState } from "react";
 import DepotUpdatemodal from "@/components/depot/DepotUpdateModal";
+import { useTranslation } from "react-i18next";
 import {
   MapPin,
   Calendar,
@@ -31,6 +32,7 @@ export default function DepotDetails() {
   const [isUpdateOpen, setIsUpdateOpen] = useState<boolean>(false);
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
   const { depotId } = useParams<string>();
+  const { t } = useTranslation();
 
   if (!depotId) {
     return <NotFound />;
@@ -66,8 +68,8 @@ export default function DepotDetails() {
       <div className="container mx-auto p-6">
         <Alert variant="destructive">
           <AlertCircle className="h-4 w-4" />
-          <AlertTitle>Error</AlertTitle>
-          <AlertDescription>Failed to load depot details. Please try again later.</AlertDescription>
+          <AlertTitle>{t("depotDetails.error.title")}</AlertTitle>
+          <AlertDescription>{t("depotDetails.error.description")}</AlertDescription>
         </Alert>
       </div>
     );
@@ -93,8 +95,7 @@ export default function DepotDetails() {
   return (
     <div className="container mx-auto p-6 space-y-8">
       <DepotUpdatemodal isOpen={isUpdateOpen} onClose={() => setIsUpdateOpen(false)} depot={depot} />
-      
-      {/* Header Section */}
+
       <div className="flex flex-col sm:flex-row justify-between items-start gap-6">
         <div className="space-y-2">
           <div className="flex items-center gap-3">
@@ -102,25 +103,24 @@ export default function DepotDetails() {
               <Building2 className="h-6 w-6 text-blue-600" />
             </div>
             <div>
-              <h1 className="text-3xl font-bold tracking-tight text-gray-900">Depot Overview</h1>
-              <p className="text-gray-600 mt-1">Monitor and manage depot operations</p>
+              <h1 className="text-3xl font-bold tracking-tight text-gray-900">{t("depotDetails.overview.title")}</h1>
+              <p className="text-gray-600 mt-1">{t("depotDetails.overview.subtitle")}</p>
             </div>
           </div>
         </div>
         <Button onClick={() => setIsUpdateOpen(true)} className="gap-2 px-6">
           <Edit className="h-4 w-4" />
-          Edit Depot
+          {t("depotDetails.actions.editDepot")}
         </Button>
       </div>
 
-      {/* Key Metrics */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
         <Card className="border-l-4 border-l-blue-500 hover:shadow-md transition-shadow">
           <CardContent className="p-6">
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-2xl font-bold text-gray-900">{depot.vehicles.length}</p>
-                <p className="text-sm font-medium text-gray-600">Total Vehicles</p>
+                <p className="text-sm font-medium text-gray-600">{t("depotDetails.metrics.totalVehicles")}</p>
               </div>
               <div className="p-3 bg-blue-50 rounded-full">
                 <Truck className="h-6 w-6 text-blue-600" />
@@ -134,7 +134,7 @@ export default function DepotDetails() {
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-2xl font-bold text-gray-900">{activeVehicles}</p>
-                <p className="text-sm font-medium text-gray-600">Active Vehicles</p>
+                <p className="text-sm font-medium text-gray-600">{t("depotDetails.metrics.activeVehicles")}</p>
               </div>
               <div className="p-3 bg-green-50 rounded-full">
                 <Gauge className="h-6 w-6 text-green-600" />
@@ -148,7 +148,7 @@ export default function DepotDetails() {
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-2xl font-bold text-gray-900">{totalLoad.toLocaleString()}</p>
-                <p className="text-sm font-medium text-gray-600">Total Load (kg)</p>
+                <p className="text-sm font-medium text-gray-600">{t("depotDetails.metrics.totalLoad")}</p>
               </div>
               <div className="p-3 bg-orange-50 rounded-full">
                 <Package className="h-6 w-6 text-orange-600" />
@@ -162,7 +162,7 @@ export default function DepotDetails() {
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-2xl font-bold text-gray-900">{Math.round(averageLoad)}</p>
-                <p className="text-sm font-medium text-gray-600">Avg Load (kg)</p>
+                <p className="text-sm font-medium text-gray-600">{t("depotDetails.metrics.avgLoad")}</p>
               </div>
               <div className="p-3 bg-purple-50 rounded-full">
                 <Gauge className="h-6 w-6 text-purple-600" />
@@ -172,14 +172,12 @@ export default function DepotDetails() {
         </Card>
       </div>
 
-      {/* Main Content Grid */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-        {/* Depot Information */}
         <Card className="lg:col-span-1 h-fit">
           <CardHeader className="pb-4">
             <CardTitle className="flex items-center gap-2 text-lg">
               <MapPin className="h-5 w-5 text-blue-600" />
-              Depot Information
+              {t("depotDetails.info.title")}
             </CardTitle>
           </CardHeader>
           <CardContent className="space-y-6">
@@ -187,15 +185,15 @@ export default function DepotDetails() {
               <div className="flex items-start gap-3 p-3 bg-gray-50 rounded-lg">
                 <MapPin className="h-4 w-4 mt-0.5 text-gray-500 flex-shrink-0" />
                 <div className="min-w-0">
-                  <p className="text-sm font-medium text-gray-900">Address</p>
-                  <p className="text-sm text-gray-600 break-words">{depot.address || "No address provided"}</p>
+                  <p className="text-sm font-medium text-gray-900">{t("depotDetails.info.address")}</p>
+                  <p className="text-sm text-gray-600 break-words">{depot.address || t("depotDetails.info.noAddress")}</p>
                 </div>
               </div>
 
               <div className="flex items-start gap-3 p-3 bg-gray-50 rounded-lg">
                 <Navigation className="h-4 w-4 mt-0.5 text-gray-500 flex-shrink-0" />
                 <div>
-                  <p className="text-sm font-medium text-gray-900">Coordinates</p>
+                  <p className="text-sm font-medium text-gray-900">{t("depotDetails.info.coordinates")}</p>
                   <p className="text-sm text-gray-600 font-mono">
                     {depot.latitude?.toFixed(6)}, {depot.longitude?.toFixed(6)}
                   </p>
@@ -209,7 +207,7 @@ export default function DepotDetails() {
               <div className="flex items-center gap-3">
                 <Calendar className="h-4 w-4 text-gray-500" />
                 <div>
-                  <p className="text-sm font-medium text-gray-900">Created</p>
+                  <p className="text-sm font-medium text-gray-900">{t("depotDetails.info.created")}</p>
                   <p className="text-sm text-gray-600">{formatDate(depot.createdAt)}</p>
                 </div>
               </div>
@@ -217,7 +215,7 @@ export default function DepotDetails() {
               <div className="flex items-center gap-3">
                 <Clock className="h-4 w-4 text-gray-500" />
                 <div>
-                  <p className="text-sm font-medium text-gray-900">Last Updated</p>
+                  <p className="text-sm font-medium text-gray-900">{t("depotDetails.info.updated")}</p>
                   <p className="text-sm text-gray-600">{formatDate(depot.updatedAt)}</p>
                 </div>
               </div>
@@ -225,22 +223,19 @@ export default function DepotDetails() {
           </CardContent>
         </Card>
 
-        {/* Vehicle Management */}
         <Card className="lg:col-span-2 flex flex-col max-h-[600px]">
           <CardHeader className="flex-shrink-0 pb-4">
             <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
               <div>
                 <CardTitle className="flex items-center gap-2 text-lg">
                   <Truck className="h-5 w-5 text-blue-600" />
-                  Vehicle Fleet ({depot.vehicles.length})
+                  {t("depotDetails.vehicles.title", { count: depot.vehicles.length })}
                 </CardTitle>
-                <p className="text-sm text-gray-600 mt-1">
-                  Monitor and manage assigned vehicles
-                </p>
+                <p className="text-sm text-gray-600 mt-1">{t("depotDetails.vehicles.subtitle")}</p>
               </div>
               <Button onClick={() => setIsModalOpen(true)} className="gap-2">
                 <Plus className="h-4 w-4" />
-                Add Vehicle
+                {t("depotDetails.actions.addVehicle")}
               </Button>
             </div>
           </CardHeader>
@@ -251,13 +246,11 @@ export default function DepotDetails() {
                 <div className="p-4 bg-gray-100 rounded-full mb-4">
                   <Truck className="h-8 w-8 text-gray-400" />
                 </div>
-                <h3 className="text-lg font-medium text-gray-900 mb-2">No vehicles assigned</h3>
-                <p className="text-gray-600 mb-6 max-w-sm">
-                  Get started by adding your first vehicle to this depot to begin operations.
-                </p>
+                <h3 className="text-lg font-medium text-gray-900 mb-2">{t("depotDetails.vehicles.empty.title")}</h3>
+                <p className="text-gray-600 mb-6 max-w-sm">{t("depotDetails.vehicles.empty.description")}</p>
                 <Button onClick={() => setIsModalOpen(true)} className="gap-2">
                   <Plus className="h-4 w-4" />
-                  Add First Vehicle
+                  {t("depotDetails.actions.addFirstVehicle")}
                 </Button>
               </div>
             ) : (
@@ -266,18 +259,17 @@ export default function DepotDetails() {
                   <Card key={vehicle.id} className="border hover:shadow-sm transition-shadow">
                     <CardContent className="p-4">
                       <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4">
-                        {/* Vehicle Info Grid */}
                         <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 flex-1">
                           <div>
                             <p className="text-xs font-medium text-gray-500 uppercase tracking-wider mb-1">
-                              License Plate
+                              {t("depotDetails.vehicle.licensePlate")}
                             </p>
                             <p className="font-semibold text-gray-900">{vehicle.licensePlate}</p>
                           </div>
 
                           <div>
                             <p className="text-xs font-medium text-gray-500 uppercase tracking-wider mb-1">
-                              Status
+                              {t("depotDetails.vehicle.status")}
                             </p>
                             <Badge variant="outline" className={getStatusColor(vehicle.status)}>
                               {vehicle.status}
@@ -286,7 +278,7 @@ export default function DepotDetails() {
 
                           <div>
                             <p className="text-xs font-medium text-gray-500 uppercase tracking-wider mb-1">
-                              Load Status
+                              {t("depotDetails.vehicle.loadStatus")}
                             </p>
                             <div className="space-y-1">
                               <p className="text-sm font-medium text-gray-900">
@@ -307,17 +299,16 @@ export default function DepotDetails() {
 
                           <div>
                             <p className="text-xs font-medium text-gray-500 uppercase tracking-wider mb-1">
-                              Location
+                              {t("depotDetails.vehicle.location")}
                             </p>
                             <p className="text-sm text-gray-600 font-mono">
                               {vehicle.currentLatitude && vehicle.currentLongitude
                                 ? `${vehicle.currentLatitude.toFixed(4)}, ${vehicle.currentLongitude.toFixed(4)}`
-                                : "Unknown"}
+                                : t("depotDetails.vehicle.unknown")}
                             </p>
                           </div>
                         </div>
 
-                        {/* Actions */}
                         <div className="flex gap-2 lg:flex-col lg:w-auto">
                           <Button
                             variant="outline"
@@ -326,7 +317,7 @@ export default function DepotDetails() {
                             className="gap-2 flex-1 lg:flex-none"
                           >
                             <Eye className="h-4 w-4" />
-                            Details
+                            {t("depotDetails.actions.details")}
                           </Button>
                         </div>
                       </div>
