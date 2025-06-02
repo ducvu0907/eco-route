@@ -89,6 +89,8 @@ public class DispatchService {
     }
 
     List<Route> routes = isDynamic ? runningDispatch.getRoutes() : new ArrayList<>();
+    // runningDispatch.getRoutes().clear();
+
     List<Depot> depots = depotRepository.findAll();
 
     List<Vehicle> vehicles = vehicleRepository.findAll().stream()
@@ -122,11 +124,11 @@ public class DispatchService {
 
     dispatchRepository.save(runningDispatch);
 
-    notifyOrdersInProgress(ordersToNotify);
-    notifyNewRoutes(routesToNotify);
+    // notifyOrdersInProgress(ordersToNotify);
+    // notifyNewRoutes(routesToNotify);
 
-    ordersToNotify.clear();
-    routesToNotify.clear();
+    // ordersToNotify.clear();
+    // routesToNotify.clear();
   }
 
   // create routes for one category
@@ -187,20 +189,22 @@ public class DispatchService {
     if (!unassignedJobs.isEmpty() && !vrpThreeWheelers.isEmpty()) {
       VrpResponse res1 = vrpMiddleware(vrpJobs, vrpThreeWheelers, vrpThreeWheelersDepots, threeWheelerRoutes);
       unassignedJobs = res1.getUnassigned();
-      if (isDynamic) {
-        updateRoutes(res1, dispatch);
-      } else {
-        createRoutes(res1, dispatch);
-      }
+      createRoutes(res1, dispatch);
+      // if (isDynamic) {
+      //   updateRoutes(res1, dispatch);
+      // } else {
+      //   createRoutes(res1, dispatch);
+      // }
     }
 
     if (!unassignedJobs.isEmpty() && !vrpCompactorTrucks.isEmpty()) {
       VrpResponse res2 = vrpMiddleware(unassignedJobs, vrpCompactorTrucks, vrpCompactorTrucksDepots, compactorTruckRoutes);
-      if (isDynamic) {
-        updateRoutes(res2, dispatch);
-      } else {
-        createRoutes(res2, dispatch);
-      }
+      createRoutes(res2, dispatch);
+      // if (isDynamic) {
+      //   updateRoutes(res2, dispatch);
+      // } else {
+      //   createRoutes(res2, dispatch);
+      // }
     }
 
   }
@@ -255,19 +259,30 @@ public class DispatchService {
   private Route buildRouteFromVrp(VrpRoute vrpRoute, Dispatch dispatch) {
     Vehicle vehicle = vehicleRepository.findById(vrpRoute.getVehicleId())
         .orElseThrow(() -> new RuntimeException("Vehicle not found"));
-    vehicle.setStatus(VehicleStatus.ACTIVE);
+    if (vehicle.getStatus() == VehicleStatus.ACTIVE) {
+      Route route = routeRepository.findByDispatchIdAndVehicleId(dispatch.getId(), vehicle.getId())
+          .orElseThrow(() -> new RuntimeException("Route not found"));
 
-    Route route = Route.builder()
-        .vehicle(vehicle)
-        .dispatch(dispatch)
-        .distance(vrpRoute.getDistance())
-        .duration(vrpRoute.getDuration())
-        .geometry(vrpRoute.getGeometry())
-        .status(RouteStatus.IN_PROGRESS)
-        .build();
+      route.setOrders(buildOrders(vrpRoute, route));
+      route.setDistance(vrpRoute.getDistance());
+      route.setDuration(vrpRoute.getDuration());
+      route.setGeometry(vrpRoute.getGeometry());
+      return route;
 
-    route.setOrders(buildOrders(vrpRoute, route));
-    return route;
+    } else {
+      vehicle.setStatus(VehicleStatus.ACTIVE);
+      Route route = Route.builder()
+          .vehicle(vehicle)
+          .dispatch(dispatch)
+          .distance(vrpRoute.getDistance())
+          .duration(vrpRoute.getDuration())
+          .geometry(vrpRoute.getGeometry())
+          .status(RouteStatus.IN_PROGRESS)
+          .build();
+      route.setOrders(buildOrders(vrpRoute, route));
+      return route;
+    }
+
   }
 
   private void createRoutes(VrpResponse vrpResponse, Dispatch dispatch) {
