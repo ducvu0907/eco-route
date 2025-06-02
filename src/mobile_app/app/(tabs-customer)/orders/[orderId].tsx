@@ -9,6 +9,7 @@ import { Text, View, ActivityIndicator, Pressable, TouchableOpacity, ScrollView,
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useState, useRef, useEffect } from "react";
 import { formatDate } from "@/utils/formatDate";
+import { useTranslation } from "react-i18next"; // Import useTranslation
 
 const { height: SCREEN_HEIGHT } = Dimensions.get('window');
 const BOTTOM_SHEET_MIN_HEIGHT = 120;
@@ -79,6 +80,7 @@ const getCategoryColor = (category: TrashCategory) => {
 };
 
 export default function OrderDetails() {
+  const { t } = useTranslation(); // Initialize useTranslation
   const router = useRouter();
   const { orderId } = useLocalSearchParams();
   const { data, isLoading } = useGetOrderById(orderId as string);
@@ -107,7 +109,7 @@ export default function OrderDetails() {
           <View className="bg-white rounded-3xl p-8 shadow-sm mx-6">
             <ActivityIndicator size="large" color="#3b82f6" />
             <Text className="mt-4 text-lg text-gray-600 font-medium text-center">
-              Loading order details...
+              {t("orderDetails.loading")}
             </Text>
           </View>
         </View>
@@ -124,16 +126,16 @@ export default function OrderDetails() {
               <Ionicons name="alert-circle" size={32} color="#ef4444" />
             </View>
             <Text className="text-xl font-bold text-gray-800 text-center mb-2">
-              Order Not Found
+              {t("orderDetails.notFound")}
             </Text>
             <Text className="text-gray-500 text-center mb-6">
-              Failed to load order details. Please try again.
+              {t("orderDetails.notFoundDescription")}
             </Text>
             <TouchableOpacity 
               onPress={() => router.back()}
               className="bg-blue-500 rounded-2xl py-3 px-6"
             >
-              <Text className="text-white font-semibold text-center">Go Back</Text>
+              <Text className="text-white font-semibold text-center">{t("orderDetails.goBack")}</Text>
             </TouchableOpacity>
           </View>
         </View>
@@ -153,11 +155,11 @@ export default function OrderDetails() {
             <Ionicons name="arrow-back" size={24} color="#374151" />
           </TouchableOpacity>
           <Text className="flex-1 text-lg font-bold text-gray-800 text-center mx-4">
-            Order #{order.index || order.id.slice(-6)}
+            {t("orderDetails.orderNumber", { number: order.index || order.id.slice(-6) })}
           </Text>
           <View className={`px-3 py-1 rounded-full border ${getStatusColor(order.status)}`}>
             <Text className={`font-semibold text-xs uppercase tracking-wide ${getStatusTextColor(order.status)}`}>
-              {order.status.replace('_', ' ')}
+              {t(`orderDetails.status_${order.status.toLowerCase()}`)}
             </Text>
           </View>
         </View>
@@ -172,7 +174,7 @@ export default function OrderDetails() {
             <View className="bg-white rounded-2xl p-6 mx-6 shadow-sm">
               <Ionicons name="map" size={48} color="#9ca3af" style={{ alignSelf: 'center' }} />
               <Text className="text-gray-500 text-center mt-3 font-medium">
-                Waiting for order to be processed ...
+                {t("orderDetails.waitingForProcessing")}
               </Text>
             </View>
           </View>
@@ -208,7 +210,7 @@ export default function OrderDetails() {
           >
             <View className="flex-1">
               <Text className="text-lg font-bold text-gray-800 mb-1">
-                Order Information
+                {t("orderDetails.orderInformation")}
               </Text>
               <Text className="text-gray-500 text-sm" numberOfLines={1}>
                 {order.address}
@@ -233,7 +235,7 @@ export default function OrderDetails() {
                 </View>
                 <View className="flex-1">
                   <Text className="text-gray-500 text-sm font-medium mb-1">
-                    Pickup Address
+                    {t("orderDetails.pickupAddress")}
                   </Text>
                   <Text className="text-gray-800 font-medium text-base leading-6">
                     {order.address}
@@ -253,11 +255,11 @@ export default function OrderDetails() {
                       color={getCategoryColor(order.category)} 
                     />
                     <Text className="text-gray-500 text-sm font-medium ml-2">
-                      Category
+                      {t("orderDetails.category")}
                     </Text>
                   </View>
                   <Text className="text-gray-800 font-semibold capitalize">
-                    {order.category.toLowerCase().replace('_', ' ')}
+                    {t(`orderDetails.category_${order.category.toLowerCase()}`)}
                   </Text>
                 </View>
               </View>
@@ -267,11 +269,11 @@ export default function OrderDetails() {
                   <View className="flex-row items-center mb-2">
                     <Ionicons name="scale" size={20} color="#f97316" />
                     <Text className="text-gray-500 text-sm font-medium ml-2">
-                      Weight
+                      {t("orderDetails.weight")}
                     </Text>
                   </View>
                   <Text className="text-gray-800 font-semibold">
-                    {order.weight} kg
+                    {t("orderDetails.weightValue", { weight: order.weight })}
                   </Text>
                 </View>
               </View>
@@ -286,7 +288,7 @@ export default function OrderDetails() {
                   </View>
                   <View className="flex-1">
                     <Text className="text-gray-500 text-sm font-medium mb-2">
-                      Description
+                      {t("orderDetails.description")}
                     </Text>
                     <Text className="text-gray-800 leading-6">
                       {order.description}
@@ -305,7 +307,7 @@ export default function OrderDetails() {
                   </View>
                   <View className="flex-1">
                     <Text className="text-gray-500 text-sm font-medium">
-                      Created At
+                      {t("orderDetails.createdAt")}
                     </Text>
                     <Text className="text-gray-800 font-medium">
                       {formatDate(order.createdAt)}
@@ -321,7 +323,7 @@ export default function OrderDetails() {
                   </View>
                   <View className="flex-1">
                     <Text className="text-gray-500 text-sm font-medium">
-                      Completed At
+                      {t("orderDetails.completedAt")}
                     </Text>
                     <Text className="text-gray-800 font-medium">
                       {formatDate(order.completedAt)}
@@ -336,12 +338,12 @@ export default function OrderDetails() {
               <View className="mb-8">
                 <TouchableOpacity className="bg-red-500 rounded-2xl py-4 mb-3">
                   <Text className="text-white font-semibold text-center text-base">
-                    Cancel Order
+                    {t("orderDetails.cancelOrder")}
                   </Text>
                 </TouchableOpacity>
                 <TouchableOpacity className="bg-gray-100 rounded-2xl py-4">
                   <Text className="text-gray-700 font-semibold text-center text-base">
-                    Modify Order
+                    {t("orderDetails.modifyOrder")}
                   </Text>
                 </TouchableOpacity>
               </View>

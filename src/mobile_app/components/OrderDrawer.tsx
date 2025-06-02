@@ -2,11 +2,12 @@ import { useMarkOrderAsCancelled, useMarkOrderAsDone } from "@/hooks/useOrder";
 import { OrderResponse, OrderStatus, TrashCategory } from "@/types/types";
 import { View, TouchableOpacity, Text, ActivityIndicator, Animated } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
-import { formatDate } from "@/utils/formatDate";
+import { formatDate } from "@/utils/formatDate"; // This import is not used in the provided code
 import { useEffect, useRef } from "react";
-import { useWriteVehicleRealtimeData } from "@/hooks/useWriteVehicleRealtimeData";
-import { useVehicleRealtimeData } from "@/hooks/useVehicleRealtimeData";
+import { useWriteVehicleRealtimeData } from "@/hooks/useWriteVehicleRealtimeData"; // This import is not used in the provided code
+import { useVehicleRealtimeData } from "@/hooks/useVehicleRealtimeData"; // This import is not used in the provided code
 import { useQueryClient } from "@tanstack/react-query";
+import { useTranslation } from "react-i18next"; // Import useTranslation
 
 interface OrderDrawerProps {
   order: OrderResponse;
@@ -64,8 +65,9 @@ const getStatusColor = (status: OrderStatus) => {
 
 export default function OrderDrawer({ order, onClose }: OrderDrawerProps) {
   const queryClient = useQueryClient();
+  const { t } = useTranslation(); // Initialize useTranslation
   const { mutate: markAsDone, isPending: isMarkingAsDone } = useMarkOrderAsDone();
-  const { mutate: markAsCancelled, isPending: isMarkingAsCancelled } = useMarkOrderAsCancelled();
+  const { mutate: markAsCancelled, isPending: isMarkingAsCancelled } = useMarkOrderAsCancelled(); // This is not used in the current JSX
   const slideAnim = useRef(new Animated.Value(300)).current;
 
   useEffect(() => {
@@ -88,7 +90,7 @@ export default function OrderDrawer({ order, onClose }: OrderDrawerProps) {
     });
   };
 
-  const handleMarkAsCancelled = () => {
+  const handleMarkAsCancelled = () => { // This function is not called in the current JSX
     markAsCancelled(order.id, {
       onSuccess: () => {
         handleClose();
@@ -125,26 +127,6 @@ export default function OrderDrawer({ order, onClose }: OrderDrawerProps) {
       </TouchableOpacity>
 
       <View className="px-6 pb-8">
-        {/* Header */}
-        {/* <View className="flex-row items-center justify-between mb-6">
-          <View className="flex-1">
-            <Text className="text-xl font-bold text-gray-800 mb-1">
-              Order #{order.index || order.id.slice(-6)}
-            </Text>
-            <View className={`self-start px-3 py-1 rounded-full border ${getStatusColor(order.status)}`}>
-              <Text className="font-semibold text-xs uppercase tracking-wide">
-                {order.status.replace('_', ' ')}
-              </Text>
-            </View>
-          </View>
-          <TouchableOpacity
-            onPress={handleClose}
-            className="bg-gray-100 rounded-full p-2 ml-4"
-          >
-            <Ionicons name="close" size={20} color="#6b7280" />
-          </TouchableOpacity>
-        </View> */}
-
         {/* Address */}
         <View className="bg-blue-50 rounded-2xl p-4 mb-4">
           <View className="flex-row items-start">
@@ -153,7 +135,7 @@ export default function OrderDrawer({ order, onClose }: OrderDrawerProps) {
             </View>
             <View className="flex-1">
               <Text className="text-blue-700 font-medium text-sm mb-1">
-                Pickup Address
+                {t("OrderDrawer.pickupAddress")}
               </Text>
               <Text className="text-gray-800 font-medium leading-5">
                 {order.address}
@@ -173,11 +155,11 @@ export default function OrderDrawer({ order, onClose }: OrderDrawerProps) {
                   color={getCategoryColor(order.category)}
                 />
                 <Text className="text-gray-500 text-sm font-medium ml-2">
-                  Category
+                  {t("OrderDrawer.category")}
                 </Text>
               </View>
               <Text className="text-gray-800 font-semibold capitalize">
-                {order.category.toLowerCase().replace('_', ' ')}
+                {t(`OrderDrawer.category_${order.category.toLowerCase()}`)}
               </Text>
             </View>
           </View>
@@ -187,11 +169,11 @@ export default function OrderDrawer({ order, onClose }: OrderDrawerProps) {
               <View className="flex-row items-center">
                 <Ionicons name="scale" size={18} color="#f97316" />
                 <Text className="text-gray-500 text-sm font-medium ml-2">
-                  Weight
+                  {t("OrderDrawer.weight")}
                 </Text>
               </View>
               <Text className="text-gray-800 font-semibold">
-                {order.weight} kg
+                {t("OrderDrawer.weightValue", { weight: order.weight })}
               </Text>
             </View>
           </View>
@@ -206,7 +188,7 @@ export default function OrderDrawer({ order, onClose }: OrderDrawerProps) {
               </View>
               <View className="flex-1">
                 <Text className="text-purple-700 font-medium text-sm mb-1">
-                  Description
+                  {t("OrderDrawer.description")}
                 </Text>
                 <Text className="text-gray-800 leading-5">
                   {order.description}
@@ -230,53 +212,21 @@ export default function OrderDrawer({ order, onClose }: OrderDrawerProps) {
                   <>
                     <ActivityIndicator color="#fff" size="small" />
                     <Text className="text-white font-semibold ml-2 text-base">
-                      Marking as Done...
+                      {t("OrderDrawer.markingAsDone")}
                     </Text>
                   </>
                 ) : (
                   <>
                     <Ionicons name="checkmark-circle" size={20} color="#fff" />
                     <Text className="text-white font-semibold ml-2 text-base">
-                      Mark Order as Done
+                      {t("OrderDrawer.markOrderAsDone")}
                     </Text>
                   </>
                 )}
               </View>
             </TouchableOpacity>
-            {/* <TouchableOpacity
-              className={`rounded-2xl mb-1 ${isMarkingAsCancelled ? 'bg-gray-400' : 'bg-red-500'}`}
-              onPress={handleMarkAsCancelled}
-              disabled={isMarkingAsCancelled}
-              activeOpacity={0.8}
-            >
-              <View className="flex-row items-center justify-center py-2">
-                {isMarkingAsCancelled ? (
-                  <>
-                    <ActivityIndicator color="#fff" size="small" />
-                    <Text className="text-white font-semibold ml-2 text-base">
-                      Marking as Cancelled...
-                    </Text>
-                  </>
-                ) : (
-                  <>
-                    <Ionicons name="remove-circle" size={20} color="#fff" />
-                    <Text className="text-white font-semibold ml-2 text-base">
-                      Cancel Order
-                    </Text>
-                  </>
-                )}
-              </View>
-            </TouchableOpacity> */}
           </View>
         )}
-
-        {/* Created timestamp */}
-        {/* <View className="flex-row items-center justify-center mt-4 pt-4 border-t border-gray-100">
-          <Ionicons name="time" size={16} color="#9ca3af" />
-          <Text className="text-gray-500 text-sm ml-2">
-            Created {formatDate(order.createdAt)}
-          </Text>
-        </View> */}
 
       </View>
     </Animated.View>

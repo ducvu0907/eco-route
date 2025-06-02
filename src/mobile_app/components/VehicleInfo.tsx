@@ -1,13 +1,15 @@
 import { View, Text, ScrollView, SafeAreaView } from "react-native";
 import { TrashCategory, VehicleResponse, VehicleStatus, VehicleType } from "@/types/types";
 import { formatDate } from "@/utils/formatDate";
-import { useGetDepotById } from "@/hooks/useDepot";
+import { useGetDepotById } from "@/hooks/useDepot"; // Not used in the provided code
+import { useTranslation } from "react-i18next"; // Import useTranslation
 
 interface VehicleInfoProps {
   vehicle: VehicleResponse;
 }
 
 export default function VehicleInfo({ vehicle }: VehicleInfoProps) {
+  const { t } = useTranslation(); // Initialize useTranslation
 
   const getStatusColor = (status: VehicleStatus) => {
     switch (status) {
@@ -68,7 +70,7 @@ export default function VehicleInfo({ vehicle }: VehicleInfoProps) {
   return (
     <ScrollView className="flex-1 bg-gray-50" showsVerticalScrollIndicator={false}>
       <View className="p-4 space-y-4">
-        
+
         {/* Main Vehicle Card */}
         <View className="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
           {/* Header Section */}
@@ -76,10 +78,10 @@ export default function VehicleInfo({ vehicle }: VehicleInfoProps) {
             <View className="flex-row justify-between items-start">
               <View className="flex-1">
                 <Text className="text-2xl font-bold text-black mb-1">{vehicle.licensePlate}</Text>
-                <Text className="text-blue-100 text-sm">License Plate Number</Text>
+                <Text className="text-blue-100 text-sm">{t("VehicleInfo.licensePlateNumber")}</Text>
               </View>
               <View className={`px-4 py-2 rounded-full border ${getStatusColor(vehicle.status)}`}>
-                <Text className="font-semibold text-sm">{vehicle.status}</Text>
+                <Text className="font-semibold text-sm">{t(`VehicleInfo.status_${vehicle.status.toLowerCase()}`)}</Text>
               </View>
             </View>
           </View>
@@ -89,28 +91,28 @@ export default function VehicleInfo({ vehicle }: VehicleInfoProps) {
             {/* Type and Category */}
             <View className="flex-row space-x-4">
               <View className="flex-1">
-                <Text className="text-xs font-medium text-gray-500 uppercase tracking-wide mb-2">Vehicle Type</Text>
+                <Text className="text-xs font-medium text-gray-500 uppercase tracking-wide mb-2">{t("VehicleInfo.vehicleType")}</Text>
                 <View className={`px-3 py-2 rounded-lg border ${getTypeColor(vehicle.type)}`}>
-                  <Text className="text-sm font-medium text-center">{vehicle.type.replace('_', ' ')}</Text>
+                  <Text className="text-sm font-medium text-center">{t(`VehicleInfo.type_${vehicle.type.toLowerCase()}`)}</Text>
                 </View>
               </View>
               <View className="flex-1">
-                <Text className="text-xs font-medium text-gray-500 uppercase tracking-wide mb-2">Category</Text>
+                <Text className="text-xs font-medium text-gray-500 uppercase tracking-wide mb-2">{t("VehicleInfo.category")}</Text>
                 <View className={`px-3 py-2 rounded-lg border ${getCategoryColor(vehicle.category)}`}>
-                  <Text className="text-sm font-medium text-center">{vehicle.category}</Text>
+                  <Text className="text-sm font-medium text-center">{t(`VehicleInfo.category_${vehicle.category.toLowerCase()}`)}</Text>
                 </View>
               </View>
             </View>
 
             {/* Load Information */}
             <View className="bg-gray-50 rounded-xl p-4">
-              <Text className="text-xs font-medium text-gray-500 uppercase tracking-wide mb-3">Current Load</Text>
+              <Text className="text-xs font-medium text-gray-500 uppercase tracking-wide mb-3">{t("VehicleInfo.currentLoad")}</Text>
               <View className="flex-row justify-between items-end mb-3">
                 <Text className="text-2xl font-bold text-gray-800">
-                  {vehicle.currentLoad}<Text className="text-lg text-gray-500"> / {vehicle.capacity} kg</Text>
+                  {t("VehicleInfo.loadValue", { current: vehicle.currentLoad, capacity: vehicle.capacity })}
                 </Text>
                 <Text className={`text-sm font-semibold ${getLoadTextColor(loadPercentage)}`}>
-                  {loadPercentage.toFixed(1)}%
+                  {t("VehicleInfo.loadPercentage", { percentage: loadPercentage.toFixed(1) })}
                 </Text>
               </View>
               <View className="w-full bg-gray-200 rounded-full h-3">
@@ -120,13 +122,15 @@ export default function VehicleInfo({ vehicle }: VehicleInfoProps) {
                 />
               </View>
               {loadPercentage > 80 && (
-                <Text className="text-xs text-red-600 mt-2 font-medium">⚠️ Vehicle is nearly full</Text>
+                <Text className="text-xs text-red-600 mt-2 font-medium">
+                  {t("VehicleInfo.vehicleNearlyFull")}
+                </Text>
               )}
             </View>
 
             {/* Driver Information */}
             <View className="bg-blue-50 rounded-xl p-4 border border-blue-100">
-              <Text className="text-xs font-medium text-blue-600 uppercase tracking-wide mb-3">Driver Information</Text>
+              <Text className="text-xs font-medium text-blue-600 uppercase tracking-wide mb-3">{t("VehicleInfo.driverInformation")}</Text>
               <View className="flex-row items-center space-x-3">
                 <View className="w-10 h-10 bg-blue-200 rounded-full items-center justify-center">
                   <Text className="text-blue-700 font-semibold">👤</Text>
@@ -142,14 +146,14 @@ export default function VehicleInfo({ vehicle }: VehicleInfoProps) {
 
         {/* System Information */}
         <View className="bg-white rounded-2xl shadow-sm border border-gray-100 p-4">
-          <Text className="text-xs font-medium text-gray-500 uppercase tracking-wide mb-4">System Information</Text>
+          <Text className="text-xs font-medium text-gray-500 uppercase tracking-wide mb-4">{t("VehicleInfo.systemInformation")}</Text>
           <View className="space-y-3">
             <View className="flex-row justify-between items-center py-2 border-b border-gray-100 last:border-b-0">
-              <Text className="text-sm text-gray-600">Created</Text>
+              <Text className="text-sm text-gray-600">{t("VehicleInfo.createdAt")}</Text>
               <Text className="text-sm font-medium text-gray-800">{formatDate(vehicle.createdAt)}</Text>
             </View>
             <View className="flex-row justify-between items-center py-2">
-              <Text className="text-sm text-gray-600">Last Updated</Text>
+              <Text className="text-sm text-gray-600">{t("VehicleInfo.lastUpdated")}</Text>
               <Text className="text-sm font-medium text-gray-800">{formatDate(vehicle.updatedAt)}</Text>
             </View>
           </View>
@@ -160,7 +164,7 @@ export default function VehicleInfo({ vehicle }: VehicleInfoProps) {
           <View className="flex-row items-center space-x-3">
             <View className={`w-3 h-3 rounded-full ${isVehicleActive ? 'bg-green-500' : 'bg-gray-400'}`} />
             <Text className={`font-medium ${isVehicleActive ? 'text-green-700' : 'text-gray-600'}`}>
-              {isVehicleActive ? 'Vehicle is currently active' : 'Vehicle is not active'}
+              {isVehicleActive ? t("VehicleInfo.vehicleIsActive") : t("VehicleInfo.vehicleIsNotActive")}
             </Text>
           </View>
         </View>

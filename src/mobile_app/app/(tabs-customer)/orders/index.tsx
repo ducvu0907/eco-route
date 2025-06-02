@@ -5,8 +5,10 @@ import { OrderResponse, TrashCategory, OrderStatus } from "@/types/types";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useRouter } from "expo-router";
 import { formatDate } from "@/utils/formatDate";
+import { useTranslation } from "react-i18next";
 
 export default function Orders() {
+  const { t } = useTranslation();
   const { userId } = useAuthContext();
   const { data, isLoading, isError } = useGetOrdersByUserId(userId || "");
   const router = useRouter();
@@ -15,7 +17,7 @@ export default function Orders() {
     return (
       <View className="flex-1 justify-center items-center bg-white">
         <ActivityIndicator size="large" />
-        <Text className="mt-2 text-gray-700">Loading orders...</Text>
+        <Text className="mt-2 text-gray-700">{t("ordersScreen.loading")}</Text>
       </View>
     );
   }
@@ -23,7 +25,7 @@ export default function Orders() {
   if (isError || !data?.result) {
     return (
       <View className="flex-1 justify-center items-center bg-white">
-        <Text className="text-red-500">Failed to load orders. Please try again later.</Text>
+        <Text className="text-red-500">{t("ordersScreen.error")}</Text>
       </View>
     );
   }
@@ -66,19 +68,19 @@ export default function Orders() {
     <SafeAreaView className="flex-1 bg-white">
       <View className="flex-1 bg-white p-4">
         <View className="flex-row justify-between items-center mb-4">
-          <Text className="text-2xl font-bold text-gray-800">Orders</Text>
+          <Text className="text-2xl font-bold text-gray-800">{t("ordersScreen.title")}</Text>
           <Pressable
             className="bg-blue-500 px-4 py-2 rounded-lg"
             onPress={() => router.push("/orders/create")}
           >
-            <Text className="text-white font-medium">+ New</Text>
+            <Text className="text-white font-medium">{t("ordersScreen.newButton")}</Text>
           </Pressable>
         </View>
 
         {orders.length === 0 ? (
           <View className="flex-1 justify-center items-center bg-white">
-            <Text className="text-gray-500 text-lg">You have no orders.</Text>
-            <Text className="text-gray-400 text-sm mt-2">Tap "+ New" to create your first order</Text>
+            <Text className="text-gray-500 text-lg">{t("ordersScreen.emptyTitle")}</Text>
+            <Text className="text-gray-400 text-sm mt-2">{t("ordersScreen.emptyMessage")}</Text>
           </View>
         ) : (
           <FlatList
@@ -92,20 +94,22 @@ export default function Orders() {
                       {item.address}
                     </Text>
                     <View className={`px-2 py-1 rounded-full ${getCategoryColor(item.category)}`}>
-                      <Text className="text-xs font-medium">{item.category}</Text>
+                      <Text className="text-xs font-medium">{t(`categories.${item.category}`)}</Text>
                     </View>
                   </View>
-                  
+
                   <View className="flex-row justify-between items-center mb-2">
                     <Text className={`font-medium ${getStatusColor(item.status)}`}>
-                      Status: {item.status.replace('_', ' ')}
+                      {t("ordersScreen.status")}: {t(`statuses.${item.status}`)}
                     </Text>
-                    <Text className="text-gray-700 font-medium">{item.weight} kg</Text>
+                    <Text className="text-gray-700 font-medium">
+                      {item.weight} {t("ordersScreen.kg")}
+                    </Text>
                   </View>
 
                   {item.index !== null && (
                     <Text className="text-gray-600 text-sm mb-1">
-                      Route Index: #{item.index}
+                      {t("ordersScreen.routeIndex")}: #{item.index}
                     </Text>
                   )}
 
@@ -116,12 +120,12 @@ export default function Orders() {
                   )}
 
                   <Text className="text-gray-500 text-sm">
-                    Created: {formatDate(item.createdAt)}
+                    {t("ordersScreen.created")}: {formatDate(item.createdAt)}
                   </Text>
-                  
+
                   {item.completedAt && (
                     <Text className="text-green-600 text-sm">
-                      Completed: {formatDate(item.completedAt)}
+                      {t("ordersScreen.completed")}: {formatDate(item.completedAt)}
                     </Text>
                   )}
                 </View>

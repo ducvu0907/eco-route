@@ -6,16 +6,18 @@ import { useEffect } from "react";
 import { Controller, useForm } from "react-hook-form";
 import { ActivityIndicator, Pressable, Text, TextInput, View, KeyboardAvoidingView, TouchableWithoutFeedback, Keyboard } from "react-native";
 import { z } from "zod";
+import { useTranslation } from "react-i18next"; // Import useTranslation
 
 const formSchema = z.object({
-  username: z.string().min(1, "Username is required"),
-  password: z.string().min(1, "Password is required"),
+  username: z.string().min(1, "usernameRequired"), // Use translation key
+  password: z.string().min(1, "passwordRequired"), // Use translation key
   fcmToken: z.string().nullable(),
 });
 
 type LoginForm = z.infer<typeof formSchema>;
 
 export default function Login() {
+  const { t } = useTranslation();
   const { fcmToken } = useAuthContext();
   const { mutate: login, isPending } = useLogin();
   const router = useRouter();
@@ -48,14 +50,11 @@ export default function Login() {
           {/* Header Section */}
           <View className="pt-16 pb-8 px-6">
             <View className="items-center mb-8">
-              {/* <View className="w-20 h-20 bg-blue-500 rounded-full items-center justify-center mb-4 shadow-lg">
-                <Text className="text-white text-2xl font-bold">Login</Text>
-              </View> */}
               <Text className="text-3xl font-bold text-gray-900 mb-2">
-                Welcome Back
+                {t("login.welcomeBack")}
               </Text>
               <Text className="text-gray-500 text-center">
-                Sign in to continue to your account
+                {t("login.signInToContinue")}
               </Text>
             </View>
           </View>
@@ -65,7 +64,7 @@ export default function Login() {
             <View className="bg-white rounded-3xl shadow-xl p-6 border border-gray-100">
               <View className="space-y-5">
                 <View>
-                  <Text className="text-gray-700 mb-3 font-semibold text-base">Username</Text>
+                  <Text className="text-gray-700 mb-3 font-semibold text-base">{t("login.username")}</Text>
                   <Controller
                     control={control}
                     name="username"
@@ -76,7 +75,7 @@ export default function Login() {
                             ? 'border-red-300 bg-red-50' 
                             : 'border-transparent focus:border-blue-300'
                         }`}
-                        placeholder="Enter your username"
+                        placeholder={t("login.enterYourUsername")}
                         placeholderTextColor="#9CA3AF"
                         onBlur={onBlur}
                         onChangeText={onChange}
@@ -87,13 +86,13 @@ export default function Login() {
                   />
                   {errors.username && (
                     <Text className="text-red-500 text-sm mt-2 ml-1">
-                      {errors.username.message}
+                      {t(`login.${errors.username.message}`)}
                     </Text>
                   )}
                 </View>
 
                 <View>
-                  <Text className="text-gray-700 mb-3 font-semibold text-base">Password</Text>
+                  <Text className="text-gray-700 mb-3 font-semibold text-base">{t("login.password")}</Text>
                   <Controller
                     control={control}
                     name="password"
@@ -104,7 +103,7 @@ export default function Login() {
                             ? 'border-red-300 bg-red-50' 
                             : 'border-transparent focus:border-blue-300'
                         }`}
-                        placeholder="Enter your password"
+                        placeholder={t("login.enterYourPassword")}
                         placeholderTextColor="#9CA3AF"
                         onBlur={onBlur}
                         onChangeText={onChange}
@@ -115,7 +114,7 @@ export default function Login() {
                   />
                   {errors.password && (
                     <Text className="text-red-500 text-sm mt-2 ml-1">
-                      {errors.password.message}
+                      {t(`login.${errors.password.message}`)}
                     </Text>
                   )}
                 </View>
@@ -141,7 +140,7 @@ export default function Login() {
                       <ActivityIndicator color="white" className="mr-3" />
                     )}
                     <Text className="text-white font-semibold text-lg">
-                      {isPending ? 'Signing In...' : 'Sign In'}
+                      {isPending ? t("login.signingIn") : t("login.signIn")}
                     </Text>
                   </View>
                 </Pressable>
@@ -155,8 +154,8 @@ export default function Login() {
                 className="py-3 px-6"
               >
                 <Text className="text-gray-600 text-center">
-                  Don't have an account?{' '}
-                  <Text className="text-blue-500 font-semibold">Sign up</Text>
+                  {t("login.dontHaveAccount")}{' '}
+                  <Text className="text-blue-500 font-semibold">{t("login.signUp")}</Text>
                 </Text>
               </Pressable>
             </View>

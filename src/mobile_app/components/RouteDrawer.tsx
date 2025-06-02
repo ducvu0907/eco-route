@@ -2,9 +2,10 @@ import { useMarkRouteAsDone } from "@/hooks/useRoute";
 import { RouteResponse, RouteStatus, OrderStatus, OrderResponse } from "@/types/types";
 import { View, TouchableOpacity, Text, ActivityIndicator, Animated, ScrollView, Dimensions } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
-import { formatDate } from "@/utils/formatDate";
+import { formatDate } from "@/utils/formatDate"; // Not used in the provided code
 import { useEffect, useRef, useState } from "react";
 import { useQueryClient } from "@tanstack/react-query";
+import { useTranslation } from "react-i18next"; // Import useTranslation
 
 const { height: screenHeight } = Dimensions.get('window');
 
@@ -15,6 +16,7 @@ interface RouteDrawerProps {
 
 export default function RouteDrawer({ route, onSelectOrder }: RouteDrawerProps) {
   const queryClient = useQueryClient();
+  const { t } = useTranslation(); // Initialize useTranslation
   const { mutate: markAsDone, isPending } = useMarkRouteAsDone();
   const [isExpanded, setIsExpanded] = useState(false);
   const slideAnim = useRef(new Animated.Value(0)).current;
@@ -39,7 +41,7 @@ export default function RouteDrawer({ route, onSelectOrder }: RouteDrawerProps) 
 
   const handleMarkAsDone = () => {
     if (isPending || !canCompleteRoute) return;
-    
+
     markAsDone(route.id, {
       onSuccess: () => {
         queryClient.invalidateQueries({queryKey: ["routes", "current"]});
@@ -51,9 +53,9 @@ export default function RouteDrawer({ route, onSelectOrder }: RouteDrawerProps) 
     const hours = Math.floor(minutes / 60);
     const mins = minutes % 60;
     if (hours > 0) {
-      return `${hours}h ${mins.toFixed(0)}m`;
+      return t("RouteDrawer.durationHoursMinutes", { hours, minutes: mins.toFixed(0) });
     }
-    return `${mins.toFixed(0)}m`;
+    return t("RouteDrawer.durationMinutes", { minutes: mins.toFixed(0) });
   };
 
   const getOrderStatusIcon = (status: OrderStatus) => {
@@ -81,7 +83,7 @@ export default function RouteDrawer({ route, onSelectOrder }: RouteDrawerProps) 
       className="bg-white rounded-t-3xl shadow-2xl border-t border-gray-200"
     >
       {/* Drag Handle */}
-      <TouchableOpacity 
+      <TouchableOpacity
         onPress={toggleExpanded}
         className="items-center py-3"
         activeOpacity={0.7}
@@ -91,18 +93,18 @@ export default function RouteDrawer({ route, onSelectOrder }: RouteDrawerProps) 
 
       <View className="px-4 pb-4">
         {/* Compact Header */}
-        <TouchableOpacity 
+        <TouchableOpacity
           onPress={toggleExpanded}
           className="flex-row items-center justify-between mb-3"
           activeOpacity={0.7}
         >
           <View className="flex-1">
             <Text className="text-lg font-bold text-gray-900 mb-1">
-              Current Route
+              {t("RouteDrawer.currentRoute")}
             </Text>
             <View className="flex-row items-center">
               <Text className="text-gray-600 text-sm font-medium mr-2">
-                {completedOrders}/{totalOrders} completed
+                {t("RouteDrawer.completedOrders", { completed: completedOrders, total: totalOrders })}
               </Text>
               <View className={`px-2 py-0.5 rounded-full ${
                 route.status === RouteStatus.COMPLETED ? 'bg-green-100' : 'bg-blue-100'
@@ -110,28 +112,28 @@ export default function RouteDrawer({ route, onSelectOrder }: RouteDrawerProps) 
                 <Text className={`text-xs font-medium ${
                   route.status === RouteStatus.COMPLETED ? 'text-green-700' : 'text-blue-700'
                 }`}>
-                  {route.status === RouteStatus.COMPLETED ? 'Done' : 'Active'}
+                  {t(`RouteDrawer.status_${route.status.toLowerCase()}`)}
                 </Text>
               </View>
             </View>
           </View>
-          <Ionicons 
-            name={isExpanded ? "chevron-down" : "chevron-up"} 
-            size={20} 
-            color="#6b7280" 
+          <Ionicons
+            name={isExpanded ? "chevron-down" : "chevron-up"}
+            size={20}
+            color="#6b7280"
           />
         </TouchableOpacity>
 
         {/* Compact Progress Bar */}
         <View className="mb-4">
           <View className="w-full bg-gray-200 rounded-full h-2">
-            <View 
+            <View
               className={`h-2 rounded-full ${progressPercentage === 100 ? 'bg-green-500' : 'bg-blue-500'}`}
               style={{ width: `${progressPercentage}%` }}
             />
           </View>
           <Text className="text-gray-500 text-xs mt-1 text-center">
-            {progressPercentage.toFixed(0)}% complete
+            {t("RouteDrawer.progressPercentage", { percentage: progressPercentage.toFixed(0) })}
           </Text>
         </View>
 
@@ -144,10 +146,10 @@ export default function RouteDrawer({ route, onSelectOrder }: RouteDrawerProps) 
                 <View className="bg-blue-50 rounded-xl p-3">
                   <View className="flex-row items-center mb-1">
                     <Ionicons name="map" size={14} color="#3b82f6" />
-                    <Text className="text-blue-700 font-medium text-xs ml-1">Distance</Text>
+                    <Text className="text-blue-700 font-medium text-xs ml-1">{t("RouteDrawer.distance")}</Text>
                   </View>
                   <Text className="text-gray-800 font-semibold">
-                    {route.distance.toFixed(1)} km
+                    {t("RouteDrawer.distanceValue", { distance: route.distance.toFixed(1) })}
                   </Text>
                 </View>
               </View>
@@ -156,7 +158,7 @@ export default function RouteDrawer({ route, onSelectOrder }: RouteDrawerProps) 
                 <View className="bg-orange-50 rounded-xl p-3">
                   <View className="flex-row items-center mb-1">
                     <Ionicons name="time" size={14} color="#f97316" />
-                    <Text className="text-orange-700 font-medium text-xs ml-1">Duration</Text>
+                    <Text className="text-orange-700 font-medium text-xs ml-1">{t("RouteDrawer.duration")}</Text>
                   </View>
                   <Text className="text-gray-800 font-semibold">
                     {formatDuration(route.duration)}
@@ -167,8 +169,10 @@ export default function RouteDrawer({ route, onSelectOrder }: RouteDrawerProps) 
 
             {/* Scrollable Order List */}
             <View className="mb-4">
-              <Text className="text-gray-700 font-semibold mb-2 text-sm">Orders ({totalOrders})</Text>
-              <ScrollView 
+              <Text className="text-gray-700 font-semibold mb-2 text-sm">
+                {t("RouteDrawer.ordersTitle", { count: totalOrders })}
+              </Text>
+              <ScrollView
                 style={{ maxHeight: screenHeight * 0.3 }}
                 showsVerticalScrollIndicator={true}
                 bounces={true}
@@ -184,18 +188,18 @@ export default function RouteDrawer({ route, onSelectOrder }: RouteDrawerProps) 
                         #{index + 1} • {order.address}
                       </Text>
                       <Text className="text-gray-500 text-xs">
-                        {order.weight} kg • {order.category.toLowerCase().replace('_', ' ')}
+                        {t("RouteDrawer.orderSummary", { weight: order.weight, category: t(`RouteDrawer.category_${order.category.toLowerCase()}`)})}
                       </Text>
                     </View>
                     <View className={`px-2 py-1 rounded-full ml-2 ${
-                      order.status === OrderStatus.COMPLETED ? 'bg-green-100' : 
+                      order.status === OrderStatus.COMPLETED ? 'bg-green-100' :
                       order.status === OrderStatus.IN_PROGRESS ? 'bg-blue-100' : 'bg-gray-100'
                     }`}>
                       <Text className={`text-xs font-medium ${
-                        order.status === OrderStatus.COMPLETED ? 'text-green-700' : 
+                        order.status === OrderStatus.COMPLETED ? 'text-green-700' :
                         order.status === OrderStatus.IN_PROGRESS ? 'text-blue-700' : 'text-gray-600'
                       }`}>
-                        {order.status}
+                        {t(`RouteDrawer.orderStatus_${order.status.toLowerCase()}`)}
                       </Text>
                     </View>
                   </TouchableOpacity>
@@ -216,14 +220,14 @@ export default function RouteDrawer({ route, onSelectOrder }: RouteDrawerProps) 
                     <>
                       <ActivityIndicator color="#fff" size="small" />
                       <Text className="text-white font-semibold ml-2">
-                        Completing Route...
+                        {t("RouteDrawer.completingRoute")}
                       </Text>
                     </>
                   ) : (
                     <>
                       <Ionicons name="checkmark-done" size={18} color="#fff" />
                       <Text className="text-white font-semibold ml-2">
-                        Complete Route
+                        {t("RouteDrawer.completeRoute")}
                       </Text>
                     </>
                   )}
@@ -234,7 +238,7 @@ export default function RouteDrawer({ route, onSelectOrder }: RouteDrawerProps) 
             {!canCompleteRoute && route.status !== RouteStatus.COMPLETED && (
               <View className="bg-gray-100 rounded-xl py-3 px-4">
                 <Text className="text-gray-600 text-center text-sm">
-                  Complete all orders to finish this route
+                  {t("RouteDrawer.completeAllOrdersMessage")}
                 </Text>
               </View>
             )}

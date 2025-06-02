@@ -1,34 +1,28 @@
-import { OrderResponse, OrderStatus, VehicleResponse } from "@/types/types";
-import { View, ActivityIndicator, Text, Modal, TouchableOpacity } from "react-native";
+import { OrderResponse, VehicleResponse } from "@/types/types";
+import { View, ActivityIndicator, Text, TouchableOpacity } from "react-native";
 import { Camera, MapView } from "@maplibre/maplibre-react-native";
-import OrderMarker from "./OrderMarker";
-import VehicleDynamicMarker from "./VehicleDynamicMarker";
+import DemoOrderMarker from "./DemoOrderMarker";
+import DemoVehicleDynamicMarker from "./DemoVehicleDynamicMarker";
+import DemoRoutePolyline from "./DemoRoutePolyline";
+import OrderDrawer from "./OrderDrawer";
+import RouteDrawer from "./RouteDrawer";
 import { useEffect, useRef, useState } from "react";
 import { useWriteVehicleRealtimeData } from "@/hooks/useWriteVehicleRealtimeData";
 import * as Location from "expo-location";
 import { useToast } from "@/hooks/useToast";
-import VehicleMarker from "./VehicleMarker";
-import RoutePolyline from "./RoutePolyline";
-import DemoVehicleMarker from "./DemoVehicleMarker";
-import DemoOrderMarker from "./DemoOrderMarker";
-import DemoRoutePolyline from "./DemoRoutePolyline";
-import { defaultMapZoom, mapTileUrl } from "@/utils/config";
-import { useMarkOrderAsDone } from "@/hooks/useOrder";
-import DemoVehicleDynamicMarker from "./DemoVehicleDynamicMarker";
-import { useVehicleRealtimeData } from "@/hooks/useVehicleRealtimeData";
-import TestMarker from "./TestMarker";
-import OrderDrawer from "./OrderDrawer";
-import RouteDrawer from "./RouteDrawer";
-import DemoDepotMarker from "./DemoDepotMarker";
 import { useGetDepotById } from "@/hooks/useDepot";
 import { useGetVehicleCurrentRoute } from "@/hooks/useRoute";
+import { useVehicleRealtimeData } from "@/hooks/useVehicleRealtimeData";
+import { defaultMapZoom, mapTileUrl } from "@/utils/config";
 import { Ionicons } from "@expo/vector-icons";
+import { useTranslation } from "react-i18next";
 
 interface InProgressDriverMapProps {
   vehicle: VehicleResponse;
 }
 
 export default function DemoInProgressDriverMap({ vehicle }: InProgressDriverMapProps) {
+  const { t } = useTranslation();
   const [selectedOrder, setSelectedOrder] = useState<OrderResponse | null>(null);
   const { showToast } = useToast();
   const { writeVehicleRealtimeData } = useWriteVehicleRealtimeData();
@@ -49,24 +43,23 @@ export default function DemoInProgressDriverMap({ vehicle }: InProgressDriverMap
     const startLocationUpdates = async () => {
       const { status } = await Location.requestForegroundPermissionsAsync();
       if (status !== 'granted') {
-        showToast("Location permission not granted", "error");
+        showToast(t("map.locationPermissionDenied"), "error");
         return;
       }
 
       intervalId = setInterval(async () => {
         const loc = await Location.getLastKnownPositionAsync({});
         if (loc) {
-          console.log(loc);
           await writeVehicleRealtimeData({
             vehicleId: vehicle.id,
             lat: loc.coords.latitude,
             lon: loc.coords.longitude
           });
         }
-      }, 10000); // every 10 seconds
+      }, 10000);
     };
 
-    // turn off for testing
+    // Disabled for demo
     // startLocationUpdates();
 
     return () => {
@@ -80,7 +73,7 @@ export default function DemoInProgressDriverMap({ vehicle }: InProgressDriverMap
     return (
       <View className="flex-1 justify-center items-center bg-gray-50">
         <ActivityIndicator size="large" color="#3b82f6" />
-        <Text className="mt-4 text-base text-gray-600 font-medium">Loading active route...</Text>
+        <Text className="mt-4 text-base text-gray-600 font-medium">{t("map.loading")}</Text>
       </View>
     );
   }
@@ -90,10 +83,10 @@ export default function DemoInProgressDriverMap({ vehicle }: InProgressDriverMap
       <View className="flex-1 justify-center items-center bg-gray-50 px-6">
         <View className="bg-white rounded-2xl p-6 shadow-sm border border-gray-100">
           <Text className="text-lg font-semibold text-red-600 text-center mb-2">
-            No Active Route
+            {t("map.noRouteTitle")}
           </Text>
           <Text className="text-sm text-gray-500 text-center leading-relaxed">
-            Failed to load active route. Please try again or contact support if the problem persists.
+            {t("map.noRouteMessage")}
           </Text>
         </View>
       </View>
@@ -102,16 +95,12 @@ export default function DemoInProgressDriverMap({ vehicle }: InProgressDriverMap
 
   return (
     <View className="flex-1 relative">
-      {/* Map View */}
-      <MapView
-        style={{ flex: 1 }}
-        mapStyle={mapTileUrl}
-      >
+      <MapView style={{ flex: 1 }} mapStyle={mapTileUrl}>
         <Camera
           ref={cameraRef}
           centerCoordinate={
-            selectedOrder 
-              ? [selectedOrder.longitude, selectedOrder.latitude] 
+            selectedOrder
+              ? [selectedOrder.longitude, selectedOrder.latitude]
               : [
                   vehicleData?.longitude || vehicle.currentLongitude,
                   vehicleData?.latitude || vehicle.currentLatitude
@@ -120,40 +109,32 @@ export default function DemoInProgressDriverMap({ vehicle }: InProgressDriverMap
           zoomLevel={defaultMapZoom}
         />
 
-        {/* Vehicle Marker */}
         <DemoVehicleDynamicMarker vehicle={vehicle} />
 
-        {/* Order Markers */}
-        {route.orders.sort((a,b) => a.index as number - (b.index as number)).map((order: OrderResponse) => (
-          <TouchableOpacity 
-            key={order.id} 
-            onPress={() => handleOrderPress(order)}
-            activeOpacity={0.8}
-          >
+        {route.orders.sort((a, b) => a.index! - b.index!).map((order: OrderResponse) => (
+          <TouchableOpacity key={order.id} onPress={() => handleOrderPress(order)} activeOpacity={0.8}>
             <DemoOrderMarker order={order} />
           </TouchableOpacity>
         ))}
 
-        {/* Depot Marker */}
-        {/* {depot && <DemoDepotMarker depot={depot} />} */}
-
-        {/* Route Polyline */}
         <DemoRoutePolyline route={route} />
       </MapView>
 
-      {/* Order Drawer */}
       {selectedOrder ? (
-        <OrderDrawer 
-          order={selectedOrder} 
-          onClose={() => setSelectedOrder(null)} 
-        />
+        <OrderDrawer order={selectedOrder} onClose={() => setSelectedOrder(null)} />
       ) : (
-        <RouteDrawer route={route} onSelectOrder={setSelectedOrder}/>
+        <RouteDrawer route={route} onSelectOrder={setSelectedOrder} />
       )}
 
       <View className="absolute top-0">
         <TouchableOpacity
-          onPress={() => cameraRef.current?.flyTo(vehicleData ? [vehicleData.longitude, vehicleData.latitude] : [vehicle.currentLongitude, vehicle.currentLatitude])}
+          onPress={() =>
+            cameraRef.current?.flyTo(
+              vehicleData
+                ? [vehicleData.longitude, vehicleData.latitude]
+                : [vehicle.currentLongitude, vehicle.currentLatitude]
+            )
+          }
           style={{
             backgroundColor: "white",
             padding: 10,
@@ -162,13 +143,12 @@ export default function DemoInProgressDriverMap({ vehicle }: InProgressDriverMap
             shadowOffset: { width: 0, height: 2 },
             shadowOpacity: 0.2,
             shadowRadius: 4,
-            elevation: 3,
+            elevation: 3
           }}
         >
           <Ionicons name="map" size={20} color="#3b82f6" />
         </TouchableOpacity>
       </View>
-
     </View>
   );
 }

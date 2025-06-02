@@ -1,6 +1,7 @@
+import DemoLocationPicker from "@/components/DemoLocationPicker";
 import { useCreateOrder } from "@/hooks/useOrder";
 import {
-  View, Text, TextInput, ActivityIndicator, TouchableOpacity, 
+  View, Text, TextInput, ActivityIndicator, TouchableOpacity,
   TouchableWithoutFeedback, Keyboard, Image, ScrollView, Alert
 } from "react-native";
 import { useForm, Controller } from "react-hook-form";
@@ -11,55 +12,28 @@ import { useReverseLocation } from "@/hooks/useFetchLocation";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Ionicons } from "@expo/vector-icons";
 import { useEffect, useState } from "react";
-import DemoLocationPicker from "@/components/DemoLocationPicker";
 import { useQueryClient } from "@tanstack/react-query";
 import { useAuthContext } from "@/hooks/useAuthContext";
 import { TrashCategory, OrderCreateRequest } from "@/types/types";
 import * as ImagePicker from "expo-image-picker";
+import { useTranslation } from "react-i18next";
 import { useToast } from "@/hooks/useToast";
 
 // Schema based on OrderCreateRequest interface
 const formSchema = z.object({
-  latitude: z.number({ required_error: "Location is required" }),
-  longitude: z.number({ required_error: "Location is required" }),
+  latitude: z.number({ required_error: "orderCreate.locationRequired" }), // Use translation key
+  longitude: z.number({ required_error: "orderCreate.locationRequired" }), // Use translation key
   description: z.string().nullable(),
-  category: z.nativeEnum(TrashCategory),
-  address: z.string().min(1, "Address is required"),
-  weight: z.number().min(0.1, "Weight must be at least 0.1 kg"),
+  category: z.nativeEnum(TrashCategory, { errorMap: () => ({ message: "orderCreate.categoryRequired" }) }), // Use translation key
+  address: z.string().min(1, "orderCreate.addressRequired"), // Use translation key
+  weight: z.number().min(0.1, "orderCreate.weightMin"), // Use translation key
   file: z.any().optional()
 });
 
 type OrderForm = z.infer<typeof formSchema>;
 
-const CATEGORY_INFO = {
-  [TrashCategory.GENERAL]: { 
-    icon: "trash-outline", 
-    color: "bg-gray-100 text-gray-800 border-gray-200",
-    description: "Regular household waste"
-  },
-  [TrashCategory.ORGANIC]: { 
-    icon: "leaf-outline", 
-    color: "bg-green-100 text-green-800 border-green-200",
-    description: "Food scraps, garden waste"
-  },
-  [TrashCategory.RECYCLABLE]: { 
-    icon: "refresh-outline", 
-    color: "bg-blue-100 text-blue-800 border-blue-200",
-    description: "Paper, plastic, glass, metal"
-  },
-  [TrashCategory.HAZARDOUS]: { 
-    icon: "warning-outline", 
-    color: "bg-red-100 text-red-800 border-red-200",
-    description: "Chemicals, batteries, paint"
-  },
-  [TrashCategory.ELECTRONIC]: { 
-    icon: "phone-portrait-outline", 
-    color: "bg-purple-100 text-purple-800 border-purple-200",
-    description: "Computers, phones, appliances"
-  },
-};
-
 export default function OrderCreate() {
+  const { t } = useTranslation(); // Initialize useTranslation
   const {showToast} = useToast();
   const { userId } = useAuthContext();
   const queryClient = useQueryClient();
@@ -129,7 +103,7 @@ export default function OrderCreate() {
   const pickImage = async () => {
     const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
     if (status !== 'granted') {
-      showToast("Camera permission not granted", "error");
+      showToast(t("orderCreate.cameraPermissionDenied"), "error"); // Translate toast message
       return;
     }
 
@@ -158,6 +132,35 @@ export default function OrderCreate() {
     setImagePreview(null);
   };
 
+  // Define CATEGORY_INFO using t() for descriptions
+  const CATEGORY_INFO = {
+    [TrashCategory.GENERAL]: {
+      icon: "trash-outline",
+      color: "bg-gray-100 text-gray-800 border-gray-200",
+      description: t("orderCreate.categoryGeneralDescription")
+    },
+    [TrashCategory.ORGANIC]: {
+      icon: "leaf-outline",
+      color: "bg-green-100 text-green-800 border-green-200",
+      description: t("orderCreate.categoryOrganicDescription")
+    },
+    [TrashCategory.RECYCLABLE]: {
+      icon: "refresh-outline",
+      color: "bg-blue-100 text-blue-800 border-blue-200",
+      description: t("orderCreate.categoryRecyclableDescription")
+    },
+    [TrashCategory.HAZARDOUS]: {
+      icon: "warning-outline",
+      color: "bg-red-100 text-red-800 border-red-200",
+      description: t("orderCreate.categoryHazardousDescription")
+    },
+    [TrashCategory.ELECTRONIC]: {
+      icon: "phone-portrait-outline",
+      color: "bg-purple-100 text-purple-800 border-purple-200",
+      description: t("orderCreate.categoryElectronicDescription")
+    },
+  };
+
   return (
     <SafeAreaView className="flex-1 bg-white">
       <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
@@ -165,28 +168,28 @@ export default function OrderCreate() {
           <View className="p-4">
             {/* Header */}
             <View className="flex-row items-center justify-between mb-6">
-              <TouchableOpacity 
-                onPress={() => router.back()} 
+              <TouchableOpacity
+                onPress={() => router.back()}
                 className="p-2 rounded-full bg-gray-100"
               >
                 <Ionicons name="arrow-back" size={24} color="black" />
               </TouchableOpacity>
-              <Text className="text-2xl font-bold text-gray-800">Create Order</Text>
+              <Text className="text-2xl font-bold text-gray-800">{t("orderCreate.createOrderTitle")}</Text>
               <View className="w-10" />
             </View>
 
             {/* Location Section */}
             <View className="mb-6">
-              <Text className="text-lg font-semibold text-gray-800 mb-3">📍 Location</Text>
-              
-              <TouchableOpacity 
+              <Text className="text-lg font-semibold text-gray-800 mb-3">{t("orderCreate.locationSectionTitle")}</Text>
+
+              <TouchableOpacity
                 className="border-2 border-dashed border-blue-300 p-4 rounded-xl bg-blue-50 mb-3"
                 onPress={() => setLocationPickerVisible(true)}
               >
                 <View className="items-center">
                   <Ionicons name="location-outline" size={32} color="#3B82F6" />
                   <Text className="text-blue-600 font-medium mt-2">
-                    {location ? "Change Location" : "Select Location on Map"}
+                    {location ? t("orderCreate.changeLocation") : t("orderCreate.selectLocation")}
                   </Text>
                   {location && (
                     <Text className="text-xs text-gray-500 mt-1">
@@ -197,11 +200,11 @@ export default function OrderCreate() {
               </TouchableOpacity>
 
               <View className="bg-gray-50 p-3 rounded-xl">
-                <Text className="text-sm text-gray-600 mb-1">Address</Text>
+                <Text className="text-sm text-gray-600 mb-1">{t("orderCreate.addressLabel")}</Text>
                 {isReversing ? (
                   <View className="flex-row items-center">
                     <ActivityIndicator size="small" />
-                    <Text className="ml-2 text-gray-500">Getting address...</Text>
+                    <Text className="ml-2 text-gray-500">{t("orderCreate.gettingAddress")}</Text>
                   </View>
                 ) : (
                   <Controller
@@ -209,20 +212,20 @@ export default function OrderCreate() {
                     name="address"
                     render={({ field }) => (
                       <Text className="text-gray-800 text-base">
-                        {field.value || "No address selected"}
+                        {field.value || t("orderCreate.noAddressSelected")}
                       </Text>
                     )}
                   />
                 )}
               </View>
               {errors.address && (
-                <Text className="text-red-500 text-sm mt-1 ml-1">{errors.address.message}</Text>
+                <Text className="text-red-500 text-sm mt-1 ml-1">{t(`orderCreate.${errors.address.message}`)}</Text>
               )}
             </View>
 
             {/* Trash Category Section */}
             <View className="mb-6">
-              <Text className="text-lg font-semibold text-gray-800 mb-3">🗂️ Category</Text>
+              <Text className="text-lg font-semibold text-gray-800 mb-3">{t("orderCreate.categorySectionTitle")}</Text>
               <Controller
                 control={control}
                 name="category"
@@ -232,8 +235,8 @@ export default function OrderCreate() {
                       <TouchableOpacity
                         key={category}
                         className={`p-4 rounded-xl border-2 ${
-                          value === category 
-                            ? info.color 
+                          value === category
+                            ? info.color
                             : "bg-white border-gray-200"
                         }`}
                         onPress={() => {
@@ -242,22 +245,22 @@ export default function OrderCreate() {
                         }}
                       >
                         <View className="flex-row items-center">
-                          <Ionicons 
-                            name={info.icon as any} 
-                            size={24} 
-                            color={value === category ? 
+                          <Ionicons
+                            name={info.icon as any}
+                            size={24}
+                            color={value === category ?
                               (category === TrashCategory.GENERAL ? "#374151" :
                                category === TrashCategory.ORGANIC ? "#065F46" :
                                category === TrashCategory.RECYCLABLE ? "#1E40AF" :
-                               category === TrashCategory.HAZARDOUS ? "#991B1B" : "#581C87") 
+                               category === TrashCategory.HAZARDOUS ? "#991B1B" : "#581C87")
                               : "#9CA3AF"
-                            } 
+                            }
                           />
                           <View className="ml-3 flex-1">
                             <Text className={`font-medium ${
                               value === category ? "text-gray-800" : "text-gray-600"
                             }`}>
-                              {category.replace('_', ' ')}
+                              {t(`orderCreate.category_${category.toLowerCase()}`)}
                             </Text>
                             <Text className="text-sm text-gray-500 mt-1">
                               {info.description}
@@ -273,13 +276,13 @@ export default function OrderCreate() {
                 )}
               />
               {errors.category && (
-                <Text className="text-red-500 text-sm mt-1 ml-1">{errors.category.message}</Text>
+                <Text className="text-red-500 text-sm mt-1 ml-1">{t(`orderCreate.${errors.category.message}`)}</Text>
               )}
             </View>
 
             {/* Weight Section */}
             <View className="mb-6">
-              <Text className="text-lg font-semibold text-gray-800 mb-3">⚖️ Weight</Text>
+              <Text className="text-lg font-semibold text-gray-800 mb-3">{t("orderCreate.weightSectionTitle")}</Text>
               <Controller
                 control={control}
                 name="weight"
@@ -288,7 +291,7 @@ export default function OrderCreate() {
                     <TextInput
                       className="border-2 border-gray-200 p-4 rounded-xl text-base bg-white"
                       keyboardType="decimal-pad"
-                      placeholder="Enter weight"
+                      placeholder={t("orderCreate.enterWeightPlaceholder")}
                       value={field.value ? String(field.value) : ""}
                       onChangeText={(v) => {
                         const numericValue = parseFloat(v);
@@ -301,20 +304,20 @@ export default function OrderCreate() {
                   </View>
                 )}
               />
-              {watchedWeight && (
+              {watchedWeight !== undefined && watchedWeight !== null && (
                 <Text className="text-sm text-gray-500 mt-1 ml-1">
-                  {watchedWeight < 10 ? "Light load" : 
-                   watchedWeight < 50 ? "Medium load" : "Heavy load"}
+                  {watchedWeight < 10 ? t("orderCreate.lightLoad") :
+                   watchedWeight < 50 ? t("orderCreate.mediumLoad") : t("orderCreate.heavyLoad")}
                 </Text>
               )}
               {errors.weight && (
-                <Text className="text-red-500 text-sm mt-1 ml-1">{errors.weight.message}</Text>
+                <Text className="text-red-500 text-sm mt-1 ml-1">{t(`orderCreate.${errors.weight.message}`)}</Text>
               )}
             </View>
 
             {/* Description Section */}
             <View className="mb-6">
-              <Text className="text-lg font-semibold text-gray-800 mb-3">📝 Description (Optional)</Text>
+              <Text className="text-lg font-semibold text-gray-800 mb-3">{t("orderCreate.descriptionSectionTitle")}</Text>
               <Controller
                 control={control}
                 name="description"
@@ -323,7 +326,7 @@ export default function OrderCreate() {
                     className="border-2 border-gray-200 p-4 rounded-xl text-base bg-white"
                     multiline
                     numberOfLines={4}
-                    placeholder="Add any additional details about your waste..."
+                    placeholder={t("orderCreate.descriptionPlaceholder")}
                     onChangeText={field.onChange}
                     value={field.value || ""}
                     textAlignVertical="top"
@@ -334,16 +337,16 @@ export default function OrderCreate() {
 
             {/* Image Section */}
             <View className="mb-8">
-              <Text className="text-lg font-semibold text-gray-800 mb-3">📷 Photo (Optional)</Text>
-              
+              <Text className="text-lg font-semibold text-gray-800 mb-3">{t("orderCreate.photoSectionTitle")}</Text>
+
               {imagePreview ? (
                 <View className="relative">
-                  <Image 
-                    source={{ uri: imagePreview }} 
+                  <Image
+                    source={{ uri: imagePreview }}
                     className="w-full h-48 rounded-xl"
                     resizeMode="cover"
                   />
-                  <TouchableOpacity 
+                  <TouchableOpacity
                     className="absolute top-2 right-2 bg-red-500 p-2 rounded-full"
                     onPress={removeImage}
                   >
@@ -351,14 +354,14 @@ export default function OrderCreate() {
                   </TouchableOpacity>
                 </View>
               ) : (
-                <TouchableOpacity 
+                <TouchableOpacity
                   className="border-2 border-dashed border-gray-300 p-8 rounded-xl bg-gray-50"
                   onPress={pickImage}
                 >
                   <View className="items-center">
                     <Ionicons name="camera-outline" size={32} color="#9CA3AF" />
-                    <Text className="text-gray-500 font-medium mt-2">Add Photo</Text>
-                    <Text className="text-gray-400 text-sm mt-1">Tap to select image</Text>
+                    <Text className="text-gray-500 font-medium mt-2">{t("orderCreate.addPhoto")}</Text>
+                    <Text className="text-gray-400 text-sm mt-1">{t("orderCreate.tapToSelectImage")}</Text>
                   </View>
                 </TouchableOpacity>
               )}
@@ -367,8 +370,8 @@ export default function OrderCreate() {
             {/* Submit Button */}
             <TouchableOpacity
               className={`p-4 rounded-xl ${
-                isPending || !location 
-                  ? "bg-gray-300" 
+                isPending || !location
+                  ? "bg-gray-300"
                   : "bg-blue-500"
               }`}
               onPress={handleSubmit(onSubmit)}
@@ -379,14 +382,14 @@ export default function OrderCreate() {
                 <Text className={`font-semibold text-base ${
                   isPending || !location ? "text-gray-500" : "text-white"
                 }`}>
-                  {isPending ? "Creating Order..." : "Create Order"}
+                  {isPending ? t("orderCreate.creatingOrder") : t("orderCreate.createOrderButton")}
                 </Text>
               </View>
             </TouchableOpacity>
 
             {!location && (
               <Text className="text-orange-600 text-sm text-center mt-2">
-                Please select a location to continue
+                {t("orderCreate.selectLocationToContinue")}
               </Text>
             )}
           </View>

@@ -8,20 +8,22 @@ import { z } from "zod";
 import {Picker} from '@react-native-picker/picker';
 import { useAuthContext } from "@/hooks/useAuthContext";
 import { useEffect } from "react";
+import { useTranslation } from "react-i18next"; // Import useTranslation
 
 const formSchema = z.object({
-  username: z.string().min(1, "Username is required"),
-  password: z.string().min(1, "Password is required"),
-  phone: z.string().min(1, "Phone is required"),
+  username: z.string().min(1, "usernameRequired"), // Use translation key
+  password: z.string().min(1, "passwordRequired"), // Use translation key
+  phone: z.string().min(1, "phoneRequired"), // Use translation key
   fcmToken: z.string().nullable(),
   role: z.nativeEnum(Role, {
-    errorMap: () => ({message: "Role is required"}),
+    errorMap: () => ({message: "roleRequired"}), // Use translation key
   }),
 });
 
 type RegisterForm = z.infer<typeof formSchema>;
 
 export default function Register() {
+  const { t } = useTranslation();
   const {fcmToken} = useAuthContext();
   const { mutate: register, isPending } = useRegister();
   const router = useRouter();
@@ -59,14 +61,11 @@ export default function Register() {
             {/* Header Section */}
             <View className="pt-12 pb-6 px-6">
               <View className="items-center mb-6">
-                {/* <View className="w-20 h-20 bg-green-500 rounded-full items-center justify-center mb-4 shadow-lg">
-                  <Text className="text-white text-2xl font-bold">Register</Text>
-                </View> */}
                 <Text className="text-3xl font-bold text-gray-900 mb-2">
-                  Create Account
+                  {t("register.createAccount")}
                 </Text>
                 <Text className="text-gray-500 text-center">
-                  Join us and start your journey today
+                  {t("register.joinUs")}
                 </Text>
               </View>
             </View>
@@ -76,7 +75,7 @@ export default function Register() {
               <View className="bg-white rounded-3xl shadow-xl p-6 border border-gray-100">
                 <View className="space-y-5">
                   <View>
-                    <Text className="text-gray-700 mb-3 font-semibold text-base">Username</Text>
+                    <Text className="text-gray-700 mb-3 font-semibold text-base">{t("register.username")}</Text>
                     <Controller
                       control={control}
                       name="username"
@@ -87,7 +86,7 @@ export default function Register() {
                               ? 'border-red-300 bg-red-50' 
                               : 'border-transparent focus:border-green-300'
                           }`}
-                          placeholder="Choose a username"
+                          placeholder={t("register.chooseUsername")}
                           placeholderTextColor="#9CA3AF"
                           onBlur={onBlur}
                           onChangeText={onChange}
@@ -98,13 +97,13 @@ export default function Register() {
                     />
                     {errors.username && (
                       <Text className="text-red-500 text-sm mt-2 ml-1">
-                        {errors.username.message}
+                        {t(`register.${errors.username.message}`)}
                       </Text>
                     )}
                   </View>
 
                   <View>
-                    <Text className="text-gray-700 mb-3 font-semibold text-base">Password</Text>
+                    <Text className="text-gray-700 mb-3 font-semibold text-base">{t("register.password")}</Text>
                     <Controller
                       control={control}
                       name="password"
@@ -115,7 +114,7 @@ export default function Register() {
                               ? 'border-red-300 bg-red-50' 
                               : 'border-transparent focus:border-green-300'
                           }`}
-                          placeholder="Create a secure password"
+                          placeholder={t("register.createSecurePassword")}
                           placeholderTextColor="#9CA3AF"
                           onBlur={onBlur}
                           onChangeText={onChange}
@@ -126,13 +125,13 @@ export default function Register() {
                     />
                     {errors.password && (
                       <Text className="text-red-500 text-sm mt-2 ml-1">
-                        {errors.password.message}
+                        {t(`register.${errors.password.message}`)}
                       </Text>
                     )}
                   </View>
 
                   <View>
-                    <Text className="text-gray-700 mb-3 font-semibold text-base">Phone Number</Text>
+                    <Text className="text-gray-700 mb-3 font-semibold text-base">{t("register.phoneNumber")}</Text>
                     <Controller
                       control={control}
                       name="phone"
@@ -143,7 +142,7 @@ export default function Register() {
                               ? 'border-red-300 bg-red-50' 
                               : 'border-transparent focus:border-green-300'
                           }`}
-                          placeholder="Enter your phone number"
+                          placeholder={t("register.enterPhoneNumber")}
                           placeholderTextColor="#9CA3AF"
                           onBlur={onBlur}
                           onChangeText={onChange}
@@ -154,13 +153,13 @@ export default function Register() {
                     />
                     {errors.phone && (
                       <Text className="text-red-500 text-sm mt-2 ml-1">
-                        {errors.phone.message}
+                        {t(`register.${errors.phone.message}`)}
                       </Text>
                     )}
                   </View>
 
                   <View>
-                    <Text className="text-gray-700 mb-3 font-semibold text-base">Role</Text>
+                    <Text className="text-gray-700 mb-3 font-semibold text-base">{t("register.role")}</Text>
                     <View className={`bg-gray-50 rounded-2xl border-2 ${
                       errors.role ? 'border-red-300 bg-red-50' : 'border-transparent'
                     }`}>
@@ -179,17 +178,17 @@ export default function Register() {
                             }}
                           >
                             <Picker.Item 
-                              label="Select your role" 
+                              label={t("register.selectYourRole")} 
                               value={undefined} 
                               color="#9CA3AF"
                             />
                             <Picker.Item 
-                              label="👤 Customer" 
+                              label={t("register.customerRole")} 
                               value={Role.CUSTOMER} 
                               color="#374151"
                             />
                             <Picker.Item 
-                              label="🚗 Driver" 
+                              label={t("register.driverRole")} 
                               value={Role.DRIVER} 
                               color="#374151"
                             />
@@ -199,7 +198,7 @@ export default function Register() {
                     </View>
                     {errors.role && (
                       <Text className="text-red-500 text-sm mt-2 ml-1">
-                        {errors.role.message}
+                        {t(`register.${errors.role.message}`)}
                       </Text>
                     )}
                   </View>
@@ -225,7 +224,7 @@ export default function Register() {
                         <ActivityIndicator color="white" className="mr-3" />
                       )}
                       <Text className="text-white font-semibold text-lg">
-                        {isPending ? 'Creating Account...' : 'Create Account'}
+                        {isPending ? t("register.creatingAccount") : t("register.createAccountButton")}
                       </Text>
                     </View>
                   </Pressable>
@@ -239,8 +238,8 @@ export default function Register() {
                   className="py-3 px-6"
                 >
                   <Text className="text-gray-600 text-center">
-                    Already have an account?{' '}
-                    <Text className="text-green-500 font-semibold">Sign in</Text>
+                    {t("register.alreadyHaveAccount")}{' '}
+                    <Text className="text-green-500 font-semibold">{t("register.signIn")}</Text>
                   </Text>
                 </Pressable>
               </View>

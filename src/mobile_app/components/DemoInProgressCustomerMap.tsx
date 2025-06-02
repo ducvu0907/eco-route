@@ -1,53 +1,49 @@
 import { useGetRouteById } from "@/hooks/useRoute";
 import { OrderResponse, OrderStatus } from "@/types/types";
-import { Camera, MapView, MarkerView } from "@maplibre/maplibre-react-native";
-import OrderMarker from "./OrderMarker";
-import VehicleDynamicMarker from "./VehicleDynamicMarker";
+import { Camera, MapView } from "@maplibre/maplibre-react-native";
 import { View, ActivityIndicator, Text, TouchableOpacity } from "react-native";
-import VehicleMarker from "./VehicleMarker";
 import DemoOrderMarker from "./DemoOrderMarker";
-import DemoVehicleMarker from "./DemoVehicleMarker";
-import { defaultMapZoom, mapTileUrl } from "@/utils/config";
 import DemoVehicleDynamicMarker from "./DemoVehicleDynamicMarker";
-import VehicleDrawer from "./VehicleDrawer";
+import { defaultMapZoom, mapTileUrl } from "@/utils/config";
 import DemoRoutePolyline from "./DemoRoutePolyline";
-import { useVehicleRealtimeData } from "@/hooks/useVehicleRealtimeData";
 import { Ionicons } from "@expo/vector-icons";
 import { useRef } from "react";
+import { useTranslation } from "react-i18next";
 
 interface InProgressMapProps {
   order: OrderResponse;
 }
 
-export default function DemoInProgressCustomerMap({order}: InProgressMapProps) {
-  const {data, isLoading} = useGetRouteById(order.routeId || "");
+export default function DemoInProgressCustomerMap({ order }: InProgressMapProps) {
+  const { t } = useTranslation();
+  const { data, isLoading } = useGetRouteById(order.routeId || "");
   const route = data?.result;
   const vehicle = route?.vehicle;
   const cameraRef = useRef<any>(null);
 
- if (isLoading) {
+  if (isLoading) {
     return (
-      <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
+      <View className="flex-1 justify-center items-center bg-white">
         <ActivityIndicator size="large" color="#0000ff" />
+        <Text className="mt-4 text-base text-gray-600">{t("inProgressCustomerMap.loading")}</Text>
       </View>
     );
   }
 
   if (!route || !vehicle) {
     return (
-      <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
-        <Text>Error loading route data</Text>
+      <View className="flex-1 justify-center items-center bg-white px-6">
+        <Text className="text-lg text-red-600 text-center">{t("inProgressCustomerMap.errorTitle")}</Text>
+        <Text className="text-sm text-gray-500 text-center mt-2">
+          {t("inProgressCustomerMap.errorMessage")}
+        </Text>
       </View>
     );
   }
 
   return (
     <View className="flex-1">
-      <MapView
-        style={{ flex: 1 }}
-        mapStyle={mapTileUrl}
-      >
-
+      <MapView style={{ flex: 1 }} mapStyle={mapTileUrl}>
         <Camera
           ref={cameraRef}
           centerCoordinate={[order.longitude, order.latitude]}
@@ -56,13 +52,14 @@ export default function DemoInProgressCustomerMap({order}: InProgressMapProps) {
 
         <DemoOrderMarker order={order} />
 
-        {order.status === OrderStatus.IN_PROGRESS && <DemoVehicleDynamicMarker vehicle={vehicle} />}
+        {order.status === OrderStatus.IN_PROGRESS && (
+          <DemoVehicleDynamicMarker vehicle={vehicle} />
+        )}
 
         <DemoRoutePolyline route={route} />
-
       </MapView>
 
-      <View className="absolute top-0">
+      <View className="absolute top-0 left-0 m-4">
         <TouchableOpacity
           onPress={() => cameraRef.current?.flyTo([order.longitude, order.latitude])}
           style={{
@@ -79,7 +76,6 @@ export default function DemoInProgressCustomerMap({order}: InProgressMapProps) {
           <Ionicons name="map" size={20} color="#3b82f6" />
         </TouchableOpacity>
       </View>
-
     </View>
   );
 }

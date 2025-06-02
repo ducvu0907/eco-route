@@ -1,9 +1,11 @@
 import React from 'react';
 import { View, Text, Pressable } from 'react-native';
-import { useNavigation, useRouter } from 'expo-router';
+import { useRouter } from 'expo-router';
+import { useTranslation } from 'react-i18next'; // Import useTranslation
 
 export default function NotFoundPage() {
   const router = useRouter();
+  const { t } = useTranslation(); // Initialize useTranslation
 
   return (
     <View className="flex-1 bg-gradient-to-b from-slate-50 to-white">
@@ -31,13 +33,12 @@ export default function NotFoundPage() {
 
           {/* Error Message */}
           <Text className="text-xl font-semibold text-gray-700 mb-3">
-            Page Not Found
+            {t("notFound.pageNotFound")}
           </Text>
 
           {/* Description */}
           <Text className="text-gray-500 text-center text-base leading-6 mb-8 max-w-sm">
-            Sorry, we couldn't find the page you're looking for. 
-            It might have been moved or doesn't exist.
+            {t("notFound.description")}
           </Text>
 
           {/* Action Button */}
@@ -54,7 +55,7 @@ export default function NotFoundPage() {
           >
             <View className="flex-row items-center">
               <Text className="text-white font-semibold text-lg mr-2">
-                Go Home
+                {t("notFound.goHome")}
               </Text>
               <Text className="text-white text-lg">🏠</Text>
             </View>
@@ -63,20 +64,20 @@ export default function NotFoundPage() {
           {/* Additional Help */}
           <View className="mt-8 items-center">
             <Text className="text-gray-400 text-sm mb-3">
-              Need help? Try these options:
+              {t("notFound.needHelp")}
             </Text>
             <View className="flex-row space-x-6">
               <Pressable
                 onPress={() => router.back()}
                 className="px-4 py-2 bg-gray-100 rounded-xl"
               >
-                <Text className="text-gray-600 font-medium">← Go Back</Text>
+                <Text className="text-gray-600 font-medium">{t("notFound.goBack")}</Text>
               </Pressable>
               <Pressable
                 onPress={() => router.replace("/login")}
                 className="px-4 py-2 bg-gray-100 rounded-xl"
               >
-                <Text className="text-gray-600 font-medium">Login 👤</Text>
+                <Text className="text-gray-600 font-medium">{t("notFound.login")}</Text>
               </Pressable>
             </View>
           </View>
@@ -86,7 +87,7 @@ export default function NotFoundPage() {
       {/* Footer */}
       <View className="pb-8 px-8">
         <Text className="text-center text-gray-400 text-sm">
-          Error Code: 404 • Page Not Found
+          {t("notFound.errorCodeFooter")}
         </Text>
       </View>
     </View>

@@ -5,8 +5,10 @@ import { Ionicons } from "@expo/vector-icons";
 import { NotificationResponse } from "@/types/types";
 import { formatDate } from "@/utils/formatDate";
 import { SafeAreaView } from "react-native-safe-area-context";
+import { useTranslation } from "react-i18next"; // Import useTranslation
 
 export default function Notifications() {
+  const { t } = useTranslation(); // Initialize useTranslation
   const { userId } = useAuthContext();
   const { data, isLoading } = useGetNotificationsByUserId(userId as string);
   const notifications: NotificationResponse[] = data?.result || [];
@@ -49,7 +51,7 @@ export default function Notifications() {
     return (
       <View className="flex-1 justify-center items-center bg-gray-50">
         <ActivityIndicator size="large" color="#3B82F6" />
-        <Text className="text-gray-600 mt-4 text-base">Loading notifications...</Text>
+        <Text className="text-gray-600 mt-4 text-base">{t("notifications.loading")}</Text>
       </View>
     );
   }
@@ -59,10 +61,10 @@ export default function Notifications() {
       <View className="flex-1 justify-center items-center bg-gray-50 px-8">
         <Ionicons name="notifications-off-outline" size={64} color="#9CA3AF" />
         <Text className="text-xl font-semibold text-gray-700 mt-4 text-center">
-          No notifications yet
+          {t("notifications.noNotificationsYet")}
         </Text>
         <Text className="text-gray-500 mt-2 text-center leading-6">
-          When you receive notifications, they'll appear here
+          {t("notifications.appearHere")}
         </Text>
       </View>
     );
@@ -71,7 +73,7 @@ export default function Notifications() {
   return (
     <View className="flex-1 bg-gray-50 p-2">
       <SafeAreaView>
-        <Text className="text-2xl font-semibold text-center">Notifications</Text>
+        <Text className="text-2xl font-semibold text-center">{t("notifications.title")}</Text>
       </SafeAreaView>
 
       <FlatList

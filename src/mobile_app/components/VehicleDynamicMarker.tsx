@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { View, Text, ActivityIndicator, Image } from "react-native";
 import { Callout, Marker } from "react-native-maps";
-import { VehicleResponse } from "@/types/types";
+import { VehicleResponse, VehicleType } from "@/types/types";
 import { useVehicleRealtimeData } from "@/hooks/useVehicleRealtimeData";
 import { isBackgroundLocationAvailableAsync } from "expo-location";
 
@@ -16,6 +16,15 @@ export default function VehicleDynamicMarker({ vehicle }: VehicleDynamicMarkerPr
     return <ActivityIndicator />;
   }
   
+  const getVehicleIcon = (vehicle: VehicleResponse) => {
+    switch (vehicle.type) {
+      case VehicleType.COMPACTOR_TRUCK:
+        return "@/assets/images/compactor-truck.png";
+      case VehicleType.THREE_WHEELER:
+        return "@/assets/images/three-wheeler.png";
+    }
+  };
+
   return (
     <Marker
       coordinate={{
@@ -25,7 +34,7 @@ export default function VehicleDynamicMarker({ vehicle }: VehicleDynamicMarkerPr
       title="Vehicle"
     >
       <Image
-        source={require("@/assets/images/truck-icon.png")}
+        source={require(getVehicleIcon(vehicle))}
         style={{ width: 30, height: 30 }}
         resizeMode="contain"
       />
