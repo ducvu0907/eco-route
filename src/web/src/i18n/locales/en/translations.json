@@ -888,5 +888,16 @@
     "numberOfVehicles": "Number of vehicles",
     "createdAt": "Created At",
     "viewDetails": "View details"
+  },
+  "mapModalInput": {
+    "buttonLabel": "Select Location on Map",
+    "dialogTitle": "Select Location",
+    "latLabel": "Lat:",
+    "lngLabel": "Lng:",
+    "centerMap": "Center Map",
+    "helpText": "Click anywhere on the map to set the location marker.",
+    "selectedCoordinates": "Selected coordinates: {{lat}}, {{lng}}",
+    "cancel": "Cancel",
+    "confirm": "Confirm Location"
   }
 }

@@ -888,5 +888,16 @@
     "numberOfVehicles": "Số lượng phương tiện",
     "createdAt": "Đã tạo vào",
     "viewDetails": "Xem chi tiết"
+  },
+  "mapModalInput": {
+    "buttonLabel": "Chọn vị trí trên bản đồ",
+    "dialogTitle": "Chọn vị trí",
+    "latLabel": "Vĩ độ:",
+    "lngLabel": "Kinh độ:",
+    "centerMap": "Căn giữa bản đồ",
+    "helpText": "Nhấp vào bất kỳ đâu trên bản đồ để đặt điểm đánh dấu vị trí.",
+    "selectedCoordinates": "Tọa độ đã chọn: {{lat}}, {{lng}}",
+    "cancel": "Hủy",
+    "confirm": "Xác nhận vị trí"
   }
 }
