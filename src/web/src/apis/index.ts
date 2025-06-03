@@ -1,10 +1,10 @@
-import { apiUrl } from '@/config/config';
+// import { apiUrl } from '@/config/config';
 import { useToast } from '@/hooks/useToast';
 import { ApiResponse } from '@/types/types';
 import axios, { AxiosResponse } from 'axios';
 
 const axiosInstance = axios.create({
-  baseURL: apiUrl,
+  baseURL: "/api", // use this to let nginx routing
 });
 
 axiosInstance.interceptors.request.use(

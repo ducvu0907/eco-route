@@ -1,3 +1,5 @@
+import DepotCreateModal from "@/components/depot/DepotCreateModal";
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -9,31 +11,27 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
+import { Skeleton } from "@/components/ui/skeleton";
 import { useDeleteDepot, useGetDepots } from "@/hooks/useDepot";
 import { DepotResponse } from "@/types/types";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Skeleton } from "@/components/ui/skeleton";
-import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
-import {
-  MapPin,
-  Truck,
-  Plus,
-  List,
-  Map as MapIcon,
-  Eye,
-  Trash2,
-  Warehouse,
-  Calendar,
-  AlertTriangle,
-  Search
-} from "lucide-react";
 import { formatDate } from "@/utils/formatDate";
-import { Button } from "@/components/ui/button";
-import { useNavigate } from "react-router";
-import DepotCreateModal from "@/components/depot/DepotCreateModal";
+import {
+  AlertTriangle,
+  Calendar,
+  Eye,
+  MapPin,
+  Plus,
+  Search,
+  Trash2,
+  Truck,
+  Warehouse
+} from "lucide-react";
 import { useState } from "react";
-import { Input } from "@/components/ui/input";
 import { useTranslation } from "react-i18next";
+import { useNavigate } from "react-router";
 
 export default function DepotManagement() {
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);

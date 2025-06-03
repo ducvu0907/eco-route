@@ -1,14 +1,10 @@
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { MapContainer, TileLayer, Marker, Polyline, Popup } from "react-leaflet";
-import { LatLngExpression } from "leaflet";
-import { RouteResponse } from "@/types/types";
-import "leaflet/dist/leaflet.css";
-import VehicleMarker from "@/components/map/VehicleMarker";
-import OrderMarker from "@/components/map/OrderMarker";
 import DepotDynamicMarker from "@/components/map/DepotDynamicMarker";
-import RoutePolyline from "./RoutePolyline";
-import { useGetDepotById } from "@/hooks/useDepot";
-import StaticRoutePolyline from "./StaticRoutePolyline";
+import OrderMarker from "@/components/map/OrderMarker";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { RouteResponse } from "@/types/types";
+import { LatLngExpression } from "leaflet";
+import "leaflet/dist/leaflet.css";
+import { MapContainer, TileLayer } from "react-leaflet";
 import UpdatedRoutePolyline from "./UpdatedRoutePolyline";
 
 interface SingleRouteStaticMapProps {

@@ -1,19 +1,19 @@
-import { useGetDepots } from "@/hooks/useDepot";
-import { MapContainer, TileLayer, LayersControl } from "react-leaflet";
-import { useGetVehicles } from "@/hooks/useVehicle";
-import { LatLngExpression } from "leaflet";
-import { defaultCenter } from "@/config/config";
-import { DepotResponse, VehicleResponse } from "@/types/types";
 import DepotMarker from "@/components/map/DepotMarker";
 import VehicleDynamicMarker from "@/components/map/VehicleDynamicMarker";
 import { Button } from "@/components/ui/button";
+import { defaultCenter } from "@/config/config";
+import { useGetDepots } from "@/hooks/useDepot";
+import { useGetVehicles } from "@/hooks/useVehicle";
+import { DepotResponse, VehicleResponse } from "@/types/types";
+import { LatLngExpression } from "leaflet";
 import { useState } from "react";
+import { LayersControl, MapContainer, TileLayer } from "react-leaflet";
 
 export default function Map() {
-  const { data: depotData, isLoading: isDepotsLoading, isError: isDepotsError } = useGetDepots();
+  const { data: depotData } = useGetDepots();
   const depots = depotData?.result;
   
-  const { data: vehiclesData, isLoading: isVehiclesLoading, isError: isVehiclesError } = useGetVehicles();
+  const { data: vehiclesData } = useGetVehicles();
   const vehicles = vehiclesData?.result;
 
   const [showVehicles, setShowVehicles] = useState<boolean>(true);

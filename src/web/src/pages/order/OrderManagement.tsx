@@ -1,36 +1,32 @@
-import { useGetOrders } from "@/hooks/useOrder";
-import { OrderResponse, OrderStatus, TrashCategory } from "@/types/types";
-import {
-  Card,
-  CardHeader,
-  CardTitle,
-  CardContent,
-} from "@/components/ui/card";
-import { Skeleton } from "@/components/ui/skeleton";
-import { Alert, AlertTitle, AlertDescription } from "@/components/ui/alert";
+import OrdersMap from "@/components/order/OrdersMap";
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { formatDate } from "@/utils/formatDate";
-import { useNavigate } from "react-router";
-import OrdersMap from "@/components/order/OrdersMap";
 import {
-  MapPin,
-  Scale,
+  Card,
+  CardContent,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import { Skeleton } from "@/components/ui/skeleton";
+import { useGetOrders } from "@/hooks/useOrder";
+import { OrderResponse, OrderStatus, TrashCategory } from "@/types/types";
+import { formatDate } from "@/utils/formatDate";
+import {
+  AlertCircle,
   Calendar,
   Eye,
-  AlertCircle,
-  CheckCircle,
-  Clock,
-  XCircle,
-  Loader2,
-  Trash2,
-  Package,
-  Map,
   List,
   ListOrderedIcon,
+  Map,
+  MapPin,
+  Package,
+  Scale,
+  Trash2
 } from "lucide-react";
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
+import { useNavigate } from "react-router";
 
 export default function OrderManagement() {
   const navigate = useNavigate();
@@ -52,20 +48,20 @@ export default function OrderManagement() {
     return categoryMatch && statusMatch && fromMatch && toMatch;
   });
 
-  const getStatusIcon = (status: OrderStatus) => {
-    switch (status) {
-      case OrderStatus.COMPLETED:
-        return <CheckCircle className="h-4 w-4 text-green-500" />;
-      case OrderStatus.IN_PROGRESS:
-        return <Loader2 className="h-4 w-4 text-blue-500 animate-spin" />;
-      case OrderStatus.PENDING:
-        return <Clock className="h-4 w-4 text-yellow-500" />;
-      case OrderStatus.CANCELLED:
-        return <XCircle className="h-4 w-4 text-red-500" />;
-      default:
-        return <Clock className="h-4 w-4 text-gray-400" />;
-    }
-  };
+  // const getStatusIcon = (status: OrderStatus) => {
+  //   switch (status) {
+  //     case OrderStatus.COMPLETED:
+  //       return <CheckCircle className="h-4 w-4 text-green-500" />;
+  //     case OrderStatus.IN_PROGRESS:
+  //       return <Loader2 className="h-4 w-4 text-blue-500 animate-spin" />;
+  //     case OrderStatus.PENDING:
+  //       return <Clock className="h-4 w-4 text-yellow-500" />;
+  //     case OrderStatus.CANCELLED:
+  //       return <XCircle className="h-4 w-4 text-red-500" />;
+  //     default:
+  //       return <Clock className="h-4 w-4 text-gray-400" />;
+  //   }
+  // };
 
   const getStatusBadge = (status: OrderStatus) => {
     switch (status) {

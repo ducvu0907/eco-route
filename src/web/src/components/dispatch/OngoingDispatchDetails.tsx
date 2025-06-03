@@ -1,14 +1,14 @@
-import { useEffect, useState } from "react";
-import { DispatchResponse, RouteResponse, VehicleRealtimeData } from "@/types/types";
-import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { MapContainer, TileLayer, Marker, Polyline, Popup } from "react-leaflet";
-import { ref, onValue } from "firebase/database";
 import { database } from "@/firebase";
-import { LatLngExpression } from "leaflet";
-import { useGetPendingOrders } from "@/hooks/useOrder";
-import { Button } from "../ui/button";
 import { useCreateDispatch } from "@/hooks/useDispatch";
+import { useGetPendingOrders } from "@/hooks/useOrder";
+import { DispatchResponse, RouteResponse, VehicleRealtimeData } from "@/types/types";
+import { onValue, ref } from "firebase/database";
+import { LatLngExpression } from "leaflet";
+import { useEffect, useState } from "react";
+import { MapContainer, Marker, Polyline, Popup, TileLayer } from "react-leaflet";
+import { Button } from "../ui/button";
 
 interface OngoingDispatchDetailsProps {
   dispatch: DispatchResponse;
@@ -16,7 +16,7 @@ interface OngoingDispatchDetailsProps {
 }
 
 export default function OngoingDispatchDetails({ dispatch, routes }: OngoingDispatchDetailsProps) {
-  const { mutate: createDispatch, isPending } = useCreateDispatch();
+  const { mutate: createDispatch } = useCreateDispatch();
   const [vehicleRealtimeData, setVehicleRealtimeData] = useState<Record<string, VehicleRealtimeData>>({});
   const {data: ordersData, isLoading: isOrdersLoading} = useGetPendingOrders();
   const pendingOrders = ordersData?.result;

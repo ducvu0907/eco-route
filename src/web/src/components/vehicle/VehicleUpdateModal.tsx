@@ -1,52 +1,51 @@
-import { useForm } from "react-hook-form";
-import { z } from "zod";
-import { zodResolver } from "@hookform/resolvers/zod";
+import { Alert, AlertDescription } from "@/components/ui/alert";
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
 import {
   Dialog,
   DialogContent,
+  DialogFooter,
   DialogHeader,
   DialogTitle,
-  DialogFooter,
 } from "@/components/ui/dialog";
-import { Button } from "@/components/ui/button";
 import {
   Form,
+  FormControl,
+  FormDescription,
   FormField,
   FormItem,
   FormLabel,
-  FormControl,
   FormMessage,
-  FormDescription,
 } from "@/components/ui/form";
 import {
   Select,
-  SelectTrigger,
-  SelectValue,
   SelectContent,
   SelectItem,
+  SelectTrigger,
+  SelectValue,
 } from "@/components/ui/select";
-import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
-import { Alert, AlertDescription } from "@/components/ui/alert";
 import { useGetDepots } from "@/hooks/useDepot";
 import { useGetDriversNotAssigned } from "@/hooks/useUser";
-import { useEffect } from "react";
-import { DepotResponse, Role, UserResponse, VehicleResponse, VehicleStatus } from "@/types/types";
 import { useUpdateVehicle } from "@/hooks/useVehicle";
+import { VehicleResponse, VehicleStatus } from "@/types/types";
+import { zodResolver } from "@hookform/resolvers/zod";
 import { useQueryClient } from "@tanstack/react-query";
-import { 
-  Truck, 
-  User, 
-  MapPin, 
-  AlertCircle, 
-  CheckCircle, 
-  Clock, 
+import {
+  AlertCircle,
+  CheckCircle,
+  Clock,
+  Info,
   Loader2,
+  MapPin,
   Save,
-  X,
-  Info
+  Truck,
+  User,
+  X
 } from "lucide-react";
+import { useForm } from "react-hook-form";
 import { useTranslation } from "react-i18next"; // Import useTranslation
+import { z } from "zod";
 
 interface VehicleUpdateModalProps {
   isOpen: boolean;

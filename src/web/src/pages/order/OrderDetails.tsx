@@ -1,37 +1,35 @@
-import { useNavigate, useParams } from "react-router";
-import NotFound from "../NotFound";
-import { useGetOrderById } from "@/hooks/useOrder";
-import { useGetUserById } from "@/hooks/useUser";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Skeleton } from "@/components/ui/skeleton";
+import SingleRouteDynamicMap from "@/components/map/SingleRouteDynamicMap";
+import { AspectRatio } from "@/components/ui/aspect-ratio";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { formatDate } from "@/utils/formatDate";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Skeleton } from "@/components/ui/skeleton";
+import { useGetOrderById } from "@/hooks/useOrder";
 import { useGetRouteById } from "@/hooks/useRoute";
+import { useGetUserById } from "@/hooks/useUser";
 import { OrderStatus, TrashCategory } from "@/types/types";
-import { AspectRatio } from "@/components/ui/aspect-ratio";
-import SingleRouteDynamicMap from "@/components/map/SingleRouteDynamicMap";
-import SingleRouteStaticMap from "@/components/map/SingleRouteStaticMap";
-import { useTranslation } from "react-i18next";
+import { formatDate } from "@/utils/formatDate";
 import {
-  MapPin,
-  Scale,
-  Calendar,
-  User,
-  Phone,
-  Package,
-  Clock,
-  CheckCircle,
-  Loader2,
-  XCircle,
   AlertCircle,
-  ArrowLeft,
+  Calendar,
+  CheckCircle,
+  Clock,
+  Eye,
+  Loader2,
+  MapPin,
   Navigation,
-  Truck,
+  Package,
+  Phone,
   Route,
+  Scale,
   Trash2,
-  Eye
+  Truck,
+  User,
+  XCircle
 } from "lucide-react";
+import { useTranslation } from "react-i18next";
+import { useNavigate, useParams } from "react-router";
+import NotFound from "../NotFound";
 
 export default function OrderDetails() {
   const navigate = useNavigate();
@@ -52,9 +50,7 @@ export default function OrderDetails() {
   } = useGetUserById(order?.userId || "");
 
   const {
-    data: routeData,
-    isLoading: isRouteLoading,
-    isError: isRouteError
+    data: routeData
   } = useGetRouteById(order?.routeId || "");
 
   const user = userData?.result;

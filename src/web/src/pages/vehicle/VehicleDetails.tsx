@@ -1,49 +1,41 @@
-import { useNavigate, useParams } from "react-router";
-import NotFound from "../NotFound";
-import { useGetVehicleById } from "@/hooks/useVehicle";
-import { useGetRoutesByVehicleId } from "@/hooks/useRoute";
-import { useEffect, useState } from "react";
-import {
-  MapContainer,
-  TileLayer,
-  Marker,
-  Polyline,
-  Popup,
-} from "react-leaflet";
+import SingleRouteDynamicMap from "@/components/map/SingleRouteDynamicMap";
+import SingleRouteStaticMap from "@/components/map/SingleRouteStaticMap";
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
 import {
   Card,
   CardContent,
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { Skeleton } from "@/components/ui/skeleton";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
-import { RouteResponse, VehicleResponse, OrderResponse, RouteStatus, VehicleStatus } from "@/types/types";
-import { Button } from "@/components/ui/button";
+import { Skeleton } from "@/components/ui/skeleton";
 import VehicleUpdateModal from "@/components/vehicle/VehicleUpdateModal";
-import { LatLngExpression } from "leaflet";
 import { useGetDepotById } from "@/hooks/useDepot";
-import SingleRouteStaticMap from "@/components/map/SingleRouteStaticMap";
-import SingleRouteDynamicMap from "@/components/map/SingleRouteDynamicMap";
-import { useTranslation } from "react-i18next";
-import { 
-  Truck, 
-  User, 
-  MapPin, 
-  Weight, 
-  Route, 
-  Package, 
-  Clock, 
-  CheckCircle, 
-  AlertCircle,
-  Navigation,
-  Edit,
-  Calendar,
-  Activity
-} from "lucide-react";
+import { useGetRoutesByVehicleId } from "@/hooks/useRoute";
+import { useGetVehicleById } from "@/hooks/useVehicle";
+import { RouteResponse, RouteStatus, VehicleResponse, VehicleStatus } from "@/types/types";
 import { formatDate } from "@/utils/formatDate";
+import {
+  Activity,
+  AlertCircle,
+  Calendar,
+  CheckCircle,
+  Clock,
+  Edit,
+  MapPin,
+  Navigation,
+  Package,
+  Route,
+  Truck,
+  User,
+  Weight
+} from "lucide-react";
+import { useState } from "react";
+import { useTranslation } from "react-i18next";
+import { useNavigate, useParams } from "react-router";
+import NotFound from "../NotFound";
 
 export default function VehicleDetails() {
   const navigate = useNavigate();
@@ -69,7 +61,7 @@ export default function VehicleDetails() {
   const vehicle: VehicleResponse | null = vehicleData?.result ?? null;
   const routes: RouteResponse[] = routesData?.result ?? [];
 
-  const { data: depotData, isLoading: isDepotLoading } = useGetDepotById(vehicle?.depotId || "");
+  const { data: depotData } = useGetDepotById(vehicle?.depotId || "");
   const depot = depotData?.result;
 
   const getStatusColor = (status: VehicleStatus) => {

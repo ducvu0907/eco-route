@@ -1,14 +1,9 @@
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Skeleton } from "@/components/ui/skeleton";
-import { Alert, AlertTitle, AlertDescription } from "@/components/ui/alert";
-import { useGetPendingOrders } from "@/hooks/useOrder";
 import { Badge } from "@/components/ui/badge";
-import { ScrollArea } from "@/components/ui/scroll-area";
-import { Separator } from "@/components/ui/separator";
-import { Package, MapPin, Weight, Calendar, AlertCircle, CheckCircle, Clock, Eye, Loader2, Scale, Trash2, XCircle } from "lucide-react";
-import { formatDate } from "@/utils/formatDate";
-import { useNavigate } from "react-router";
+import { Card, CardContent, CardTitle } from "@/components/ui/card";
 import { OrderResponse, OrderStatus, TrashCategory } from "@/types/types";
+import { formatDate } from "@/utils/formatDate";
+import { AlertCircle, Calendar, CheckCircle, Clock, Eye, Loader2, MapPin, Package, Scale, Trash2, XCircle } from "lucide-react";
+import { useNavigate } from "react-router";
 import { Button } from "../ui/button";
 
 export default function PendingOrdersSidebar({ orders }: { orders: OrderResponse[] }) {

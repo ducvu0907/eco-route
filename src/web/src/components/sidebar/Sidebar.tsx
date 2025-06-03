@@ -1,19 +1,15 @@
-import { Home, Warehouse, Truck, Users, Send, ShoppingCart, Map, LogOut, ChevronLeft, ChevronRight, Waypoints, Bell, Dot, Loader2, Languages, LanguagesIcon } from "lucide-react";
-import { cn } from "@/lib/utils";
+import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
-import { useLocation, useNavigate } from "react-router-dom";
+import { Separator } from "@/components/ui/separator";
 import { useLogout } from "@/hooks/useAuth";
 import { useAuthContext } from "@/hooks/useAuthContext";
-import {
-  Avatar,
-  AvatarFallback,
-} from "@/components/ui/avatar";
-import { Separator } from "@/components/ui/separator";
-import { useState } from "react";
-import React from "react";
-import NotificationDropdown from "../notification/NotificationDropdown";
+import { cn } from "@/lib/utils";
+import { ChevronLeft, ChevronRight, Home, LanguagesIcon, LogOut, Send, ShoppingCart, Truck, Users, Warehouse, Waypoints } from "lucide-react";
+import React, { useState } from "react";
 import { useTranslation } from "react-i18next";
+import { useLocation, useNavigate } from "react-router-dom";
+import NotificationDropdown from "../notification/NotificationDropdown";
 
 type NavItem = {
   labelKey: string;
@@ -108,9 +104,8 @@ export default function Sidebar() {
   const navigate = useNavigate();
   const location = useLocation();
   const [isCollapsed, setIsCollapsed] = useState(false);
-  const { t, i18n } = useTranslation(); // Initialize useTranslation
+  const { t } = useTranslation();
 
-  // Define navItems with labelKey for translation
   const navItems: NavItem[] = [
     { labelKey: "dashboard", icon: <Home className="w-5 h-5" />, key: "dashboard", path: "/dashboard" },
     { labelKey: "depots", icon: <Warehouse className="w-5 h-5" />, key: "depots", path: "/depots" },
@@ -119,8 +114,6 @@ export default function Sidebar() {
     { labelKey: "dispatches", icon: <Send className="w-5 h-5" />, key: "dispatches", path: "/dispatches" },
     { labelKey: "orders", icon: <ShoppingCart className="w-5 h-5" />, key: "orders", path: "/orders" },
   ];
-
-  const handleChangeLanguage = () => i18n.language === "en" ? i18n.changeLanguage("vi") : i18n.changeLanguage("en");
 
   return (
     <div className={cn(

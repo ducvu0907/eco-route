@@ -1,10 +1,9 @@
 import { DepotIcon } from "@/lib/leaflet-icons";
-import { useGetDepotById } from "@/hooks/useDepot";
+import { DepotResponse } from "@/types/types";
+import { formatDate } from "@/utils/formatDate";
 import { Marker, Popup } from "react-leaflet";
 import { useNavigate } from "react-router";
 import { Button } from "../ui/button";
-import { formatDate } from "@/utils/formatDate";
-import { DepotResponse } from "@/types/types";
 
 interface DepotMarkerProps {
   depot: DepotResponse;

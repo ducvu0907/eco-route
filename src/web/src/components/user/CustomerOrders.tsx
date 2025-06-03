@@ -1,26 +1,22 @@
 // CustomerOrders.tsx
 import { useGetOrdersByUserId } from "@/hooks/useOrder";
-import { Alert, AlertTitle, AlertDescription } from "../ui/alert";
-import { Card, CardHeader, CardTitle, CardContent } from "../ui/card";
-import { Skeleton } from "../ui/skeleton";
-import { Badge } from "../ui/badge";
-import { Button } from "../ui/button";
+import { OrderStatus, TrashCategory } from "@/types/types";
 import { formatDate } from "@/utils/formatDate";
-import { useNavigate } from "react-router";
-import { 
-  Package, 
-  MapPin, 
-  Scale, 
-  Calendar, 
-  Eye, 
+import {
   AlertCircle,
-  CheckCircle,
-  Clock,
-  XCircle,
-  Loader2,
+  Calendar,
+  Eye,
+  MapPin,
+  Package,
+  Scale,
   Trash2
 } from "lucide-react";
-import { OrderStatus, TrashCategory } from "@/types/types";
+import { useNavigate } from "react-router";
+import { Alert, AlertDescription, AlertTitle } from "../ui/alert";
+import { Badge } from "../ui/badge";
+import { Button } from "../ui/button";
+import { Card, CardContent, CardHeader, CardTitle } from "../ui/card";
+import { Skeleton } from "../ui/skeleton";
 
 interface CustomerOrdersProps {
   userId: string;

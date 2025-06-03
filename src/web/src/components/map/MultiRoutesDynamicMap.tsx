@@ -1,12 +1,12 @@
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { MapContainer, Polyline, TileLayer } from "react-leaflet";
-import "leaflet/dist/leaflet.css";
-import { LatLngExpression } from "leaflet";
-import { RouteResponse } from "@/types/types";
-import OrderMarker from "@/components/map/OrderMarker";
 import DepotDynamicMarker from "@/components/map/DepotDynamicMarker";
-import VehicleDynamicMarker from "./VehicleDynamicMarker";
+import OrderMarker from "@/components/map/OrderMarker";
+import { Card, CardContent } from "@/components/ui/card";
+import { RouteResponse } from "@/types/types";
+import { LatLngExpression } from "leaflet";
+import "leaflet/dist/leaflet.css";
+import { MapContainer, TileLayer } from "react-leaflet";
 import UpdatedRoutePolyline from "./UpdatedRoutePolyline";
+import VehicleDynamicMarker from "./VehicleDynamicMarker";
 
 interface MultiRoutesDynamicMapProps {
   routes: RouteResponse[];

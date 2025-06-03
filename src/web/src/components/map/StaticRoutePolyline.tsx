@@ -1,10 +1,9 @@
 import { useGetDepotById } from "@/hooks/useDepot";
-import { useVehicleRealtimeData } from "@/hooks/useVehicleRealtimeData";
-import { OrderResponse, OrderStatus, VehicleResponse } from "@/types/types";
+import { OrderResponse, VehicleResponse } from "@/types/types";
 import L, { LatLngExpression } from "leaflet";
+import "leaflet-arrowheads";
 import { Loader2 } from "lucide-react";
 import { Polyline, useMap } from "react-leaflet";
-import "leaflet-arrowheads";
 
 interface RoutePolylinePropps {
   depotId: string;

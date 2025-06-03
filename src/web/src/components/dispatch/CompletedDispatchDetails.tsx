@@ -1,14 +1,11 @@
-import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Separator } from "@/components/ui/separator";
-import { Badge } from "@/components/ui/badge";
-import { DispatchResponse, RouteResponse, OrderResponse } from "@/types/types";
-import { MapContainer, TileLayer, Polyline, Marker, Popup } from "react-leaflet";
-import { LatLngExpression, Icon } from "leaflet";
-import { useMemo } from "react";
-import MultiRoutesStaticMap from "../map/MultiRoutesStaticMap";
-import { Truck, Package, MapPin, Clock, CheckCircle2, Calendar } from "lucide-react";
+import { DispatchResponse, RouteResponse } from "@/types/types";
+import { Calendar, CheckCircle2, Clock, MapPin, Package, Truck } from "lucide-react";
 import { useTranslation } from "react-i18next";
+import MultiRoutesStaticMap from "../map/MultiRoutesStaticMap";
 
 interface CompletedDispatchDetailsProps {
   dispatch: DispatchResponse;
@@ -198,7 +195,7 @@ export default function CompletedDispatchDetails({ dispatch, routes }: Completed
                             <div className="space-y-2">
                               {route.orders
                                 .sort((a, b) => (a.index ?? 0) - (b.index ?? 0))
-                                .map((order, orderIndex) => (
+                                .map((order, _) => (
                                   <div 
                                     key={order.id} 
                                     className="flex items-start gap-2 p-2 bg-muted/30 rounded text-xs"

@@ -1,11 +1,13 @@
-import { useGetUsers } from "@/hooks/useUser";
-import { UserResponse } from "@/types/types";
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
+import { Badge } from "@/components/ui/badge";
 import {
   Card,
   CardContent,
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
+import { Skeleton } from "@/components/ui/skeleton";
 import {
   Table,
   TableBody,
@@ -14,31 +16,27 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { Skeleton } from "@/components/ui/skeleton";
-import { Alert, AlertTitle, AlertDescription } from "@/components/ui/alert";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Badge } from "@/components/ui/badge";
-import { 
-  Users, 
-  AlertTriangle, 
-  User, 
-  Phone, 
-  Shield, 
+import { useGetUsers } from "@/hooks/useUser";
+import { UserResponse } from "@/types/types";
+import { formatDate } from "@/utils/formatDate";
+import {
+  AlertTriangle,
   Calendar,
   Clock,
-  UserCheck,
   Crown,
-  Truck,
   ExternalLink,
-  Search,
   Filter,
-  X
+  Phone,
+  Search,
+  Shield,
+  Truck,
+  User,
+  UserCheck,
+  Users
 } from "lucide-react";
-import { formatDate } from "@/utils/formatDate";
-import { useNavigate } from "react-router";
-import { useState, useMemo } from "react";
+import { useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
+import { useNavigate } from "react-router";
 
 export default function UserManagement() {
   const navigate = useNavigate();
@@ -121,16 +119,16 @@ export default function UserManagement() {
     }));
   };
 
-  const clearAllFilters = () => {
-    setSelectedRole(null);
-    setSearchQueries({
-      username: "",
-      phone: "",
-      id: "",
-      createdAt: "",
-      updatedAt: ""
-    });
-  };
+  // const clearAllFilters = () => {
+  //   setSelectedRole(null);
+  //   setSearchQueries({
+  //     username: "",
+  //     phone: "",
+  //     id: "",
+  //     createdAt: "",
+  //     updatedAt: ""
+  //   });
+  // };
 
   const hasActiveFilters = selectedRole || Object.values(searchQueries).some(query => query !== "");
 

@@ -1,5 +1,5 @@
-import { RouteResponse, VehicleRealtimeData, VehicleResponse } from "@/types/types";
-import mockData, { DashboardData } from "./mockData";
+import { RouteResponse, VehicleResponse } from "@/types/types";
+import mockData from "./mockData";
 
 export const generateDailyOrdersData = () => {
   const days = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
@@ -12,7 +12,7 @@ export const generateDailyOrdersData = () => {
 };
 
 export const generateRouteEfficiencyData = (routes: RouteResponse[]) => {
-  return routes.map((route, index) => ({
+  return routes.map((route, _) => ({
     route: `Route ${route.id}`,
     efficiency: Math.round(((route.orders.length * 100) / route.distance) * 10) / 10, // Orders per km efficiency
     distance: route.distance,

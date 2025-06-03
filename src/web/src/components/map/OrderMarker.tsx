@@ -1,9 +1,9 @@
-import { GeneralTrashIcon, HazardousTrashIcon, ElectronicTrashIcon, OrganicTrashIcon, RecyclableTrashIcon } from "@/lib/leaflet-icons"
-import { OrderResponse, TrashCategory, OrderStatus } from "@/types/types";
+import { ElectronicTrashIcon, GeneralTrashIcon, HazardousTrashIcon, OrganicTrashIcon, RecyclableTrashIcon } from "@/lib/leaflet-icons";
+import { OrderResponse, TrashCategory } from "@/types/types";
+import { useTranslation } from "react-i18next";
 import { Marker, Popup } from "react-leaflet";
 import { useNavigate } from "react-router";
 import { Button } from "../ui/button";
-import { useTranslation } from "react-i18next";
 
 interface OrderMarkerProps {
   order: OrderResponse;

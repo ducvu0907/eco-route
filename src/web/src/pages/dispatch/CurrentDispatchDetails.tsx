@@ -1,35 +1,35 @@
-import { useState } from "react";
-import { 
-  Truck, 
-  MapPin, 
-  Package, 
-  Clock, 
-  Route, 
-  AlertCircle, 
-  CheckCircle2,
-  RotateCcw,
-  Weight,
-  Navigation,
-  Calendar,
-  Users
-} from "lucide-react";
-import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
-import { Skeleton } from "@/components/ui/skeleton";
-import { Separator } from "@/components/ui/separator";
-import { useCreateDispatch, useGetCurrentDispatch, useMarkDispatchAsDone } from "@/hooks/useDispatch";
 import MultiRoutesDynamicMap from "@/components/map/MultiRoutesDynamicMap";
+import SingleRouteDynamicMap from "@/components/map/SingleRouteDynamicMap";
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent } from "@/components/ui/card";
+import { Separator } from "@/components/ui/separator";
+import { Skeleton } from "@/components/ui/skeleton";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { useCreateDispatch, useGetCurrentDispatch, useMarkDispatchAsDone } from "@/hooks/useDispatch";
 import { useGetPendingOrders } from "@/hooks/useOrder";
 import { useGetRoutesByDispatchId } from "@/hooks/useRoute";
-import NoDispatch from "./NoDispatch";
 import { DispatchStatus, RouteResponse, RouteStatus, TrashCategory } from "@/types/types";
-import SingleRouteDynamicMap from "@/components/map/SingleRouteDynamicMap";
 import { formatDate } from "@/utils/formatDate";
 import { useQueryClient } from "@tanstack/react-query";
+import {
+  AlertCircle,
+  Calendar,
+  CheckCircle2,
+  Clock,
+  MapPin,
+  Navigation,
+  Package,
+  RotateCcw,
+  Route,
+  Truck,
+  Users,
+  Weight
+} from "lucide-react";
+import { useState } from "react";
 import { useTranslation } from "react-i18next";
+import NoDispatch from "./NoDispatch";
 
 const getCategoryBadgeVariant = (category: TrashCategory) => {
   switch (category) {

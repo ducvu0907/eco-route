@@ -1,21 +1,16 @@
-// PendingOrdersMap.tsx
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { MapContainer, TileLayer } from "react-leaflet";
-import "leaflet/dist/leaflet.css";
-import { LatLngExpression } from "leaflet";
-import { useGetPendingOrders } from "@/hooks/useOrder";
-import { useGetVehicles } from "@/hooks/useVehicle";
 import OrderMarker from "@/components/map/OrderMarker";
 import VehicleDynamicMarker from "@/components/map/VehicleDynamicMarker";
-import { Skeleton } from "@/components/ui/skeleton";
-import { Alert, AlertTitle, AlertDescription } from "@/components/ui/alert";
+import { Card, CardContent, CardTitle } from "@/components/ui/card";
 import { defaultCenter } from "@/config/config";
-import { MapPin, Package, Truck } from "lucide-react";
-import { Badge } from "@/components/ui/badge";
+import { useGetVehicles } from "@/hooks/useVehicle";
 import { OrderResponse } from "@/types/types";
+import { LatLngExpression } from "leaflet";
+import "leaflet/dist/leaflet.css";
+import { MapPin } from "lucide-react";
+import { MapContainer, TileLayer } from "react-leaflet";
 
 export default function PendingOrdersMap({ orders }: { orders: OrderResponse[] }) {
-  const { data: vehicleData, isLoading: isVehiclesLoading, isError: isVehiclesError } = useGetVehicles();
+  const { data: vehicleData } = useGetVehicles();
 
   const vehicles = vehicleData?.result || [];
 

@@ -2,28 +2,28 @@ import {
   useGetVehicleByDriverId,
   useGetVehicles,
 } from "@/hooks/useVehicle";
-import {
-  Card,
-  CardHeader,
-  CardTitle,
-  CardContent
-} from "../ui/card";
-import { Skeleton } from "../ui/skeleton";
-import { Badge } from "../ui/badge";
-import { Button } from "../ui/button";
 import { VehicleStatus } from "@/types/types";
-import { useNavigate } from "react-router";
-import { 
-  Truck, 
-  MapPin, 
-  Package, 
-  Gauge, 
-  Navigation,
-  Eye,
+import {
   AlertTriangle,
   CheckCircle,
-  Clock
+  Clock,
+  Eye,
+  Gauge,
+  MapPin,
+  Navigation,
+  Package,
+  Truck
 } from "lucide-react";
+import { useNavigate } from "react-router";
+import { Badge } from "../ui/badge";
+import { Button } from "../ui/button";
+import {
+  Card,
+  CardContent,
+  CardHeader,
+  CardTitle
+} from "../ui/card";
+import { Skeleton } from "../ui/skeleton";
 
 interface DriverVehicleProps {
   driverId: string;
@@ -32,7 +32,7 @@ interface DriverVehicleProps {
 export default function DriverVehicle({ driverId }: DriverVehicleProps) {
   const navigate = useNavigate();
   const {
-    data: allVehiclesData,
+    data: _,
     isLoading: isVehiclesLoading
   } = useGetVehicles();
   const {
@@ -41,7 +41,7 @@ export default function DriverVehicle({ driverId }: DriverVehicleProps) {
   } = useGetVehicleByDriverId(driverId);
 
   const vehicle = assignedVehicleData?.result;
-  const vehicles = allVehiclesData?.result || [];
+  // const vehicles = allVehiclesData?.result || [];
 
   const getStatusIcon = (status: VehicleStatus) => {
     switch (status) {

@@ -1,5 +1,5 @@
 import { orsApiKey } from "@/config/config";
-import { Feature, OrsApiResponse } from "@/types/types";
+import { Feature } from "@/types/types";
 import axios from "axios";
 import { useState } from "react";
 

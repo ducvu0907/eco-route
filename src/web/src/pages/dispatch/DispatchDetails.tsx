@@ -1,10 +1,9 @@
-import { useParams } from "react-router";
-import NotFound from "../NotFound";
-import { useGetRoutesByDispatchId } from "@/hooks/useRoute";
-import { useGetDispatchById } from "@/hooks/useDispatch";
-import OngoingDispatchDetails from "@/components/dispatch/OngoingDispatchDetails";
 import CompletedDispatchDetails from "@/components/dispatch/CompletedDispatchDetails";
 import { Skeleton } from "@/components/ui/skeleton";
+import { useGetDispatchById } from "@/hooks/useDispatch";
+import { useGetRoutesByDispatchId } from "@/hooks/useRoute";
+import { useParams } from "react-router";
+import NotFound from "../NotFound";
 import CurrentDispatchDetails from "./CurrentDispatchDetails";
 
 export default function DispatchDetails() {

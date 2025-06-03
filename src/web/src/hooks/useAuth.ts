@@ -1,5 +1,5 @@
 import { login, register } from "@/apis/auth";
-import { RegisterRequest, ApiResponse, UserResponse, LoginRequest, AuthResponse } from "@/types/types";
+import { RegisterRequest, ApiResponse, LoginRequest, AuthResponse } from "@/types/types";
 import { useMutation } from "@tanstack/react-query";
 import { useToast } from "./useToast";
 import { useAuthContext } from "./useAuthContext";
@@ -7,8 +7,8 @@ import { useAuthContext } from "./useAuthContext";
 export const useRegister = () => {
   return useMutation({
     mutationFn: (payload: RegisterRequest) => register(payload),
-    onSuccess: (response: ApiResponse<UserResponse>) => {
-      const result = response.result as UserResponse;
+    onSuccess: () => {
+      // const result = response.result as UserResponse;
     },
   });
 }

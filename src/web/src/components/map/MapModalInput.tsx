@@ -19,6 +19,7 @@ import { MapPin } from "lucide-react";
 import { LatLngExpression } from "leaflet";
 import { defaultCenter } from "@/config/config";
 import { useTranslation } from "react-i18next";
+import { DepotIcon } from "@/lib/leaflet-icons";
 
 interface MapInputProps {
   setLatLng: (lat: number, lng: number) => void;
@@ -130,7 +131,7 @@ export default function MapModalInput({ setLatLng }: MapInputProps) {
               </LayersControl>
 
               <MapClickHandler />
-              <Marker position={[lat, lng]} />
+              <Marker position={[lat, lng]} icon={DepotIcon}/>
             </MapContainer>
           </div>
 

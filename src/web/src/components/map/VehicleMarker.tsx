@@ -2,6 +2,7 @@ import { VehicleResponse } from "@/types/types";
 import { Marker, Popup } from "react-leaflet";
 import { useNavigate } from "react-router";
 import { Button } from "../ui/button";
+import { TruckIcon } from "@/lib/leaflet-icons";
 
 interface VehicleMarkerProps {
   vehicle: VehicleResponse;

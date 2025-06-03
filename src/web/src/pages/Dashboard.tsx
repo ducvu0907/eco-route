@@ -1,53 +1,52 @@
-import React from 'react';
-import { 
-  Truck, 
-  MapPin, 
-  Package, 
-  TrendingUp, 
-  Clock, 
-  CheckCircle, 
-  AlertCircle,
-  Route,
-  Zap,
-  Recycle,
-  Trash2,
-  Battery,
-  Globe,
-  BarChart3,
-  PieChart,
-  Activity
-} from 'lucide-react';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Progress } from '@/components/ui/progress';
-import { 
-  LineChart, 
-  Line, 
-  XAxis, 
-  YAxis, 
-  CartesianGrid, 
-  Tooltip, 
-  Legend, 
-  ResponsiveContainer,
-  BarChart,
-  Bar,
-  PieChart as RechartsPieChart,
-  Cell,
-  AreaChart,
-  Area,
-  RadialBarChart,
-  RadialBar,
-  Pie
-} from 'recharts';
-import { DispatchStatus, OrderStatus, RouteStatus, TrashCategory, VehicleStatus } from '@/types/types';
-import mockData, { DashboardData } from '@/utils/mockData';
-import { generateDailyOrdersData, generateRouteEfficiencyData, generateDispatchHourlyData, generateWasteCategoryData, generateVehicleUtilizationData, COLORS } from '@/utils/dashboardUtils';
 import { useGetDepots } from '@/hooks/useDepot';
 import { useGetDispatches } from '@/hooks/useDispatch';
 import { useGetOrders } from '@/hooks/useOrder';
 import { useGetRoutes } from '@/hooks/useRoute';
-import { useTranslation } from 'react-i18next';
 import { useGetVehicles } from '@/hooks/useVehicle';
+import { DispatchStatus, OrderStatus, RouteStatus, TrashCategory, VehicleStatus } from '@/types/types';
+import { COLORS, generateDailyOrdersData, generateDispatchHourlyData, generateRouteEfficiencyData, generateVehicleUtilizationData, generateWasteCategoryData } from '@/utils/dashboardUtils';
+import mockData, { DashboardData } from '@/utils/mockData';
+import {
+  Activity,
+  AlertCircle,
+  BarChart3,
+  Battery,
+  CheckCircle,
+  Clock,
+  Globe,
+  MapPin,
+  Package,
+  PieChart,
+  Recycle,
+  Route,
+  Trash2,
+  TrendingUp,
+  Truck,
+  Zap
+} from 'lucide-react';
+import { useTranslation } from 'react-i18next';
+import {
+  Area,
+  AreaChart,
+  Bar,
+  BarChart,
+  CartesianGrid,
+  Cell,
+  Legend,
+  Line,
+  LineChart,
+  Pie,
+  RadialBar,
+  RadialBarChart,
+  PieChart as RechartsPieChart,
+  ResponsiveContainer,
+  Tooltip,
+  XAxis,
+  YAxis
+} from 'recharts';
 
 export default function Dashboard() {
   const { t } = useTranslation();
@@ -291,7 +290,7 @@ export default function Dashboard() {
                     outerRadius={80}
                     fill="#8884d8"
                   >
-                    {wasteCategoryData.map((entry, index) => (
+                    {wasteCategoryData.map((_, index) => (
                       <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
                     ))}
                   </Pie>

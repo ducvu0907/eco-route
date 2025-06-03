@@ -1,5 +1,20 @@
-import { useDeleteVehicle, useGetVehicles } from "@/hooks/useVehicle";
-import { TrashCategory, VehicleResponse, VehicleStatus, VehicleType } from "@/types/types";
+import {
+  Alert,
+  AlertDescription,
+  AlertTitle,
+} from "@/components/ui/alert";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
+import { Button } from "@/components/ui/button";
 import {
   Card,
   CardContent,
@@ -8,43 +23,27 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
+import VehicleCreateModal from "@/components/vehicle/VehicleCreateModal";
+import { useDeleteVehicle, useGetVehicles } from "@/hooks/useVehicle";
+import { TrashCategory, VehicleResponse, VehicleStatus, VehicleType } from "@/types/types";
+import { formatDate } from "@/utils/formatDate";
 import {
-  Alert,
-  AlertDescription,
-  AlertTitle,
-} from "@/components/ui/alert";
-import {
-  AlertDialog,
-  AlertDialogTrigger,
-  AlertDialogContent,
-  AlertDialogHeader,
-  AlertDialogFooter,
-  AlertDialogTitle,
-  AlertDialogDescription,
-  AlertDialogCancel,
-  AlertDialogAction,
-} from "@/components/ui/alert-dialog";
-import { 
-  Truck, 
-  AlertTriangle, 
-  Plus, 
-  Eye, 
-  Trash2, 
   Activity,
-  Wrench,
+  AlertTriangle,
   Clock,
-  Package,
-  Gauge,
-  TruckIcon,
+  Eye,
   Filter,
+  Package,
+  Plus,
+  Trash2,
+  Truck,
+  TruckIcon,
+  Wrench,
   X
 } from "lucide-react";
-import { formatDate } from "@/utils/formatDate";
-import { Link, useNavigate } from "react-router";
-import { Button } from "@/components/ui/button";
 import { useEffect, useState } from "react";
-import VehicleCreateModal from "@/components/vehicle/VehicleCreateModal";
 import { useTranslation } from "react-i18next";
+import { Link, useNavigate } from "react-router";
 
 export default function VehicleManagement() {
   const { t } = useTranslation();
