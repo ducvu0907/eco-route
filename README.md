@@ -17,17 +17,10 @@
 - Check-in and update order status in real-time  
 
 ### 🧑‍💼 Manager
-- Monitor all information about orders, vehicles, depots, and users  
+- Monitor users, orders, vehicles and depots
 - Real-time tracking of all vehicles and orders  
 - Create and manage dispatch schedules  
 - Built-in solver with support for multi-depot VRP and dynamic order handling  
-
----
-
-## 🏗️ System Architecture
-
-_Coming soon..._  
-_Add system architecture diagram or explanation here._
 
 ---
 
@@ -42,6 +35,7 @@ _Add system architecture diagram or explanation here._
 - **Firebase Realtime Database & Cloud Messaging** – Real-time sync and push notifications
 - **Docker** – Containerized local development
 - **OpenAPI/Swagger** – API documentation
+- **Nginx** - Reverse proxy for routing traffic to backend, frontend, and API services
 
 ---
 
@@ -96,6 +90,7 @@ sudo chmod +x dev.sh
 - Matches application-dev.yml configuration
 
 Default API URL: `http://localhost:8080`
+
 API documentation: `http://localhost:8080/docs`
 
 ### VRP Solver API (FastAPI)
@@ -147,5 +142,6 @@ Run on Android (via Expo):
 ```bash
 npx expo run:android
 ```
-[!NOTE]
-Make sure your emulator or physical device is running and connected.
+
+**Note**: Make sure your emulator or physical device is running and connected.
+
