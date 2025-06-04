@@ -5,7 +5,7 @@ import { Separator } from "@/components/ui/separator";
 import { useLogout } from "@/hooks/useAuth";
 import { useAuthContext } from "@/hooks/useAuthContext";
 import { cn } from "@/lib/utils";
-import { ChevronLeft, ChevronRight, Home, LanguagesIcon, LogOut, Send, ShoppingCart, Truck, Users, Warehouse, Waypoints } from "lucide-react";
+import { ChevronLeft, ChevronRight, Globe, Home, LogOut, Send, ShoppingCart, Truck, Users, Warehouse, Waypoints } from "lucide-react";
 import React, { useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useLocation, useNavigate } from "react-router-dom";
@@ -83,7 +83,7 @@ function UserSection({ isCollapsed }: { isCollapsed: boolean }) {
               {username}
             </p>
           </div>
-          <LanguagesIcon className="w-5 h-5" onClick={handleChangeLanguage}/>
+          <Globe className="w-5 h-5" onClick={handleChangeLanguage}/>
           <NotificationDropdown />
         </div>
       </Card>

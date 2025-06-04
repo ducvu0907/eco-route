@@ -899,5 +899,10 @@
     "selectedCoordinates": "Selected coordinates: {{lat}}, {{lng}}",
     "cancel": "Cancel",
     "confirm": "Confirm Location"
+  },
+  "notificationDropdown": {
+    "title": "Notifications",
+    "loading": "Loading...",
+    "empty": "No notifications."
   }
 }

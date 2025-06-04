@@ -5,8 +5,10 @@ import { useAuthContext } from "@/hooks/useAuthContext";
 import { useGetNotificationsByUserId } from "@/hooks/useNotification";
 import { cn } from "@/lib/utils";
 import { formatDate } from "@/utils/formatDate";
+import { useTranslation } from "react-i18next";
 
 export default function NotificationDropdown() {
+  const { t } = useTranslation();
   const { userId } = useAuthContext();
   const { data, isLoading } = useGetNotificationsByUserId(userId as string);
 
@@ -51,15 +53,19 @@ export default function NotificationDropdown() {
 
       {open && (
         <div className="max-h-[500px] absolute left-10 bottom-10 mt-2 w-80 bg-white dark:bg-zinc-900 shadow-lg rounded-md border z-50 overflow-auto">
-          <div className="p-3 border-b text-sm font-semibold">Notifications</div>
+          <div className="p-3 border-b text-sm font-semibold">
+            {t("notificationDropdown.title")}
+          </div>
           <div className="max-h-80 overflow-y-auto">
             {isLoading ? (
               <div className="p-4 flex items-center justify-center text-muted-foreground text-sm">
                 <Loader2 className="h-4 w-4 animate-spin mr-2" />
-                Loading...
+                {t("notificationDropdown.loading")}
               </div>
             ) : notifications.length === 0 ? (
-              <div className="p-4 text-muted-foreground text-sm">No notifications.</div>
+              <div className="p-4 text-muted-foreground text-sm">
+                {t("notificationDropdown.empty")}
+              </div>
             ) : (
               notifications.map((notification) => (
                 <div
@@ -69,7 +75,9 @@ export default function NotificationDropdown() {
                     !notification.isRead && "bg-muted/30"
                   )}
                 >
-                  {!notification.isRead && <Dot className="text-primary mt-1 w-4 h-4" />}
+                  {!notification.isRead && (
+                    <Dot className="text-primary mt-1 w-4 h-4" />
+                  )}
                   <div className="flex-1">
                     <p>{notification.content}</p>
                     <p className="text-xs text-muted-foreground">

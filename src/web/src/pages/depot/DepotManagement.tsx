@@ -135,10 +135,10 @@ export default function DepotManagement() {
               {searchQuery ? t("depotManagement.noDepotsFound.searchMatch") : t("depotManagement.noDepotsFound.noDepots")}
             </h3>
             <p className="text-slate-600 mb-6">{t("depotManagement.noDepotsFound.getDescription")}</p>
-            <Button onClick={() => setIsModalOpen(true)}>
+            {/* <Button onClick={() => setIsModalOpen(true)}>
               <Plus className="w-4 h-4 mr-2" />
               {t("depotManagement.noDepotsFound.createButton")}
-            </Button>
+            </Button> */}
           </div>
         ) : (
           <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">

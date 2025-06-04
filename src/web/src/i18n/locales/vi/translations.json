@@ -899,5 +899,10 @@
     "selectedCoordinates": "Tọa độ đã chọn: {{lat}}, {{lng}}",
     "cancel": "Hủy",
     "confirm": "Xác nhận vị trí"
+  },
+  "notificationDropdown": {
+    "title": "Thông báo",
+    "loading": "Đang tải...",
+    "empty": "Không có thông báo nào."
   }
 }
