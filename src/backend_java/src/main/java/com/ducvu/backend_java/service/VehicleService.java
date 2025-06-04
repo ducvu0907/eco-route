@@ -32,19 +32,38 @@ public class VehicleService {
   private final Mapper mapper;
   private final DatabaseReference db;
 
-  // TODO: this listens to all vehicles update but i think it's not necessary right now
+  // TODO
   @PostConstruct
   public void listenToVehiclesUpdate() {
-    db.addValueEventListener(new ValueEventListener() {
+    db.addChildEventListener(new ChildEventListener() {
+
       @Override
-      public void onDataChange(DataSnapshot snapshot) {
-        log.info("Vehicles got updated");
+      public void onChildAdded(DataSnapshot snapshot, String previousChildName) { }
+
+      @Override
+      public void onChildChanged(DataSnapshot snapshot, String previousChildName) {
+        log.info("Vehicle updated: {}", snapshot);
+        Vehicle vehicle = vehicleRepository.findById(snapshot.getKey())
+            .orElseThrow(() -> new RuntimeException("Vehicle not found"));
+
+        VehicleRealtimeData data = snapshot.getValue(VehicleRealtimeData.class);
+
+        vehicle.setCurrentLatitude(data.getLatitude());
+        vehicle.setCurrentLongitude(data.getLatitude());
+        vehicle.setCurrentLoad(data.getLoad());
+
+        vehicleRepository.save(vehicle);
+        log.info("Sync vehicle real-time data successfully");
       }
 
       @Override
-      public void onCancelled(DatabaseError error) {
-        log.error("Firebase error: {}", error.getMessage());
-      }
+      public void onChildRemoved(DataSnapshot snapshot) { }
+
+      @Override
+      public void onChildMoved(DataSnapshot snapshot, String previousChildName) { }
+
+      @Override
+      public void onCancelled(DatabaseError error) { }
     });
   }
 

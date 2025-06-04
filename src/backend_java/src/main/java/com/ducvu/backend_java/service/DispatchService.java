@@ -124,11 +124,11 @@ public class DispatchService {
 
     dispatchRepository.save(runningDispatch);
 
-    // notifyOrdersInProgress(ordersToNotify);
-    // notifyNewRoutes(routesToNotify);
+     notifyOrdersInProgress(ordersToNotify);
+     notifyNewRoutes(routesToNotify);
 
-    // ordersToNotify.clear();
-    // routesToNotify.clear();
+     ordersToNotify.clear();
+     routesToNotify.clear();
   }
 
   // create routes for one category
