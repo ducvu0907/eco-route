@@ -204,8 +204,8 @@
   "RouteDrawer": {
     "currentRoute": "Tuyến đường hiện tại",
     "completedOrders": "{{completed}}/{{total}} đã hoàn thành",
-    "status_completed": "Đã xong",
-    "status_active": "Đang hoạt động",
+    "completed": "Đã xong",
+    "in_progress": "Đang hoạt động",
     "progressPercentage": "{{percentage}}% hoàn thành",
     "distance": "Khoảng cách",
     "distanceValue": "{{distance}} km",

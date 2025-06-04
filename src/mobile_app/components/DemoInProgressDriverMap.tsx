@@ -1,4 +1,4 @@
-import { OrderResponse, VehicleResponse } from "@/types/types";
+import { OrderResponse, RouteStatus, VehicleResponse } from "@/types/types";
 import { View, ActivityIndicator, Text, TouchableOpacity } from "react-native";
 import { Camera, MapView } from "@maplibre/maplibre-react-native";
 import DemoOrderMarker from "./DemoOrderMarker";
@@ -78,7 +78,7 @@ export default function DemoInProgressDriverMap({ vehicle }: InProgressDriverMap
     );
   }
 
-  if (!route) {
+  if (!route || route.status === RouteStatus.COMPLETED) {
     return (
       <View className="flex-1 justify-center items-center bg-gray-50 px-6">
         <View className="bg-white rounded-2xl p-6 shadow-sm border border-gray-100">

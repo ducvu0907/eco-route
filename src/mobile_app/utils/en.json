@@ -204,8 +204,8 @@
   "RouteDrawer": {
     "currentRoute": "Current Route",
     "completedOrders": "{{completed}}/{{total}} completed",
-    "status_completed": "Done",
-    "status_active": "Active",
+    "in_progress": "In progress",
+    "completed": "Completed",
     "progressPercentage": "{{percentage}}% complete",
     "distance": "Distance",
     "distanceValue": "{{distance}} km",

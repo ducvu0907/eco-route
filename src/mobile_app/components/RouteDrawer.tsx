@@ -112,7 +112,7 @@ export default function RouteDrawer({ route, onSelectOrder }: RouteDrawerProps) 
                 <Text className={`text-xs font-medium ${
                   route.status === RouteStatus.COMPLETED ? 'text-green-700' : 'text-blue-700'
                 }`}>
-                  {t(`RouteDrawer.status_${route.status.toLowerCase()}`)}
+                  {t(`RouteDrawer.${route.status.toLowerCase()}`)}
                 </Text>
               </View>
             </View>
