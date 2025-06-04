@@ -135,7 +135,7 @@ export interface DepotResponse {
 export interface DispatchResponse {
   id: string;
   status: DispatchStatus;
-  completedAt: string;
+  completedAt: string | null;
   createdAt: string;
   updatedAt: string;
 }
@@ -186,7 +186,7 @@ export interface RouteResponse {
   distance: number;
   status: RouteStatus;
   orders: OrderResponse[];
-  completedAt: string;
+  completedAt: string | null;
   createdAt: string;
   updatedAt: string;
   duration: number;

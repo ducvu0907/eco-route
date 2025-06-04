@@ -6,6 +6,7 @@ import { DispatchResponse, RouteResponse } from "@/types/types";
 import { Calendar, CheckCircle2, Clock, MapPin, Package, Truck } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import MultiRoutesStaticMap from "../map/MultiRoutesStaticMap";
+import { formatDate } from "@/utils/formatDate";
 
 interface CompletedDispatchDetailsProps {
   dispatch: DispatchResponse;
@@ -118,7 +119,7 @@ export default function CompletedDispatchDetails({ dispatch, routes }: Completed
                 <Clock className="w-4 h-4 text-muted-foreground" />
                 <span className="text-sm font-medium text-muted-foreground">{t("completedDispatchDetails.dispatchInformation.createdAt")}</span>
               </div>
-              <p className="text-sm">{new Date(dispatch.createdAt).toLocaleString()}</p>
+              <p className="text-sm">{formatDate(dispatch.createdAt)}</p>
             </div>
 
             <div className="space-y-2">
@@ -126,7 +127,7 @@ export default function CompletedDispatchDetails({ dispatch, routes }: Completed
                 <CheckCircle2 className="w-4 h-4 text-green-600" />
                 <span className="text-sm font-medium text-muted-foreground">{t("completedDispatchDetails.dispatchInformation.completedAt")}</span>
               </div>
-              <p className="text-sm">{new Date(dispatch.completedAt).toLocaleString()}</p>
+              <p className="text-sm">{formatDate(dispatch.completedAt)}</p>
             </div>
           </div>
 

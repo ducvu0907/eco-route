@@ -1,5 +1,6 @@
 import { Badge } from '@/components/ui/badge';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { LoadingSpinner } from '@/components/ui/loading-spinner';
 import { Progress } from '@/components/ui/progress';
 import { useGetDepots } from '@/hooks/useDepot';
 import { useGetDispatches } from '@/hooks/useDispatch';
@@ -50,20 +51,30 @@ import {
 
 export default function Dashboard() {
   const { t } = useTranslation();
-  const { data: depotsData } = useGetDepots();
+  const { data: depotsData, isLoading: isDepotsLoading } = useGetDepots();
   const depots = depotsData?.result;
-  const { data: vehiclesData } = useGetVehicles();
+  const { data: vehiclesData, isLoading: isVehiclesLoading } = useGetVehicles();
   const vehicles = vehiclesData?.result;
-  const { data: dispatchesData } = useGetDispatches();
+  const { data: dispatchesData, isLoading: isDispatchesLoading } = useGetDispatches();
   const dispatches = dispatchesData?.result;
-  const { data: ordersData } = useGetOrders();
+  const { data: ordersData, isLoading: isOrdersLoading } = useGetOrders();
   const orders = ordersData?.result;
-  const {data: routesData} = useGetRoutes();
+  const {data: routesData, isLoading: isRoutesLoading} = useGetRoutes();
   const routes = routesData?.result;
+
+  if (isDepotsLoading || isVehiclesLoading || isDispatchesLoading || isOrdersLoading || isRoutesLoading) {
+    return (
+      <div className='w-full h-full flex justify-center items-center'>
+        <LoadingSpinner className='w-20 h-20'/>
+      </div>
+    );
+  }
 
   if (!depots || !vehicles || !orders || !dispatches || !routes) {
     return (
-      <div>Error loading dashboard data.</div>
+      <div className='w-full h-full flex justify-center items-center'>
+        <span>Errors while loading data. Please try again later</span>
+      </div>
     );
   }
 

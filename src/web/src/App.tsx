@@ -9,7 +9,6 @@ import { useToast } from "./hooks/useToast";
 import "./i18n/config";
 import Login from "./pages/auth/Login";
 import Register from "./pages/auth/Register";
-import Dashboard from "./pages/Dashboard";
 import DepotDetails from "./pages/depot/DepotDetails";
 import DepotManagement from "./pages/depot/DepotManagement";
 import CurrentDispatchDetails from "./pages/dispatch/CurrentDispatchDetails";
@@ -17,6 +16,7 @@ import DispatchDetails from "./pages/dispatch/DispatchDetails";
 import DispatchManagement from "./pages/dispatch/DispatchManagement";
 import Layout from "./pages/Layout";
 import Map from "./pages/map/Map";
+import NewDashboard from "./pages/NewDashboard";
 import NotFound from "./pages/NotFound";
 import OrderDetails from "./pages/order/OrderDetails";
 import OrderManagement from "./pages/order/OrderManagement";
@@ -58,7 +58,7 @@ const App = () => {
       <Route element={!isAuthenticated ? <Navigate to={"/login"}/> : <Layout />}>
 
         <Route path="/" element={<Navigate to="/dashboard"/>}/>
-        <Route path="/dashboard" element={<Dashboard />}/>
+        <Route path="/dashboard" element={<NewDashboard />}/>
 
         <Route path="/dispatches" element={<DispatchManagement />}/>
         <Route path="/dispatches/:dispatchId" element={<DispatchDetails />}/>
