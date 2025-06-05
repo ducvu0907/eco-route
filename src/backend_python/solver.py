@@ -3,7 +3,7 @@ import hygese as hgs
 import math
 import os
 import subprocess
-from api_v2 import Route, RoutingRequest, RoutingResponse, logger, Job
+from api_v2 import Route, RoutingRequest, RoutingResponse, logger, Job, Geometry
 from alns_solver import VRPState, alns_optimize
 from typing import List, Dict, Tuple
 from collections import defaultdict
@@ -668,6 +668,9 @@ def _solve_dynamic_mdvrp(request: RoutingRequest):
 
   # local search and update metadata for all updated routes
   for i, route in enumerate(updated_routes):
+    if len(route.steps) == 0:
+      updated_routes[i] = Route(vehicle_id=updated_route.vehicle_id, steps=[], distance=0.0, duration=0.0, geometry=Geometry(type="LineString", coordinates=[]))
+      continue
     depot = vehicle_id_to_depot[route.vehicle_id]
     vehicle = vehicle_id_to_vehicle[route.vehicle_id]
     updated_route = _intra_route_local_search(route, vehicle, depot)

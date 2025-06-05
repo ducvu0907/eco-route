@@ -283,7 +283,8 @@
       },
       "activeFilters": {
         "type": "Loại:",
-        "category": "Danh mục:"
+        "category": "Danh mục:",
+        "status": "Trạng thái:"
       }
     },
     "vehicleCard": {
@@ -505,7 +506,8 @@
       "totalDistance": "Tổng Khoảng cách",
       "estDuration": "Thời lượng Ước tính",
       "distanceUnit": "km",
-      "durationUnit": "phút"
+      "durationUnit": "phút",
+      "weightUnit": "kg"
     },
     "tabs": {
       "overview": "Tổng quan",
@@ -906,6 +908,7 @@
     "empty": "Không có thông báo nào."
   },
   "dashboard": {
+    "Dashboard": "Thông số",
     "Total Orders": "Tổng số đơn hàng",
     "Total trash collection requests": "Tổng số yêu cầu thu gom rác",
     "Active Vehicles": "Phương tiện đang hoạt động",

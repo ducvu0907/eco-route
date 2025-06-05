@@ -297,6 +297,7 @@ export default function CurrentDispatchDetails() {
                       if (selectedRoute && selectedRoute.id === route.id) {
                         setSelectedRoute(null);
                       } else {
+                        setSelectedRoute(null);
                         setSelectedRoute(route);
                       }
                     }}>

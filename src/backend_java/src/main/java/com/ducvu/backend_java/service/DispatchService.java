@@ -267,6 +267,10 @@ public class DispatchService {
       route.setDistance(vrpRoute.getDistance());
       route.setDuration(vrpRoute.getDuration());
       route.setGeometry(vrpRoute.getGeometry());
+      if (vrpRoute.getSteps().isEmpty()) {
+        route.setStatus(RouteStatus.COMPLETED);
+        vehicle.setStatus(VehicleStatus.IDLE);
+      }
       return route;
 
     } else {
@@ -280,6 +284,10 @@ public class DispatchService {
           .status(RouteStatus.IN_PROGRESS)
           .build();
       route.setOrders(buildOrders(vrpRoute, route));
+      if (vrpRoute.getSteps().isEmpty()) {
+        route.setStatus(RouteStatus.COMPLETED);
+        vehicle.setStatus(VehicleStatus.IDLE);
+      }
       return route;
     }
 

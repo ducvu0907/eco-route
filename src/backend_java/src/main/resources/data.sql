@@ -89,3 +89,17 @@ INSERT INTO vehicles (id, driver_id, depot_id, license_plate, capacity, current_
 ('88888888-8888-8888-8888-888888888888', 'd8', 'd2', '29A-88888', 1000.0, 20.0381, 105.7821, 0, 'IDLE', now(), now(), 'COMPACTOR_TRUCK', 'ORGANIC'),
 ('99999999-9999-9999-9999-999999999999', 'd9', 'd3', '29A-99999', 300.0, 21.0039, 105.8209, 0, 'IDLE', now(), now(), 'THREE_WHEELER', 'ORGANIC'),
 ('aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa', 'd10', 'd1', '29A-00000', 1000.0, 21.0285, 105.8542, 0, 'IDLE', now(), now(), 'COMPACTOR_TRUCK', 'ORGANIC');
+
+-- 10 more orders with category ORGANIC, further from previous locations
+INSERT INTO orders (id, user_id, route_id, latitude, longitude, address, weight, status, completed_at, created_at, updated_at, image_url, description, category, index) VALUES
+('aaaaaaaa-aaaa-aaaa-aaaa-aaaa000031', 'c1', NULL, 21.0725, 105.8105, 'Xuan La, Tay Ho, Hanoi', 0.9, 'PENDING', NULL, now(), now(), 'https://placehold.co/400x300', 'Used cooking oil (small container)', 'ORGANIC', NULL),
+('aaaaaaaa-aaaa-aaaa-aaaa-aaaa000032', 'c2', NULL, 21.0335, 105.8165, 'Doi Can, Ba Dinh, Hanoi', 1.4, 'PENDING', NULL, now(), now(), 'https://placehold.co/400x300', 'Expired food products (non-liquid)', 'ORGANIC', NULL),
+('aaaaaaaa-aaaa-aaaa-aaaa-aaaa000033', 'c3', NULL, 20.9995, 105.8505, 'Bach Mai, Hai Ba Trung, Hanoi', 1.8, 'PENDING', NULL, now(), now(), 'https://placehold.co/400x300', 'Compostable packaging', 'ORGANIC', NULL),
+('aaaaaaaa-aaaa-aaaa-aaaa-aaaa000034', 'c4', NULL, 20.9955, 105.7955, 'Nguyen Tuan, Thanh Xuan, Hanoi', 0.6, 'PENDING', NULL, now(), now(), 'https://placehold.co/400x300', 'Leftover fruits', 'ORGANIC', NULL),
+('aaaaaaaa-aaaa-aaaa-aaaa-aaaa000035', 'c5', NULL, 20.9755, 105.8555, 'Tam Trinh, Hoang Mai, Hanoi', 2.1, 'PENDING', NULL, now(), now(), 'https://placehold.co/400x300', 'Yard waste', 'ORGANIC', NULL),
+('aaaaaaaa-aaaa-aaaa-aaaa-aaaa000036', 'c6', NULL, 21.0205, 105.7555, 'Chau Van Liem, Nam Tu Liem, Hanoi', 1.0, 'PENDING', NULL, now(), now(), 'https://placehold.co/400x300', 'Stale pastries', 'ORGANIC', NULL),
+('aaaaaaaa-aaaa-aaaa-aaaa-aaaa000037', 'c7', NULL, 20.9705, 105.7805, 'To Hieu, Ha Dong, Hanoi', 1.5, 'PENDING', NULL, now(), now(), 'https://placehold.co/400x300', 'Vegetable scraps', 'ORGANIC', NULL),
+('aaaaaaaa-aaaa-aaaa-aaaa-aaaa000038', 'c8', NULL, 21.0505, 105.9105, 'Viet Hung, Long Bien, Hanoi', 0.7, 'PENDING', NULL, now(), now(), 'https://placehold.co/400x300', 'Pet food waste', 'ORGANIC', NULL),
+('aaaaaaaa-aaaa-aaaa-aaaa-aaaa000039', 'c9', NULL, 21.1105, 105.8005, 'Hai Boi, Dong Anh, Hanoi', 1.2, 'PENDING', NULL, now(), now(), 'https://placehold.co/400x300', 'Dairy waste', 'ORGANIC', NULL),
+('aaaaaaaa-aaaa-aaaa-aaaa-aaaa000040', 'c10', NULL, 21.0500, 105.6800, 'Son Dong, Hoai Duc, Hanoi', 1.9, 'PENDING', NULL, now(), now(), 'https://placehold.co/400x300', 'Spoiled produce', 'ORGANIC', NULL);
+

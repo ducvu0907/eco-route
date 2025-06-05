@@ -22,8 +22,8 @@ axiosInstance.interceptors.request.use(
 
 axiosInstance.interceptors.response.use(
   (response: AxiosResponse<ApiResponse<unknown>, unknown>) => {
-    const { showToast } = useToast();
-    showToast(response.data.message, "success");
+    // const { showToast } = useToast();
+    // showToast(response.data.message, "success");
     return response;
   },
   (error) => {

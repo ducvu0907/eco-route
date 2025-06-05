@@ -283,7 +283,8 @@
       },
       "activeFilters": {
         "type": "Type:",
-        "category": "Category:"
+        "category": "Category:",
+        "status": "Status:"
       }
     },
     "vehicleCard": {
@@ -505,7 +506,8 @@
       "totalDistance": "Total Distance",
       "estDuration": "Est. Duration",
       "distanceUnit": "km",
-      "durationUnit": "min"
+      "durationUnit": "min",
+      "weightUnit": "kg"
     },
     "tabs": {
       "overview": "Overview",
@@ -906,6 +908,7 @@
     "empty": "No notifications."
   },
   "dashboard": {
+    "Dashboard": "Dashboard",
     "Total Orders": "Total Orders",
     "Total trash collection requests": "Total trash collection requests",
     "Active Vehicles": "Active Vehicles",
