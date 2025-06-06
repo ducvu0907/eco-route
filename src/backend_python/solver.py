@@ -668,8 +668,9 @@ def _solve_dynamic_mdvrp(request: RoutingRequest):
 
   # local search and update metadata for all updated routes
   for i, route in enumerate(updated_routes):
+    # TODO: untested
     if len(route.steps) == 0:
-      updated_routes[i] = Route(vehicle_id=updated_route.vehicle_id, steps=[], distance=0.0, duration=0.0, geometry=Geometry(type="LineString", coordinates=[]))
+      updated_routes[i] = Route(vehicle_id=route.vehicle_id, steps=[], distance=0.0, duration=0.0, geometry=Geometry(type="LineString", coordinates=[]))
       continue
     depot = vehicle_id_to_depot[route.vehicle_id]
     vehicle = vehicle_id_to_vehicle[route.vehicle_id]
