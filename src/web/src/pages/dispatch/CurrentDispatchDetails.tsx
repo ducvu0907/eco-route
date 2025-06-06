@@ -1,6 +1,6 @@
 import MultiRoutesDynamicMap from "@/components/map/MultiRoutesDynamicMap";
 import SingleRouteDynamicMap from "@/components/map/SingleRouteDynamicMap";
-import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
+// import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
@@ -14,7 +14,7 @@ import { DispatchStatus, RouteResponse, RouteStatus, TrashCategory } from "@/typ
 import { formatDate } from "@/utils/formatDate";
 import { useQueryClient } from "@tanstack/react-query";
 import {
-  AlertCircle,
+  // AlertCircle,
   Calendar,
   CheckCircle2,
   Clock,
@@ -112,11 +112,7 @@ export default function CurrentDispatchDetails() {
 
   if (isError) {
     return (
-      <Alert variant="destructive" className="m-6">
-        <AlertCircle className="h-4 w-4" />
-        <AlertTitle>{t("currentDispatchDetails.error.title")}</AlertTitle>
-        <AlertDescription>{t("currentDispatchDetails.error.description")}</AlertDescription>
-      </Alert>
+      <NoDispatch />
     );
   }
 

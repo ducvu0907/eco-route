@@ -4,9 +4,13 @@ import { useTranslation } from "react-i18next";
 import { Marker, Popup } from "react-leaflet";
 import { useNavigate } from "react-router";
 import { Button } from "../ui/button";
+import { useEffect, useRef } from "react";
+import L from "leaflet";
 
 interface OrderMarkerProps {
   order: OrderResponse;
+  setSelected?: () => void;
+  isSelected?: boolean;
 }
 
 export const getOrderIcon = (category: TrashCategory) => {
@@ -24,12 +28,19 @@ export const getOrderIcon = (category: TrashCategory) => {
   }
 }
 
-export default function OrderMarker({ order }: OrderMarkerProps) {
+export default function OrderMarker({ order, setSelected, isSelected}: OrderMarkerProps) {
   const navigate = useNavigate();
   const { t } = useTranslation();
+  const markerRef = useRef<L.Marker>(null);
+
+  useEffect(() => {
+    if (isSelected && markerRef.current) {
+      markerRef.current.openPopup();
+    }
+  }, [isSelected]);
 
   return (
-    <Marker key={order.id} position={[order.latitude, order.longitude]} icon={getOrderIcon(order.category)}>
+    <Marker key={order.id} position={[order.latitude, order.longitude]} icon={getOrderIcon(order.category)} eventHandlers={{click: setSelected}} ref={markerRef}>
       <Popup>
         <strong>{t("orderMarker.orderNumber", { index: order.index })}</strong><br />
         <p>{t("orderMarker.address")}: {order.address}</p>

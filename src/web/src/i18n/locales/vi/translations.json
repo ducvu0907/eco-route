@@ -859,7 +859,8 @@
       "vehicles": "Phương tiện",
       "users": "Người dùng",
       "dispatches": "Điều phối",
-      "orders": "Đơn hàng"
+      "orders": "Đơn hàng",
+      "map": "Bản đồ"
     },
     "userSection": {
       "usernameError": "Lỗi khi truy xuất tên người dùng",
@@ -889,6 +890,12 @@
     "depot": "Kho",
     "numberOfVehicles": "Số lượng phương tiện",
     "createdAt": "Đã tạo vào",
+    "viewDetails": "Xem chi tiết"
+  },
+  "depotMarker": {
+    "title": "Bãi xe",
+    "numberOfVehicles": "Số lượng xe:",
+    "createdAt": "Ngày tạo:",
     "viewDetails": "Xem chi tiết"
   },
   "mapModalInput": {
@@ -962,5 +969,95 @@
     "Depots with the highest number of assigned vehicles.": "Các trạm trung chuyển có số lượng phương tiện được giao cao nhất.",
     "Loading dashboard data...": "Đang tải dữ liệu trang tổng quan...",
     "Failed to load dashboard data.": "Không thể tải dữ liệu trang tổng quan."
+  },
+  "map": {
+    "loading": {
+      "title": "Đang tải dữ liệu bản đồ",
+      "description": "Đang tìm nạp thông tin mới nhất về các kho, phương tiện và đơn hàng..."
+    },
+    "filter": {
+      "type": {
+        "label": "Loại",
+        "all": "Tất cả các loại",
+        "depots": "Kho",
+        "vehicles": "Phương tiện",
+        "orders": "Đơn hàng"
+      },
+      "orderStatus": {
+        "label": "Trạng thái đơn hàng",
+        "all": "Tất cả trạng thái",
+        "completed": "ĐÃ HOÀN THÀNH",
+        "in_progress": "ĐANG XỬ LÝ",
+        "pending": "CHỜ XỬ LÝ",
+        "cancelled": "ĐÃ HỦY"
+      },
+      "vehicleStatus": {
+        "label": "Trạng thái phương tiện",
+        "all": "Tất cả trạng thái",
+        "active": "ĐANG HOẠT ĐỘNG",
+        "idle": "NHÀN RỖI",
+        "repair": "ĐANG SỬA CHỮA"
+      },
+      "category": {
+        "label": "Danh mục",
+        "all": "Tất cả danh mục",
+        "general": "CHUNG",
+        "organic": "HỮU CƠ",
+        "recyclable": "TÁI CHẾ",
+        "hazardous": "NGUY HIỂM",
+        "electronic": "ĐIỆN TỬ"
+      },
+      "vehicleType": {
+        "compactor_truck": "Xe tải ép rác",
+        "three_wheeler": "Xe ba bánh"
+      }
+    },
+    "detailsPanel": {
+      "title": "Bảng điều khiển chi tiết",
+      "subtitle": {
+        "selected": "Thông tin {{type}}",
+        "noSelection": "Chọn một mục để xem chi tiết"
+      },
+      "noSelection": {
+        "title": "Chưa chọn",
+        "description": "Nhấp vào bất kỳ điểm đánh dấu nào trên bản đồ để xem thông tin chi tiết về các kho, phương tiện hoặc đơn hàng."
+      },
+      "tabs": {
+        "details": "Chi tiết",
+        "timeline": "Dòng thời gian"
+      },
+      "order": {
+        "id": "ID: {{id}}",
+        "status": "Trạng thái",
+        "category": "Danh mục",
+        "weight": "Trọng lượng",
+        "description": "Mô tả",
+        "address": "Địa chỉ",
+        "weightUnit": "kg"
+      },
+      "vehicle": {
+        "id": "ID: {{id}}",
+        "status": "Trạng thái",
+        "licensePlate": "Biển số xe",
+        "type": "Loại",
+        "category": "Danh mục",
+        "loadCapacity": "Tải trọng",
+        "currentLoad": "Tải trọng hiện tại",
+        "capacityUnit": "kg",
+        "capacityPercentage": "{{percentage}}% công suất",
+        "driverInformation": "Thông tin tài xế"
+      },
+      "depot": {
+        "id": "ID: {{id}}",
+        "vehicles": "Phương tiện",
+        "vehiclesCount": "{{count}} phương tiện",
+        "address": "Địa chỉ"
+      },
+      "timeline": {
+        "title": "Dòng thời gian",
+        "created": "Đã tạo",
+        "lastUpdated": "Cập nhật lần cuối"
+      }
+    }
   }
 }

@@ -859,7 +859,8 @@
       "vehicles": "Vehicles",
       "users": "Users",
       "dispatches": "Dispatches",
-      "orders": "Orders"
+      "orders": "Orders",
+      "map": "Map"
     },
     "userSection": {
       "usernameError": "Error retrieving username",
@@ -889,6 +890,12 @@
     "depot": "Depot",
     "numberOfVehicles": "Number of vehicles",
     "createdAt": "Created At",
+    "viewDetails": "View details"
+  },
+  "depotMarker": {
+    "title": "Depot",
+    "numberOfVehicles": "Number of vehicles:",
+    "createdAt": "Created At:",
     "viewDetails": "View details"
   },
   "mapModalInput": {
@@ -962,5 +969,95 @@
     "Depots with the highest number of assigned vehicles.": "Depots with the highest number of assigned vehicles.",
     "Loading dashboard data...": "Loading dashboard data...",
     "Failed to load dashboard data.": "Failed to load dashboard data."
+  },
+  "map": {
+    "loading": {
+      "title": "Loading Map Data",
+      "description": "Fetching the latest information about depots, vehicles, and orders..."
+    },
+    "filter": {
+      "type": {
+        "label": "Type",
+        "all": "All Types",
+        "depots": "Depots",
+        "vehicles": "Vehicles",
+        "orders": "Orders"
+      },
+      "orderStatus": {
+        "label": "Order Status",
+        "all": "All Statuses",
+        "completed": "COMPLETED",
+        "in_progress": "IN_PROGRESS",
+        "pending": "PENDING",
+        "cancelled": "CANCELLED"
+      },
+      "vehicleStatus": {
+        "label": "Vehicle Status",
+        "all": "All Statuses",
+        "active": "ACTIVE",
+        "idle": "IDLE",
+        "repair": "REPAIR"
+      },
+      "category": {
+        "label": "Category",
+        "all": "All Categories",
+        "general": "GENERAL",
+        "organic": "ORGANIC",
+        "recyclable": "RECYCLABLE",
+        "hazardous": "HAZARDOUS",
+        "electronic": "ELECTRONIC"
+      },
+      "vehicleType": {
+        "compactor_truck": "Compactor Truck",
+        "three_wheeler": "Three Wheeler"
+      }
+    },
+    "detailsPanel": {
+      "title": "Details Panel",
+      "subtitle": {
+        "selected": "{{type}} Information",
+        "noSelection": "Select an item to view details"
+      },
+      "noSelection": {
+        "title": "No Selection",
+        "description": "Click on any marker on the map to view detailed information about depots, vehicles, or orders."
+      },
+      "tabs": {
+        "details": "Details",
+        "timeline": "Timeline"
+      },
+      "order": {
+        "id": "ID: {{id}}",
+        "status": "Status",
+        "category": "Category",
+        "weight": "Weight",
+        "description": "Description",
+        "address": "Address",
+        "weightUnit": "kg"
+      },
+      "vehicle": {
+        "id": "ID: {{id}}",
+        "status": "Status",
+        "licensePlate": "License Plate",
+        "type": "Type",
+        "category": "Category",
+        "loadCapacity": "Load Capacity",
+        "currentLoad": "Current Load",
+        "capacityUnit": "kg",
+        "capacityPercentage": "{{percentage}}% capacity",
+        "driverInformation": "Driver Information"
+      },
+      "depot": {
+        "id": "ID: {{id}}",
+        "vehicles": "Vehicles",
+        "vehiclesCount": "{{count}} vehicles",
+        "address": "Address"
+      },
+      "timeline": {
+        "title": "Timeline",
+        "created": "Created",
+        "lastUpdated": "Last Updated"
+      }
+    }
   }
 }

@@ -5,9 +5,13 @@ import { useNavigate } from "react-router";
 import { Button } from "../ui/button";
 import { useVehicleRealtimeData } from "@/hooks/useVehicleRealtimeData";
 import { useTranslation } from "react-i18next";
+import { useEffect, useRef } from "react";
+import L from "leaflet";
 
 interface VehicleDynamicMarkerProps {
   vehicle: VehicleResponse;
+  setSelected?: () => void;
+  isSelected?: boolean;
 }
 
 export const getVehicleIcon = (type: VehicleType) => {
@@ -19,9 +23,10 @@ export const getVehicleIcon = (type: VehicleType) => {
   }
 };
 
-export default function VehicleDynamicMarker({ vehicle }: VehicleDynamicMarkerProps) {
+export default function VehicleDynamicMarker({ vehicle, setSelected, isSelected }: VehicleDynamicMarkerProps) {
   const navigate = useNavigate();
   const { t } = useTranslation();
+  const markerRef = useRef<L.Marker>(null);
 
   const realtimeData = useVehicleRealtimeData(vehicle.id);
 
@@ -29,8 +34,14 @@ export default function VehicleDynamicMarker({ vehicle }: VehicleDynamicMarkerPr
   const lng = realtimeData?.longitude ?? vehicle.currentLongitude;
   const load = realtimeData?.load ?? vehicle.currentLoad;
 
+  useEffect(() => {
+    if (isSelected && markerRef.current) {
+      markerRef.current.openPopup();
+    }
+  }, [isSelected]);
+
   return (
-    <Marker position={[lat, lng]} icon={getVehicleIcon(vehicle.type)}>
+    <Marker position={[lat, lng]} icon={getVehicleIcon(vehicle.type)} eventHandlers={{ click: setSelected }} ref={markerRef}>
       <Popup>
         <strong>{t("vehicleDynamicMarker.vehicle")}</strong>: {vehicle.licensePlate} <br />
         {t("vehicleDynamicMarker.load")}: {load}kg <br />

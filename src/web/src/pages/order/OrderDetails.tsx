@@ -16,6 +16,7 @@ import {
   Clock,
   Eye,
   Loader2,
+  MapIcon,
   MapPin,
   Navigation,
   Package,
@@ -121,6 +122,10 @@ export default function OrderDetails() {
     );
   };
 
+  const goToMap = () => {
+    navigate("/map", {state: {selectedObject: order}});
+  };
+
   if (isLoading) {
     return (
       <div className="w-full h-full p-6">
@@ -185,7 +190,12 @@ export default function OrderDetails() {
         </Button> */}
         <div className="flex items-center justify-between">
           <div>
-            <h1 className="text-3xl font-bold tracking-tight">{t("orderDetails.header.title")}</h1>
+            <div className="flex flex-row items-center">
+              <h1 className="text-3xl font-bold tracking-tight">{t("orderDetails.header.title")}</h1>
+              <Button onClick={goToMap} className="ml-2">
+                <MapIcon className="w-5 h-5" />
+              </Button>
+            </div>
             <p className="text-muted-foreground">{t("orderDetails.header.orderId", { orderId: order.id })}</p>
           </div>
           <div className="flex items-center gap-2">

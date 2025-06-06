@@ -4,7 +4,7 @@ import enTranslations from "./locales/en/translations.json";
 import viTranslations from "./locales/vi/translations.json";
 
 i18n.use(initReactI18next).init({
-  lng: "en",
+  lng: "vi",
   fallbackLng: "en",
   resources: {
     en: {

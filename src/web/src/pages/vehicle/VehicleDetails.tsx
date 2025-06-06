@@ -24,6 +24,7 @@ import {
   CheckCircle,
   Clock,
   Edit,
+  MapIcon,
   MapPin,
   Navigation,
   Package,
@@ -101,6 +102,10 @@ export default function VehicleDetails() {
     }
   };
 
+  const goToMap = () => {
+    navigate("/map", {state: {selectedObject: vehicle}});
+  };
+
   if (isVehicleLoading || isRoutesLoading) {
     return (
       <div className="container mx-auto p-6 space-y-6">
@@ -136,7 +141,12 @@ export default function VehicleDetails() {
             <Truck className="h-8 w-8 text-blue-600" />
           </div>
           <div>
-            <h1 className="text-3xl font-bold text-gray-900">{t("vehicleDetails.header.title")}</h1>
+            <div className="flex flex-row items-center">
+              <h1 className="text-3xl font-bold text-gray-900">{t("vehicleDetails.header.title")}</h1>
+              <Button onClick={goToMap} className="ml-2">
+                <MapIcon className="w-5 h-5" />
+              </Button>
+            </div>
             <p className="text-gray-600 mt-1">{t("vehicleDetails.header.subtitle")}</p>
           </div>
         </div>

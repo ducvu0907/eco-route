@@ -5,7 +5,7 @@ import { Separator } from "@/components/ui/separator";
 import { useLogout } from "@/hooks/useAuth";
 import { useAuthContext } from "@/hooks/useAuthContext";
 import { cn } from "@/lib/utils";
-import { ChevronLeft, ChevronRight, Globe, Home, LogOut, Send, ShoppingCart, Truck, Users, Warehouse, Waypoints } from "lucide-react";
+import { ChevronLeft, ChevronRight, Globe, Home, LogOut, MapIcon, Send, ShoppingCart, Truck, Users, Warehouse, Waypoints } from "lucide-react";
 import React, { useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useLocation, useNavigate } from "react-router-dom";
@@ -32,7 +32,7 @@ function UserSection({ isCollapsed }: { isCollapsed: boolean }) {
   }
 
   const getInitials = (name?: string) => {
-    if (!name) return t("sidebar.userSection.userAvatarFallback"); // Translate fallback
+    if (!name) return t("sidebar.userSection.userAvatarFallback");
     const words = name.split(" ");
     if (words.length >= 2) {
       return (words[0][0] + words[1][0]).toUpperCase();
@@ -113,6 +113,7 @@ export default function Sidebar() {
     { labelKey: "users", icon: <Users className="w-5 h-5" />, key: "users", path: "/users" },
     { labelKey: "dispatches", icon: <Send className="w-5 h-5" />, key: "dispatches", path: "/dispatches" },
     { labelKey: "orders", icon: <ShoppingCart className="w-5 h-5" />, key: "orders", path: "/orders" },
+    { labelKey: "map", icon: <MapIcon className="w-5 h-5" />, key: "map", path: "/map" },
   ];
 
   return (

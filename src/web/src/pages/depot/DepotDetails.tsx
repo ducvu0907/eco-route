@@ -24,7 +24,8 @@ import {
   Navigation,
   Clock,
   AlertCircle,
-  Building2
+  Building2,
+  MapIcon
 } from "lucide-react";
 
 export default function DepotDetails() {
@@ -92,6 +93,10 @@ export default function DepotDetails() {
   const totalLoad = depot.vehicles.reduce((sum, v) => sum + (v.currentLoad || 0), 0);
   const averageLoad = depot.vehicles.length > 0 ? totalLoad / depot.vehicles.length : 0;
 
+  const goToMap = () => {
+    navigate("/map", { state: { selectedObject: depot } });
+  };
+
   return (
     <div className="container mx-auto p-6 space-y-8">
       <DepotUpdatemodal isOpen={isUpdateOpen} onClose={() => setIsUpdateOpen(false)} depot={depot} />
@@ -106,6 +111,9 @@ export default function DepotDetails() {
               <h1 className="text-3xl font-bold tracking-tight text-gray-900">{t("depotDetails.overview.title")}</h1>
               <p className="text-gray-600 mt-1">{t("depotDetails.overview.subtitle")}</p>
             </div>
+            <Button variant={"default"} onClick={goToMap}>
+              <MapIcon className="w-5 h-5"/>
+            </Button>
           </div>
         </div>
         <Button onClick={() => setIsUpdateOpen(true)} className="gap-2 px-6">
