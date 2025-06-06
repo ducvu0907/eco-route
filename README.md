@@ -1,6 +1,6 @@
 # EcoRoute
 
-**EcoRoute** is a SaaS platform designed to streamline garbage collection procedures for environmental service companies. It provides real-time coordination between all actors in the trash collection process—from customers and drivers to fleet managers—ensuring efficiency and transparency throughout the entire waste collection lifecycle.
+**EcoRoute** is a platform designed to streamline garbage collection procedures for environmental service companies. It provides real-time coordination between all actors in the trash collection process—from customers and drivers to fleet managers—ensuring efficiency and transparency throughout the entire waste collection lifecycle.
 
 ---
 
