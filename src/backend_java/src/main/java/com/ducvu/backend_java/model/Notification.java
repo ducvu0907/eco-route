@@ -26,6 +26,11 @@ public class Notification {
   @JoinColumn(name = "user_id")
   private User user;
 
+  @Enumerated(value = EnumType.STRING)
+  private NotificationType type;
+
+  private String refId; // reference the id of the object, combine with type to define specific object
+
   private String content;
 
   private Boolean isRead;

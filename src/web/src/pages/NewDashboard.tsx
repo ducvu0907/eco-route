@@ -467,45 +467,6 @@ export default function NewDashboard() {
           </Card>
         </div>
 
-        {/* <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-7">
-          <Card className="col-span-4">
-            <CardHeader>
-              <CardTitle>{t("dashboard.Route and Dispatch Status")}</CardTitle>
-              <CardDescription>{t("dashboard.Overview of ongoing and completed routes and dispatches.")}</CardDescription>
-            </CardHeader>
-            <CardContent>
-              <ResponsiveContainer width="100%" height={300}>
-                <LineChart data={routesStatusChartData.map(r => ({ ...r, type: 'Route' })).concat(dispatchesStatusChartData.map(d => ({ ...d, type: 'Dispatch' })))}>
-                  <CartesianGrid strokeDasharray="3 3" />
-                  <XAxis dataKey="name" />
-                  <YAxis />
-                  <Tooltip />
-                  <Legend />
-                  <Line type="monotone" dataKey="value" stroke="#ffc658" name={t("dashboard.Routes")} />
-                  <Line type="monotone" dataKey="value" stroke="#8884d8" name={t("dashboard.Dispatches")} />
-                </LineChart>
-              </ResponsiveContainer>
-            </CardContent>
-          </Card>
-
-          <Card className="col-span-3">
-            <CardHeader>
-              <CardTitle>{t("dashboard.Order Completion Rate")}</CardTitle>
-              <CardDescription>{t("dashboard.Percentage of completed orders.")}</CardDescription>
-            </CardHeader>
-            <CardContent className="flex flex-col items-center justify-center h-[300px]">
-              <div className="w-full text-center">
-                <Progress value={completedOrdersPercentage} className="w-full" />
-                <div className="text-lg font-bold mt-2">{completedOrdersPercentage.toFixed(1)}%</div>
-                <p className="text-sm text-muted-foreground">
-                  {completedOrders} {t("dashboard.of")} {totalOrders} {t("dashboard.orders completed")}
-                </p>
-              </div>
-            </CardContent>
-          </Card>
-        </div> */}
-
-
         <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-7">
           <Card className="col-span-4">
             <CardHeader>

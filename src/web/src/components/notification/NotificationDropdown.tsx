@@ -2,15 +2,20 @@ import { useState, useRef, useEffect } from "react";
 import { Bell, Dot, Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useAuthContext } from "@/hooks/useAuthContext";
-import { useGetNotificationsByUserId } from "@/hooks/useNotification";
+import { useGetNotificationsByUserId, useReadNotification } from "@/hooks/useNotification";
 import { cn } from "@/lib/utils";
 import { formatDate } from "@/utils/formatDate";
 import { useTranslation } from "react-i18next";
+import { useNavigate } from "react-router";
+import { notificationRoute } from "@/utils/notificationRoute";
+import { NotificationResponse } from "@/types/types";
 
 export default function NotificationDropdown() {
+  const navigate = useNavigate();
   const { t } = useTranslation();
   const { userId } = useAuthContext();
   const { data, isLoading } = useGetNotificationsByUserId(userId as string);
+  const {mutate: read} = useReadNotification();
 
   const notifications = data?.result || [];
   const unreadCount = notifications.filter((n) => !n.isRead).length;
@@ -30,6 +35,11 @@ export default function NotificationDropdown() {
       document.removeEventListener("mousedown", handleClickOutside);
     };
   }, []);
+
+  const handleClickItem = (item: NotificationResponse) => {
+    read(item.id);
+    navigate(notificationRoute(item));
+  };
 
   return (
     <div className="relative" ref={panelRef}>
@@ -74,6 +84,7 @@ export default function NotificationDropdown() {
                     "flex items-start gap-2 p-3 text-sm hover:bg-muted cursor-pointer",
                     !notification.isRead && "bg-muted/30"
                   )}
+                  onClick={() => handleClickItem(notification)}
                 >
                   {!notification.isRead && (
                     <Dot className="text-primary mt-1 w-4 h-4" />

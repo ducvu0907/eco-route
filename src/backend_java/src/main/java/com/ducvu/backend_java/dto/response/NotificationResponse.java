@@ -1,5 +1,6 @@
 package com.ducvu.backend_java.dto.response;
 
+import com.ducvu.backend_java.model.NotificationType;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -13,6 +14,7 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 public class NotificationResponse {
   private String id;
+  private NotificationType type;
   private String content;
   private Boolean isRead;
   private LocalDateTime createdAt;

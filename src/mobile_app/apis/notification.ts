@@ -5,3 +5,8 @@ export const getNotificationsByUserId = async (userId: string): Promise<ApiRespo
   const { data } = await axiosInstance.get(`/users/${userId}/notifications`);
   return data;
 }
+
+export const readNotification = async (notificationId: string): Promise<ApiResponse<NotificationResponse[]>> => {
+  const { data } = await axiosInstance.post(`/notifications/${notificationId}/read`);
+  return data;
+}

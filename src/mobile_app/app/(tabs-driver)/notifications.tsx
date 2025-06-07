@@ -1,17 +1,26 @@
 import { useAuthContext } from "@/hooks/useAuthContext";
-import { useGetNotificationsByUserId } from "@/hooks/useNotification";
+import { useGetNotificationsByUserId, useReadNotification } from "@/hooks/useNotification";
 import { View, Text, FlatList, TouchableOpacity, ActivityIndicator } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { NotificationResponse } from "@/types/types";
 import { formatDate } from "@/utils/formatDate";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { useTranslation } from "react-i18next"; // Import useTranslation
+import { useTranslation } from "react-i18next";
+import { Href, useRouter } from "expo-router";
+import { notificationRoute } from "@/utils/notificationRoute";
 
 export default function Notifications() {
-  const { t } = useTranslation(); // Initialize useTranslation
+  const router = useRouter();
+  const { t } = useTranslation();
   const { userId } = useAuthContext();
   const { data, isLoading } = useGetNotificationsByUserId(userId as string);
+  const {mutate: read} = useReadNotification();
   const notifications: NotificationResponse[] = data?.result || [];
+
+  const handleClick = (item: NotificationResponse) => {
+    read(item.id);
+    router.replace(notificationRoute(item) as Href);
+  };
 
   const renderNotification = ({ item }: { item: NotificationResponse }) => (
     <TouchableOpacity 
@@ -19,6 +28,7 @@ export default function Notifications() {
         !item.isRead ? 'bg-blue-50' : 'bg-white'
       }`}
       activeOpacity={0.7}
+      onPress={() => handleClick(item)}
     >
       <View className="mr-3 mt-1">
         <Ionicons 

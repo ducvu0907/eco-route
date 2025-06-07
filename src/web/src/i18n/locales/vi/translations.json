@@ -1,7 +1,7 @@
 {
   "orderManagement": {
     "pageTitle": "Quản lý Đơn hàng",
-    "pageDescription": "Quản lý và theo dõi tất cả các đơn hàng thu gom rác thải ({count} tổng cộng)",
+    "pageDescription": "Quản lý và theo dõi tất cả các đơn hàng thu gom rác thải ({{count}} tổng cộng)",
     "filters": {
       "category": {
         "label": "Danh mục:",
@@ -15,6 +15,7 @@
       "status": {
         "label": "Trạng thái:",
         "all": "Tất cả",
+        "reassigned": "Xử lý sau",
         "completed": "Đã hoàn thành",
         "in_progress": "Đang tiến hành",
         "pending": "Đang chờ xử lý",
@@ -188,6 +189,7 @@
       "orderId": "Mã đơn hàng: {{orderId}}"
     },
     "status": {
+      "reassigned": "Xử lý sau",
       "completed": "Đã hoàn thành",
       "inProgress": "Đang tiến hành",
       "pending": "Đang chờ xử lý",
@@ -216,7 +218,7 @@
     },
     "actionsCard": {
       "title": "Hành động",
-      "goToDispatch": "Đi đến điều phối",
+      "goToDispatch": "Đi đến phiên điều phối",
       "viewRouteDetails": "Xem chi tiết tuyến đường",
       "backToOrders": "Quay lại Đơn hàng"
     },
@@ -550,7 +552,7 @@
     },
     "orderStatus": {
       "PENDING": "Đang chờ xử lý",
-      "COLLECTED": "Đã thu gom",
+      "IN_PROGRESS": "Đang thu gom",
       "CANCELLED": "Đã hủy"
     }
   },
@@ -583,115 +585,6 @@
       "completed": "Đã hoàn thành",
       "in_progress": "Đang tiến hành",
       "pending": "Đang chờ xử lý"
-    }
-  },
-  "dashboard": {
-    "header": {
-      "title": "Bảng điều khiển",
-      "subtitle": "Giám sát đội xe, đơn hàng và hoạt động của bạn trong thời gian thực"
-    },
-    "keyMetrics": {
-      "totalOrders": {
-        "title": "Tổng số Đơn hàng",
-        "completedText": "+{{count}} đã hoàn thành"
-      },
-      "activeVehicles": {
-        "title": "Phương tiện Đang hoạt động",
-        "idleText": "{{idleCount}} rảnh rỗi",
-        "repairText": "{{repairCount}} đang sửa chữa"
-      },
-      "completionRate": {
-        "title": "Tỷ lệ Hoàn thành"
-      },
-      "totalWeight": {
-        "title": "Tổng Trọng lượng",
-        "unit": "kg",
-        "description": "Đã thu gom hôm nay"
-      }
-    },
-    "chartsSection": {
-      "dailyOrdersTrend": {
-        "title": "Xu hướng Đơn hàng Hàng ngày",
-        "description": "Phân phối trạng thái đơn hàng trong tuần",
-        "completedLabel": "đã hoàn thành",
-        "inProgressLabel": "đang tiến hành",
-        "pendingLabel": "đang chờ xử lý"
-      },
-      "routeEfficiencyAnalysis": {
-        "title": "Phân tích Hiệu quả Tuyến đường",
-        "description": "Hiệu quả so với Khoảng cách cho các tuyến đường đang hoạt động",
-        "efficiencyLabel": "Hiệu quả %",
-        "distanceLabel": "Khoảng cách (km)"
-      },
-      "hourlyDispatchActivity": {
-        "title": "Hoạt động Điều phối Hàng giờ",
-        "description": "Tần suất điều phối và phân bổ phương tiện",
-        "dispatchesLabel": "điều phối",
-        "vehiclesLabel": "phương tiện"
-      },
-      "wasteCategoryDistribution": {
-        "title": "Phân phối Danh mục Chất thải",
-        "description": "Phân phối trọng lượng theo loại chất thải",
-        "tooltipWeight": "Trọng lượng"
-      },
-      "vehicleLoadUtilization": {
-        "title": "Tỷ lệ Sử dụng Tải trọng Phương tiện",
-        "description": "Tỷ lệ sử dụng dung tích tải hiện tại",
-        "tooltipUtilization": "Tỷ lệ sử dụng"
-      },
-      "routePerformanceMetrics": {
-        "title": "Số liệu Hiệu suất Tuyến đường",
-        "description": "Mức tiêu thụ nhiên liệu so với hiệu quả tuyến đường",
-        "fuelLabel": "Nhiên liệu (L)",
-        "efficiencyLabel": "Hiệu quả %"
-      }
-    },
-    "mainContentGrid": {
-      "orderStatus": {
-        "title": "Trạng thái Đơn hàng",
-        "description": "Phân phối đơn hàng hiện tại",
-        "pending": "Đang chờ xử lý",
-        "inProgress": "Đang tiến hành",
-        "completed": "Đã hoàn thành"
-      },
-      "fleetStatus": {
-        "title": "Trạng thái Đội xe",
-        "description": "Trạng thái sẵn sàng và tải trọng của phương tiện"
-      },
-      "wasteCategories": {
-        "title": "Danh mục Chất thải",
-        "description": "Phân phối theo danh mục",
-        "ordersCount": "{{count}} đơn hàng"
-      }
-    },
-    "routesAndDepots": {
-      "activeRoutes": {
-        "title": "Tuyến đường Hoạt động",
-        "description": "Hoạt động tuyến đường hiện tại",
-        "stops": "điểm dừng",
-        "duration": "Thời lượng"
-      },
-      "depotLocations": {
-        "title": "Vị trí Kho",
-        "description": "Cơ sở thu gom và lưu trữ",
-        "vehiclesCount": "Phương tiện"
-      }
-    },
-    "statuses": {
-      "ACTIVE": "Hoạt động",
-      "IN_PROGRESS": "Đang tiến hành",
-      "COMPLETED": "Đã hoàn thành",
-      "PENDING": "Đang chờ xử lý",
-      "IDLE": "Rảnh rỗi",
-      "REPAIR": "Sửa chữa",
-      "CANCELLED": "Đã hủy"
-    },
-    "categories": {
-      "RECYCLABLE": "Tái chế",
-      "ORGANIC": "Hữu cơ",
-      "HAZARDOUS": "Nguy hại",
-      "ELECTRONIC": "Điện tử",
-      "GENERAL": "Tổng hợp"
     }
   },
   "depotCreateModal": {
@@ -875,6 +768,7 @@
     "status": "Trạng thái",
     "viewDetails": "Xem chi tiết",
     "statuses": {
+      "REASSIGNED": "Xử lý sau",
       "PENDING": "Đang chờ xử lý",
       "IN_PROGRESS": "Đang tiến hành",
       "COMPLETED": "Đã hoàn thành",
@@ -986,6 +880,7 @@
       "orderStatus": {
         "label": "Trạng thái đơn hàng",
         "all": "Tất cả trạng thái",
+        "reassigned": "XỬ LÝ SAU",
         "completed": "ĐÃ HOÀN THÀNH",
         "in_progress": "ĐANG XỬ LÝ",
         "pending": "CHỜ XỬ LÝ",

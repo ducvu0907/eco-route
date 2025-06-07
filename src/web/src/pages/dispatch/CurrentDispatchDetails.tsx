@@ -7,7 +7,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { useCreateDispatch, useGetCurrentDispatch, useMarkDispatchAsDone } from "@/hooks/useDispatch";
+import { useCreateDispatch, useGetCurrentDispatch } from "@/hooks/useDispatch";
 import { useGetPendingOrders } from "@/hooks/useOrder";
 import { useGetRoutesByDispatchId } from "@/hooks/useRoute";
 import { DispatchStatus, RouteResponse, RouteStatus, TrashCategory } from "@/types/types";
@@ -53,7 +53,6 @@ const getStatusBadgeVariant = (status: DispatchStatus | RouteStatus) => {
 export default function CurrentDispatchDetails() {
   const queryClient = useQueryClient();
   const { mutate: createDispatch, isPending } = useCreateDispatch();
-  const { mutate: markAsDone, isPending: isMarking } = useMarkDispatchAsDone();
   const [activeTab, setActiveTab] = useState("overview");
   const [selectedRoute, setSelectedRoute] = useState<RouteResponse | null>(null);
   const { t } = useTranslation();
@@ -144,14 +143,6 @@ export default function CurrentDispatchDetails() {
                 >
                   <RotateCcw className="h-4 w-4 mr-2" />
                   {t("currentDispatchDetails.header.rerouteButton")}
-                </Button>
-                <Button 
-                  onClick={() => markAsDone(dispatch.id)} 
-                  disabled={isMarking}
-                  size="sm"
-                >
-                  <CheckCircle2 className="h-4 w-4 mr-2" />
-                  {isMarking ? t("currentDispatchDetails.header.markingButton") : t("currentDispatchDetails.header.markCompleteButton")}
                 </Button>
               </div>
             </div>

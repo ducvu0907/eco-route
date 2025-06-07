@@ -92,7 +92,7 @@ INSERT INTO vehicles (id, driver_id, depot_id, license_plate, capacity, current_
 
 -- 10 more orders with category ORGANIC, further from previous locations
 INSERT INTO orders (id, user_id, route_id, latitude, longitude, address, weight, status, completed_at, created_at, updated_at, image_url, description, category, index) VALUES
-('aaaaaaaa-aaaa-aaaa-aaaa-aaaa000031', 'c1', NULL, 21.0725, 105.8105, 'Xuan La, Tay Ho, Hanoi', 0.9, 'PENDING', NULL, now(), now(), 'https://placehold.co/400x300', 'Used cooking oil (small container)', 'ORGANIC', NULL),
+('aaaaaaaa-aaaa-aaaa-aaaa-aaaa000031', 'c1', NULL, 21.0725, 105.8105, 'Xuan La, Tay Ho, Hanoi', 0.9, 'REASSIGNED', NULL, now(), now(), 'https://placehold.co/400x300', 'Used cooking oil (small container)', 'ORGANIC', NULL),
 ('aaaaaaaa-aaaa-aaaa-aaaa-aaaa000032', 'c2', NULL, 21.0335, 105.8165, 'Doi Can, Ba Dinh, Hanoi', 1.4, 'PENDING', NULL, now(), now(), 'https://placehold.co/400x300', 'Expired food products (non-liquid)', 'ORGANIC', NULL),
 ('aaaaaaaa-aaaa-aaaa-aaaa-aaaa000033', 'c3', NULL, 20.9995, 105.8505, 'Bach Mai, Hai Ba Trung, Hanoi', 1.8, 'PENDING', NULL, now(), now(), 'https://placehold.co/400x300', 'Compostable packaging', 'ORGANIC', NULL),
 ('aaaaaaaa-aaaa-aaaa-aaaa-aaaa000034', 'c4', NULL, 20.9955, 105.7955, 'Nguyen Tuan, Thanh Xuan, Hanoi', 0.6, 'PENDING', NULL, now(), now(), 'https://placehold.co/400x300', 'Leftover fruits', 'ORGANIC', NULL),

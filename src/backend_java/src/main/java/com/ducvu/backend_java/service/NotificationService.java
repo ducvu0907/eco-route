@@ -3,6 +3,7 @@ package com.ducvu.backend_java.service;
 
 import com.ducvu.backend_java.dto.response.NotificationResponse;
 import com.ducvu.backend_java.model.Notification;
+import com.ducvu.backend_java.model.NotificationType;
 import com.ducvu.backend_java.model.User;
 import com.ducvu.backend_java.repository.NotificationRepository;
 import com.ducvu.backend_java.util.Mapper;
@@ -10,10 +11,10 @@ import com.google.firebase.messaging.*;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
-import org.springframework.util.StringUtils;
 
 import java.util.List;
 import java.util.Objects;
+import java.util.stream.IntStream;
 
 @Service
 @RequiredArgsConstructor
@@ -23,16 +24,22 @@ public class NotificationService {
   private final Mapper mapper;
   private final FirebaseMessaging firebaseMessaging;
 
-  public List<NotificationResponse> saveAll(String content, List<User> users) {
+  public List<NotificationResponse> saveAll(String content, List<User> users, NotificationType type, List<String> refIds) {
     if (users.isEmpty()) {
       log.warn("No users provided");
       return List.of();
     }
 
-    List<Notification> notifications = users.stream()
-        .map(user -> Notification.builder()
+    if (refIds.size() != users.size()) {
+      throw new RuntimeException("Mismatch between refIds and users size");
+    }
+
+    List<Notification> notifications = IntStream.range(0, users.size())
+        .mapToObj(i -> Notification.builder()
             .content(content)
-            .user(user)
+            .type(type)
+            .user(users.get(i))
+            .refId(refIds.get(i))
             .isRead(false)
             .build()
         )
@@ -43,9 +50,12 @@ public class NotificationService {
         .map(mapper::map)
         .toList();
   }
-  public NotificationResponse save(String content, User user) {
+
+  public NotificationResponse save(String content, User user, NotificationType type, String refId) {
     Notification notification = Notification.builder()
         .content(content)
+        .type(type)
+        .refId(refId)
         .user(user)
         .isRead(false)
         .build();
@@ -53,7 +63,7 @@ public class NotificationService {
     return mapper.map(notificationRepository.save(notification));
   }
 
-  public void sendBatchNotifications(String content, List<User> users) {
+  public void sendBatchNotifications(String content, List<User> users, NotificationType type, List<String> refIds) {
     log.info("Sending notifications to {}", users);
 
     List<String> fcmTokens = users.stream()
@@ -74,7 +84,7 @@ public class NotificationService {
 
     try {
       BatchResponse response = firebaseMessaging.sendEachForMulticast(message);
-      saveAll(content, users); // persist notifications
+      saveAll(content, users, type, refIds); // persist notifications
       log.info("Batch notification sent. Success: {}, Failure: {}",
           response.getSuccessCount(), response.getFailureCount());
 
@@ -88,7 +98,7 @@ public class NotificationService {
     }
   }
 
-  public void sendSingleNotification(String content, User user) {
+  public void sendSingleNotification(String content, User user, NotificationType type, String refId) {
     log.info("Sending notification to {}", user);
     if (user.getFcmToken() == null) {
       log.warn("FCM token is null or empty. Notification not sent.");
@@ -107,7 +117,7 @@ public class NotificationService {
 
     try {
       String response = firebaseMessaging.send(message);
-      save(content, user);
+      save(content, user, type, refId);
       log.info("Notification sent successfully. Response: {}", response);
     } catch (Exception e) {
       log.error("Failed to send notification to token: {}", user, e);

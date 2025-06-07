@@ -1,7 +1,7 @@
 {
   "orderManagement": {
     "pageTitle": "Order Management",
-    "pageDescription": "Manage and track all waste collection orders ({count} total)",
+    "pageDescription": "Manage and track all waste collection orders ({{count}} total)",
     "filters": {
       "category": {
         "label": "Category:",
@@ -15,6 +15,7 @@
       "status": {
         "label": "Status:",
         "all": "All",
+        "reassigned": "Reassigned",
         "completed": "Completed",
         "in_progress": "In Progress",
         "pending": "Pending",
@@ -188,6 +189,7 @@
       "orderId": "Order ID: {{orderId}}"
     },
     "status": {
+      "reassigned": "Reassigned",
       "completed": "Completed",
       "inProgress": "In Progress",
       "pending": "Pending",
@@ -550,7 +552,7 @@
     },
     "orderStatus": {
       "PENDING": "Pending",
-      "COLLECTED": "Collected",
+      "IN_PROGRESS": "In progress",
       "CANCELLED": "Cancelled"
     }
   },
@@ -583,115 +585,6 @@
       "completed": "Completed",
       "in_progress": "In Progress",
       "pending": "Pending"
-    }
-  },
-  "dashboard": {
-    "header": {
-      "title": "Dashboard",
-      "subtitle": "Monitor your fleet, orders, and operations in real-time"
-    },
-    "keyMetrics": {
-      "totalOrders": {
-        "title": "Total Orders",
-        "completedText": "+{{count}} completed"
-      },
-      "activeVehicles": {
-        "title": "Active Vehicles",
-        "idleText": "{{idleCount}} idle",
-        "repairText": "{{repairCount}} in repair"
-      },
-      "completionRate": {
-        "title": "Completion Rate"
-      },
-      "totalWeight": {
-        "title": "Total Weight",
-        "unit": "kg",
-        "description": "Collected today"
-      }
-    },
-    "chartsSection": {
-      "dailyOrdersTrend": {
-        "title": "Daily Orders Trend",
-        "description": "Order status distribution over the week",
-        "completedLabel": "completed",
-        "inProgressLabel": "inProgress",
-        "pendingLabel": "pending"
-      },
-      "routeEfficiencyAnalysis": {
-        "title": "Route Efficiency Analysis",
-        "description": "Efficiency vs Distance for active routes",
-        "efficiencyLabel": "Efficiency %",
-        "distanceLabel": "Distance (km)"
-      },
-      "hourlyDispatchActivity": {
-        "title": "Hourly Dispatch Activity",
-        "description": "Dispatch frequency and vehicle allocation",
-        "dispatchesLabel": "dispatches",
-        "vehiclesLabel": "vehicles"
-      },
-      "wasteCategoryDistribution": {
-        "title": "Waste Category Distribution",
-        "description": "Weight distribution by waste type",
-        "tooltipWeight": "Weight"
-      },
-      "vehicleLoadUtilization": {
-        "title": "Vehicle Load Utilization",
-        "description": "Current load capacity utilization",
-        "tooltipUtilization": "Utilization"
-      },
-      "routePerformanceMetrics": {
-        "title": "Route Performance Metrics",
-        "description": "Fuel consumption vs route efficiency",
-        "fuelLabel": "Fuel (L)",
-        "efficiencyLabel": "Efficiency %"
-      }
-    },
-    "mainContentGrid": {
-      "orderStatus": {
-        "title": "Order Status",
-        "description": "Current order distribution",
-        "pending": "Pending",
-        "inProgress": "In Progress",
-        "completed": "Completed"
-      },
-      "fleetStatus": {
-        "title": "Fleet Status",
-        "description": "Vehicle availability and load"
-      },
-      "wasteCategories": {
-        "title": "Waste Categories",
-        "description": "Distribution by category",
-        "ordersCount": "{{count}} orders"
-      }
-    },
-    "routesAndDepots": {
-      "activeRoutes": {
-        "title": "Active Routes",
-        "description": "Current route operations",
-        "stops": "stops",
-        "duration": "Duration"
-      },
-      "depotLocations": {
-        "title": "Depot Locations",
-        "description": "Collection and storage facilities",
-        "vehiclesCount": "Vehicles"
-      }
-    },
-    "statuses": {
-      "ACTIVE": "Active",
-      "IN_PROGRESS": "In Progress",
-      "COMPLETED": "Completed",
-      "PENDING": "Pending",
-      "IDLE": "Idle",
-      "REPAIR": "Repair",
-      "CANCELLED": "Cancelled"
-    },
-    "categories": {
-      "RECYCLABLE": "Recyclable",
-      "ORGANIC": "Organic",
-      "HAZARDOUS": "Hazardous",
-      "ELECTRONIC": "Electronic",
-      "GENERAL": "General"
     }
   },
   "depotCreateModal": {
@@ -875,6 +768,7 @@
     "status": "Status",
     "viewDetails": "View details",
     "statuses": {
+      "REASSIGNED": "Reassigned",
       "PENDING": "Pending",
       "IN_PROGRESS": "In Progress",
       "COMPLETED": "Completed",
@@ -986,6 +880,7 @@
       "orderStatus": {
         "label": "Order Status",
         "all": "All Statuses",
+        "reassigned": "REASSIGNED",
         "completed": "COMPLETED",
         "in_progress": "IN_PROGRESS",
         "pending": "PENDING",

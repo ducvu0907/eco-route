@@ -70,6 +70,7 @@
     "notFoundDescription": "Failed to load order details. Please try again.",
     "goBack": "Go Back",
     "orderNumber": "Order #{{number}}",
+    "status_reassigned": "Reassigned",
     "status_pending": "Pending",
     "status_in_progress": "In Progress",
     "status_completed": "Completed",
@@ -182,6 +183,7 @@
     "ELECTRONIC": "Electronic"
   },
   "statuses": {
+    "REASSIGNED": "Reassigned",
     "PENDING": "Pending",
     "IN_PROGRESS": "In Progress",
     "COMPLETED": "Completed",
@@ -214,8 +216,9 @@
     "durationMinutes": "{{minutes}}m",
     "ordersTitle": "Orders ({{count}})",
     "orderSummary": "{{weight}} kg • {{category}}",
+    "orderStatus_reassigned": "REASSIGNED",
     "orderStatus_completed": "COMPLETED",
-    "orderStatus_in_progress": "IN_PROGRESS",
+    "orderStatus_in_progress": "IN PROGRESS",
     "orderStatus_pending": "PENDING",
     "orderStatus_cancelled": "CANCELLED",
     "completingRoute": "Completing Route...",

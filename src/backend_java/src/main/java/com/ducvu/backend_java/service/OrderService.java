@@ -4,10 +4,7 @@ package com.ducvu.backend_java.service;
 import com.ducvu.backend_java.dto.request.OrderCreateRequest;
 import com.ducvu.backend_java.dto.request.OrderUpdateRequest;
 import com.ducvu.backend_java.dto.response.OrderResponse;
-import com.ducvu.backend_java.model.Order;
-import com.ducvu.backend_java.model.OrderStatus;
-import com.ducvu.backend_java.model.Role;
-import com.ducvu.backend_java.model.User;
+import com.ducvu.backend_java.model.*;
 import com.ducvu.backend_java.repository.DispatchRepository;
 import com.ducvu.backend_java.repository.OrderRepository;
 import com.ducvu.backend_java.repository.RouteRepository;
@@ -125,48 +122,71 @@ public class OrderService {
     }
 
 
-    notifyNewOrder();
-    return mapper.map(orderRepository.save(order));
+    order = orderRepository.save(order);
+
+    notifyNewOrder(order);
+    return mapper.map(order);
   }
 
-  // driver uses this to update order status
+  public OrderResponse markOrderAsReassignment(String orderId) {
+    Order order = orderRepository.findById(orderId)
+        .orElseThrow(() -> new RuntimeException("Order not found"));
+
+    order.setStatus(OrderStatus.REASSIGNED);
+    order = orderRepository.save(order);
+
+    notifyOrderReassignment(order);
+    return mapper.map(order);
+  }
+
   public OrderResponse markOrderAsCancelled(String orderId) {
     Order order = orderRepository.findById(orderId)
         .orElseThrow(() -> new RuntimeException("Order not found"));
 
+    if (order.getStatus() != OrderStatus.PENDING && order.getStatus() != OrderStatus.REASSIGNED) {
+      throw new RuntimeException("Order is not cancellable");
+    }
+
     order.setStatus(OrderStatus.CANCELLED);
     order.setCompletedAt(LocalDateTime.now());
 
+    order = orderRepository.save(order);
+
     notifyOrderCancelled(order);
-    return mapper.map(orderRepository.save(order));
+    return mapper.map(order);
   }
 
-  public OrderResponse markOrderAsDone(String orderId) {
+  public OrderResponse markOrderAsCompleted(String orderId) {
     Order order = orderRepository.findById(orderId)
         .orElseThrow(() -> new RuntimeException("Order not found"));
 
     order.setStatus(OrderStatus.COMPLETED);
     order.setCompletedAt(LocalDateTime.now());
 
+    order = orderRepository.save(order);
+
     notifyOrderCompleted(order);
-    return mapper.map(orderRepository.save(order));
+    return mapper.map(order);
   }
 
-  private void notifyNewOrder() {
+
+  private void notifyOrderReassignment(Order order) {
+    User customer = order.getUser();
+    notificationService.sendSingleNotification("Order is reassigned", customer, NotificationType.ORDER, order.getId());
+  }
+  private void notifyNewOrder(Order order) {
     User manager = userService.getManager();
-    notificationService.sendSingleNotification("New order created", manager);
+    notificationService.sendSingleNotification("New order", manager, NotificationType.ORDER, order.getId());
   }
 
   private void notifyOrderCancelled(Order order) {
     User manager = userService.getManager();
-    notificationService.sendSingleNotification("Order is cancelled", order.getUser());
-    notificationService.sendSingleNotification("Order is cancelled", manager);
+    notificationService.sendSingleNotification("Order is cancelled", manager, NotificationType.ORDER, order.getId());
   }
 
   private void notifyOrderCompleted(Order order) {
-    User manager = userService.getManager();
-    notificationService.sendSingleNotification("Order is completed", order.getUser());
-    notificationService.sendSingleNotification("Order is completed", manager);
+    User customer = order.getUser();
+    notificationService.sendSingleNotification("Order is completed", customer, NotificationType.ORDER, order.getId());
   }
 
 }

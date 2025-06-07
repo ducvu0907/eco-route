@@ -8,6 +8,12 @@ export interface ApiResponse<T> {
 
 
 // enums
+export enum NotificationType {
+  ORDER = "ORDER",
+  ROUTE = "ROUTE",
+  DISPATCH = "DISPATCH"
+}
+
 export enum TrashCategory {
   GENERAL = "GENERAL",
   ORGANIC = "ORGANIC",
@@ -28,6 +34,7 @@ export enum Role {
 }
 
 export enum OrderStatus {
+  REASSIGNED = "REASSIGNED",
   PENDING = "PENDING",
   IN_PROGRESS = "IN_PROGRESS",
   COMPLETED = "COMPLETED",
@@ -143,6 +150,8 @@ export interface DispatchResponse {
 export interface NotificationResponse {
   id: string;
   content: string;
+  type: NotificationType;
+  refId: string;
   isRead: boolean;
   createdAt: string;
   updatedAt: string;

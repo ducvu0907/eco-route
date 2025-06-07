@@ -6,8 +6,13 @@ export const markOrderAsCancelled = async (orderId: string): Promise<ApiResponse
   return data;
 };
 
-export const markOrderAsDone = async (orderId: string): Promise<ApiResponse<OrderResponse>> => {
-  const { data } = await axiosInstance.post(`/orders/${orderId}/done`);
+export const markOrderAsReassigned = async (orderId: string): Promise<ApiResponse<OrderResponse>> => {
+  const { data } = await axiosInstance.post(`/orders/${orderId}/reassigned`);
+  return data;
+};
+
+export const markOrderAsCompleted = async (orderId: string): Promise<ApiResponse<OrderResponse>> => {
+  const { data } = await axiosInstance.post(`/orders/${orderId}/completed`);
   return data;
 };
 

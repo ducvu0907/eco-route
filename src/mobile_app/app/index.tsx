@@ -50,7 +50,7 @@ export default function Index() {
     });
 
     messaging().onMessage(async remoteMessage => {
-      // showToast(remoteMessage.notification?.body as string, "success");
+      showToast(remoteMessage.notification?.body as string, "success");
       queryClient.invalidateQueries(); // no args = invalidating all
       console.log('Notification received in foreground:', remoteMessage);
     });

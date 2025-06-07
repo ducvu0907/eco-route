@@ -114,6 +114,7 @@ public class Mapper {
         .id(notification.getId())
         .content(notification.getContent())
         .isRead(notification.getIsRead())
+        .type(notification.getType())
         .createdAt(notification.getCreatedAt())
         .updatedAt(notification.getUpdatedAt())
         .build();

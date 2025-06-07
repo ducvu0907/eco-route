@@ -1,5 +1,5 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { getOrders, getOrderById, createOrder, updateOrder, getOrderByUserId, getPendingOrders, getOngoingOrders, markOrderAsDone, markOrderAsCancelled, } from "@/apis/order";
+import { getOrders, getOrderById, createOrder, updateOrder, getOrderByUserId, getPendingOrders, getOngoingOrders, markOrderAsCompleted, markOrderAsCancelled, markOrderAsReassigned } from "@/apis/order";
 import { ApiResponse, OrderResponse, OrderCreateRequest, OrderUpdateRequest, } from "@/types/types";
 
 export const useGetOngoingOrders = () => {
@@ -67,7 +67,7 @@ export const useMarkOrderAsDone = () => {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: (orderId: string) => markOrderAsDone(orderId),
+    mutationFn: (orderId: string) => markOrderAsCompleted(orderId),
     onSuccess: (_data, orderId) => {
       queryClient.invalidateQueries({ queryKey: ["orders", orderId] });
     }
@@ -79,6 +79,17 @@ export const useMarkOrderAsCancelled = () => {
 
   return useMutation({
     mutationFn: (orderId: string) => markOrderAsCancelled(orderId),
+    onSuccess: (_data, orderId) => {
+      queryClient.invalidateQueries({ queryKey: ["orders", orderId] });
+    }
+  })
+}
+
+export const useMarkOrderAsReassigned = () => {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: (orderId: string) => markOrderAsReassigned(orderId),
     onSuccess: (_data, orderId) => {
       queryClient.invalidateQueries({ queryKey: ["orders", orderId] });
     }

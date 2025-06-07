@@ -31,13 +31,13 @@ public class RouteService {
         .toList();
   }
 
-  public RouteResponse markRouteAsDone(String routeId) {
+  public RouteResponse markRouteAsCompleted(String routeId) {
     Route route = routeRepository.findById(routeId)
         .orElseThrow(() -> new RuntimeException("Route not found"));
 
     for (Order order : route.getOrders()) {
-      if (order.getStatus() != OrderStatus.COMPLETED) {
-        throw new RuntimeException("There's unfinished order");
+      if (order.getStatus() == OrderStatus.PENDING) {
+        throw new RuntimeException("There are pending orders");
       }
     }
 
@@ -45,8 +45,18 @@ public class RouteService {
     route.getVehicle().setStatus(VehicleStatus.IDLE);
     route.setCompletedAt(LocalDateTime.now());
 
+    route = routeRepository.save(route);
     notifyCompletedRoute(route);
-    return mapper.map(routeRepository.save(route));
+
+    // mark dispatch as completed if there are no routes in progress
+    Dispatch dispatch = route.getDispatch();
+    if (dispatch.getRoutes().stream().allMatch(r -> r.getStatus() == RouteStatus.COMPLETED)) {
+      dispatch.setStatus(DispatchStatus.COMPLETED);
+      dispatchRepository.save(dispatch);
+      notifyCompletedDispatch(dispatch);
+    }
+
+    return mapper.map(route);
   }
 
   public RouteResponse getVehicleCurrentRoute(String vehicleId) {
@@ -90,7 +100,12 @@ public class RouteService {
 
   private void notifyCompletedRoute(Route route) {
     User manager = userService.getManager();
-    notificationService.sendSingleNotification(String.format("Route %s is completed", route.getId()), manager);
+    notificationService.sendSingleNotification("Route is completed", manager, NotificationType.ROUTE, route.getId());
+  }
+
+  private void notifyCompletedDispatch(Dispatch dispatch) {
+    User manager = userService.getManager();
+    notificationService.sendSingleNotification("Dispatch is completed", manager, NotificationType.DISPATCH, dispatch.getId());
   }
 
 }

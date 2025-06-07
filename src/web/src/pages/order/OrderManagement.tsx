@@ -48,27 +48,14 @@ export default function OrderManagement() {
     return categoryMatch && statusMatch && fromMatch && toMatch;
   });
 
-  // const getStatusIcon = (status: OrderStatus) => {
-  //   switch (status) {
-  //     case OrderStatus.COMPLETED:
-  //       return <CheckCircle className="h-4 w-4 text-green-500" />;
-  //     case OrderStatus.IN_PROGRESS:
-  //       return <Loader2 className="h-4 w-4 text-blue-500 animate-spin" />;
-  //     case OrderStatus.PENDING:
-  //       return <Clock className="h-4 w-4 text-yellow-500" />;
-  //     case OrderStatus.CANCELLED:
-  //       return <XCircle className="h-4 w-4 text-red-500" />;
-  //     default:
-  //       return <Clock className="h-4 w-4 text-gray-400" />;
-  //   }
-  // };
-
   const getStatusBadge = (status: OrderStatus) => {
     switch (status) {
       case OrderStatus.COMPLETED:
         return <Badge variant="default" className="bg-green-100 text-green-800 border-green-200">{t("orderManagement.filters.status.completed")}</Badge>;
       case OrderStatus.IN_PROGRESS:
         return <Badge variant="secondary" className="bg-blue-100 text-blue-800 border-blue-200">{t("orderManagement.filters.status.in_progress")}</Badge>;
+      case OrderStatus.REASSIGNED:
+        return <Badge variant="outline" className="bg-yellow-50 text-yellow-800 border-yellow-200">{t("orderManagement.filters.status.reassigned")}</Badge>;
       case OrderStatus.PENDING:
         return <Badge variant="outline" className="bg-yellow-50 text-yellow-800 border-yellow-200">{t("orderManagement.filters.status.pending")}</Badge>;
       case OrderStatus.CANCELLED:

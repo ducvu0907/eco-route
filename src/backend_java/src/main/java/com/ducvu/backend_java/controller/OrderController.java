@@ -96,12 +96,22 @@ public class OrderController {
         .build();
   }
 
-  @PostMapping("/orders/{orderId}/done")
-  public ApiResponse<OrderResponse> markOrderAsDone(@PathVariable("orderId") String orderId) {
-    log.info("Received mark order as done: {}", orderId);
-    var result = orderService.markOrderAsDone(orderId);
+  @PostMapping("/orders/{orderId}/reassigned")
+  public ApiResponse<OrderResponse> markOrderAsReassignment(@PathVariable("orderId") String orderId) {
+    log.info("Received mark order as reassigned: {}", orderId);
+    var result = orderService.markOrderAsReassignment(orderId);
     return ApiResponse.<OrderResponse>builder()
-        .message("Mark order as done successfully")
+        .message("Mark order as reassigned successfully")
+        .result(result)
+        .build();
+  }
+
+  @PostMapping("/orders/{orderId}/completed")
+  public ApiResponse<OrderResponse> markOrderAsCompleted(@PathVariable("orderId") String orderId) {
+    log.info("Received mark order as completed: {}", orderId);
+    var result = orderService.markOrderAsCompleted(orderId);
+    return ApiResponse.<OrderResponse>builder()
+        .message("Mark order as completed successfully")
         .result(result)
         .build();
   }

@@ -33,8 +33,9 @@ def solve_mdvrp_with_pyvrp(instance: MDVRPInstance, max_runtime=10.0):
 def solve_with_gancp(instance_path):
   instance = read_mdvrp_cordeau(instance_path)
   cost, routes = solve_instance(instance)
-  print(cost)
+  return cost, routes
 
 if __name__ == "__main__":
   instance_path = "/home/ducvu/work/projects/eco-route/src/backend_python/data/mdvrp/pr10"
-  solve_with_gancp(instance_path)
+  cost, routes = solve_with_gancp(instance_path)
+  print(f"Cost of the solution: {cost}")

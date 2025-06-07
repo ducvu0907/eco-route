@@ -31,12 +31,12 @@ public class RouteController {
         .build();
   }
 
-  @PostMapping("/routes/{routeId}/done")
-  public ApiResponse<RouteResponse> markRouteAsDone(@PathVariable("routeId") String routeId) {
-    log.info("Received mark route as done request");
-    var result = routeService.markRouteAsDone(routeId);
+  @PostMapping("/routes/{routeId}/completed")
+  public ApiResponse<RouteResponse> markRouteAsCompleted(@PathVariable("routeId") String routeId) {
+    log.info("Received mark route as completed request");
+    var result = routeService.markRouteAsCompleted(routeId);
     return ApiResponse.<RouteResponse>builder()
-        .message("Mark route as done successfully")
+        .message("Mark route as completed successfully")
         .result(result)
         .build();
   }

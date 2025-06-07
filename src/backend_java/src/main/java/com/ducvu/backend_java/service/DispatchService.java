@@ -6,23 +6,15 @@ import com.ducvu.backend_java.dto.response.VrpResponse;
 import com.ducvu.backend_java.model.*;
 import com.ducvu.backend_java.repository.*;
 import com.ducvu.backend_java.util.Mapper;
-import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
-import io.minio.errors.ErrorResponseException;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.aspectj.weaver.ast.Or;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.support.TransactionSynchronization;
-import org.springframework.transaction.support.TransactionSynchronizationManager;
 import org.springframework.web.client.RestTemplate;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
-import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -82,23 +74,24 @@ public class DispatchService {
 
     boolean isDynamic = runningDispatch != null;
 
+    // if new dispatch then we handle both pending and reassigned one
+    List<Order> orders = orderRepository.findAllPendingOrdersAndReassignmentPendingSorted()
+        .stream()
+        .toList();
+
     if (!isDynamic) {
       runningDispatch = Dispatch.builder()
           .status(DispatchStatus.IN_PROGRESS)
           .build();
+
+      // if dynamic then we only handle pending orders not reassigned one
+      orders = orderRepository.findAllPendingOrdersSorted()
+          .stream()
+          .toList();
     }
-
-    List<Route> routes = isDynamic ? runningDispatch.getRoutes() : new ArrayList<>();
-    // runningDispatch.getRoutes().clear();
-
-    List<Depot> depots = depotRepository.findAll();
 
     List<Vehicle> vehicles = vehicleRepository.findAll().stream()
         .filter(v -> v.getStatus() != VehicleStatus.REPAIR)
-        .toList();
-
-    List<Order> orders = orderRepository.findAllPendingOrdersSorted()
-        .stream()
         .toList();
 
     for (TrashCategory category : TrashCategory.values()) {
@@ -124,11 +117,11 @@ public class DispatchService {
 
     dispatchRepository.save(runningDispatch);
 
-     notifyOrdersInProgress(ordersToNotify);
-     notifyNewRoutes(routesToNotify);
+    notifyOrdersInProgress(ordersToNotify);
+    notifyNewRoutes(routesToNotify);
 
-     ordersToNotify.clear();
-     routesToNotify.clear();
+    ordersToNotify.clear();
+    routesToNotify.clear();
   }
 
   // create routes for one category
@@ -190,21 +183,11 @@ public class DispatchService {
       VrpResponse res1 = vrpMiddleware(vrpJobs, vrpThreeWheelers, vrpThreeWheelersDepots, threeWheelerRoutes);
       unassignedJobs = res1.getUnassigned();
       createRoutes(res1, dispatch);
-      // if (isDynamic) {
-      //   updateRoutes(res1, dispatch);
-      // } else {
-      //   createRoutes(res1, dispatch);
-      // }
     }
 
     if (!unassignedJobs.isEmpty() && !vrpCompactorTrucks.isEmpty()) {
       VrpResponse res2 = vrpMiddleware(unassignedJobs, vrpCompactorTrucks, vrpCompactorTrucksDepots, compactorTruckRoutes);
       createRoutes(res2, dispatch);
-      // if (isDynamic) {
-      //   updateRoutes(res2, dispatch);
-      // } else {
-      //   createRoutes(res2, dispatch);
-      // }
     }
 
   }
@@ -224,7 +207,6 @@ public class DispatchService {
     }
 
     ordersToNotify.addAll(orders);
-    // notifyOrdersInProgress(orders);
     return orders;
   }
 
@@ -253,7 +235,6 @@ public class DispatchService {
         .toList();
 
     routesToNotify.addAll(updatedRoutes);
-    // notifyNewRoutes(updatedRoutes);
   }
 
   private Route buildRouteFromVrp(VrpRoute vrpRoute, Dispatch dispatch) {
@@ -328,14 +309,20 @@ public class DispatchService {
     List<User> users = orders.stream()
         .map(order -> order.getUser())
         .toList();
-    notificationService.sendBatchNotifications("Order is in progress", users);
+    List<String> refIds = orders.stream()
+        .map(order -> order.getId())
+        .toList();
+    notificationService.sendBatchNotifications("Order is in progress", users, NotificationType.ORDER, refIds);
   }
 
   private void notifyNewRoutes(List<Route> routes) {
     List<User> drivers = routes.stream()
         .map(route -> route.getVehicle().getDriver())
         .toList();
-    notificationService.sendBatchNotifications("New route created", drivers);
+    List<String> refIds = routes.stream()
+        .map(route -> route.getId())
+        .toList();
+    notificationService.sendBatchNotifications("New route", drivers, NotificationType.ROUTE, refIds);
   }
 
 }

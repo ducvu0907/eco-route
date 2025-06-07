@@ -41,6 +41,7 @@ import { useLocation } from "react-router";
 type SelectedObject = OrderResponse | VehicleResponse | DepotResponse | null;
 
 const statusConfig = {
+  REASSIGNED: { variant: 'default', color: 'bg-emerald-50 text-emerald-700 border-emerald-200', icon: Circle },
   COMPLETED: { variant: 'default', color: 'bg-emerald-50 text-emerald-700 border-emerald-200', icon: CheckCircle },
   ACTIVE: { variant: 'default', color: 'bg-emerald-50 text-emerald-700 border-emerald-200', icon: CheckCircle },
   IN_PROGRESS: { variant: 'secondary', color: 'bg-blue-50 text-blue-700 border-blue-200', icon: Clock },

@@ -1,5 +1,5 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { getRouteById, getRoutesByVehicleId, getRoutesByDispatchId, getVehicleCurrentRoute, markRouteAsDone, } from "@/apis/route";
+import { getRouteById, getRoutesByVehicleId, getRoutesByDispatchId, getVehicleCurrentRoute, markRouteAsCompleted } from "@/apis/route";
 import { ApiResponse, RouteResponse } from "@/types/types";
 
 export const useGetRouteById = (routeId: string) => {
@@ -14,7 +14,7 @@ export const useMarkRouteAsDone = () => {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: (routeId: string) => markRouteAsDone(routeId),
+    mutationFn: (routeId: string) => markRouteAsCompleted(routeId),
     onSuccess: (_data, routeId) => {
       queryClient.invalidateQueries({queryKey: ["routes", routeId]});
     }

@@ -70,6 +70,7 @@
     "notFoundDescription": "Không thể tải chi tiết đơn hàng. Vui lòng thử lại.",
     "goBack": "Quay lại",
     "orderNumber": "Đơn hàng #{{number}}",
+    "status_reassigned": "Xử lý sau",
     "status_pending": "Đang chờ xử lý",
     "status_in_progress": "Đang thực hiện",
     "status_completed": "Đã hoàn thành",
@@ -182,6 +183,7 @@
     "ELECTRONIC": "Điện tử"
   },
   "statuses": {
+    "REASSIGNED": "Xử lý sau",
     "PENDING": "Đang chờ xử lý",
     "IN_PROGRESS": "Đang thực hiện",
     "COMPLETED": "Đã hoàn thành",
@@ -214,6 +216,7 @@
     "durationMinutes": "{{minutes}}phút",
     "ordersTitle": "Đơn hàng ({{count}})",
     "orderSummary": "{{weight}} kg • {{category}}",
+    "orderStatus_reassigned": "CHỜ XỬ LÝ SAU",
     "orderStatus_completed": "ĐÃ HOÀN THÀNH",
     "orderStatus_in_progress": "ĐANG THỰC HIỆN",
     "orderStatus_pending": "ĐANG CHỜ XỬ LÝ",
