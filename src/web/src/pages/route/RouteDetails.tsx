@@ -258,7 +258,7 @@ export default function RouteDetails() {
                 <p className="text-2xl font-bold">{completedOrders}/{route.orders.length}</p>
                 {routeStats && (
                   <p className="text-xs text-gray-500">
-                    {t('routeDetails.stats.avg')}: {routeStats.averages.orders.toFixed(1)} | {routeStats.percentiles.orders.toFixed(0)}{t('routeDetails.stats.percentile')}
+                    {t('routeDetails.stats.avg')}: {routeStats.averages.orders}
                   </p>
                 )}
               </div>
@@ -275,7 +275,7 @@ export default function RouteDetails() {
                 <p className="text-2xl font-bold">{formatDistance(route.distance)}</p>
                 {routeStats && (
                   <p className="text-xs text-gray-500">
-                    {t('routeDetails.stats.avg')}: {formatDistance(routeStats.averages.distance)} | {routeStats.percentiles.distance.toFixed(0)}{t('routeDetails.stats.percentile')}
+                    {t('routeDetails.stats.avg')}: {formatDistance(routeStats.averages.distance)}
                   </p>
                 )}
               </div>
@@ -292,7 +292,7 @@ export default function RouteDetails() {
                 <p className="text-2xl font-bold">{formatDuration(route.duration)}</p>
                 {routeStats && (
                   <p className="text-xs text-gray-500">
-                    {t('routeDetails.stats.avg')}: {formatDuration(routeStats.averages.duration)} | {routeStats.percentiles.duration.toFixed(0)}{t('routeDetails.stats.percentile')}
+                    {t('routeDetails.stats.avg')}: {formatDuration(routeStats.averages.duration)}
                   </p>
                 )}
               </div>
@@ -403,7 +403,8 @@ export default function RouteDetails() {
                       name === 'duration' ? `${value} ${t('routeDetails.stats.hours')}` :
                       name === 'weight' ? `${value} ${t('routeDetails.stats.kg')}` :
                       value,
-                      t(`routeDetails.charts.performanceTrend.${name}`)
+                      ''
+                      // t(`routeDetails.charts.performanceTrend.${name}`)
                     ]}
                   />
                   <Legend />
@@ -455,7 +456,8 @@ export default function RouteDetails() {
                       name === 'distance' ? `${value} ${t('routeDetails.stats.km')}` :
                       name === 'duration' ? `${value} ${t('routeDetails.stats.hours')}` :
                       value,
-                      t(`routeDetails.charts.distanceDuration.${name}`)
+                      ''
+                      // t(`routeDetails.charts.distanceDuration.${name}`)
                     ]}
                   />
                   <Legend />
@@ -511,8 +513,9 @@ export default function RouteDetails() {
             </CardHeader>
             <CardContent>
               <ResponsiveContainer width="100%" height={300}>
-                <BarChart data={chartData.statusDistribution} layout="horizontal">
+                <BarChart data={chartData.statusDistribution} layout="vertical"> {/* Changed layout to vertical for conventional bar chart, or adjust axes for horizontal */}
                   <CartesianGrid strokeDasharray="3 3" />
+                  {/* Corrected X and Y Axes for horizontal bar chart */}
                   <XAxis type="number" />
                   <YAxis dataKey="status" type="category" width={100} />
                   <Tooltip formatter={(value) => [value, t('routeDetails.charts.statusDistribution.orders')]} />
@@ -525,6 +528,7 @@ export default function RouteDetails() {
               </ResponsiveContainer>
             </CardContent>
           </Card>
+
         </div>
       )}
 
@@ -610,7 +614,7 @@ export default function RouteDetails() {
               <span>{t('routeDetails.timeline.title')}</span>
             </CardTitle>
             <CardDescription>
-              {t('routeDetails.timeline.createdOn', { date: new Date(route.createdAt).toLocaleDateString(), time: new Date(route.createdAt).toLocaleTimeString() })}
+              {t('routeDetails.timeline.createdOn')} {formatDate(route.createdAt)}
             </CardDescription>
           </CardHeader>
           <CardContent>

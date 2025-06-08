@@ -1041,7 +1041,7 @@
     },
     "timeline": {
       "title": "Dòng thời gian tuyến đường",
-      "createdOn": "Được tạo vào ngày {{date}} lúc {{time}}",
+      "createdOn": "Được tạo vào ngày",
       "started": "Bắt đầu",
       "completed": "Hoàn thành",
       "lastUpdated": "Cập nhật lần cuối",
@@ -1067,7 +1067,7 @@
     "category": {
       "GENERAL": "SINH HOẠT",
       "ELECTRONIC": "ĐIỆN TỬ",
-      "RECYCLABLE": "CÓ THỂ TÁI CHẾ",
+      "RECYCLABLE": "TÁI CHẾ",
       "ORGANIC": "HỮU CƠ",
       "HAZARDOUS": "NGUY HIỂM"
     }

@@ -1041,7 +1041,7 @@
     },
     "timeline": {
       "title": "Route Timeline",
-      "createdOn": "Created on {{date}} at {{time}}",
+      "createdOn": "Created at", 
       "started": "Started",
       "completed": "Completed",
       "lastUpdated": "Last Updated",
