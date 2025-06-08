@@ -367,7 +367,8 @@
       "duration": "Duration",
       "minutes": "min",
       "completed": "Completed:",
-      "goToDispatch": "Go to dispatch"
+      "goToDispatch": "Go to dispatch",
+      "goToRoute": "Go to route"
     },
     "mapSection": {
       "title": "Route Map",
@@ -491,6 +492,10 @@
     }
   },
   "currentDispatchDetails": {
+    "button": {
+      "goToRoute": "View Route Details",
+      "goToOrder": "View Order Details"
+    },
     "error": {
       "title": "Error",
       "description": "Failed to load dispatch details. Please try again."
@@ -953,6 +958,118 @@
         "created": "Created",
         "lastUpdated": "Last Updated"
       }
+    }
+  },
+  "routeDetails": {
+    "loading": "Loading route details...",
+    "notFound": {
+      "title": "Route Not Found",
+      "message": "The requested route could not be found."
+    },
+    "title": "Route Details",
+    "id": "Route ID: {{routeId}}",
+    "status": {
+      "COMPLETED": "COMPLETED",
+      "IN_PROGRESS": "IN PROGRESS",
+      "PENDING": "PENDING",
+      "CANCELLED": "CANCELLED",
+      "REASSIGNED": "REASSIGNED"
+    },
+    "stats": {
+      "orders": "Orders",
+      "distance": "Distance",
+      "duration": "Duration",
+      "weight": "Weight",
+      "avg": "Avg",
+      "percentile": "th percentile",
+      "kg": "kg",
+      "km": "km",
+      "hours": "hrs"
+    },
+    "durationFormat": "{{hours}}h {{minutes}}m",
+    "durationMinutesFormat": "{{minutes}}m",
+    "distanceKmFormat": "{{distance}} km",
+    "distanceMetersFormat": "{{distance}} m",
+    "performance": {
+      "efficiencyScore": "Efficiency Score",
+      "higherBetter": "Higher is better",
+      "completionRate": "Completion Rate",
+      "completedOrders": "{{completed}} of {{total}} orders",
+      "routeRank": "Route Rank",
+      "totalRoutes": "of {{total}} total routes",
+      "weightEfficiency": "Weight Efficiency",
+      "kgPerKm": "kg per km"
+    },
+    "charts": {
+      "performanceTrend": {
+        "title": "Vehicle Route Performance Trend",
+        "description": "Comparison of this route with vehicle's historical performance",
+        "orders": "Orders",
+        "distance": "Distance",
+        "duration": "Duration",
+        "weightKg": "Weight (kg)"
+      },
+      "distanceDuration": {
+        "title": "Distance vs Duration Comparison",
+        "description": "How this route compares in efficiency",
+        "distanceKm": "Distance (km)",
+        "durationHrs": "Duration (hrs)"
+      },
+      "categoryDistribution": {
+        "title": "Order Category Distribution",
+        "description": "Breakdown of waste categories in this route"
+      },
+      "statusDistribution": {
+        "title": "Order Status Distribution",
+        "description": "Current status of orders in this route",
+        "orders": "Orders"
+      }
+    },
+    "vehicleInfo": {
+      "title": "Vehicle Information",
+      "licensePlate": "License Plate",
+      "type": "Type",
+      "category": "Category",
+      "capacity": "Capacity",
+      "currentLoad": "Current Load",
+      "status": "Status"
+    },
+    "driverInfo": {
+      "title": "Driver",
+      "name": "Name",
+      "phone": "Phone"
+    },
+    "timeline": {
+      "title": "Route Timeline",
+      "createdOn": "Created on {{date}} at {{time}}",
+      "started": "Started",
+      "completed": "Completed",
+      "lastUpdated": "Last Updated",
+      "progress": "Progress",
+      "ordersCompleted": "Orders Completed",
+      "of": "of",
+      "vehiclePerformanceSummary": "Vehicle Performance Summary",
+      "totalRoutes": "Total Routes",
+      "completedRoutes": "Completed"
+    },
+    "ordersList": {
+      "title": "Orders ({{count}})"
+    },
+    "orderCompleted": "Completed",
+    "viewOrderDetails": "View Order Details",
+    "orderStatus": {
+      "COMPLETED": "COMPLETED",
+      "IN_PROGRESS": "IN PROGRESS",
+      "PENDING": "PENDING",
+      "CANCELLED": "CANCELLED",
+      "REASSIGNED": "REASSIGNED"
+    },
+    "category": {
+      "GENERAL": "GENERAL",
+      "ELECTRONIC": "ELECTRONIC",
+      "RECYCLABLE": "RECYCLABLE",
+      "ORGANIC": "ORGANIC",
+      "HAZARDOUS": "HAZARDOUS"
     }
   }
 }

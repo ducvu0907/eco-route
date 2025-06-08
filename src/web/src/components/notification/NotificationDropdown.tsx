@@ -38,6 +38,7 @@ export default function NotificationDropdown() {
 
   const handleClickItem = (item: NotificationResponse) => {
     read(item.id);
+    setOpen(false);
     navigate(notificationRoute(item));
   };
 

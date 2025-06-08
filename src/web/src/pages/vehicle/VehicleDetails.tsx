@@ -281,9 +281,9 @@ export default function VehicleDetails() {
                           </Badge>
                           <Button
                             variant={"outline"}
-                            onClick={() => navigate(`/dispatches/${route.dispatchId}`)}
+                            onClick={() => navigate(`/routes/${route.id}`)}
                           >
-                            {t("vehicleDetails.routesCard.goToDispatch")}
+                            {t("vehicleDetails.routesCard.goToRoute")}
                           </Button>
                         </div>
 

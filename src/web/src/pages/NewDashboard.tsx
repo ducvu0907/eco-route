@@ -16,7 +16,7 @@ const generateMockDepots = (count: number): DepotResponse[] => {
       latitude: 10.762622 + (Math.random() - 0.5) * 0.1,
       longitude: 106.660172 + (Math.random() - 0.5) * 0.1,
       address: `Depot Address ${i + 1}`,
-      vehicles: [], // Will be populated by mock vehicles
+      vehicles: [], 
       createdAt: new Date().toISOString(),
       updatedAt: new Date().toISOString(),
     });
@@ -163,7 +163,7 @@ const generateMockRoutes = (count: number, vehicles: VehicleResponse[], dispatch
 export default function NewDashboard() {
   const { t } = useTranslation();
 
-  // Uncomment and use real data when available
+  // real data
   // const { data: depotsData, isLoading: isDepotsLoading } = useGetDepots();
   // const { data: vehiclesData, isLoading: isVehiclesLoading } = useGetVehicles();
   // const { data: dispatchesData, isLoading: isDispatchesLoading } = useGetDispatches();
@@ -255,29 +255,33 @@ export default function NewDashboard() {
 
 
   // Routes by Status
-  // const routesByStatus = routes.reduce((acc, route) => {
-  //   acc[route.status] = (acc[route.status] || 0) + 1;
-  //   return acc;
-  // }, {} as Record<RouteStatus, number>);
-  // const routesStatusChartData = Object.entries(routesByStatus).map(([status, count]) => ({
-  //   name: t(`dashboard.${status}`),
-  //   value: count,
-  // }));
+  const routesByStatus = routes.reduce((acc, route) => {
+    acc[route.status] = (acc[route.status] || 0) + 1;
+    return acc;
+  }, {} as Record<RouteStatus, number>);
+  const routesStatusChartData = Object.entries(routesByStatus).map(([status, count]) => ({
+    name: t(`dashboard.${status}`),
+    value: count,
+  }));
 
   // Dispatches by Status
-  // const dispatchesByStatus = dispatches.reduce((acc, dispatch) => {
-  //   acc[dispatch.status] = (acc[dispatch.status] || 0) + 1;
-  //   return acc;
-  // }, {} as Record<DispatchStatus, number>);
+  const dispatchesByStatus = dispatches.reduce((acc, dispatch) => {
+    acc[dispatch.status] = (acc[dispatch.status] || 0) + 1;
+    return acc;
+  }, {} as Record<DispatchStatus, number>);
+
   // const dispatchesStatusChartData = Object.entries(dispatchesByStatus).map(([status, count]) => ({
   //   name: t(`dashboard.${status}`),
   //   value: count,
   // }));
 
   // Total completed orders vs. total orders
-  // const totalOrders = orders.length;
-  // const completedOrders = orders.filter(order => order.status === OrderStatus.COMPLETED).length;
+  const totalOrders = orders.length;
+  const completedOrders = orders.filter(order => order.status === OrderStatus.COMPLETED).length;
+  const cancelledOrders = orders.filter(order => order.status === OrderStatus.CANCELLED).length;
+
   // const completedOrdersPercentage = totalOrders > 0 ? (completedOrders / totalOrders) * 100 : 0;
+  // const cancelledOrdersPercentage = totalOrders > 0 ? (cancelledOrders / totalOrders) * 100 : 0;
 
   // Average Route Distance and Duration
   const totalRouteDistance = routes.reduce((sum, route) => sum + route.distance, 0);
@@ -285,6 +289,10 @@ export default function NewDashboard() {
 
   const totalRouteDuration = routes.reduce((sum, route) => sum + route.duration, 0); // in minutes
   const averageRouteDuration = routes.length > 0 ? totalRouteDuration / routes.length : 0;
+
+  // Total Orders per Route (Average)
+  const totalOrdersInRoutes = routes.reduce((sum, route) => sum + route.orders.length, 0);
+  const averageOrdersPerRoute = routes.length > 0 ? totalOrdersInRoutes / routes.length : 0;
 
 
   // Vehicle Load Percentage
@@ -303,7 +311,7 @@ export default function NewDashboard() {
 
 
   // Colors for Pie Charts
-  const COLORS = ['#0088FE', '#00C49F', '#FFBB28', '#FF8042', '#AF19FF', '#FF0000'];
+  const COLORS = ['#0088FE', '#00C49F', '#FFBB28', '#FF8042', '#AF19FF', '#FF0000', '#88FEE8'];
 
 
   return (
@@ -467,6 +475,55 @@ export default function NewDashboard() {
           </Card>
         </div>
 
+        {/* New Charts for Routes */}
+        <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-7">
+          <Card className="col-span-4">
+            <CardHeader>
+              <CardTitle>{t("dashboard.Routes by Status")}</CardTitle>
+              <CardDescription>{t("dashboard.Current distribution of all route statuses.")}</CardDescription>
+            </CardHeader>
+            <CardContent>
+              <ResponsiveContainer width="100%" height={300}>
+                <BarChart data={routesStatusChartData}>
+                  <CartesianGrid strokeDasharray="3 3" />
+                  <XAxis dataKey="name" />
+                  <YAxis />
+                  <Tooltip />
+                  <Legend />
+                  <Bar dataKey="value" fill="#FFBB28" />
+                </BarChart>
+              </ResponsiveContainer>
+            </CardContent>
+          </Card>
+          <Card className="col-span-3">
+            <CardHeader>
+              <CardTitle>{t("dashboard.Order Completion/Cancellation Rate")}</CardTitle>
+              <CardDescription>{t("dashboard.Percentage of completed and cancelled orders.")}</CardDescription>
+            </CardHeader>
+            <CardContent className="h-[300px] flex items-center justify-center">
+              <ResponsiveContainer width="100%" height="100%">
+                <PieChart>
+                  <Pie
+                    data={[{ name: t('dashboard.Completed'), value: completedOrders }, { name: t('dashboard.Cancelled'), value: cancelledOrders }]}
+                    cx="50%"
+                    cy="50%"
+                    labelLine={false}
+                    outerRadius={100}
+                    fill="#8884d8"
+                    dataKey="value"
+                    label={({ name, percent }) => `${name} ${(percent * 100).toFixed(0)}%`}
+                  >
+                    <Cell key={`cell-completed`} fill={COLORS[0]} />
+                    <Cell key={`cell-cancelled`} fill={COLORS[5]} />
+                  </Pie>
+                  <Tooltip formatter={(value: number) => `${value} (${((value / totalOrders) * 100).toFixed(1)}%)`} />
+                  <Legend />
+                </PieChart>
+              </ResponsiveContainer>
+            </CardContent>
+          </Card>
+        </div>
+
         <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-7">
           <Card className="col-span-4">
             <CardHeader>
@@ -515,32 +572,62 @@ export default function NewDashboard() {
           </Card>
         </div>
 
-        <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-1">
+        {/* Additional Route Statistics */}
+        <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
           <Card>
-            <CardHeader>
-              <CardTitle>{t("dashboard.Top 5 Depots by Vehicle Count")}</CardTitle>
-              <CardDescription>{t("dashboard.Depots with the highest number of assigned vehicles.")}</CardDescription>
+            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+              <CardTitle className="text-sm font-medium">{t("dashboard.Total Routes")}</CardTitle>
+              <RouteIcon className="h-4 w-4 text-muted-foreground" />
             </CardHeader>
             <CardContent>
-              <ul className="space-y-2">
-                {top5Depots.map((depot, index) => (
-                  <li key={depot.id} className="flex items-center justify-between">
-                    <div className="flex items-center space-x-2">
-                      <span className="font-bold text-lg">{index + 1}.</span>
-                      <span>{depot.address}</span>
-                    </div>
-                    <div className="flex items-center space-x-1">
-                      <Truck className="h-4 w-4" />
-                      <span>{depot.vehicleCount}</span>
-                    </div>
-                  </li>
-                ))}
-              </ul>
+              <div className="text-2xl font-bold">{routes.length}</div>
+              <p className="text-xs text-muted-foreground">
+                {t("dashboard.Total routes ever created")}
+              </p>
+            </CardContent>
+          </Card>
+          <Card>
+            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+              <CardTitle className="text-sm font-medium">{t("dashboard.Routes in Progress")}</CardTitle>
+              <Clock className="h-4 w-4 text-muted-foreground" />
+            </CardHeader>
+            <CardContent>
+              <div className="text-2xl font-bold">
+                {routes.filter(r => r.status === RouteStatus.IN_PROGRESS).length}
+              </div>
+              <p className="text-xs text-muted-foreground">
+                {t("dashboard.Routes currently being executed")}
+              </p>
+            </CardContent>
+          </Card>
+          <Card>
+            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+              <CardTitle className="text-sm font-medium">{t("dashboard.Average Orders per Route")}</CardTitle>
+              <Package className="h-4 w-4 text-muted-foreground" />
+            </CardHeader>
+            <CardContent>
+              <div className="text-2xl font-bold">{averageOrdersPerRoute.toFixed(1)}</div>
+              <p className="text-xs text-muted-foreground">
+                {t("dashboard.Average number of orders in a route")}
+              </p>
+            </CardContent>
+          </Card>
+          <Card>
+            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+              <CardTitle className="text-sm font-medium">{t("dashboard.Most Active Depot")}</CardTitle>
+              <Truck className="h-4 w-4 text-muted-foreground" />
+            </CardHeader>
+            <CardContent>
+              <div className="text-2xl font-bold">
+                {top5Depots.length > 0 ? top5Depots[0].address : t("dashboard.N/A")}
+              </div>
+              <p className="text-xs text-muted-foreground">
+                {t("dashboard.Depot with most vehicles")}{" "}
+                {top5Depots.length > 0 && `(${top5Depots[0].vehicleCount} vehicles)`}
+              </p>
             </CardContent>
           </Card>
         </div>
-
-
       </div>
     </ScrollArea>
   );

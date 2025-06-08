@@ -1,6 +1,5 @@
 import MultiRoutesDynamicMap from "@/components/map/MultiRoutesDynamicMap";
 import SingleRouteDynamicMap from "@/components/map/SingleRouteDynamicMap";
-// import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
@@ -14,7 +13,6 @@ import { DispatchStatus, RouteResponse, RouteStatus, TrashCategory } from "@/typ
 import { formatDate } from "@/utils/formatDate";
 import { useQueryClient } from "@tanstack/react-query";
 import {
-  // AlertCircle,
   Calendar,
   CheckCircle2,
   Clock,
@@ -30,6 +28,7 @@ import {
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
 import NoDispatch from "./NoDispatch";
+import { useNavigate } from "react-router";
 
 const getCategoryBadgeVariant = (category: TrashCategory) => {
   switch (category) {
@@ -51,6 +50,7 @@ const getStatusBadgeVariant = (status: DispatchStatus | RouteStatus) => {
 };
 
 export default function CurrentDispatchDetails() {
+  const navigate = useNavigate();
   const queryClient = useQueryClient();
   const { mutate: createDispatch, isPending } = useCreateDispatch();
   const [activeTab, setActiveTab] = useState("overview");
@@ -288,7 +288,7 @@ export default function CurrentDispatchDetails() {
                         setSelectedRoute(route);
                       }
                     }}>
-                    <CardContent className="p-4">
+                    <CardContent className="p-4 flex flex-col gap-3"> {/* Added flex-col and gap */}
                       <div className="space-y-3">
                         <div className="flex items-center justify-between">
                           <div className="flex items-center gap-2">
@@ -322,6 +322,16 @@ export default function CurrentDispatchDetails() {
                           </div>
                         </div>
                       </div>
+                      <Button 
+                        variant={"secondary"} 
+                        onClick={(e) => {
+                            e.stopPropagation();
+                            navigate(`/routes/${route.id}`);
+                        }}
+                        className="w-full" 
+                      >
+                      {t("currentDispatchDetails.button.goToRoute")}
+                      </Button>
                     </CardContent>
                   </Card>
                 ))}
@@ -340,7 +350,7 @@ export default function CurrentDispatchDetails() {
               <div className="space-y-3">
                 {pendingOrders.map((order) => (
                   <Card key={order.id} className="border-l-4 border-l-orange-500">
-                    <CardContent className="p-4">
+                    <CardContent className="p-4 flex flex-col gap-3"> {/* Added flex-col and gap */}
                       <div className="space-y-3">
                         <div className="flex items-start justify-between">
                           <div className="flex-1">
@@ -365,11 +375,19 @@ export default function CurrentDispatchDetails() {
                           </Badge>
                         </div>
                       </div>
+                      <Button 
+                        variant={"secondary"} 
+                        onClick={() => navigate(`/orders/${order.id}`)}
+                        className="w-full" 
+                      >
+                      {t("currentDispatchDetails.button.goToOrder")}
+                      </Button>
                     </CardContent>
                   </Card>
                 ))}
               </div>
             </TabsContent>
+
           </div>
         </Tabs>
       </div>

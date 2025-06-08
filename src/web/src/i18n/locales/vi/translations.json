@@ -367,7 +367,8 @@
       "duration": "Thời lượng",
       "minutes": "phút",
       "completed": "Đã hoàn thành:",
-      "goToDispatch": "Đi đến điều phối"
+      "goToDispatch": "Đi đến điều phối",
+      "goToRoute": "Xem chi tiết lộ trình"
     },
     "mapSection": {
       "title": "Bản đồ Tuyến đường",
@@ -434,11 +435,11 @@
       "description": "Không thể tải thông tin điều phối. Vui lòng kiểm tra kết nối của bạn và thử lại."
     },
     "header": {
-      "title": "Quản lý Điều phối",
-      "currentDispatchButton": "Điều phối Hiện tại"
+      "title": "Quản lý phiên điều phối",
+      "currentDispatchButton": "Phiên điều phối Hiện tại"
     },
     "stats": {
-      "totalDispatches": "Tổng số Điều phối",
+      "totalDispatches": "Tổng số phiên Điều phối",
       "completed": "Đã hoàn thành",
       "inProgress": "Đang tiến hành"
     },
@@ -448,10 +449,10 @@
       "clearFilters": "Xóa Bộ lọc"
     },
     "table": {
-      "title": "Lịch sử Điều phối",
+      "title": "Lịch sử",
       "totalRecords": "{{count}} tổng số bản ghi",
       "header": {
-        "dispatchId": "Mã Điều phối",
+        "dispatchId": "Mã phiên điều phối",
         "status": "Trạng thái",
         "completedAt": "Hoàn thành vào",
         "createdAt": "Tạo vào",
@@ -460,9 +461,9 @@
       },
       "statusPending": "Đang chờ xử lý",
       "noDispatches": {
-        "title": "Không tìm thấy Điều phối",
+        "title": "Không tìm thấy phiên điều phối",
         "description": "Hiện tại không có điều phối nào trong hệ thống. Các điều phối sẽ xuất hiện ở đây khi chúng được tạo và phân công cho phương tiện.",
-        "createButton": "Tạo Điều phối Mới"
+        "createButton": "Tạo phiên điều phối mới"
       }
     }
   },
@@ -491,6 +492,10 @@
     }
   },
   "currentDispatchDetails": {
+    "button": {
+      "goToRoute": "Xem chi tiết tuyến đường",
+      "goToOrder": "Xem chi tiết yêu cầu"
+    },
     "error": {
       "title": "Lỗi",
       "description": "Không thể tải chi tiết điều phối. Vui lòng thử lại."
@@ -953,6 +958,118 @@
         "created": "Đã tạo",
         "lastUpdated": "Cập nhật lần cuối"
       }
+    }
+  },
+  "routeDetails": {
+    "loading": "Đang tải chi tiết tuyến đường...",
+    "notFound": {
+      "title": "Không tìm thấy tuyến đường",
+      "message": "Không tìm thấy tuyến đường được yêu cầu."
+    },
+    "title": "Chi tiết tuyến đường",
+    "id": "ID tuyến đường: {{routeId}}",
+    "status": {
+      "COMPLETED": "HOÀN THÀNH",
+      "IN_PROGRESS": "ĐANG THỰC HIỆN",
+      "PENDING": "ĐANG CHỜ",
+      "CANCELLED": "ĐÃ HỦY",
+      "REASSIGNED": "ĐÃ PHÂN CÔNG LẠI"
+    },
+    "stats": {
+      "orders": "Đơn hàng",
+      "distance": "Khoảng cách",
+      "duration": "Thời lượng",
+      "weight": "Trọng lượng",
+      "avg": "Trung bình",
+      "percentile": "th phần trăm",
+      "kg": "kg",
+      "km": "km",
+      "hours": "giờ"
+    },
+    "durationFormat": "{{hours}}h {{minutes}}m",
+    "durationMinutesFormat": "{{minutes}}m",
+    "distanceKmFormat": "{{distance}} km",
+    "distanceMetersFormat": "{{distance}} m",
+    "performance": {
+      "efficiencyScore": "Điểm hiệu quả",
+      "higherBetter": "Cao hơn là tốt hơn",
+      "completionRate": "Tỷ lệ hoàn thành",
+      "completedOrders": "{{completed}} trên {{total}} đơn hàng",
+      "routeRank": "Xếp hạng tuyến đường",
+      "totalRoutes": "trên tổng số {{total}} tuyến đường",
+      "weightEfficiency": "Hiệu suất trọng lượng",
+      "kgPerKm": "kg mỗi km"
+    },
+    "charts": {
+      "performanceTrend": {
+        "title": "Xu hướng hiệu suất tuyến đường của phương tiện",
+        "description": "So sánh tuyến đường này với hiệu suất lịch sử của phương tiện",
+        "orders": "Đơn hàng",
+        "distance": "Khoảng cách",
+        "duration": "Thời lượng",
+        "weightKg": "Trọng lượng (kg)"
+      },
+      "distanceDuration": {
+        "title": "So sánh Khoảng cách và Thời lượng",
+        "description": "So sánh về hiệu quả",
+        "distanceKm": "Khoảng cách (km)",
+        "durationHrs": "Thời lượng (giờ)"
+      },
+      "categoryDistribution": {
+        "title": "Phân phối loại đơn hàng",
+        "description": "Phân tích các loại chất thải trong tuyến đường này"
+      },
+      "statusDistribution": {
+        "title": "Phân phối trạng thái đơn hàng",
+        "description": "Trạng thái hiện tại của các đơn hàng trong tuyến đường này",
+        "orders": "Đơn hàng"
+      }
+    },
+    "vehicleInfo": {
+      "title": "Thông tin phương tiện",
+      "licensePlate": "Biển số",
+      "type": "Loại",
+      "category": "Danh mục",
+      "capacity": "Dung tích",
+      "currentLoad": "Tải trọng hiện tại",
+      "status": "Trạng thái"
+    },
+    "driverInfo": {
+      "title": "Tài xế",
+      "name": "Tên",
+      "phone": "Số điện thoại"
+    },
+    "timeline": {
+      "title": "Dòng thời gian tuyến đường",
+      "createdOn": "Được tạo vào ngày {{date}} lúc {{time}}",
+      "started": "Bắt đầu",
+      "completed": "Hoàn thành",
+      "lastUpdated": "Cập nhật lần cuối",
+      "progress": "Tiến độ",
+      "ordersCompleted": "Đơn hàng đã hoàn thành",
+      "of": "trên",
+      "vehiclePerformanceSummary": "Tóm tắt hiệu suất phương tiện",
+      "totalRoutes": "Tổng số tuyến đường",
+      "completedRoutes": "Đã hoàn thành"
+    },
+    "ordersList": {
+      "title": "Đơn hàng ({{count}})"
+    },
+    "orderCompleted": "Hoàn thành",
+    "viewOrderDetails": "Xem chi tiết đơn hàng",
+    "orderStatus": {
+      "COMPLETED": "ĐÃ HOÀN THÀNH",
+      "IN_PROGRESS": "ĐANG TIẾN HÀNH",
+      "PENDING": "ĐANG CHỜ XỬ LÝ",
+      "CANCELLED": "ĐÃ HỦY",
+      "REASSIGNED": "ĐÃ GIAO LẠI"
+    },
+    "category": {
+      "GENERAL": "SINH HOẠT",
+      "ELECTRONIC": "ĐIỆN TỬ",
+      "RECYCLABLE": "CÓ THỂ TÁI CHẾ",
+      "ORGANIC": "HỮU CƠ",
+      "HAZARDOUS": "NGUY HIỂM"
     }
   }
 }

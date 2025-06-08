@@ -24,6 +24,7 @@ import UserDetails from "./pages/user/UserDetails";
 import UserManagement from "./pages/user/UserManagement";
 import VehicleDetails from "./pages/vehicle/VehicleDetails";
 import VehicleManagement from "./pages/vehicle/VehicleManagement";
+import RouteDetails from "./pages/route/RouteDetails";
 
 const App = () => {
   const queryClient = useQueryClient();
@@ -77,6 +78,8 @@ const App = () => {
         <Route path="/orders/:orderId" element={<OrderDetails />}/>
 
         <Route path="/map" element={<Map />} />
+
+        <Route path="/routes/:routeId" element={<RouteDetails />} />
 
       </Route>
 

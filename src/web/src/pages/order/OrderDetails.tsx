@@ -379,16 +379,6 @@ export default function OrderDetails() {
               </div>
             </CardHeader>
             <CardContent className="space-y-3">
-              {order.status === OrderStatus.PENDING && (
-                <Button 
-                  onClick={() => navigate("/dispatches/current")}
-                  className="w-full"
-                >
-                  <Route className="h-4 w-4 mr-2" />
-                  {t("orderDetails.actionsCard.goToDispatch")}
-                </Button>
-              )}
-              
               {route && (
                 <Button 
                   variant="outline"
