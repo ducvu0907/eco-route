@@ -101,6 +101,37 @@ public class OrderService {
     return mapper.map(order);
   }
 
+  public OrderResponse updateOrder(String orderId, OrderUpdateRequest request, MultipartFile file) {
+    Order order = orderRepository.findById(orderId)
+        .orElseThrow(() -> new RuntimeException("Order not found"));
+
+    if (request.getAddress() != null && request.getLatitude() != null && request.getLongitude() != null) {
+      order.setAddress(request.getAddress());
+      order.setLatitude(request.getLatitude());
+      order.setLongitude(request.getLongitude());
+    }
+
+    if (request.getWeight() != null) {
+      order.setWeight(request.getWeight());
+    }
+
+    if (request.getDescription() != null) {
+      order.setDescription(request.getDescription());
+    }
+
+    if (request.getCategory() != null) {
+      order.setCategory(request.getCategory());
+    }
+
+    if (file != null) {
+      String imageUrl = minioService.uploadFile(file); // save into minio
+      order.setImageUrl(imageUrl);
+    }
+
+    order = orderRepository.save(order);
+    notifyUpdatedOrder(order);
+    return mapper.map(order);
+  }
   public OrderResponse createOrder(OrderCreateRequest request, MultipartFile file) {
     validator.validate(request);
     User user = userService.getCurrentUser();
@@ -148,7 +179,7 @@ public class OrderService {
     }
 
     order.setStatus(OrderStatus.CANCELLED);
-    order.setCompletedAt(LocalDateTime.now());
+    // order.setCompletedAt(LocalDateTime.now());
 
     order = orderRepository.save(order);
 
@@ -174,6 +205,12 @@ public class OrderService {
     User customer = order.getUser();
     notificationService.sendSingleNotification("Order is reassigned", customer, NotificationType.ORDER, order.getId());
   }
+
+  private void notifyUpdatedOrder(Order order) {
+    User manager = userService.getManager();
+    notificationService.sendSingleNotification("Order is updated", manager, NotificationType.ORDER, order.getId());
+  }
+
   private void notifyNewOrder(Order order) {
     User manager = userService.getManager();
     notificationService.sendSingleNotification("New order", manager, NotificationType.ORDER, order.getId());

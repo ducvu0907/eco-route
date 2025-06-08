@@ -75,6 +75,19 @@ public class OrderController {
         .build();
   }
 
+  @PostMapping(value = "/orders/{orderId}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+  public ApiResponse<OrderResponse> updateOrder(
+      @PathVariable("orderId") String orderId,
+      @RequestPart("request") OrderUpdateRequest request,
+      @RequestPart(value = "file", required = false) MultipartFile file) {
+    log.info("Received order update request: {}", request);
+    var result = orderService.updateOrder(orderId, request, file);
+    return ApiResponse.<OrderResponse>builder()
+        .message("Update order successfully")
+        .result(result)
+        .build();
+  }
+
   @PostMapping(value = "/orders", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
   public ApiResponse<OrderResponse> createOrder(
       @RequestPart("request") OrderCreateRequest request, @RequestPart(value = "file", required = false) MultipartFile file) {

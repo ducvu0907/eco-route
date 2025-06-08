@@ -71,6 +71,8 @@ public class NotificationService {
         .filter(Objects::nonNull)
         .toList();
 
+    saveAll(content, users, type, refIds); // still persist notifications
+
     if (fcmTokens.isEmpty()) {
       log.warn("No FCM tokens provided for batch notification.");
       return;
@@ -84,7 +86,6 @@ public class NotificationService {
 
     try {
       BatchResponse response = firebaseMessaging.sendEachForMulticast(message);
-      saveAll(content, users, type, refIds); // persist notifications
       log.info("Batch notification sent. Success: {}, Failure: {}",
           response.getSuccessCount(), response.getFailureCount());
 
@@ -100,6 +101,8 @@ public class NotificationService {
 
   public void sendSingleNotification(String content, User user, NotificationType type, String refId) {
     log.info("Sending notification to {}", user);
+    save(content, user, type, refId); // still persist notification
+
     if (user.getFcmToken() == null) {
       log.warn("FCM token is null or empty. Notification not sent.");
       return;
@@ -117,7 +120,6 @@ public class NotificationService {
 
     try {
       String response = firebaseMessaging.send(message);
-      save(content, user, type, refId);
       log.info("Notification sent successfully. Response: {}", response);
     } catch (Exception e) {
       log.error("Failed to send notification to token: {}", user, e);

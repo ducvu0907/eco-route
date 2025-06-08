@@ -16,6 +16,7 @@ public class NotificationResponse {
   private String id;
   private NotificationType type;
   private String content;
+  private String refId;
   private Boolean isRead;
   private LocalDateTime createdAt;
   private LocalDateTime updatedAt;

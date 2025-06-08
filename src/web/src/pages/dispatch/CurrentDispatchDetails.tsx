@@ -318,7 +318,7 @@ export default function CurrentDispatchDetails() {
                           </div>
                           <div className="flex items-center gap-2">
                             <Clock className="h-3 w-3" />
-                            {t("currentDispatchDetails.routesTab.duration")}: {route.duration} {t("currentDispatchDetails.stats.durationUnit")}
+                            {t("currentDispatchDetails.routesTab.duration")}: {route.duration.toFixed(1)} {t("currentDispatchDetails.stats.durationUnit")}
                           </div>
                         </div>
                       </div>
