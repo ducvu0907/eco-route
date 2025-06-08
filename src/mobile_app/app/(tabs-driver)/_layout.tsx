@@ -1,9 +1,6 @@
 import { Tabs } from "expo-router";
 import { Ionicons } from "@expo/vector-icons";
-import { useAuthContext } from "@/hooks/useAuthContext";
-import { Role } from "@/types/types";
-import { Redirect } from "expo-router";
-import { useTranslation } from "react-i18next"; // Assuming you are using react-i18next
+import { useTranslation } from "react-i18next";
 
 export default function TabsDriverLayout() {
   const { t } = useTranslation();
@@ -26,11 +23,11 @@ export default function TabsDriverLayout() {
       />
 
       <Tabs.Screen
-        name="current-route"
+        name="routes"
         options={{
-          tabBarLabel: t("driverTabs.currentRoute"),
+          tabBarLabel: t("driverTabs.routes"),
           tabBarIcon: ({ color, size }) => (
-            <Ionicons name="navigate-outline" size={size} color={color} />
+            <Ionicons name="person-outline" size={size} color={color} />
           ),
         }}
       />

@@ -19,7 +19,8 @@ export default function Notifications() {
 
   const handleClick = (item: NotificationResponse) => {
     read(item.id);
-    router.replace(notificationRoute(item) as Href);
+    const href = notificationRoute(item);
+    router.replace(href as Href);
   };
 
   const renderNotification = ({ item }: { item: NotificationResponse }) => (

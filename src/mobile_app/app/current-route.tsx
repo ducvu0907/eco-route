@@ -1,13 +1,16 @@
 import React from "react";
-import { View, Text, ActivityIndicator } from "react-native";
+import { View, Text, ActivityIndicator, TouchableOpacity } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import VehicleInfo from "@/components/VehicleInfo";
 import { useAuthContext } from "@/hooks/useAuthContext";
 import { useGetVehicleByDriverId } from "@/hooks/useVehicle";
 import DemoInProgressDriverMap from "@/components/DemoInProgressDriverMap";
 import { useTranslation } from "react-i18next";
+import { Ionicons } from "@expo/vector-icons";
+import { useRouter } from "expo-router";
 
 export default function CurrentRouteDetails() {
+  const router = useRouter();
   const { t } = useTranslation();
   const { userId } = useAuthContext();
   const { data, isLoading, isError } = useGetVehicleByDriverId(userId || "");
@@ -49,7 +52,19 @@ export default function CurrentRouteDetails() {
     <View className="flex-1 bg-white">
       {/* Header */}
       <SafeAreaView className="p-0 bg-white border-b border-gray-200 z-10">
-        <Text className="text-xl font-bold text-gray-800 text-center">{t("route.title")}</Text>
+        <View className="p-4">
+          {/* Header */}
+          <View className="flex-row items-center justify-between">
+              <TouchableOpacity
+                onPress={() => router.back()}
+                className="p-2 rounded-full bg-gray-100"
+              >
+                <Ionicons name="arrow-back" size={24} color="black" />
+              </TouchableOpacity>
+            <Text className="text-2xl font-bold text-gray-800">{t("route.title")}</Text>
+            <View className="w-10" />
+          </View>
+        </View>
       </SafeAreaView>
 
       {/* Map Container */}

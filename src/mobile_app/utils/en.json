@@ -90,7 +90,13 @@
     "createdAt": "Created At",
     "completedAt": "Completed At",
     "cancelOrder": "Cancel Order",
-    "modifyOrder": "Modify Order"
+    "modifyOrder": "Modify Order",
+    "cancelConfirmationTitle": "Confirm Cancellation",
+    "cancelConfirmationMessage": "Are you sure you want to cancel this order? This action cannot be undone.",
+    "cancelConfirmationNo": "No",
+    "cancelConfirmationYes": "Yes, Cancel",
+    "cancelled": "Order is cancelled",
+    "reassigned": "Order is reassigned"
   },
   "orderCreate": {
     "createOrderTitle": "Create Order",
@@ -128,6 +134,7 @@
     "locationRequired": "Location is required",
     "categoryRequired": "Category is required",
     "addressRequired": "Address is required",
+    "weightRequired": "Weight should be float",
     "weightMin": "Weight must be at least 0.1 kg"
   },
   "vehicle": {
@@ -195,8 +202,8 @@
     "weight": "Weight",
     "weightValue": "{{weight}} kg",
     "description": "Description",
-    "markingAsDone": "Marking as Done...",
-    "markOrderAsDone": "Mark Order as Done",
+    "markOrderAsDone": "Done",
+    "markOrderAsReassigned": "Reassign",
     "category_general": "General",
     "category_organic": "Organic",
     "category_recyclable": "Recyclable",
@@ -245,7 +252,7 @@
   },
   "driverTabs": {
     "vehicle": "Your Vehicle",
-    "currentRoute": "Current Route",
+    "routes": "Routes",
     "notifications": "Notifications",
     "info": "Info"
   },
@@ -273,5 +280,54 @@
     "lastUpdated": "Last Updated",
     "vehicleIsActive": "Vehicle is currently active",
     "vehicleIsNotActive": "Vehicle is not active"
+  },
+  "routesScreen": {
+    "loadingRoutes": "Loading routes...",
+    "noVehicleAssigned": "No Vehicle Assigned",
+    "noVehicleAssignedMessage": "You don't have a vehicle assigned to your account. Please contact your manager to get assigned to a vehicle.",
+    "myRoutes": "My Routes",
+    "vehicleInfo": "Vehicle: {{licensePlate}} • {{count}} route{{count === 1 ? '' : 's'}}",
+    "routeSummary": "Route Summary",
+    "totalOrders": "Total Orders",
+    "completed": "Completed",
+    "cancelled": "Cancelled",
+    "totalDistance": "Total Distance",
+    "totalDuration": "Total Duration",
+    "routeNumber": "Route #{{number}}",
+    "created": "Created",
+    "status_inprogress": "IN PROGRESS",
+    "status_completed": "COMPLETED",
+    "status_pending": "PENDING",
+    "ordersCount": "{{completed}}/{{total}} orders",
+    "progress": "Progress",
+    "completedOn": "Completed on",
+    "viewDetails": "View Details"
+  },
+  "orderUpdate": {
+    "updateOrderTitle": "Update Order",
+    "locationSectionTitle": "Update Location",
+    "changeLocation": "Change Location",
+    "selectLocation": "Select Location",
+    "addressLabel": "Address",
+    "noAddressSelected": "No address selected",
+    "gettingAddress": "Getting address...",
+    "categorySectionTitle": "Update Trash Category",
+    "categoryInvalid": "Please select a valid category.",
+    "weightSectionTitle": "Update Weight",
+    "enterWeightPlaceholder": "Enter weight in kg (e.g., 5.5)",
+    "weightInvalid": "Weight must be a number.",
+    "weightMin": "Weight must be at least 0.1 kg.",
+    "descriptionSectionTitle": "Update Description",
+    "descriptionPlaceholder": "Add a detailed description...",
+    "photoSectionTitle": "Update Photo",
+    "addPhoto": "Add a photo",
+    "tapToSelectImage": "Tap to select an image",
+    "updatingOrder": "Updating Order...",
+    "updateOrderButton": "Update Order",
+    "selectLocationToContinue": "Please select a location to continue.",
+    "cameraPermissionDenied": "Camera roll permissions are required to upload an image.",
+    "successMessage": "Order updated successfully!",
+    "errorMessage": "Failed to update order: {{message}}",
+    "loadingOrder": "Loading order details..."
   }
 }

@@ -41,7 +41,7 @@ export const useLogout = () => {
 
   const logout = () => {
     clearAuth();
-    showToast("Logged out successfully", "success");
+    // showToast("Logged out successfully", "success");
     router.replace("/login");
   }
 

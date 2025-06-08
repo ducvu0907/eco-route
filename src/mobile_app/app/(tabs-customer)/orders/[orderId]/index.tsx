@@ -1,15 +1,14 @@
 import DemoInProgressCustomerMap from "@/components/DemoInProgressCustomerMap";
-import InProgressCustomerMap from "@/components/InProgressCustomerMap";
-import OrderInfo from "@/components/OrderInfo";
-import { useGetOrderById } from "@/hooks/useOrder";
+import { useGetOrderById, useMarkOrderAsCancelled } from "@/hooks/useOrder";
 import { OrderStatus, TrashCategory } from "@/types/types";
 import { Ionicons } from "@expo/vector-icons";
 import { useLocalSearchParams, useRouter } from "expo-router";
-import { Text, View, ActivityIndicator, Pressable, TouchableOpacity, ScrollView, Animated, Dimensions } from "react-native";
+import { Text, View, ActivityIndicator, Pressable, TouchableOpacity, ScrollView, Animated, Dimensions, Alert } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useState, useRef, useEffect } from "react";
 import { formatDate } from "@/utils/formatDate";
-import { useTranslation } from "react-i18next"; // Import useTranslation
+import { useTranslation } from "react-i18next";
+import { useReadNotification } from "@/hooks/useNotification";
 
 const { height: SCREEN_HEIGHT } = Dimensions.get('window');
 const BOTTOM_SHEET_MIN_HEIGHT = 120;
@@ -80,7 +79,8 @@ const getCategoryColor = (category: TrashCategory) => {
 };
 
 export default function OrderDetails() {
-  const { t } = useTranslation(); // Initialize useTranslation
+  const { mutate: cancelOrder, isPending } = useMarkOrderAsCancelled();
+  const { t } = useTranslation();
   const router = useRouter();
   const { orderId } = useLocalSearchParams();
   const { data, isLoading } = useGetOrderById(orderId as string);
@@ -88,6 +88,25 @@ export default function OrderDetails() {
   
   const [isExpanded, setIsExpanded] = useState(false);
   const slideAnim = useRef(new Animated.Value(BOTTOM_SHEET_MIN_HEIGHT)).current;
+
+  const confirmCancelOrder = () => {
+    Alert.alert(
+      t("orderDetails.cancelConfirmationTitle"),
+      t("orderDetails.cancelConfirmationMessage"),
+      [
+        {
+          text: t("orderDetails.cancelConfirmationNo"),
+          style: "cancel",
+        },
+        {
+          text: t("orderDetails.cancelConfirmationYes"),
+          onPress: () => cancelOrder(orderId as string),
+          style: "destructive",
+        },
+      ],
+      { cancelable: true }
+    );
+  };
 
   useEffect(() => {
     Animated.spring(slideAnim, {
@@ -167,15 +186,29 @@ export default function OrderDetails() {
 
       {/* Map Container */}
       <View className="flex-1">
-        {order.status !== OrderStatus.PENDING ? (
+        {(order.status === OrderStatus.COMPLETED || order.status === OrderStatus.IN_PROGRESS) ? (
           <DemoInProgressCustomerMap order={order} />
         ) : (
           <View className="flex-1 bg-gray-200 items-center justify-center">
             <View className="bg-white rounded-2xl p-6 mx-6 shadow-sm">
               <Ionicons name="map" size={48} color="#9ca3af" style={{ alignSelf: 'center' }} />
-              <Text className="text-gray-500 text-center mt-3 font-medium">
-                {t("orderDetails.waitingForProcessing")}
-              </Text>
+              {order.status === OrderStatus.PENDING && (
+                <Text className="text-gray-500 text-center mt-3 font-medium">
+                  {t("orderDetails.waitingForProcessing")}
+                </Text>
+              )}
+              {order.status === OrderStatus.CANCELLED &&
+                (
+                  <Text className="text-gray-500 text-center mt-3 font-medium">
+                    {t("orderDetails.cancelled")}
+                  </Text>
+                )}
+              {order.status === OrderStatus.REASSIGNED &&
+                (
+                  <Text className="text-gray-500 text-center mt-3 font-medium">
+                    {t("orderDetails.reassigned")}
+                  </Text>
+                )}
             </View>
           </View>
         )}
@@ -226,7 +259,7 @@ export default function OrderDetails() {
 
         {/* Expanded Content */}
         {isExpanded && (
-          <ScrollView className="flex-1 px-6" showsVerticalScrollIndicator={false}>
+          <ScrollView className="flex-1 px-2" showsVerticalScrollIndicator={false}>
             {/* Address Section */}
             <View className="mb-6">
               <View className="flex-row items-start">
@@ -245,7 +278,7 @@ export default function OrderDetails() {
             </View>
 
             {/* Category and Weight Row */}
-            <View className="flex-row mb-6">
+            <View className="flex-row mb-2">
               <View className="flex-1 mr-3">
                 <View className="bg-gray-50 rounded-2xl p-4">
                   <View className="flex-row items-center mb-2">
@@ -334,20 +367,22 @@ export default function OrderDetails() {
             </View>
 
             {/* Action Buttons */}
-            {order.status === OrderStatus.PENDING && (
+            {(order.status === OrderStatus.PENDING || order.status === OrderStatus.REASSIGNED) && (
               <View className="mb-8">
-                <TouchableOpacity className="bg-red-500 rounded-2xl py-4 mb-3">
+                <TouchableOpacity className="bg-red-500 rounded-2xl py-4 mb-3" onPress={confirmCancelOrder}>
                   <Text className="text-white font-semibold text-center text-base">
                     {t("orderDetails.cancelOrder")}
                   </Text>
                 </TouchableOpacity>
-                <TouchableOpacity className="bg-gray-100 rounded-2xl py-4">
+
+                <TouchableOpacity className="bg-gray-100 rounded-2xl py-4" onPress={() => router.push(`/orders/${orderId}/update`)}>
                   <Text className="text-gray-700 font-semibold text-center text-base">
                     {t("orderDetails.modifyOrder")}
                   </Text>
                 </TouchableOpacity>
               </View>
             )}
+
           </ScrollView>
         )}
       </Animated.View>

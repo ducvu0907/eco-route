@@ -1,6 +1,6 @@
 import { useAuthContext } from "@/hooks/useAuthContext";
 import { useGetOrdersByUserId } from "@/hooks/useOrder";
-import { View, Text, FlatList, ActivityIndicator, Pressable, TouchableOpacity } from "react-native";
+import { View, Text, FlatList, ActivityIndicator, Pressable, TouchableOpacity, RefreshControl } from "react-native";
 import { OrderResponse, TrashCategory, OrderStatus } from "@/types/types";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useRouter } from "expo-router";
@@ -10,7 +10,7 @@ import { useTranslation } from "react-i18next";
 export default function Orders() {
   const { t } = useTranslation();
   const { userId } = useAuthContext();
-  const { data, isLoading, isError } = useGetOrdersByUserId(userId || "");
+  const { data, isLoading, isError, refetch, isRefetching } = useGetOrdersByUserId(userId || "");
   const router = useRouter();
 
   if (isLoading) {
@@ -132,6 +132,14 @@ export default function Orders() {
               </TouchableOpacity>
             )}
             showsVerticalScrollIndicator={false}
+            refreshControl={
+              <RefreshControl
+                refreshing={isRefetching}
+                onRefresh={refetch}
+                colors={["#2563eb"]}
+                tintColor="#2563eb"
+              />
+            }
           />
         )}
       </View>

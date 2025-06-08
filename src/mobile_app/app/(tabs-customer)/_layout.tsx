@@ -1,6 +1,10 @@
 import { Tabs } from "expo-router";
 import { Ionicons } from "@expo/vector-icons";
 import { useTranslation } from "react-i18next";
+import { useGetNotificationsByUserId } from "@/hooks/useNotification";
+import { useAuthContext } from "@/hooks/useAuthContext";
+import { NotificationResponse } from "@/types/types";
+import { View, Text, ActivityIndicator } from "react-native";
 
 export default function TabsCustomerLayout() {
   const { t } = useTranslation();

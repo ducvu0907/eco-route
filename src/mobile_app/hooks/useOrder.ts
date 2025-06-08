@@ -54,8 +54,8 @@ export const useUpdateOrder = () => {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: ({ orderId, payload }: { orderId: string; payload: OrderUpdateRequest }) =>
-      updateOrder(orderId, payload),
+    mutationFn: ({ orderId, payload, file }: { orderId: string; payload: OrderUpdateRequest, file?: any }) =>
+      updateOrder(orderId, payload, file),
     onSuccess: (_data, { orderId }) => {
       queryClient.invalidateQueries({ queryKey: ["orders"] });
       queryClient.invalidateQueries({ queryKey: ["orders", orderId] });
@@ -70,6 +70,7 @@ export const useMarkOrderAsDone = () => {
     mutationFn: (orderId: string) => markOrderAsCompleted(orderId),
     onSuccess: (_data, orderId) => {
       queryClient.invalidateQueries({ queryKey: ["orders", orderId] });
+      queryClient.invalidateQueries({ queryKey: ["orders"] });
     }
   })
 }
@@ -80,6 +81,7 @@ export const useMarkOrderAsCancelled = () => {
   return useMutation({
     mutationFn: (orderId: string) => markOrderAsCancelled(orderId),
     onSuccess: (_data, orderId) => {
+      queryClient.invalidateQueries({ queryKey: ["orders"] });
       queryClient.invalidateQueries({ queryKey: ["orders", orderId] });
     }
   })
@@ -91,6 +93,7 @@ export const useMarkOrderAsReassigned = () => {
   return useMutation({
     mutationFn: (orderId: string) => markOrderAsReassigned(orderId),
     onSuccess: (_data, orderId) => {
+      queryClient.invalidateQueries({ queryKey: ["orders"] });
       queryClient.invalidateQueries({ queryKey: ["orders", orderId] });
     }
   })

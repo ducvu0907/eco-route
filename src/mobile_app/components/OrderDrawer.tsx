@@ -1,13 +1,10 @@
-import { useMarkOrderAsCancelled, useMarkOrderAsDone } from "@/hooks/useOrder";
+import { useMarkOrderAsCancelled, useMarkOrderAsDone, useMarkOrderAsReassigned } from "@/hooks/useOrder";
 import { OrderResponse, OrderStatus, TrashCategory } from "@/types/types";
 import { View, TouchableOpacity, Text, ActivityIndicator, Animated } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
-import { formatDate } from "@/utils/formatDate"; // This import is not used in the provided code
 import { useEffect, useRef } from "react";
-import { useWriteVehicleRealtimeData } from "@/hooks/useWriteVehicleRealtimeData"; // This import is not used in the provided code
-import { useVehicleRealtimeData } from "@/hooks/useVehicleRealtimeData"; // This import is not used in the provided code
 import { useQueryClient } from "@tanstack/react-query";
-import { useTranslation } from "react-i18next"; // Import useTranslation
+import { useTranslation } from "react-i18next";
 
 interface OrderDrawerProps {
   order: OrderResponse;
@@ -48,26 +45,11 @@ const getCategoryColor = (category: TrashCategory) => {
   }
 };
 
-const getStatusColor = (status: OrderStatus) => {
-  switch (status) {
-    case OrderStatus.PENDING:
-      return "bg-yellow-100 border-yellow-200 text-yellow-700";
-    case OrderStatus.IN_PROGRESS:
-      return "bg-blue-100 border-blue-200 text-blue-700";
-    case OrderStatus.COMPLETED:
-      return "bg-green-100 border-green-200 text-green-700";
-    case OrderStatus.CANCELLED:
-      return "bg-red-100 border-red-200 text-red-700";
-    default:
-      return "bg-gray-100 border-gray-200 text-gray-700";
-  }
-};
-
 export default function OrderDrawer({ order, onClose }: OrderDrawerProps) {
   const queryClient = useQueryClient();
-  const { t } = useTranslation(); // Initialize useTranslation
+  const { t } = useTranslation();
   const { mutate: markAsDone, isPending: isMarkingAsDone } = useMarkOrderAsDone();
-  const { mutate: markAsCancelled, isPending: isMarkingAsCancelled } = useMarkOrderAsCancelled(); // This is not used in the current JSX
+  const { mutate: reassign, isPending: isMarkingAsReassigned } = useMarkOrderAsReassigned();
   const slideAnim = useRef(new Animated.Value(300)).current;
 
   useEffect(() => {
@@ -81,7 +63,7 @@ export default function OrderDrawer({ order, onClose }: OrderDrawerProps) {
 
   const handleClose = () => {
     Animated.spring(slideAnim, {
-      toValue: 0,
+      toValue: 300,
       useNativeDriver: true,
       tension: 100,
       friction: 8,
@@ -90,8 +72,8 @@ export default function OrderDrawer({ order, onClose }: OrderDrawerProps) {
     });
   };
 
-  const handleMarkAsCancelled = () => { // This function is not called in the current JSX
-    markAsCancelled(order.id, {
+  const handleMarkAsReassigned = () => {
+    reassign(order.id, {
       onSuccess: () => {
         handleClose();
       },
@@ -113,6 +95,7 @@ export default function OrderDrawer({ order, onClose }: OrderDrawerProps) {
         position: "absolute",
         bottom: 0,
         width: "100%",
+        maxHeight: "40%",
         transform: [{ translateY: slideAnim }],
       }}
       className="bg-white rounded-t-3xl shadow-2xl"
@@ -120,106 +103,114 @@ export default function OrderDrawer({ order, onClose }: OrderDrawerProps) {
       {/* Handle */}
       <TouchableOpacity
         onPress={handleClose}
-        className="items-center py-4"
+        className="items-center py-3"
         activeOpacity={0.7}
       >
         <View className="w-12 h-1 bg-gray-300 rounded-full" />
       </TouchableOpacity>
 
-      <View className="px-6 pb-8">
-        {/* Address */}
-        <View className="bg-blue-50 rounded-2xl p-4 mb-4">
-          <View className="flex-row items-start">
+      <View className="px-4 pb-6">
+        {/* Header with Address and Category/Weight inline */}
+        <View className="mb-4">
+          {/* Address */}
+          <View className="flex-row items-center mb-3">
             <View className="bg-blue-100 rounded-full p-2 mr-3">
-              <Ionicons name="location" size={18} color="#3b82f6" />
+              <Ionicons name="location" size={16} color="#3b82f6" />
             </View>
             <View className="flex-1">
-              <Text className="text-blue-700 font-medium text-sm mb-1">
+              <Text className="text-blue-600 font-medium text-xs mb-1">
                 {t("OrderDrawer.pickupAddress")}
               </Text>
-              <Text className="text-gray-800 font-medium leading-5">
+              <Text className="text-gray-800 font-medium text-sm leading-4" numberOfLines={2}>
                 {order.address}
               </Text>
             </View>
           </View>
-        </View>
 
-        {/* Category and Weight */}
-        <View className="flex-row mb-6">
-          <View className="flex-1 mr-2">
-            <View className="bg-gray-50 rounded-2xl p-4">
-              <View className="flex-row items-center mb-2">
-                <Ionicons
-                  name={getCategoryIcon(order.category) as any}
-                  size={18}
-                  color={getCategoryColor(order.category)}
-                />
-                <Text className="text-gray-500 text-sm font-medium ml-2">
+          {/* Category and Weight - Horizontal Layout */}
+          <View className="flex-row justify-between">
+            <View className="flex-1 flex-row items-center bg-gray-50 rounded-xl p-3 mr-2">
+              <Ionicons
+                name={getCategoryIcon(order.category) as any}
+                size={16}
+                color={getCategoryColor(order.category)}
+              />
+              <View className="ml-2 flex-1">
+                <Text className="text-gray-500 text-xs font-medium">
                   {t("OrderDrawer.category")}
                 </Text>
-              </View>
-              <Text className="text-gray-800 font-semibold capitalize">
-                {t(`OrderDrawer.category_${order.category.toLowerCase()}`)}
-              </Text>
-            </View>
-          </View>
-
-          <View className="flex-1 ml-2">
-            <View className="bg-orange-50 rounded-2xl p-4">
-              <View className="flex-row items-center">
-                <Ionicons name="scale" size={18} color="#f97316" />
-                <Text className="text-gray-500 text-sm font-medium ml-2">
-                  {t("OrderDrawer.weight")}
+                <Text className="text-gray-800 font-semibold text-sm capitalize" numberOfLines={1}>
+                  {t(`OrderDrawer.category_${order.category.toLowerCase()}`)}
                 </Text>
               </View>
-              <Text className="text-gray-800 font-semibold">
-                {t("OrderDrawer.weightValue", { weight: order.weight })}
-              </Text>
+            </View>
+
+            <View className="flex-1 flex-row items-center bg-orange-50 rounded-xl p-3 ml-2">
+              <Ionicons name="scale" size={16} color="#f97316" />
+              <View className="ml-2 flex-1">
+                <Text className="text-gray-500 text-xs font-medium">
+                  {t("OrderDrawer.weight")}
+                </Text>
+                <Text className="text-gray-800 font-semibold text-sm">
+                  {t("OrderDrawer.weightValue", { weight: order.weight })}
+                </Text>
+              </View>
             </View>
           </View>
         </View>
 
-        {/* Description */}
+        {/* Description - Compact */}
         {order.description && (
-          <View className="bg-purple-50 rounded-2xl p-0 mb-2">
-            <View className="flex-row items-start">
-              <View className="bg-purple-100 rounded-full p-0 mr-3">
-                <Ionicons name="document-text" size={18} color="#8b5cf6" />
-              </View>
-              <View className="flex-1">
-                <Text className="text-purple-700 font-medium text-sm mb-1">
-                  {t("OrderDrawer.description")}
-                </Text>
-                <Text className="text-gray-800 leading-5">
-                  {order.description}
-                </Text>
-              </View>
+          <View className="flex-row items-start bg-purple-50 rounded-xl p-3 mb-4">
+            <Ionicons name="document-text" size={16} color="#8b5cf6" />
+            <View className="ml-2 flex-1">
+              <Text className="text-purple-600 font-medium text-xs mb-1">
+                {t("OrderDrawer.description")}
+              </Text>
+              <Text className="text-gray-800 text-sm leading-4" numberOfLines={2}>
+                {order.description}
+              </Text>
             </View>
           </View>
         )}
 
-        {/* Action Buttons */}
+        {/* Action Buttons - Compact */}
         {order.status !== OrderStatus.COMPLETED && (
-          <View>
+          <View className="flex-row space-x-3">
             <TouchableOpacity
-              className={`rounded-2xl mb-1 ${isMarkingAsDone ? 'bg-gray-400' : 'bg-green-500'}`}
+              className={`flex-1 rounded-xl ${isMarkingAsDone ? 'bg-gray-400' : 'bg-green-500'} py-3`}
               onPress={handleMarkAsDone}
               disabled={isMarkingAsDone}
               activeOpacity={0.8}
             >
-              <View className="flex-row items-center justify-center py-2">
+              <View className="flex-row items-center justify-center">
                 {isMarkingAsDone ? (
-                  <>
-                    <ActivityIndicator color="#fff" size="small" />
-                    <Text className="text-white font-semibold ml-2 text-base">
-                      {t("OrderDrawer.markingAsDone")}
-                    </Text>
-                  </>
+                  <ActivityIndicator color="#fff" size="small" />
                 ) : (
                   <>
-                    <Ionicons name="checkmark-circle" size={20} color="#fff" />
-                    <Text className="text-white font-semibold ml-2 text-base">
+                    <Ionicons name="checkmark-circle" size={18} color="#fff" />
+                    <Text className="text-white font-semibold ml-2 text-sm">
                       {t("OrderDrawer.markOrderAsDone")}
+                    </Text>
+                  </>
+                )}
+              </View>
+            </TouchableOpacity>
+
+            <TouchableOpacity
+              className={`flex-1 rounded-xl ${isMarkingAsReassigned ? 'bg-gray-400' : 'bg-red-500'} py-3`}
+              onPress={handleMarkAsReassigned}
+              disabled={isMarkingAsReassigned}
+              activeOpacity={0.8}
+            >
+              <View className="flex-row items-center justify-center">
+                {isMarkingAsReassigned ? (
+                  <ActivityIndicator color="#fff" size="small" />
+                ) : (
+                  <>
+                    <Ionicons name="alert-circle" size={18} color="#fff" />
+                    <Text className="text-white font-semibold ml-2 text-sm">
+                      {t("OrderDrawer.markOrderAsReassigned")}
                     </Text>
                   </>
                 )}
@@ -227,7 +218,6 @@ export default function OrderDrawer({ order, onClose }: OrderDrawerProps) {
             </TouchableOpacity>
           </View>
         )}
-
       </View>
     </Animated.View>
   );

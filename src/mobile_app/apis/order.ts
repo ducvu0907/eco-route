@@ -64,7 +64,25 @@ export const createOrder = async (payload: OrderCreateRequest, file?: {uri: stri
   return data;
 };
 
-export const updateOrder = async (orderId: string, payload: OrderUpdateRequest): Promise<ApiResponse<OrderResponse>> => {
-  const { data } = await axiosInstance.post(`/orders/${orderId}`, payload);
+export const updateOrder = async (orderId: string, payload: OrderUpdateRequest, file?: {uri: string, name: string, type: string}): Promise<ApiResponse<OrderResponse>> => {
+  console.log(payload, file);
+
+  const formData = new FormData();
+
+  formData.append("request", {
+    "string": JSON.stringify(payload),
+    type: "application/json"
+  } as any);
+
+  if (file) {
+    formData.append("file", file as any);
+  }
+
+  const { data } = await axiosInstance.post(`/orders/${orderId}`, formData, {
+    headers: {
+      "Content-Type": "multipart/form-data"
+    },
+  });
+
   return data;
 };

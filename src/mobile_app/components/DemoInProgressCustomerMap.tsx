@@ -9,6 +9,8 @@ import DemoRoutePolyline from "./DemoRoutePolyline";
 import { Ionicons } from "@expo/vector-icons";
 import { useRef } from "react";
 import { useTranslation } from "react-i18next";
+import DepotMarker from "./DepotMarker";
+import { useGetDepotById } from "@/hooks/useDepot";
 
 interface InProgressMapProps {
   order: OrderResponse;
@@ -16,12 +18,14 @@ interface InProgressMapProps {
 
 export default function DemoInProgressCustomerMap({ order }: InProgressMapProps) {
   const { t } = useTranslation();
-  const { data, isLoading } = useGetRouteById(order.routeId || "");
-  const route = data?.result;
+  const { data: routeData, isLoading: isRouteLoading } = useGetRouteById(order.routeId || "");
+  const route = routeData?.result;
   const vehicle = route?.vehicle;
+  const {data: depotData, isLoading: isDepotLoading} = useGetDepotById(vehicle?.depotId || "");
+  const depot = depotData?.result;
   const cameraRef = useRef<any>(null);
 
-  if (isLoading) {
+  if (isRouteLoading || isDepotLoading) {
     return (
       <View className="flex-1 justify-center items-center bg-white">
         <ActivityIndicator size="large" color="#0000ff" />
@@ -50,6 +54,7 @@ export default function DemoInProgressCustomerMap({ order }: InProgressMapProps)
           zoomLevel={defaultMapZoom}
         />
 
+        {depot && <DepotMarker depot={depot}/>}
         <DemoOrderMarker order={order} />
 
         {order.status === OrderStatus.IN_PROGRESS && (

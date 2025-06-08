@@ -89,8 +89,14 @@
     "description": "Mô tả",
     "createdAt": "Tạo lúc",
     "completedAt": "Hoàn thành lúc",
-    "cancelOrder": "Hủy đơn hàng",
-    "modifyOrder": "Sửa đổi đơn hàng"
+    "cancelOrder": "Hủy yêu cầu",
+    "modifyOrder": "Sửa đổi yêu cầu",
+    "cancelConfirmationTitle": "Xác nhận Hủy bỏ",
+    "cancelConfirmationMessage": "Bạn có chắc muốn hủy đơn hàng này không? Hành động này không thể hoàn tác.",
+    "cancelConfirmationNo": "Không",
+    "cancelConfirmationYes": "Có, Hủy bỏ",
+    "cancelled": "Đơn hàng đã bị hủy",
+    "reassigned": "Đơn hàng đã được chỉ định lại"
   },
   "orderCreate": {
     "createOrderTitle": "Tạo đơn hàng",
@@ -128,6 +134,7 @@
     "locationRequired": "Địa điểm là bắt buộc",
     "categoryRequired": "Danh mục là bắt buộc",
     "addressRequired": "Địa chỉ là bắt buộc",
+    "weightRequired": "Cân nặng không hợp lệ",
     "weightMin": "Cân nặng phải tối thiểu 0.1 kg"
   },
   "vehicle": {
@@ -195,8 +202,8 @@
     "weight": "Cân nặng",
     "weightValue": "{{weight}} kg",
     "description": "Mô tả",
-    "markingAsDone": "Đang đánh dấu đã xong...",
-    "markOrderAsDone": "Đánh dấu đơn hàng đã xong",
+    "markOrderAsDone": "Đã thu gom",
+    "markOrderAsReassigned": "Xử lý sau",
     "category_general": "Tổng hợp",
     "category_organic": "Hữu cơ",
     "category_recyclable": "Tái chế",
@@ -244,8 +251,8 @@
     "info": "Thông tin"
   },
   "driverTabs": {
-    "vehicle": "Phương tiện của bạn",
-    "currentRoute": "Tuyến đường hiện tại",
+    "vehicle": "Phương tiện",
+    "routes": "Lộ trình",
     "notifications": "Thông báo",
     "info": "Thông tin"
   },
@@ -273,5 +280,54 @@
     "lastUpdated": "Cập nhật gần nhất",
     "vehicleIsActive": "Xe hiện đang hoạt động",
     "vehicleIsNotActive": "Xe không hoạt động"
+  },
+  "routesScreen": {
+    "loadingRoutes": "Đang tải các tuyến đường...",
+    "noVehicleAssigned": "Chưa được chỉ định phương tiện",
+    "noVehicleAssignedMessage": "Bạn chưa có phương tiện nào được chỉ định vào tài khoản của mình. Vui lòng liên hệ quản lý để được chỉ định một phương tiện.",
+    "myRoutes": "Các Tuyến đường của Tôi",
+    "vehicleInfo": "Phương tiện: {{licensePlate}} • {{count}} tuyến đường",
+    "routeSummary": "Tóm tắt Tuyến đường",
+    "totalOrders": "Tổng số Đơn hàng",
+    "completed": "Đã hoàn thành",
+    "cancelled": "Đã hủy",
+    "totalDistance": "Tổng quãng đường",
+    "totalDuration": "Tổng thời gian",
+    "routeNumber": "Tuyến đường #{{number}}",
+    "created": "Đã tạo",
+    "status_inprogress": "ĐANG TIẾN HÀNH",
+    "status_completed": "ĐÃ HOÀN THÀNH",
+    "status_pending": "ĐANG CHỜ",
+    "ordersCount": "{{completed}}/{{total}} đơn hàng",
+    "progress": "Tiến độ",
+    "completedOn": "Hoàn thành vào",
+    "viewDetails": "Xem Chi tiết"
+  },
+  "orderUpdate": {
+    "updateOrderTitle": "Cập nhật đơn hàng",
+    "locationSectionTitle": "Cập nhật vị trí",
+    "changeLocation": "Thay đổi vị trí",
+    "selectLocation": "Chọn vị trí",
+    "addressLabel": "Địa chỉ",
+    "noAddressSelected": "Chưa chọn địa chỉ",
+    "gettingAddress": "Đang lấy địa chỉ...",
+    "categorySectionTitle": "Cập nhật loại rác",
+    "categoryInvalid": "Vui lòng chọn một loại rác hợp lệ.",
+    "weightSectionTitle": "Cập nhật trọng lượng",
+    "enterWeightPlaceholder": "Nhập trọng lượng (kg, ví dụ: 5.5)",
+    "weightInvalid": "Trọng lượng phải là một số.",
+    "weightMin": "Trọng lượng tối thiểu phải là 0.1 kg.",
+    "descriptionSectionTitle": "Cập nhật mô tả",
+    "descriptionPlaceholder": "Thêm mô tả chi tiết...",
+    "photoSectionTitle": "Cập nhật ảnh",
+    "addPhoto": "Thêm ảnh",
+    "tapToSelectImage": "Chạm để chọn ảnh",
+    "updatingOrder": "Đang cập nhật đơn hàng...",
+    "updateOrderButton": "Cập nhật đơn hàng",
+    "selectLocationToContinue": "Vui lòng chọn vị trí để tiếp tục.",
+    "cameraPermissionDenied": "Cần cấp quyền truy cập thư viện ảnh để tải lên hình ảnh.",
+    "successMessage": "Đơn hàng đã được cập nhật thành công!",
+    "errorMessage": "Cập nhật đơn hàng thất bại: {{message}}",
+    "loadingOrder": "Đang tải chi tiết đơn hàng..."
   }
 }

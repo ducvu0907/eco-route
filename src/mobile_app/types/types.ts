@@ -95,11 +95,15 @@ export interface OrderCreateRequest {
   weight: number;
 }
 
-// TODO: fix this
-export interface OrderUpdateRequest {
-  status: OrderStatus;
-}
 
+export interface OrderUpdateRequest {
+  latitude?: number | null;
+  longitude?: number | null;
+  description?: string | null;
+  category?: TrashCategory | null;
+  address?: string | null;
+  weight?: number | null;
+}
 
 export interface VehicleCreateRequest {
   driverId: string;

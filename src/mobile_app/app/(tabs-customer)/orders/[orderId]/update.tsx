@@ -1,5 +1,5 @@
 import DemoLocationPicker from "@/components/DemoLocationPicker";
-import { useCreateOrder } from "@/hooks/useOrder";
+import { useGetOrderById, useUpdateOrder } from "@/hooks/useOrder"; 
 import {
   View, Text, TextInput, ActivityIndicator, TouchableOpacity,
   TouchableWithoutFeedback, Keyboard, Image, ScrollView, Alert
@@ -7,59 +7,86 @@ import {
 import { useForm, Controller } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useRouter } from "expo-router";
+import { useRouter, useLocalSearchParams } from "expo-router";
 import { useReverseLocation } from "@/hooks/useFetchLocation";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Ionicons } from "@expo/vector-icons";
 import { useEffect, useState } from "react";
 import { useQueryClient } from "@tanstack/react-query";
 import { useAuthContext } from "@/hooks/useAuthContext";
-import { TrashCategory, OrderCreateRequest } from "@/types/types";
+import { TrashCategory, OrderUpdateRequest } from "@/types/types"; 
 import * as ImagePicker from "expo-image-picker";
 import { useTranslation } from "react-i18next";
 import { useToast } from "@/hooks/useToast";
 
-// Schema based on OrderCreateRequest interface
 const formSchema = z.object({
-  latitude: z.number({ required_error: "orderCreate.locationRequired" }), // Use translation key
-  longitude: z.number({ required_error: "orderCreate.locationRequired" }), // Use translation key
-  description: z.string().nullable(),
-  category: z.nativeEnum(TrashCategory, { errorMap: () => ({ message: "orderCreate.categoryRequired" }) }), // Use translation key
-  address: z.string().min(1, "orderCreate.addressRequired"), // Use translation key
-  weight: z.coerce.number({errorMap: () => ({message: "orderCreate.weightRequired"})}).min(0.1, "orderCreate.weightMin"), // Use translation key
-  file: z.any().optional()
+  latitude: z.number().nullable().optional(),
+  longitude: z.number().nullable().optional(),
+  description: z.string().nullable().optional(),
+  category: z.nativeEnum(TrashCategory, { errorMap: () => ({ message: "orderUpdate.categoryInvalid" }) }).nullable().optional(),
+  address: z.string().min(1, "orderUpdate.addressRequired").nullable().optional(), // Still require if present, but field is optional
+  weight: z.coerce.number({invalid_type_error: "orderUpdate.weightInvalid"}).min(0.1, "orderUpdate.weightMin").nullable().optional(),
+  file: z.any().optional(),
 });
 
 type OrderForm = z.infer<typeof formSchema>;
 
-export default function OrderCreate() {
-  const { t } = useTranslation(); // Initialize useTranslation
-  const {showToast} = useToast();
+export default function OrderUpdate() {
+  const { t } = useTranslation();
+  const { showToast } = useToast();
   const { userId } = useAuthContext();
   const queryClient = useQueryClient();
   const router = useRouter();
-  const { mutate: createOrder, isPending } = useCreateOrder();
+  const { orderId } = useLocalSearchParams();
+
+  const { mutate: updateOrder, isPending: isUpdating } = useUpdateOrder();
   const { reverseLocation, data: reverseData, loading: isReversing } = useReverseLocation();
+
+  const { data: orderDetails, isLoading: isLoadingOrder } = useGetOrderById(orderId as string);
+  const order = orderDetails?.result;
+  console.log(order?.imageUrl);
 
   const [isLocationPickerVisible, setLocationPickerVisible] = useState(false);
   const [location, setLocation] = useState<{ latitude: number; longitude: number } | null>(null);
   const [imagePreview, setImagePreview] = useState<string | null>(null);
-  const [selectedCategory, setSelectedCategory] = useState<TrashCategory>(TrashCategory.GENERAL);
+  const [selectedCategory, setSelectedCategory] = useState<TrashCategory | undefined>(undefined);
 
   const {
     control,
     handleSubmit,
     formState: { errors },
     setValue,
-    watch,
+    reset
   } = useForm<OrderForm>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      description: null,
-      category: TrashCategory.GENERAL,
+      description: undefined,
+      category: undefined,
       weight: undefined,
+      latitude: undefined,
+      longitude: undefined,
+      address: undefined,
+      file: undefined,
     }
   });
+
+  useEffect(() => {
+    if (order) {
+      reset({
+        latitude: order.latitude,
+        longitude: order.longitude,
+        description: order.description,
+        category: order.category,
+        address: order.address,
+        weight: order.weight,
+      });
+      setLocation({ latitude: order.latitude, longitude: order.longitude });
+      setSelectedCategory(order.category);
+      if (order.imageUrl) {
+        setImagePreview(order.imageUrl);
+      }
+    }
+  }, [orderDetails, reset]);
 
   useEffect(() => {
     if (location) {
@@ -74,20 +101,30 @@ export default function OrderCreate() {
   }, [reverseData]);
 
   const onSubmit = (data: OrderForm) => {
-    const orderData: OrderCreateRequest = {
-      latitude: data.latitude,
-      longitude: data.longitude,
-      description: data.description,
-      category: data.category,
-      address: data.address,
-      weight: data.weight,
-    };
+    // only send fields that have been changed
+    const payload: OrderUpdateRequest = {};
 
-    createOrder({ payload: orderData, file: data.file }, {
+    if (data.latitude !== undefined) payload.latitude = data.latitude;
+    if (data.longitude !== undefined) payload.longitude = data.longitude;
+    if (data.description !== undefined) payload.description = data.description;
+    if (data.category !== undefined) payload.category = data.category;
+    if (data.address !== undefined) payload.address = data.address;
+    if (data.weight !== undefined) payload.weight = data.weight;
+
+    // handle image changes
+    let fileToUpload: any = undefined;
+    if (data.file && data.file !== order?.imageUrl) {
+      console.log("image changed");
+      fileToUpload = data.file;
+    }
+
+
+    updateOrder({ orderId: orderId as string, payload, file: fileToUpload }, {
       onSuccess: () => {
+        queryClient.invalidateQueries({ queryKey: ["orders", orderId] });
         queryClient.invalidateQueries({ queryKey: ["users", userId, "orders"] });
         router.back();
-      }
+      },
     });
   };
 
@@ -101,7 +138,7 @@ export default function OrderCreate() {
   const pickImage = async () => {
     const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
     if (status !== 'granted') {
-      showToast(t("orderCreate.cameraPermissionDenied"), "error"); // Translate toast message
+      showToast(t("orderUpdate.cameraPermissionDenied"), "error");
       return;
     }
 
@@ -126,11 +163,10 @@ export default function OrderCreate() {
   };
 
   const removeImage = () => {
-    setValue("file", null);
+    setValue("file", null); // Set file to null to indicate removal
     setImagePreview(null);
   };
 
-  // Define CATEGORY_INFO using t() for descriptions
   const CATEGORY_INFO = {
     [TrashCategory.GENERAL]: {
       icon: "trash-outline",
@@ -159,6 +195,15 @@ export default function OrderCreate() {
     },
   };
 
+  if (isLoadingOrder) {
+    return (
+      <SafeAreaView className="flex-1 justify-center items-center bg-white">
+        <ActivityIndicator size="large" color="#3B82F6" />
+        <Text className="mt-4 text-gray-600">{t("orderUpdate.loadingOrder")}</Text>
+      </SafeAreaView>
+    );
+  }
+
   return (
     <SafeAreaView className="flex-1 bg-white">
       <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
@@ -172,13 +217,13 @@ export default function OrderCreate() {
               >
                 <Ionicons name="arrow-back" size={24} color="black" />
               </TouchableOpacity>
-              <Text className="text-2xl font-bold text-gray-800">{t("orderCreate.createOrderTitle")}</Text>
+              <Text className="text-2xl font-bold text-gray-800">{t("orderUpdate.updateOrderTitle")}</Text>
               <View className="w-10" />
             </View>
 
             {/* Location Section */}
             <View className="mb-6">
-              <Text className="text-lg font-semibold text-gray-800 mb-3">{t("orderCreate.locationSectionTitle")}</Text>
+              <Text className="text-lg font-semibold text-gray-800 mb-3">{t("orderUpdate.locationSectionTitle")}</Text>
 
               <TouchableOpacity
                 className="border-2 border-dashed border-blue-300 p-4 rounded-xl bg-blue-50 mb-3"
@@ -187,7 +232,7 @@ export default function OrderCreate() {
                 <View className="items-center">
                   <Ionicons name="location-outline" size={32} color="#3B82F6" />
                   <Text className="text-blue-600 font-medium mt-2">
-                    {location ? t("orderCreate.changeLocation") : t("orderCreate.selectLocation")}
+                    {location ? t("orderUpdate.changeLocation") : t("orderUpdate.selectLocation")}
                   </Text>
                   {location && (
                     <Text className="text-xs text-gray-500 mt-1">
@@ -198,11 +243,11 @@ export default function OrderCreate() {
               </TouchableOpacity>
 
               <View className="bg-gray-50 p-3 rounded-xl">
-                <Text className="text-sm text-gray-600 mb-1">{t("orderCreate.addressLabel")}</Text>
+                <Text className="text-sm text-gray-600 mb-1">{t("orderUpdate.addressLabel")}</Text>
                 {isReversing ? (
                   <View className="flex-row items-center">
                     <ActivityIndicator size="small" />
-                    <Text className="ml-2 text-gray-500">{t("orderCreate.gettingAddress")}</Text>
+                    <Text className="ml-2 text-gray-500">{t("orderUpdate.gettingAddress")}</Text>
                   </View>
                 ) : (
                   <Controller
@@ -210,20 +255,20 @@ export default function OrderCreate() {
                     name="address"
                     render={({ field }) => (
                       <Text className="text-gray-800 text-base">
-                        {field.value || t("orderCreate.noAddressSelected")}
+                        {field.value || t("orderUpdate.noAddressSelected")}
                       </Text>
                     )}
                   />
                 )}
               </View>
               {errors.address && (
-                <Text className="text-red-500 text-sm mt-1 ml-1">{t(`orderCreate.${errors.address.message}`)}</Text>
+                <Text className="text-red-500 text-sm mt-1 ml-1">{t(`orderUpdate.${errors.address.message}`)}</Text>
               )}
             </View>
 
             {/* Trash Category Section */}
             <View className="mb-6">
-              <Text className="text-lg font-semibold text-gray-800 mb-3">{t("orderCreate.categorySectionTitle")}</Text>
+              <Text className="text-lg font-semibold text-gray-800 mb-3">{t("orderUpdate.categorySectionTitle")}</Text>
               <Controller
                 control={control}
                 name="category"
@@ -233,7 +278,7 @@ export default function OrderCreate() {
                       <TouchableOpacity
                         key={category}
                         className={`p-4 rounded-xl border-2 ${
-                          value === category
+                          (value || selectedCategory) === category
                             ? info.color
                             : "bg-white border-gray-200"
                         }`}
@@ -246,7 +291,7 @@ export default function OrderCreate() {
                           <Ionicons
                             name={info.icon as any}
                             size={24}
-                            color={value === category ?
+                            color={(value || selectedCategory) === category ?
                               (category === TrashCategory.GENERAL ? "#374151" :
                                category === TrashCategory.ORGANIC ? "#065F46" :
                                category === TrashCategory.RECYCLABLE ? "#1E40AF" :
@@ -256,7 +301,7 @@ export default function OrderCreate() {
                           />
                           <View className="ml-3 flex-1">
                             <Text className={`font-medium ${
-                              value === category ? "text-gray-800" : "text-gray-600"
+                              (value || selectedCategory) === category ? "text-gray-800" : "text-gray-600"
                             }`}>
                               {t(`orderCreate.category_${category.toLowerCase()}`)}
                             </Text>
@@ -264,7 +309,7 @@ export default function OrderCreate() {
                               {info.description}
                             </Text>
                           </View>
-                          {value === category && (
+                          {(value || selectedCategory) === category && (
                             <Ionicons name="checkmark-circle" size={20} color="#10B981" />
                           )}
                         </View>
@@ -274,13 +319,13 @@ export default function OrderCreate() {
                 )}
               />
               {errors.category && (
-                <Text className="text-red-500 text-sm mt-1 ml-1">{t(`orderCreate.${errors.category.message}`)}</Text>
+                <Text className="text-red-500 text-sm mt-1 ml-1">{t(`orderUpdate.${errors.category.message}`)}</Text>
               )}
             </View>
 
             {/* Weight Section */}
             <View className="mb-6">
-              <Text className="text-lg font-semibold text-gray-800 mb-3">{t("orderCreate.weightSectionTitle")}</Text>
+              <Text className="text-lg font-semibold text-gray-800 mb-3">{t("orderUpdate.weightSectionTitle")}</Text>
               <Controller
                 control={control}
                 name="weight"
@@ -289,7 +334,7 @@ export default function OrderCreate() {
                     <TextInput
                       className="border-2 border-gray-200 p-4 rounded-xl text-base bg-white"
                       keyboardType="numeric"
-                      placeholder={t("orderCreate.enterWeightPlaceholder")}
+                      placeholder={t("orderUpdate.enterWeightPlaceholder")}
                       value={field.value ? String(field.value) : ""}
                       onChangeText={field.onChange}
                     />
@@ -299,7 +344,6 @@ export default function OrderCreate() {
                   </View>
                 )}
               />
-              
               {errors.weight && (
                 <Text className="text-red-500 text-sm mt-1 ml-1">{t(`${errors.weight.message}`)}</Text>
               )}
@@ -307,7 +351,7 @@ export default function OrderCreate() {
 
             {/* Description Section */}
             <View className="mb-6">
-              <Text className="text-lg font-semibold text-gray-800 mb-3">{t("orderCreate.descriptionSectionTitle")}</Text>
+              <Text className="text-lg font-semibold text-gray-800 mb-3">{t("orderUpdate.descriptionSectionTitle")}</Text>
               <Controller
                 control={control}
                 name="description"
@@ -316,7 +360,7 @@ export default function OrderCreate() {
                     className="border-2 border-gray-200 p-4 rounded-xl text-base bg-white"
                     multiline
                     numberOfLines={4}
-                    placeholder={t("orderCreate.descriptionPlaceholder")}
+                    placeholder={t("orderUpdate.descriptionPlaceholder")}
                     onChangeText={field.onChange}
                     value={field.value || ""}
                     textAlignVertical="top"
@@ -327,7 +371,7 @@ export default function OrderCreate() {
 
             {/* Image Section */}
             <View className="mb-8">
-              <Text className="text-lg font-semibold text-gray-800 mb-3">{t("orderCreate.photoSectionTitle")}</Text>
+              <Text className="text-lg font-semibold text-gray-800 mb-3">{t("orderUpdate.photoSectionTitle")}</Text>
 
               {imagePreview ? (
                 <View className="relative">
@@ -350,8 +394,8 @@ export default function OrderCreate() {
                 >
                   <View className="items-center">
                     <Ionicons name="camera-outline" size={32} color="#9CA3AF" />
-                    <Text className="text-gray-500 font-medium mt-2">{t("orderCreate.addPhoto")}</Text>
-                    <Text className="text-gray-400 text-sm mt-1">{t("orderCreate.tapToSelectImage")}</Text>
+                    <Text className="text-gray-500 font-medium mt-2">{t("orderUpdate.addPhoto")}</Text>
+                    <Text className="text-gray-400 text-sm mt-1">{t("orderUpdate.tapToSelectImage")}</Text>
                   </View>
                 </TouchableOpacity>
               )}
@@ -360,28 +404,22 @@ export default function OrderCreate() {
             {/* Submit Button */}
             <TouchableOpacity
               className={`p-4 rounded-xl ${
-                isPending || !location
+                isUpdating
                   ? "bg-gray-300"
                   : "bg-blue-500"
               }`}
               onPress={handleSubmit(onSubmit)}
-              disabled={isPending || !location}
+              disabled={isUpdating}
             >
               <View className="flex-row items-center justify-center">
-                {isPending && <ActivityIndicator size="small" color="white" className="mr-2" />}
+                {isUpdating && <ActivityIndicator size="small" color="white" className="mr-2" />}
                 <Text className={`font-semibold text-base ${
-                  isPending || !location ? "text-gray-500" : "text-white"
+                  isUpdating ? "text-gray-500" : "text-white"
                 }`}>
-                  {isPending ? t("orderCreate.creatingOrder") : t("orderCreate.createOrderButton")}
+                  {isUpdating ? t("orderUpdate.updatingOrder") : t("orderUpdate.updateOrderButton")}
                 </Text>
               </View>
             </TouchableOpacity>
-
-            {!location && (
-              <Text className="text-orange-600 text-sm text-center mt-2">
-                {t("orderCreate.selectLocationToContinue")}
-              </Text>
-            )}
           </View>
         </ScrollView>
       </TouchableWithoutFeedback>
