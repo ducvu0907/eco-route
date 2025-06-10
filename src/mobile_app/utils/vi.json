@@ -99,7 +99,7 @@
     "reassigned": "Đơn hàng đã được chỉ định lại"
   },
   "orderCreate": {
-    "createOrderTitle": "Tạo đơn hàng",
+    "createOrderTitle": "Tạo yêu cầu thu gom",
     "locationSectionTitle": "📍 Địa điểm",
     "changeLocation": "Thay đổi địa điểm",
     "selectLocation": "Chọn địa điểm trên bản đồ",
