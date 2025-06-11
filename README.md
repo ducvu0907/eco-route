@@ -19,8 +19,7 @@
 ### 🧑‍💼 Manager
 - Monitor users, orders, vehicles and depots
 - Real-time tracking of all vehicles and orders  
-- Create and manage dispatch schedules  
-- Built-in solver with support for multi-depot VRP and dynamic order handling  
+- Create and manage dispatch with built-in routing engine  
 
 ---
 
