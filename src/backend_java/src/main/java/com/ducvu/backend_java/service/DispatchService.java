@@ -90,6 +90,10 @@ public class DispatchService {
           .toList();
     }
 
+    if (orders.isEmpty()) {
+      throw new RuntimeException("No orders to be processed");
+    }
+
     List<Vehicle> vehicles = vehicleRepository.findAll().stream()
         .filter(v -> v.getStatus() != VehicleStatus.REPAIR)
         .toList();
