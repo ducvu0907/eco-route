@@ -27,7 +27,7 @@ export default function TabsDriverLayout() {
         options={{
           tabBarLabel: t("driverTabs.routes"),
           tabBarIcon: ({ color, size }) => (
-            <Ionicons name="person-outline" size={size} color={color} />
+            <Ionicons name="navigate-outline" size={size} color={color} />
           ),
         }}
       />

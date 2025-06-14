@@ -6,6 +6,7 @@ import { formatDate } from "@/utils/formatDate"; // Not used in the provided cod
 import { useEffect, useRef, useState } from "react";
 import { useQueryClient } from "@tanstack/react-query";
 import { useTranslation } from "react-i18next"; // Import useTranslation
+import { useRouter } from "expo-router";
 
 const { height: screenHeight } = Dimensions.get('window');
 
@@ -15,6 +16,7 @@ interface RouteDrawerProps {
 }
 
 export default function RouteDrawer({ route, onSelectOrder }: RouteDrawerProps) {
+  const router = useRouter();
   const queryClient = useQueryClient();
   const { t } = useTranslation(); // Initialize useTranslation
   const { mutate: markAsDone, isPending } = useMarkRouteAsDone();
@@ -45,6 +47,7 @@ export default function RouteDrawer({ route, onSelectOrder }: RouteDrawerProps) 
     markAsDone(route.id, {
       onSuccess: () => {
         queryClient.invalidateQueries({queryKey: ["routes", "current"]});
+        router.back();
       },
     });
   };

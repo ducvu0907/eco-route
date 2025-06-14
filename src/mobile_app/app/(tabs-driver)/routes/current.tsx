@@ -1,7 +1,6 @@
 import React from "react";
 import { View, Text, ActivityIndicator, TouchableOpacity } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-import VehicleInfo from "@/components/VehicleInfo";
 import { useAuthContext } from "@/hooks/useAuthContext";
 import { useGetVehicleByDriverId } from "@/hooks/useVehicle";
 import DemoInProgressDriverMap from "@/components/DemoInProgressDriverMap";

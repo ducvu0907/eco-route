@@ -329,5 +329,32 @@
     "successMessage": "Đơn hàng đã được cập nhật thành công!",
     "errorMessage": "Cập nhật đơn hàng thất bại: {{message}}",
     "loadingOrder": "Đang tải chi tiết đơn hàng..."
+  },
+  "routeDetails": {
+    "headerTitle": "Tuyến đường #",
+    "ordersLabel": "Đơn hàng",
+    "distanceLabel": "Khoảng cách",
+    "durationLabel": "Thời lượng",
+    "routeCompleted": "Tuyến đường đã hoàn thành vào {{date}}",
+    "viewOrdersButton": "Xem đơn hàng",
+    "orderCard": {
+      "orderNumber": "Đơn hàng #",
+      "createdAt": "Tạo lúc: {{date}}",
+      "completedAt": "Hoàn thành: {{date}}"
+    },
+    "status": {
+      "COMPLETED": "HOÀN THÀNH",
+      "IN_PROGRESS": "ĐANG XỬ LÝ",
+      "PENDING": "ĐANG CHỜ",
+      "CANCELLED": "ĐÃ HỦY",
+      "REASSIGNED": "ĐÃ CHUYỂN"
+    },
+    "category": {
+      "GENERAL": "Tổng hợp",
+      "ORGANIC": "Hữu cơ",
+      "RECYCLABLE": "Tái chế",
+      "HAZARDOUS": "Nguy hiểm",
+      "ELECTRONIC": "Điện tử"
+    }
   }
 }

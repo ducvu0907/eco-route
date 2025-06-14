@@ -210,8 +210,6 @@ export default function NewDashboard() {
     );
   }
 
-  // --- Dashboard Data Processing ---
-
   // Orders by Status
   const ordersByStatus = orders.reduce((acc, order) => {
     acc[order.status] = (acc[order.status] || 0) + 1;
@@ -265,10 +263,10 @@ export default function NewDashboard() {
   }));
 
   // Dispatches by Status
-  const dispatchesByStatus = dispatches.reduce((acc, dispatch) => {
-    acc[dispatch.status] = (acc[dispatch.status] || 0) + 1;
-    return acc;
-  }, {} as Record<DispatchStatus, number>);
+  // const dispatchesByStatus = dispatches.reduce((acc, dispatch) => {
+  //   acc[dispatch.status] = (acc[dispatch.status] || 0) + 1;
+  //   return acc;
+  // }, {} as Record<DispatchStatus, number>);
 
   // const dispatchesStatusChartData = Object.entries(dispatchesByStatus).map(([status, count]) => ({
   //   name: t(`dashboard.${status}`),

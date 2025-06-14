@@ -329,5 +329,32 @@
     "successMessage": "Order updated successfully!",
     "errorMessage": "Failed to update order: {{message}}",
     "loadingOrder": "Loading order details..."
+  },
+  "routeDetails": {
+    "headerTitle": "Route #",
+    "ordersLabel": "Orders",
+    "distanceLabel": "Distance",
+    "durationLabel": "Duration",
+    "routeCompleted": "Route completed on {{date}}",
+    "viewOrdersButton": "View Orders",
+    "orderCard": {
+      "orderNumber": "Order #",
+      "createdAt": "Created: {{date}}",
+      "completedAt": "Completed: {{date}}"
+    },
+    "status": {
+      "COMPLETED": "COMPLETED",
+      "IN_PROGRESS": "IN PROGRESS",
+      "PENDING": "PENDING",
+      "CANCELLED": "CANCELLED",
+      "REASSIGNED": "REASSIGNED"
+    },
+    "category": {
+      "GENERAL": "General",
+      "ORGANIC": "Organic",
+      "RECYCLABLE": "Recyclable",
+      "HAZARDOUS": "Hazardous",
+      "ELECTRONIC": "Electronic"
+    }
   }
 }

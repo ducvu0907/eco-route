@@ -1,14 +1,14 @@
 import StaticMapDriver from "@/components/StaticMapDriver";
-import { RouteResponse, OrderStatus, RouteStatus } from "@/types/types";
+import { OrderStatus, RouteStatus } from "@/types/types";
 import { View, Text, ScrollView, TouchableOpacity, Dimensions } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { useState } from "react";
 import { useLocalSearchParams, useRouter } from "expo-router";
-import { getRouteById } from "@/apis/route";
 import { useGetRouteById } from "@/hooks/useRoute";
 import NotFoundPage from "@/app/+not-found";
 import CurrentRouteDetails from "./current";
 import { SafeAreaView } from "react-native-safe-area-context";
+import { useTranslation } from "react-i18next";
 
 const { height: screenHeight } = Dimensions.get('window');
 
@@ -92,6 +92,8 @@ const getCategoryIcon = (category: string) => {
 };
 
 const OrderCard = ({ order, index }: { order: any; index: number }) => {
+  const { t } = useTranslation();
+
   return (
     <View className="bg-white rounded-lg p-4 mb-3 border border-gray-200">
       <View className="flex-row justify-between items-start mb-3">
@@ -101,7 +103,7 @@ const OrderCard = ({ order, index }: { order: any; index: number }) => {
           </View>
           <View>
             <Text className="text-base font-semibold text-gray-900">
-              Order #{order.id.slice(-6).toUpperCase()}
+              {t('routeDetails.orderCard.orderNumber')}{order.id.slice(-6).toUpperCase()}
             </Text>
             <Text className="text-sm text-gray-500">{order.address}</Text>
           </View>
@@ -112,7 +114,7 @@ const OrderCard = ({ order, index }: { order: any; index: number }) => {
             order.status === "IN_PROGRESS" ? "text-blue-800" :
             order.status === "PENDING" ? "text-yellow-800" :
             order.status === "CANCELLED" ? "text-red-800" : "text-purple-800"}`}>
-            {order.status.replace("_", " ")}
+            {t(`routeDetails.status.${order.status}`)}
           </Text>
         </View>
       </View>
@@ -125,7 +127,7 @@ const OrderCard = ({ order, index }: { order: any; index: number }) => {
             color="#6b7280" 
           />
           <Text className="text-sm text-gray-600 ml-2 capitalize">
-            {order.category.toLowerCase()}
+            {t(`routeDetails.category.${order.category}`)}
           </Text>
         </View>
         
@@ -143,11 +145,11 @@ const OrderCard = ({ order, index }: { order: any; index: number }) => {
 
       <View className="flex-row justify-between items-center text-xs text-gray-500">
         <Text className="text-xs text-gray-500">
-          Created: {formatDate(order.createdAt)}
+          {t('routeDetails.orderCard.createdAt', { date: formatDate(order.createdAt) })}
         </Text>
         {order.completedAt && (
           <Text className="text-xs text-green-600">
-            Completed: {formatDate(order.completedAt)}
+            {t('routeDetails.orderCard.completedAt', { date: formatDate(order.completedAt) })}
           </Text>
         )}
       </View>
@@ -161,6 +163,7 @@ export default function RouteDetails() {
   const {data} = useGetRouteById(routeId as string);
   const route = data?.result;
   const [showOrdersList, setShowOrdersList] = useState(false);
+  const { t } = useTranslation();
   
   if (!route) {
     return (
@@ -187,7 +190,7 @@ export default function RouteDetails() {
         </TouchableOpacity>
         <View className="flex-1 ml-4">
           <Text className="text-2xl font-bold text-gray-900 mb-1">
-            Route #{route.id.slice(-6).toUpperCase()}
+            {t('routeDetails.headerTitle')}{route.id.slice(-6).toUpperCase()}
           </Text>
           <Text className="text-gray-600">
             {route.vehicle.licensePlate} • {formatDate(route.createdAt)}
@@ -200,15 +203,15 @@ export default function RouteDetails() {
         <View className="flex-row justify-between items-center mb-4">
           <View className="items-center flex-1">
             <Text className="text-2xl font-bold text-gray-900">{totalOrders}</Text>
-            <Text className="text-sm text-gray-600">Orders</Text>
+            <Text className="text-sm text-gray-600">{t('routeDetails.ordersLabel')}</Text>
           </View>
           <View className="items-center flex-1">
             <Text className="text-2xl font-bold text-blue-600">{formatDistance(route.distance)}</Text>
-            <Text className="text-sm text-gray-600">Distance</Text>
+            <Text className="text-sm text-gray-600">{t('routeDetails.distanceLabel')}</Text>
           </View>
           <View className="items-center flex-1">
             <Text className="text-2xl font-bold text-purple-600">{formatDuration(route.duration)}</Text>
-            <Text className="text-sm text-gray-600">Duration</Text>
+            <Text className="text-sm text-gray-600">{t('routeDetails.durationLabel')}</Text>
           </View>
         </View>
 
@@ -216,7 +219,7 @@ export default function RouteDetails() {
           <View className="bg-green-50 rounded-lg p-3 flex-row items-center">
             <Ionicons name="checkmark-circle" size={20} color="#059669" />
             <Text className="text-sm text-green-800 ml-2 font-medium">
-              Route completed on {formatDate(route.completedAt)}
+              {t('routeDetails.routeCompleted', { date: formatDate(route.completedAt) })}
             </Text>
           </View>
         )}
@@ -256,7 +259,7 @@ export default function RouteDetails() {
         >
           <View className="flex-row justify-between items-center p-6 border-b border-gray-200">
             <Text className="text-xl font-bold text-gray-900">
-              Orders ({totalOrders})
+              {t('routeDetails.ordersLabel')} ({totalOrders})
             </Text>
             <TouchableOpacity
               onPress={() => setShowOrdersList(false)}
@@ -287,7 +290,7 @@ export default function RouteDetails() {
               activeOpacity={0.8}
             >
               <Ionicons name="list" size={20} color="white" />
-              <Text className="text-white font-semibold ml-2">View Orders</Text>
+              <Text className="text-white font-semibold ml-2">{t('routeDetails.viewOrdersButton')}</Text>
             </TouchableOpacity>
             
             <TouchableOpacity

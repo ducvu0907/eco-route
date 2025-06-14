@@ -26,6 +26,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { Building2, Loader, Loader2, MapPin, Navigation, Search } from "lucide-react";
 import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
+import { useTranslation } from "react-i18next";
 import { z } from "zod";
 
 const formSchema = z.object({
@@ -43,10 +44,12 @@ interface DepotUpdateModalProps {
 }
 
 export default function DepotUpdateModal({ isOpen, onClose, depot }: DepotUpdateModalProps) {
+  const { t } = useTranslation();
   const [showDropdown, setShowDropdown] = useState<boolean>(false);
   const [searchQuery, setSearchQuery] = useState<string | null>(null);
   const [debouncedQuery, setDebouncedQuery] = useState<string | null>(null);
   const { mutate: updateDepot, isPending } = useUpdateDepot();
+
   const form = useForm<FormValues>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -128,28 +131,31 @@ export default function DepotUpdateModal({ isOpen, onClose, depot }: DepotUpdate
             <div className="p-2 bg-blue-100 rounded-lg">
               <Building2 className="h-5 w-5 text-blue-600" />
             </div>
-            Create New Depot
+            {t("depotUpdateModal.title")}
           </DialogTitle>
         </DialogHeader>
 
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-              {/* Search Section */}
               <Card className="border-2 border-dashed border-slate-200 hover:border-slate-300 transition-colors">
                 <CardHeader className="pb-4">
                   <CardTitle className="flex items-center gap-2 text-base">
                     <Search className="h-4 w-4 text-slate-600" />
-                    Find Location
+                    {t("depotUpdateModal.findLocationCard.title")}
                   </CardTitle>
                 </CardHeader>
                 <CardContent className="space-y-4">
                   <div className="relative">
                     <div className="flex gap-2">
                       <div className="relative flex-1">
-                        {isSearching ? <Loader className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-slate-400"/> : <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-slate-400" />}
+                        {isSearching ? (
+                          <Loader className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-slate-400" />
+                        ) : (
+                          <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-slate-400" />
+                        )}
                         <Input
-                          placeholder="Search for an address..."
+                          placeholder={t("depotUpdateModal.findLocationCard.searchPlaceholder")}
                           value={searchQuery || ""}
                           onChange={(e) => setSearchQuery(e.target.value)}
                           className="pl-10 pr-4 h-11 border-slate-300 focus:border-blue-500 focus:ring-blue-500"
@@ -169,22 +175,23 @@ export default function DepotUpdateModal({ isOpen, onClose, depot }: DepotUpdate
                       </div>
                     )}
                   </div>
-                  
+
                   {!hasLocation && (
                     <div className="text-center py-8 text-slate-500">
                       <MapPin className="h-12 w-12 mx-auto mb-3 text-slate-300" />
-                      <p className="text-sm">Search for a location or use the map picker</p>
+                      <p className="text-sm">
+                        {t("depotUpdateModal.findLocationCard.mapPickerPlaceholder")}
+                      </p>
                     </div>
                   )}
                 </CardContent>
               </Card>
 
-              {/* Location Details Section */}
               <Card className={`transition-all duration-200 ${hasLocation ? 'border-green-200 bg-green-50/30' : 'border-slate-200'}`}>
                 <CardHeader className="pb-4">
                   <CardTitle className="flex items-center gap-2 text-base">
                     <Navigation className="h-4 w-4 text-slate-600" />
-                    Location Details
+                    {t("depotUpdateModal.locationDetailsCard.title")}
                     {hasLocation && (
                       <Badge variant="secondary" className="ml-auto bg-green-100 text-green-700 border-green-200">
                         <MapPin className="h-3 w-3 mr-1" />
@@ -198,19 +205,23 @@ export default function DepotUpdateModal({ isOpen, onClose, depot }: DepotUpdate
                     name="address"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel className="text-sm font-medium text-slate-700">Address</FormLabel>
+                        <FormLabel className="text-sm font-medium text-slate-700">
+                          {t("depotUpdateModal.locationDetailsCard.addressLabel")}
+                        </FormLabel>
                         <FormControl>
                           <div className="relative">
                             {isReversing ? (
                               <div className="flex items-center justify-center h-11 border border-slate-300 rounded-md bg-slate-50">
                                 <Loader2 className="h-4 w-4 animate-spin text-slate-400" />
-                                <span className="ml-2 text-sm text-slate-500">Locating...</span>
+                                <span className="ml-2 text-sm text-slate-500">
+                                  {t("depotUpdateModal.locationDetailsCard.locatingText")}
+                                </span>
                               </div>
                             ) : (
-                              <Input 
-                                {...field} 
+                              <Input
+                                {...field}
                                 className={`h-11 ${address ? 'bg-white border-green-300' : 'bg-slate-50 border-slate-300'}`}
-                                placeholder="Address will appear here"
+                                placeholder={t("depotUpdateModal.locationDetailsCard.addressPlaceholder")}
                                 readOnly={hasLocation}
                               />
                             )}
@@ -227,13 +238,15 @@ export default function DepotUpdateModal({ isOpen, onClose, depot }: DepotUpdate
                       name="latitude"
                       render={({ field }) => (
                         <FormItem>
-                          <FormLabel className="text-sm font-medium text-slate-700">Latitude</FormLabel>
+                          <FormLabel className="text-sm font-medium text-slate-700">
+                            {t("depotUpdateModal.locationDetailsCard.latitudeLabel")}
+                          </FormLabel>
                           <FormControl>
-                            <Input 
-                              type="number" 
-                              step="any" 
-                              {...field} 
-                              readOnly 
+                            <Input
+                              type="number"
+                              step="any"
+                              {...field}
+                              readOnly
                               className="h-11 bg-slate-50 border-slate-300 text-slate-600 font-mono text-sm"
                               placeholder="0.000000"
                             />
@@ -247,13 +260,15 @@ export default function DepotUpdateModal({ isOpen, onClose, depot }: DepotUpdate
                       name="longitude"
                       render={({ field }) => (
                         <FormItem>
-                          <FormLabel className="text-sm font-medium text-slate-700">Longitude</FormLabel>
+                          <FormLabel className="text-sm font-medium text-slate-700">
+                            {t("depotUpdateModal.locationDetailsCard.longitudeLabel")}
+                          </FormLabel>
                           <FormControl>
-                            <Input 
-                              type="number" 
-                              step="any" 
-                              {...field} 
-                              readOnly 
+                            <Input
+                              type="number"
+                              step="any"
+                              {...field}
+                              readOnly
                               className="h-11 bg-slate-50 border-slate-300 text-slate-600 font-mono text-sm"
                               placeholder="0.000000"
                             />
@@ -268,28 +283,28 @@ export default function DepotUpdateModal({ isOpen, onClose, depot }: DepotUpdate
             </div>
 
             <DialogFooter className="pt-6 border-t border-slate-200 flex gap-3">
-              <Button 
-                type="button" 
-                variant="outline" 
+              <Button
+                type="button"
+                variant="outline"
                 onClick={onClose}
                 className="h-11 px-6"
               >
-                Cancel
+                {t("depotUpdateModal.footer.cancelButton")}
               </Button>
-              <Button 
-                type="submit" 
+              <Button
+                type="submit"
                 disabled={isPending || isReversing || !hasLocation}
                 className="h-11 px-6 bg-blue-600 hover:bg-blue-700 text-white"
               >
                 {isPending || isReversing ? (
                   <>
-                    <Loader2 className="mr-2 h-4 w-4 animate-spin" /> 
-                    Creating...
+                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                    {t("depotUpdateModal.footer.updatingButton")}
                   </>
                 ) : (
                   <>
                     <Building2 className="mr-2 h-4 w-4" />
-                    Create Depot
+                    {t("depotUpdateModal.footer.updateButton")}
                   </>
                 )}
               </Button>
