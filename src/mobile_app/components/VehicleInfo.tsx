@@ -80,7 +80,7 @@ export default function VehicleInfo({ vehicle }: VehicleInfoProps) {
             <View className="bg-gradient-to-br from-blue-500 to-blue-700 p-6">
               <View className="flex-row justify-between items-start">
                 <View className="flex-1">
-                  <Text className="text-3xl font-extrabold text-white mb-1">{vehicle.licensePlate}</Text>
+                  <Text className="text-3xl font-extrabold text-black mb-1">{vehicle.licensePlate}</Text>
                   <Text className="text-blue-100 text-sm opacity-90">{t("VehicleInfo.licensePlateNumber")}</Text>
                 </View>
                 <View className={`px-4 py-2 rounded-full border ${getStatusColor(vehicle.status)}`}>
