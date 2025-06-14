@@ -705,7 +705,7 @@
     },
     "header": {
       "title": "Cập nhật Phương tiện",
-      "subtitle": "{licensePlate} • {vehicleType}"
+      "subtitle": "{{licensePlate}} • {{vehicleType}}"
     },
     "currentInfoCard": {
       "title": "Thông tin Phương tiện Hiện tại",
@@ -1071,5 +1071,29 @@
       "ORGANIC": "HỮU CƠ",
       "HAZARDOUS": "NGUY HIỂM"
     }
+  },
+  "pendingOrdersSidebar": {
+    "noOrdersFoundTitle": "Không tìm thấy đơn hàng nào",
+    "noOrdersFoundDescription": "Chưa có đơn đặt thu gom rác nào được tạo. Các đơn hàng sẽ xuất hiện ở đây khi khách hàng bắt đầu sử dụng dịch vụ.",
+    "noPendingOrdersTitle": "Không có đơn hàng đang chờ xử lý",
+    "noPendingOrdersDescription": "Tất cả các đơn hàng đã được xử lý.",
+    "addressNotProvided": "Chưa cung cấp địa chỉ",
+    "descriptionLabel": "Mô tả:",
+    "viewButton": "Xem",
+    "completedDate": "Hoàn thành: {{date}}",
+    "status": {
+      "completed": "Đã hoàn thành",
+      "inProgress": "Đang tiến hành",
+      "pending": "Đang chờ xử lý",
+      "cancelled": "Đã hủy"
+    },
+    "category": {
+      "general": "Rác thải sinh hoạt",
+      "organic": "Rác thải hữu cơ",
+      "recyclable": "Rác thải tái chế",
+      "hazardous": "Rác thải nguy hại",
+      "electronic": "Rác thải điện tử"
+    },
+    "weightUnit": "kg"
   }
 }

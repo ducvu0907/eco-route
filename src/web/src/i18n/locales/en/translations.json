@@ -1071,5 +1071,29 @@
       "ORGANIC": "ORGANIC",
       "HAZARDOUS": "HAZARDOUS"
     }
+  },
+  "pendingOrdersSidebar": {
+    "noOrdersFoundTitle": "No Orders Found",
+    "noOrdersFoundDescription": "No waste collection orders have been placed yet. Orders will appear here once customers start using the service.",
+    "noPendingOrdersTitle": "No Pending Orders",
+    "noPendingOrdersDescription": "All orders have been processed.",
+    "addressNotProvided": "No address provided",
+    "descriptionLabel": "Description:",
+    "viewButton": "View",
+    "completedDate": "Completed: {{date}}",
+    "status": {
+      "completed": "Completed",
+      "inProgress": "In Progress",
+      "pending": "Pending",
+      "cancelled": "Cancelled"
+    },
+    "category": {
+      "general": "General",
+      "organic": "Organic",
+      "recyclable": "Recyclable",
+      "hazardous": "Hazardous",
+      "electronic": "Electronic"
+    },
+    "weightUnit": "kg"
   }
 }

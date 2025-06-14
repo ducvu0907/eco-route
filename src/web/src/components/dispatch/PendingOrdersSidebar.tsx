@@ -5,9 +5,11 @@ import { formatDate } from "@/utils/formatDate";
 import { AlertCircle, Calendar, CheckCircle, Clock, Eye, Loader2, MapPin, Package, Scale, Trash2, XCircle } from "lucide-react";
 import { useNavigate } from "react-router";
 import { Button } from "../ui/button";
+import { useTranslation } from "react-i18next"; // Assuming you are using react-i18next
 
 export default function PendingOrdersSidebar({ orders }: { orders: OrderResponse[] }) {
   const navigate = useNavigate();
+  const { t } = useTranslation(); // Namespace for translations
 
   const getStatusIcon = (status: OrderStatus) => {
     switch (status) {
@@ -27,13 +29,13 @@ export default function PendingOrdersSidebar({ orders }: { orders: OrderResponse
   const getStatusBadge = (status: OrderStatus) => {
     switch (status) {
       case OrderStatus.COMPLETED:
-        return <Badge variant="default" className="bg-green-100 text-green-800 border-green-200">Completed</Badge>;
+        return <Badge variant="default" className="bg-green-100 text-green-800 border-green-200">{t("pendingOrdersSidebar.status.completed")}</Badge>;
       case OrderStatus.IN_PROGRESS:
-        return <Badge variant="secondary" className="bg-blue-100 text-blue-800 border-blue-200">In Progress</Badge>;
+        return <Badge variant="secondary" className="bg-blue-100 text-blue-800 border-blue-200">{t("pendingOrdersSidebar.status.inProgress")}</Badge>;
       case OrderStatus.PENDING:
-        return <Badge variant="outline" className="bg-yellow-50 text-yellow-800 border-yellow-200">Pending</Badge>;
+        return <Badge variant="outline" className="bg-yellow-50 text-yellow-800 border-yellow-200">{t("pendingOrdersSidebar.status.pending")}</Badge>;
       case OrderStatus.CANCELLED:
-        return <Badge variant="destructive">Cancelled</Badge>;
+        return <Badge variant="destructive">{t("pendingOrdersSidebar.status.cancelled")}</Badge>;
       default:
         return <Badge variant="outline">{status}</Badge>;
     }
@@ -65,9 +67,12 @@ export default function PendingOrdersSidebar({ orders }: { orders: OrderResponse
       [TrashCategory.ELECTRONIC]: "bg-purple-100 text-purple-800 border-purple-200"
     };
 
+    // Use t() for category names
+    const categoryName = t(`pendingOrdersSidebar.category.${category.toLowerCase()}`);
+
     return (
       <Badge variant="outline" className={`text-xs ${categoryColors[category]}`}>
-        {category.toLowerCase().replace(/\b\w/g, l => l.toUpperCase())}
+        {categoryName}
       </Badge>
     );
   };
@@ -78,8 +83,8 @@ export default function PendingOrdersSidebar({ orders }: { orders: OrderResponse
         <Card className="w-full text-center">
           <CardContent>
             <Package className="w-12 h-12 text-muted-foreground mx-auto mb-4" />
-            <CardTitle className="mb-2">No Pending Orders</CardTitle>
-            <p className="text-muted-foreground">All orders have been processed.</p>
+            <CardTitle className="mb-2">{t("noPendingOrdersTitle")}</CardTitle>
+            <p className="text-muted-foreground">{t("pendingOrdersSidebar.noPendingOrdersDescription")}</p>
           </CardContent>
         </Card>
       </div>
@@ -95,9 +100,9 @@ export default function PendingOrdersSidebar({ orders }: { orders: OrderResponse
               <Package className="h-8 w-8 text-muted-foreground" />
             </div>
             <div className="space-y-2">
-              <h3 className="font-semibold text-lg">No Orders Found</h3>
+              <h3 className="font-semibold text-lg">{t("noOrdersFoundTitle")}</h3>
               <p className="text-sm text-muted-foreground max-w-sm">
-                No waste collection orders have been placed yet. Orders will appear here once customers start using the service.
+                {t("pendingOrdersSidebar.noOrdersFoundDescription")}
               </p>
             </div>
           </div>
@@ -115,18 +120,18 @@ export default function PendingOrdersSidebar({ orders }: { orders: OrderResponse
                     <div className="flex items-center gap-2">
                       <MapPin className="h-4 w-4 text-muted-foreground flex-shrink-0" />
                       <span className="text-sm font-medium line-clamp-1 group-hover:text-foreground">
-                        {order.address || "No address provided"}
+                        {order.address || t("pendingOrdersSidebar.addressNotProvided")}
                       </span>
                     </div>
 
                     <div className="flex items-center gap-3 text-xs text-muted-foreground">
                       <div className="flex items-center gap-1">
                         {getCategoryIcon(order.category)}
-                        <span>{order.category.toLowerCase().replace(/\b\w/g, l => l.toUpperCase())}</span>
+                        <span>{t(`pendingOrdersSidebar.category.${order.category.toLowerCase()}`)}</span>
                       </div>
                       <div className="flex items-center gap-1">
                         <Scale className="h-3 w-3" />
-                        <span>{order.weight} kg</span>
+                        <span>{order.weight} {t("pendingOrdersSidebar.weightUnit")}</span>
                       </div>
                     </div>
                   </div>
@@ -140,7 +145,7 @@ export default function PendingOrdersSidebar({ orders }: { orders: OrderResponse
                 {/* Order Description */}
                 {order.description && (
                   <div className="mb-3 p-2 bg-muted/30 rounded text-xs">
-                    <span className="text-muted-foreground">Description: </span>
+                    <span className="text-muted-foreground">{t("pendingOrdersSidebar.descriptionLabel")} </span>
                     <span className="text-foreground">{order.description}</span>
                   </div>
                 )}
@@ -161,14 +166,14 @@ export default function PendingOrdersSidebar({ orders }: { orders: OrderResponse
                     className="h-7 px-3 opacity-0 group-hover:opacity-100 transition-opacity"
                   >
                     <Eye className="h-3 w-3 mr-1" />
-                    View
+                    {t("pendingOrdersSidebar.viewButton")}
                   </Button>
                 </div>
 
                 {/* Completion Info */}
                 {order.completedAt && (
                   <div className="mt-2 pt-2 border-t border-muted text-xs text-muted-foreground">
-                    Completed: {formatDate(order.completedAt)}
+                    {t("pendingOrdersSidebar.completedDate", { date: formatDate(order.completedAt) })}
                   </div>
                 )}
               </div>
