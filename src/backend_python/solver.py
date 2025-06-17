@@ -514,6 +514,12 @@ def solve(request: RoutingRequest):
 # static solver
 def _solve_static_mdvrp(request:RoutingRequest):
   instance = _parse_static_request(request)
+  if instance.num_customers == 0:
+    raise Exception("No customer to assign")
+  if instance.num_depots == 0:
+    raise Exception("No depots")
+  if instance.num_vehicles == 0:
+    raise Exception("No vehicles")
   job_id_to_job = {job.id:job for job in request.jobs}
   depot_id_to_depot_idx = {d.id:i for i, d in enumerate(request.depots)}
   depot_idx_to_vehicles = defaultdict(list)
