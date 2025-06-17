@@ -33,10 +33,19 @@ import {
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+
 
 export default function DepotManagement() {
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
   const [searchQuery, setSearchQuery] = useState<string>("");
+  const [selectedCategory, setSelectedCategory] = useState<string>("ALL"); // New state for category filter
   const navigate = useNavigate();
   const { data, isLoading, isError } = useGetDepots();
   const { mutate: deleteDepot, isPending: isDeleting } = useDeleteDepot();
@@ -47,9 +56,11 @@ export default function DepotManagement() {
     navigate(`/depots/${depot.id}`);
   };
 
-  const filteredDepots = depots.filter((depot) =>
-    depot.address?.toLowerCase().includes(searchQuery.toLowerCase())
-  );
+  const filteredDepots = depots.filter((depot) => {
+    const matchesSearch = depot.address?.toLowerCase().includes(searchQuery.toLowerCase());
+    const matchesCategory = selectedCategory === "ALL" || depot.category === selectedCategory;
+    return matchesSearch && matchesCategory;
+  });
 
   // Helper function to get category color and styling
   const getCategoryStyle = (category: string) => {
@@ -68,6 +79,16 @@ export default function DepotManagement() {
         return 'bg-gray-50 text-gray-700 border-gray-200';
     }
   };
+
+  // Define available categories for the filter
+  const categories = [
+    { value: "ALL", label: t("depotManagement.categoryFilter.all") },
+    { value: "GENERAL", label: t("depotCreateModal.trashCategories.GENERAL") },
+    { value: "ORGANIC", label: t("depotCreateModal.trashCategories.ORGANIC") },
+    { value: "RECYCLABLE", label: t("depotCreateModal.trashCategories.RECYCLABLE") },
+    { value: "HAZARDOUS", label: t("depotCreateModal.trashCategories.HAZARDOUS") },
+    { value: "ELECTRONIC", label: t("depotCreateModal.trashCategories.ELECTRONIC") },
+  ];
 
   if (isLoading) {
     return (
@@ -125,14 +146,32 @@ export default function DepotManagement() {
             </div>
 
             <div className="flex gap-3 flex-wrap items-center">
-              <Search />
-              <Input
-                type="text"
-                placeholder={t("depotManagement.searchPlaceholder")}
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                className="px-4 py-2 border border-slate-200 rounded-lg shadow-sm text-sm w-full sm:w-64 focus:outline-none focus:ring-2 focus:ring-primary/50"
-              />
+              {/* Category Filter */}
+              <Select onValueChange={setSelectedCategory} value={selectedCategory}>
+                <SelectTrigger className="w-[180px] px-4 py-2 border border-slate-200 rounded-lg shadow-sm text-sm focus:outline-none focus:ring-2 focus:ring-primary/50">
+                  <SelectValue placeholder={t("depotManagement.categoryFilter.placeholder")} />
+                </SelectTrigger>
+                <SelectContent className="bg-white z-50 shadow-lg rounded-lg border border-slate-200">
+                  {categories.map((cat) => (
+                    <SelectItem key={cat.value} value={cat.value}>
+                      {cat.label}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+
+              {/* Search Input */}
+              <div className="relative">
+                <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
+                <Input
+                  type="text"
+                  placeholder={t("depotManagement.searchPlaceholder")}
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                  className="pl-9 pr-4 py-2 border border-slate-200 rounded-lg shadow-sm text-sm w-full sm:w-64 focus:outline-none focus:ring-2 focus:ring-primary/50"
+                />
+              </div>
+
               <Button
                 onClick={() => setIsModalOpen(true)}
                 className="bg-primary hover:bg-primary/90 transition-all duration-200 shadow-md hover:shadow-lg"
@@ -151,13 +190,11 @@ export default function DepotManagement() {
           <div className="text-center py-16">
             <Warehouse className="w-16 h-16 text-slate-400 mx-auto mb-4" />
             <h3 className="text-lg font-medium text-slate-900 mb-2">
-              {searchQuery ? t("depotManagement.noDepotsFound.searchMatch") : t("depotManagement.noDepotsFound.noDepots")}
+              {searchQuery || selectedCategory !== "ALL"
+                ? t("depotManagement.noDepotsFound.searchMatch")
+                : t("depotManagement.noDepotsFound.noDepots")}
             </h3>
             <p className="text-slate-600 mb-6">{t("depotManagement.noDepotsFound.getDescription")}</p>
-            {/* <Button onClick={() => setIsModalOpen(true)}>
-              <Plus className="w-4 h-4 mr-2" />
-              {t("depotManagement.noDepotsFound.createButton")}
-            </Button> */}
           </div>
         ) : (
           <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">

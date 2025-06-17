@@ -45,18 +45,15 @@ const formatDate = (dateString: string) => {
 };
 
 const formatDistance = (distance: number) => {
-  if (distance >= 1000) {
-    return `${(distance / 1000).toFixed(1)} km`;
-  }
-  return `${distance.toFixed(0)} m`;
+  return `${distance.toFixed(0)} km`;
 };
 
 const formatDuration = (duration: number) => {
-  const hours = Math.floor(duration / 3600);
-  const minutes = Math.floor((duration % 3600) / 60);
-  
+  const hours = Math.floor(duration / 60);
+  const minutes = duration % 60;
+
   if (hours > 0) {
-    return `${hours}h ${minutes}m`;
+    return `${hours}h ${minutes.toFixed(0)}m`;
   }
   return `${minutes}m`;
 };

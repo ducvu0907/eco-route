@@ -182,6 +182,9 @@
     "errorState": {
       "title": "Lỗi",
       "description": "Không thể tải kho. Vui lòng thử lại sau."
+    },
+    "categoryFilter": {
+      "all": "Tất cả loại rác"
     }
   },
   "orderDetails": {

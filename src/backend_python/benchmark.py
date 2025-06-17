@@ -68,7 +68,7 @@ def benchmark(folder_path, output_csv='benchmark_results.csv'):
 if __name__ == "__main__":
   # folder1 = "/home/ducvu/work/projects/eco-route/src/backend_python/data/mdvrp"
   folder2 = "/home/ducvu/work/projects/eco-route/src/backend_python/data/T_instances"
-  file = "/home/ducvu/work/projects/eco-route/src/backend_python/data/mdvrp/p10"
+  file = "/home/ducvu/work/projects/eco-route/src/backend_python/data/T_instances/T003-n127-d2.txt"
   benchmark(folder2)
   # cost, _ = solve_with_gancp(file)
   # print(cost)
