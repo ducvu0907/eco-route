@@ -17,5 +17,4 @@ public class VehicleCreateRequest {
   private String depotId;
   private String licensePlate;
   private VehicleType type;
-  private TrashCategory category;
 }

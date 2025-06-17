@@ -28,6 +28,9 @@ public class Depot {
   @OneToMany(mappedBy = "depot", fetch = FetchType.LAZY) // no cascading
   private List<Vehicle> vehicles = new ArrayList<>();
 
+  @Enumerated(value = EnumType.STRING)
+  private TrashCategory category;
+
   private Double latitude;
 
   private Double longitude;

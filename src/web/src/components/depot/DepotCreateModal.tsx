@@ -21,7 +21,7 @@ import {
 import { Input } from "@/components/ui/input";
 import { useCreateDepot } from "@/hooks/useDepot";
 import { useReverseLocation, useSearchLocation } from "@/hooks/useFetchLocation";
-import { DepotCreateRequest, Feature } from "@/types/types";
+import { DepotCreateRequest, Feature, TrashCategory } from "@/types/types";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Building2, Loader, Loader2, MapPin, Navigation, Search } from "lucide-react";
 import { useEffect, useState } from "react";
@@ -45,6 +45,7 @@ export default function DepotCreateModal({ isOpen, onClose }: DepotCreateModalPr
     address: z.string().min(1, t("depotCreateModal.validation.addressRequired")),
     latitude: z.coerce.number().min(1, t("depotCreateModal.validation.latitudeRequired")),
     longitude: z.coerce.number().min(1, t("depotCreateModal.validation.longitudeRequired")),
+    category: z.nativeEnum(TrashCategory),
   });
 
   type FormValues = z.infer<typeof formSchema>;
@@ -55,6 +56,7 @@ export default function DepotCreateModal({ isOpen, onClose }: DepotCreateModalPr
       address: "",
       latitude: 0,
       longitude: 0,
+      category: TrashCategory.GENERAL
     },
   });
 
@@ -231,11 +233,11 @@ export default function DepotCreateModal({ isOpen, onClose }: DepotCreateModalPr
                         <FormItem>
                           <FormLabel className="text-sm font-medium text-slate-700">{t("depotCreateModal.locationDetailsCard.latitudeLabel")}</FormLabel>
                           <FormControl>
-                            <Input 
-                              type="number" 
-                              step="any" 
-                              {...field} 
-                              readOnly 
+                            <Input
+                              type="number"
+                              step="any"
+                              {...field}
+                              readOnly
                               className="h-11 bg-slate-50 border-slate-300 text-slate-600 font-mono text-sm"
                               placeholder="0.000000"
                             />
@@ -251,14 +253,38 @@ export default function DepotCreateModal({ isOpen, onClose }: DepotCreateModalPr
                         <FormItem>
                           <FormLabel className="text-sm font-medium text-slate-700">{t("depotCreateModal.locationDetailsCard.longitudeLabel")}</FormLabel>
                           <FormControl>
-                            <Input 
-                              type="number" 
-                              step="any" 
-                              {...field} 
-                              readOnly 
+                            <Input
+                              type="number"
+                              step="any"
+                              {...field}
+                              readOnly
                               className="h-11 bg-slate-50 border-slate-300 text-slate-600 font-mono text-sm"
                               placeholder="0.000000"
                             />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                    <FormField
+                      control={form.control}
+                      name="category"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel className="text-sm font-medium text-slate-700">
+                            {t("depotCreateModal.locationDetailsCard.categoryLabel")}
+                          </FormLabel>
+                          <FormControl>
+                            <select
+                              {...field}
+                              className="h-11 w-full border border-slate-300 rounded-md px-3 bg-white text-sm text-slate-700 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                            >
+                              {Object.values(TrashCategory).map((category) => (
+                                <option key={category} value={category}>
+                                  {t(`depotCreateModal.trashCategories.${category}`)}
+                                </option>
+                              ))}
+                            </select>
                           </FormControl>
                           <FormMessage />
                         </FormItem>

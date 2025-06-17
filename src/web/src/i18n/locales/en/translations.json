@@ -166,7 +166,8 @@
       "vehiclesLabel": "Vehicles",
       "createdAt": "Created",
       "viewButton": "View",
-      "deleteButton": "Delete"
+      "deleteButton": "Delete",
+      "categoryLabel": "Category"
     },
     "alertDialog": {
       "title": "Are you sure?",
@@ -403,7 +404,8 @@
       "totalVehicles": "Total Vehicles",
       "activeVehicles": "Active Vehicles",
       "totalLoad": "Total Load (kg)",
-      "avgLoad": "Avg. Load (kg)"
+      "avgLoad": "Avg. Load (kg)",
+      "category": "Category"
     },
     "info": {
       "title": "Depot Information",
@@ -605,7 +607,8 @@
       "addressPlaceholder": "Address will appear here",
       "locatingText": "Locating...",
       "latitudeLabel": "Latitude",
-      "longitudeLabel": "Longitude"
+      "longitudeLabel": "Longitude",
+      "categoryLabel": "Category"
     },
     "footer": {
       "cancelButton": "Cancel",
@@ -616,6 +619,13 @@
       "addressRequired": "Address is required",
       "latitudeRequired": "Latitude is required",
       "longitudeRequired": "Longitude is required"
+    },
+    "trashCategories": {
+      "GENERAL": "General",
+      "ORGANIC": "Organic",
+      "RECYCLABLE": "Recyclable",
+      "HAZARDOUS": "Hazardous",
+      "ELECTRONIC": "Electronic"
     }
   },
   "depotUpdateModal": {
@@ -631,7 +641,8 @@
       "addressPlaceholder": "Address will appear here",
       "locatingText": "Locating...",
       "latitudeLabel": "Latitude",
-      "longitudeLabel": "Longitude"
+      "longitudeLabel": "Longitude",
+      "categoryLabel": "Category"
     },
     "footer": {
       "cancelButton": "Cancel",
@@ -642,6 +653,13 @@
       "addressRequired": "Address is required",
       "latitudeRequired": "Latitude is required",
       "longitudeRequired": "Longitude is required"
+    },
+    "trashCategories": {
+      "GENERAL": "General",
+      "ORGANIC": "Organic",
+      "RECYCLABLE": "Recyclable",
+      "HAZARDOUS": "Hazardous",
+      "ELECTRONIC": "Electronic"
     }
   },
   "vehicleCreateModal": {
@@ -848,15 +866,11 @@
     "Distribution of vehicle types in the fleet.": "Distribution of vehicle types in the fleet.",
     "COMPACTOR_TRUCK": "Compactor Truck",
     "THREE_WHEELER": "Three Wheeler",
-    "Route and Dispatch Status": "Route and Dispatch Status",
-    "Overview of ongoing and completed routes and dispatches.": "Overview of ongoing and completed routes and dispatches.",
-    "Routes": "Routes",
-    "Dispatches": "Dispatches",
+    "Routes by Status": "Routes by Status",
+    "Current distribution of all route statuses.": "Current distribution of all route statuses.",
     "CREATED": "Created",
-    "Order Completion Rate": "Order Completion Rate",
-    "Percentage of completed orders.": "Percentage of completed orders.",
-    "of": "of",
-    "orders completed": "orders completed",
+    "Order Completion/Cancellation Rate": "Order Completion/Cancellation Rate",
+    "Percentage of completed and cancelled orders.": "Percentage of completed and cancelled orders.",
     "Average Route Performance": "Average Route Performance",
     "Typical distance and duration of routes.": "Typical distance and duration of routes.",
     "Average Distance per Route": "Average Distance per Route",
@@ -864,10 +878,19 @@
     "Vehicle Load Status": "Vehicle Load Status",
     "Current load percentage of vehicles.": "Current load percentage of vehicles.",
     "full": "full",
-    "Top 5 Depots by Vehicle Count": "Top 5 Depots by Vehicle Count",
-    "Depots with the highest number of assigned vehicles.": "Depots with the highest number of assigned vehicles.",
+    "Total Routes": "Total Routes",
+    "Total routes ever created": "Total routes ever created",
+    "Routes in Progress": "Routes in Progress",
+    "Routes currently being executed": "Routes currently being executed",
+    "Average Orders per Route": "Average Orders per Route",
+    "Average number of orders in a route": "Average number of orders in a route",
+    "Most Active Depot": "Most Active Depot",
+    "Depot with most vehicles": "Depot with most vehicles",
     "Loading dashboard data...": "Loading dashboard data...",
-    "Failed to load dashboard data.": "Failed to load dashboard data."
+    "Failed to load dashboard data.": "Failed to load dashboard data.",
+    "N/A": "N/A",
+    "Completed": "Completed",
+    "Cancelled": "Cancelled"
   },
   "map": {
     "loading": {
@@ -1041,7 +1064,7 @@
     },
     "timeline": {
       "title": "Route Timeline",
-      "createdOn": "Created at", 
+      "createdOn": "Created at",
       "started": "Started",
       "completed": "Completed",
       "lastUpdated": "Last Updated",

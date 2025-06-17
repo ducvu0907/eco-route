@@ -25,7 +25,8 @@ import {
   Clock,
   AlertCircle,
   Building2,
-  MapIcon
+  MapIcon,
+  Tag
 } from "lucide-react";
 
 export default function DepotDetails() {
@@ -42,6 +43,35 @@ export default function DepotDetails() {
   const { data, isLoading, isError } = useGetDepotById(depotId);
   const depot = data?.result;
 
+  // Helper function to get category color and styling
+  const getCategoryStyle = (category: string) => {
+    switch (category) {
+      case 'GENERAL':
+        return 'bg-gray-50 text-gray-700 border-gray-200 hover:bg-gray-100';
+      case 'ORGANIC':
+        return 'bg-green-50 text-green-700 border-green-200 hover:bg-green-100';
+      case 'RECYCLABLE':
+        return 'bg-blue-50 text-blue-700 border-blue-200 hover:bg-blue-100';
+      case 'HAZARDOUS':
+        return 'bg-red-50 text-red-700 border-red-200 hover:bg-red-100';
+      case 'ELECTRONIC':
+        return 'bg-purple-50 text-purple-700 border-purple-200 hover:bg-purple-100';
+      default:
+        return 'bg-gray-50 text-gray-700 border-gray-200 hover:bg-gray-100';
+    }
+  };
+
+  const getCategoryColor = (category: string) => {
+    switch (category) {
+      case 'GENERAL': return 'border-l-gray-500';
+      case 'ORGANIC': return 'border-l-green-500';
+      case 'RECYCLABLE': return 'border-l-blue-500';
+      case 'HAZARDOUS': return 'border-l-red-500';
+      case 'ELECTRONIC': return 'border-l-purple-500';
+      default: return 'border-l-gray-500';
+    }
+  };
+
   if (isLoading) {
     return (
       <div className="container mx-auto p-6 space-y-8">
@@ -49,8 +79,8 @@ export default function DepotDetails() {
           <Skeleton className="h-8 w-64" />
           <Skeleton className="h-4 w-96" />
         </div>
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-          {[...Array(4)].map((_, i) => (
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-6">
+          {[...Array(5)].map((_, i) => (
             <Skeleton key={i} className="h-24 rounded-lg" />
           ))}
         </div>
@@ -122,7 +152,7 @@ export default function DepotDetails() {
         </Button>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-6">
         <Card className="border-l-4 border-l-blue-500 hover:shadow-md transition-shadow">
           <CardContent className="p-6">
             <div className="flex items-center justify-between">
@@ -178,6 +208,20 @@ export default function DepotDetails() {
             </div>
           </CardContent>
         </Card>
+
+        <Card className={`border-l-4 ${getCategoryColor(depot.category)} hover:shadow-md transition-shadow`}>
+          <CardContent className="p-6">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-lg font-bold text-gray-900 capitalize">{t(`depotCreateModal.trashCategories.${depot.category}`)}</p>
+                <p className="text-sm font-medium text-gray-600">{t("depotDetails.metrics.category")}</p>
+              </div>
+              <div className="p-3 bg-indigo-50 rounded-full">
+                <Tag className="h-6 w-6 text-indigo-600" />
+              </div>
+            </div>
+          </CardContent>
+        </Card>
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
@@ -205,6 +249,16 @@ export default function DepotDetails() {
                   <p className="text-sm text-gray-600 font-mono">
                     {depot.latitude?.toFixed(6)}, {depot.longitude?.toFixed(6)}
                   </p>
+                </div>
+              </div>
+
+              <div className="flex items-start gap-3 p-3 bg-gray-50 rounded-lg">
+                <Tag className="h-4 w-4 mt-0.5 text-gray-500 flex-shrink-0" />
+                <div className="min-w-0">
+                  <p className="text-sm font-medium text-gray-900">{t("depotDetails.info.category")}</p>
+                  <Badge variant="outline" className={getCategoryStyle(depot.category)}>
+                    {depot.category.toLowerCase()}
+                  </Badge>
                 </div>
               </div>
             </div>

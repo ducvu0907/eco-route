@@ -25,6 +25,7 @@ import {
   MapPin,
   Plus,
   Search,
+  Tag,
   Trash2,
   Truck,
   Warehouse
@@ -49,6 +50,24 @@ export default function DepotManagement() {
   const filteredDepots = depots.filter((depot) =>
     depot.address?.toLowerCase().includes(searchQuery.toLowerCase())
   );
+
+  // Helper function to get category color and styling
+  const getCategoryStyle = (category: string) => {
+    switch (category) {
+      case 'GENERAL':
+        return 'bg-gray-50 text-gray-700 border-gray-200';
+      case 'ORGANIC':
+        return 'bg-green-50 text-green-700 border-green-200';
+      case 'RECYCLABLE':
+        return 'bg-blue-50 text-blue-700 border-blue-200';
+      case 'HAZARDOUS':
+        return 'bg-red-50 text-red-700 border-red-200';
+      case 'ELECTRONIC':
+        return 'bg-purple-50 text-purple-700 border-purple-200';
+      default:
+        return 'bg-gray-50 text-gray-700 border-gray-200';
+    }
+  };
 
   if (isLoading) {
     return (
@@ -169,6 +188,16 @@ export default function DepotManagement() {
                     </span>
                   </div>
 
+                  <div className={`flex items-center justify-between py-3 px-4 rounded-lg border ${getCategoryStyle(depot.category)}`}>
+                    <div className="flex items-center gap-2">
+                      <Tag className="w-4 h-4" />
+                      <span className="text-sm font-medium">{t("depotManagement.card.categoryLabel")}</span>
+                    </div>
+                    <span className="text-sm font-bold capitalize">
+                      {t(`depotCreateModal.trashCategories.${depot.category}`)}
+                    </span>
+                  </div>
+
                   <div className="flex items-center gap-2 text-sm text-slate-600">
                     <Calendar className="w-4 h-4" />
                     <span>{t("depotManagement.card.createdAt")}: {formatDate(depot.createdAt)}</span>
@@ -222,10 +251,10 @@ export default function DepotManagement() {
                                 {t("depotManagement.alertDialog.deletingButton")}
                               </div>
                             ) : (
-                              <>
+                              <div>
                                 <Trash2 className="w-4 h-4 mr-2" />
                                 {t("depotManagement.alertDialog.confirmDeleteButton")}
-                              </>
+                              </div>
                             )}
                           </AlertDialogAction>
                         </AlertDialogFooter>

@@ -78,12 +78,14 @@ export interface DepotCreateRequest {
   latitude: number;
   longitude: number;
   address: string;
+  category: TrashCategory;
 }
 
 export interface DepotUpdateRequest {
   latitude: number;
   longitude: number;
   address: string;
+  category: TrashCategory;
 }
 
 export interface OrderCreateRequest {
@@ -106,7 +108,6 @@ export interface VehicleCreateRequest {
   depotId: string;
   licensePlate: string;
   type: VehicleType;
-  category: TrashCategory;
 }
 
 
@@ -135,6 +136,7 @@ export interface DepotResponse {
   longitude: number;
   address: string;
   vehicles: VehicleResponse[];
+  category: TrashCategory;
   createdAt: string;
   updatedAt: string;
 }

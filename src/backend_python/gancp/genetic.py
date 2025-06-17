@@ -42,7 +42,8 @@ def mdvrp_solve(instance,
   elite_parents = [population[i] for i in sorted_indices_pop[:3]]
 
   # main evolution loop
-  for generation in range(generations):
+  generation = 0
+  while generation < generations and time.monotonic() - start_time < 10.0:
     # create subpopulation
     # infeasibility check and repair
     subpopulation = generate_subpopulation(instance, population, scores, pop_limit[0])
@@ -165,6 +166,7 @@ def mdvrp_solve_refined(instance,
 
   # main evolution loop
   generation = 0
+  # while generation < generations:
   while generation < generations and time.monotonic() - start_time < max_runtime:
     # create subpopulation
     # infeasibility check and repair
@@ -271,10 +273,16 @@ def solve_instance(instance, dist_type="euclidean"):
   return best_cost, best_routes
 
 
+def benchmark_instance(instance, dist_type="euclidean"):
+  if instance.num_depots == 1:
+    costs, routes = hgs_cvrp(instance, dist_type=dist_type)
+    return costs, routes
+  _, _, hgs_costs, _, _ = mdvrp_solve(instance, dist_type=dist_type)
+  _, _, hgs_costs_refined, _, _ = mdvrp_solve_refined(instance, dist_type=dist_type)
+  best_cost = min(hgs_costs)
+  best_cost_refined = min(hgs_costs_refined)
+  return best_cost, best_cost_refined
+
 # test benchmark instance
 if __name__ == "__main__":
-  instance = read_mdvrp_cordeau("/home/ducvu/work/projects/eco-route/src/backend_python/data/mdvrp/pr02")
-  cost, routes = solve_instance(instance)
-  print(cost)
-  for depot_routes in routes:
-    print(depot_routes)
+  instance = read_mdvrp_cordeau("/home/ducvu/work/projects/eco-route/src/backend_python/data/mdvrp/p01")

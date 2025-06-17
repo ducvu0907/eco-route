@@ -166,7 +166,8 @@
       "vehiclesLabel": "Phương tiện",
       "createdAt": "Đã tạo",
       "viewButton": "Xem",
-      "deleteButton": "Xóa"
+      "deleteButton": "Xóa",
+      "categoryLabel": "Loại rác thải"
     },
     "alertDialog": {
       "title": "Bạn có chắc chắn không?",
@@ -403,7 +404,8 @@
       "totalVehicles": "Tổng số Phương tiện",
       "activeVehicles": "Phương tiện Đang hoạt động",
       "totalLoad": "Tổng tải trọng (kg)",
-      "avgLoad": "Tải trọng TB (kg)"
+      "avgLoad": "Tải trọng TB (kg)",
+      "category": "Loại rác thải"
     },
     "info": {
       "title": "Thông tin Kho",
@@ -605,7 +607,8 @@
       "addressPlaceholder": "Địa chỉ sẽ xuất hiện ở đây",
       "locatingText": "Đang định vị...",
       "latitudeLabel": "Vĩ độ",
-      "longitudeLabel": "Kinh độ"
+      "longitudeLabel": "Kinh độ",
+      "categoryLabel": "Loại rác thải"
     },
     "footer": {
       "cancelButton": "Hủy",
@@ -616,6 +619,13 @@
       "addressRequired": "Địa chỉ là bắt buộc",
       "latitudeRequired": "Vĩ độ là bắt buộc",
       "longitudeRequired": "Kinh độ là bắt buộc"
+    },
+    "trashCategories": {
+      "GENERAL": "Sinh hoạt",
+      "ORGANIC": "Hữu cơ",
+      "RECYCLABLE": "Tái chế",
+      "HAZARDOUS": "Nguy hại",
+      "ELECTRONIC": "Điện tử"
     }
   },
   "depotUpdateModal": {
@@ -631,7 +641,8 @@
       "addressPlaceholder": "Địa chỉ sẽ xuất hiện ở đây",
       "locatingText": "Đang định vị...",
       "latitudeLabel": "Vĩ độ",
-      "longitudeLabel": "Kinh độ"
+      "longitudeLabel": "Kinh độ",
+      "categoryLabel": "Loại rác thải"
     },
     "footer": {
       "cancelButton": "Hủy",
@@ -642,6 +653,13 @@
       "addressRequired": "Địa chỉ là bắt buộc",
       "latitudeRequired": "Vĩ độ là bắt buộc",
       "longitudeRequired": "Kinh độ là bắt buộc"
+    },
+   "trashCategories": {
+      "GENERAL": "Sinh hoạt",
+      "ORGANIC": "Hữu cơ",
+      "RECYCLABLE": "Tái chế",
+      "HAZARDOUS": "Nguy hại",
+      "ELECTRONIC": "Điện tử"
     }
   },
   "vehicleCreateModal": {
@@ -680,7 +698,7 @@
       "COMPACTOR_TRUCK": "Xe tải ép rác"
     },
     "trashCategories": {
-      "GENERAL": "Tổng hợp",
+      "GENERAL": "Sinh hoạt",
       "ORGANIC": "Hữu cơ",
       "RECYCLABLE": "Tái chế",
       "HAZARDOUS": "Nguy hại",
@@ -848,15 +866,11 @@
     "Distribution of vehicle types in the fleet.": "Phân bố các loại phương tiện trong đội xe.",
     "COMPACTOR_TRUCK": "Xe ép rác",
     "THREE_WHEELER": "Xe ba gác",
-    "Route and Dispatch Status": "Trạng thái Tuyến đường và Điều phối",
-    "Overview of ongoing and completed routes and dispatches.": "Tổng quan về các tuyến đường và điều phối đang diễn ra và đã hoàn thành.",
-    "Routes": "Tuyến đường",
-    "Dispatches": "Điều phối",
+    "Routes by Status": "Trạng thái Tuyến đường",
+    "Current distribution of all route statuses.": "Phân bố hiện tại của tất cả các trạng thái tuyến đường.",
     "CREATED": "Đã tạo",
-    "Order Completion Rate": "Tỷ lệ hoàn thành đơn hàng",
-    "Percentage of completed orders.": "Tỷ lệ phần trăm các đơn hàng đã hoàn thành.",
-    "of": "trên",
-    "orders completed": "đơn hàng đã hoàn thành",
+    "Order Completion/Cancellation Rate": "Tỷ lệ hoàn thành/hủy đơn hàng",
+    "Percentage of completed and cancelled orders.": "Tỷ lệ phần trăm các đơn hàng đã hoàn thành và đã hủy.",
     "Average Route Performance": "Hiệu suất tuyến đường trung bình",
     "Typical distance and duration of routes.": "Quãng đường và thời gian điển hình của các tuyến đường.",
     "Average Distance per Route": "Khoảng cách trung bình mỗi tuyến",
@@ -864,10 +878,19 @@
     "Vehicle Load Status": "Trạng thái tải của phương tiện",
     "Current load percentage of vehicles.": "Tỷ lệ phần trăm tải hiện tại của các phương tiện.",
     "full": "đầy",
-    "Top 5 Depots by Vehicle Count": "Top 5 trạm trung chuyển theo số lượng phương tiện",
-    "Depots with the highest number of assigned vehicles.": "Các trạm trung chuyển có số lượng phương tiện được giao cao nhất.",
+    "Total Routes": "Tổng số tuyến đường",
+    "Total routes ever created": "Tổng số tuyến đường đã được tạo",
+    "Routes in Progress": "Tuyến đường đang tiến hành",
+    "Routes currently being executed": "Các tuyến đường đang được thực hiện",
+    "Average Orders per Route": "Số đơn hàng trung bình mỗi tuyến",
+    "Average number of orders in a route": "Số lượng đơn hàng trung bình trong một tuyến đường",
+    "Most Active Depot": "Trạm trung chuyển hoạt động nhiều nhất",
+    "Depot with most vehicles": "Trạm trung chuyển có nhiều phương tiện nhất",
     "Loading dashboard data...": "Đang tải dữ liệu trang tổng quan...",
-    "Failed to load dashboard data.": "Không thể tải dữ liệu trang tổng quan."
+    "Failed to load dashboard data.": "Không thể tải dữ liệu trang tổng quan.",
+    "N/A": "Không có",
+    "Completed": "Đã hoàn thành",
+    "Cancelled": "Đã hủy"
   },
   "map": {
     "loading": {

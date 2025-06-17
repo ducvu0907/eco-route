@@ -10,6 +10,7 @@ import { Bar, BarChart, CartesianGrid, Cell, Legend, Pie, PieChart, ResponsiveCo
 // Mock Data Generation Functions
 const generateMockDepots = (count: number): DepotResponse[] => {
   const depots: DepotResponse[] = [];
+  const categories = Object.values(TrashCategory);
   for (let i = 0; i < count; i++) {
     depots.push({
       id: `depot-${i + 1}`,
@@ -17,6 +18,7 @@ const generateMockDepots = (count: number): DepotResponse[] => {
       longitude: 106.660172 + (Math.random() - 0.5) * 0.1,
       address: `Depot Address ${i + 1}`,
       vehicles: [], 
+      category: categories[Math.random() * categories.length],
       createdAt: new Date().toISOString(),
       updatedAt: new Date().toISOString(),
     });
@@ -59,7 +61,7 @@ const generateMockVehicles = (count: number, drivers: any[], depots: DepotRespon
       currentLongitude: depot.longitude + (Math.random() - 0.5) * 0.01,
       currentLoad: Math.floor(Math.random() * 500),
       type: vehicleTypes[Math.floor(Math.random() * vehicleTypes.length)],
-      category: trashCategories[Math.floor(Math.random() * trashCategories.length)],
+      category: depot.category,
       status: vehicleStatuses[Math.floor(Math.random() * vehicleStatuses.length)],
       createdAt: new Date().toISOString(),
       updatedAt: new Date().toISOString(),

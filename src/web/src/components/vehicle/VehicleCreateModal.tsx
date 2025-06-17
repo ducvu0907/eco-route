@@ -30,15 +30,14 @@ import {
   MapPin, 
   User, 
   Hash, 
-  Trash,
   Loader2,
 } from "lucide-react";
 import { useGetDepots } from "@/hooks/useDepot";
 import { useGetDriversNotAssigned } from "@/hooks/useUser";
-import { DepotResponse, Role, TrashCategory, UserResponse, VehicleType } from "@/types/types";
+import { DepotResponse, Role, UserResponse, VehicleType } from "@/types/types";
 import { useCreateVehicle } from "@/hooks/useVehicle";
 import { useQueryClient } from "@tanstack/react-query";
-import { useTranslation } from "react-i18next"; // Import useTranslation
+import { useTranslation } from "react-i18next";
 
 interface VehicleCreateModalProps {
   isOpen: boolean;
@@ -56,8 +55,7 @@ export default function VehicleCreateModal({ isOpen, onClose, depot, driver }: V
     depotId: z.string().min(1, t("vehicleCreateModal.formFields.depotLocation.required")),
     driverId: z.string().min(1, t("vehicleCreateModal.formFields.driverAssignment.required")),
     licensePlate: z.string().min(1, t("vehicleCreateModal.formFields.licensePlate.required")),
-    type: z.nativeEnum(VehicleType),
-    category: z.nativeEnum(TrashCategory)
+    type: z.nativeEnum(VehicleType)
   });
 
   type VehicleFormValues = z.infer<typeof vehicleSchema>;
@@ -74,8 +72,7 @@ export default function VehicleCreateModal({ isOpen, onClose, depot, driver }: V
       depotId: depot?.id || "",
       driverId: driver?.id || "",
       licensePlate: "",
-      type: VehicleType.THREE_WHEELER,
-      category: TrashCategory.GENERAL
+      type: VehicleType.THREE_WHEELER
     },
   });
 
@@ -98,26 +95,26 @@ export default function VehicleCreateModal({ isOpen, onClose, depot, driver }: V
     return t(`vehicleCreateModal.vehicleTypes.${type}`);
   };
 
-  const formatCategory = (category: TrashCategory) => {
-    return t(`vehicleCreateModal.trashCategories.${category}`);
-  };
+  // const formatCategory = (category: TrashCategory) => {
+  //   return t(`vehicleCreateModal.trashCategories.${category}`);
+  // };
 
-  const getCategoryIcon = (category: TrashCategory) => {
-    switch (category) {
-      case TrashCategory.GENERAL:
-        return '🗑️';
-      case TrashCategory.ORGANIC:
-        return '🌱';
-      case TrashCategory.RECYCLABLE:
-        return '♻️';
-      case TrashCategory.HAZARDOUS:
-        return '⚠️';
-      case TrashCategory.ELECTRONIC:
-        return '📱';
-      default:
-        return '📦';
-    }
-  };
+  // const getCategoryIcon = (category: TrashCategory) => {
+  //   switch (category) {
+  //     case TrashCategory.GENERAL:
+  //       return '🗑️';
+  //     case TrashCategory.ORGANIC:
+  //       return '🌱';
+  //     case TrashCategory.RECYCLABLE:
+  //       return '♻️';
+  //     case TrashCategory.HAZARDOUS:
+  //       return '⚠️';
+  //     case TrashCategory.ELECTRONIC:
+  //       return '📱';
+  //     default:
+  //       return '📦';
+  //   }
+  // };
 
   const getVehicleTypeIcon = (type: VehicleType) => {
     switch (type) {
@@ -300,7 +297,7 @@ export default function VehicleCreateModal({ isOpen, onClose, depot, driver }: V
                 />
 
                 {/* Trash Category */}
-                <FormField
+                {/* <FormField
                   control={form.control}
                   name="category"
                   render={({ field }) => (
@@ -329,7 +326,7 @@ export default function VehicleCreateModal({ isOpen, onClose, depot, driver }: V
                       <FormMessage className="text-red-500 text-sm" />
                     </FormItem>
                   )}
-                />
+                /> */}
               </div>
 
             </div>

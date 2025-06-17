@@ -96,11 +96,11 @@ public class VehicleService {
         .licensePlate(request.getLicensePlate())
         .status(VehicleStatus.IDLE)
         .type(request.getType())
-        .category(request.getCategory())
         .capacity(request.getType() == VehicleType.THREE_WHEELER ? 300.0 : 1000.0) // map vehicle type to capacity
         .currentLoad(0.)
         .build();
 
+    // validator already made sure driver id is not null
     if (request.getDriverId() != null) {
       User driver = userRepository.findById(request.getDriverId())
           .orElseThrow(() -> new RuntimeException("Driver not found"));
@@ -113,11 +113,13 @@ public class VehicleService {
       vehicle.setDriver(driver);
     }
 
+    // validator already made sure depot id is not null
     if (request.getDepotId() != null) {
       Depot depot = depotRepository.findById(request.getDepotId())
           .orElseThrow(() -> new RuntimeException("Depot not found"));
 
       vehicle.setDepot(depot);
+      vehicle.setCategory(depot.getCategory());
       vehicle.setCurrentLatitude(depot.getLatitude());
       vehicle.setCurrentLongitude(depot.getLongitude());
     }
@@ -160,6 +162,7 @@ public class VehicleService {
           .orElseThrow(() -> new RuntimeException("Depot not found"));
 
       vehicle.setDepot(depot);
+      vehicle.setCategory(depot.getCategory());
     }
 
     return mapper.map(vehicleRepository.save(vehicle));

@@ -39,14 +39,21 @@ public class DepotService {
   }
 
   public DepotResponse updateDepot(String depotId, DepotUpdateRequest request) {
-    validator.validate(request);
-
     Depot depot = depotRepository.findById(depotId)
         .orElseThrow(() -> new RuntimeException("Depot not found"));
 
     depot.setLatitude(request.getLatitude());
     depot.setLongitude(request.getLongitude());
     depot.setAddress(request.getAddress());
+
+    if (request.getCategory() != null) {
+      depot.setCategory(request.getCategory());
+      depot.getVehicles().forEach(
+          vehicle -> {
+            vehicle.setCategory(request.getCategory());
+          }
+      );
+    }
 
     return mapper.map(depotRepository.save(depot));
   }
@@ -58,18 +65,10 @@ public class DepotService {
         .latitude(request.getLatitude())
         .longitude(request.getLongitude())
         .address(request.getAddress())
+        .category(request.getCategory())
         .build();
 
-//    if (depot.getAddress() == null) {
-//      OsmResponse osmResponse = helper.reverseGeocode(request.getLatitude(), request.getLongitude());
-//      if (osmResponse != null && osmResponse.getError() != null) {
-//        depot.setAddress(osmResponse.getDisplayName());
-//        log.info("Get OSM response successfully: {}", osmResponse);
-//      }
-//    }
-
     return mapper.map(depotRepository.save(depot));
-
   }
 
   public void deleteDepot(String depotId) {

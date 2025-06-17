@@ -100,7 +100,7 @@ export default function OrderDetails() {
         },
         {
           text: t("orderDetails.cancelConfirmationYes"),
-          onPress: () => cancelOrder(orderId as string),
+          onPress: () => {cancelOrder(orderId as string); router.back();},
           style: "destructive",
         },
       ],

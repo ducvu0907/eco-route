@@ -2,6 +2,7 @@ from gancp.genetic import solve_instance
 from gancp.read_mdvrp import MDVRPInstance, read_mdvrp_vrplib, read_mdvrp_cordeau
 from pyvrp import Model, Client, Depot, VehicleType, solve
 from pyvrp.stop import MaxIterations, MaxRuntime
+from gancp.genetic import benchmark_instance
 
 def solve_mdvrp_with_pyvrp(instance: MDVRPInstance, max_runtime=10.0):
   model = Model()
@@ -35,7 +36,39 @@ def solve_with_gancp(instance_path):
   cost, routes = solve_instance(instance)
   return cost, routes
 
+
+def benchmark(folder_path, output_csv='benchmark_results.csv'):
+    import csv
+    import os
+    # Remove existing file if it exists to avoid duplicate headers
+    # if os.path.exists(output_csv):
+    #     os.remove(output_csv)
+
+    files = [
+        os.path.join(folder_path, f)
+        for f in os.listdir(folder_path)
+        if os.path.isfile(os.path.join(folder_path, f)) and not f.endswith('.res')
+    ]
+
+    for i, f in enumerate(files):
+        instance = read_mdvrp_cordeau(f)
+        cost, cost_refined = benchmark_instance(instance)
+        print(cost, cost_refined)
+
+        # Write to CSV immediately
+        write_header = i == 0  # Only write header for the first file
+        with open(output_csv, mode='a', newline='') as csvfile:
+            writer = csv.writer(csvfile)
+            if write_header:
+                writer.writerow(['Filename', 'Cost', 'Cost_Refined'])
+            writer.writerow([os.path.basename(f), cost, cost_refined])
+
+    return "Benchmark completed and saved incrementally."
+
 if __name__ == "__main__":
-  instance_path = "/home/ducvu/work/projects/eco-route/src/backend_python/data/mdvrp/pr10"
-  cost, routes = solve_with_gancp(instance_path)
-  print(f"Cost of the solution: {cost}")
+  # folder1 = "/home/ducvu/work/projects/eco-route/src/backend_python/data/mdvrp"
+  folder2 = "/home/ducvu/work/projects/eco-route/src/backend_python/data/T_instances"
+  file = "/home/ducvu/work/projects/eco-route/src/backend_python/data/mdvrp/p10"
+  benchmark(folder2)
+  # cost, _ = solve_with_gancp(file)
+  # print(cost)

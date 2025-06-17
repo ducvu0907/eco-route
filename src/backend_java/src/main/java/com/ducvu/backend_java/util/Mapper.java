@@ -31,6 +31,7 @@ public class Mapper {
             .map(this::map)
             .toList()
         )
+        .category(depot.getCategory())
         .createdAt(depot.getCreatedAt())
         .updatedAt(depot.getUpdatedAt())
         .build();
