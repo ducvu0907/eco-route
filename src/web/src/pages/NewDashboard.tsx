@@ -44,7 +44,7 @@ const generateMockUsers = (count: number, role: 'DRIVER' | 'CUSTOMER' | 'MANAGER
 const generateMockVehicles = (count: number, drivers: any[], depots: DepotResponse[]): VehicleResponse[] => {
   const vehicles: VehicleResponse[] = [];
   const vehicleTypes = Object.values(VehicleType);
-  const trashCategories = Object.values(TrashCategory);
+  // const trashCategories = Object.values(TrashCategory);
   const vehicleStatuses = Object.values(VehicleStatus);
 
   for (let i = 0; i < count; i++) {

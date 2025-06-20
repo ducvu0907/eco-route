@@ -254,6 +254,7 @@ const mockDepots: DepotResponse[] = [
     longitude: 105.8542,
     address: 'Central Depot - 15 Hang Bong Street, Hoan Kiem District, Hanoi',
     vehicles: [mockVehicles[0], mockVehicles[1]],
+    category: TrashCategory.GENERAL,
     createdAt: '2025-05-30T08:00:00Z',
     updatedAt: '2025-05-30T08:00:00Z'
   },
@@ -262,6 +263,7 @@ const mockDepots: DepotResponse[] = [
     latitude: 21.0368,
     longitude: 105.8348,
     address: 'North Station Hub - 25 Tran Hung Dao Street, Ba Dinh District, Hanoi',
+    category: TrashCategory.GENERAL,
     vehicles: [mockVehicles[2]],
     createdAt: '2025-05-30T08:00:00Z',
     updatedAt: '2025-05-30T08:00:00Z'
@@ -366,6 +368,7 @@ for (let i = 3; i <= 5; i++) {
     longitude: 105.83 + i * 0.01,
     address: `Depot ${i} - Address ${i}, Hanoi`,
     vehicles: mockVehicles.filter((_, index) => index % 3 === i % 3),
+    category: TrashCategory.GENERAL,
     createdAt: '2025-05-30T08:00:00Z',
     updatedAt: '2025-05-30T08:00:00Z'
   });
