@@ -13,5 +13,5 @@ COPY requirements.txt .
 RUN pip install --no-cache-dir --upgrade pip && pip install -r requirements.txt
 
 COPY . .
-EXPOSE 8000
+# EXPOSE 8000
 CMD ["fastapi", "run", "api_v2.py", "--port", "8000"]
