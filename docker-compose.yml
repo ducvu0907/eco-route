@@ -38,8 +38,8 @@ services:
   backend:
     image: ducvu0907/eco-route-backend:latest
     container_name: eco_route_backend
-    # ports:
-    #   - "8080:8080"
+    ports:
+      - "8080:${SERVER_PORT}"
     depends_on:
       - postgres
       - minio
@@ -59,6 +59,8 @@ services:
       FIREBASE_CREDENTIALS_PATH: ${FIREBASE_CREDENTIALS_PATH}
       FIREBASE_DATABASE_URL: ${FIREBASE_DATABASE_URL}
 
+      MINIO_PORT: ${MINIO_PORT}
+      MINIO_HOST: ${MINIO_HOST}
       MINIO_USERNAME: ${MINIO_USERNAME}
       MINIO_PASSWORD: ${MINIO_PASSWORD}
       MINIO_ENDPOINT: ${MINIO_ENDPOINT}

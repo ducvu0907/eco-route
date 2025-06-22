@@ -41,6 +41,8 @@ firebase:
   database-url: ${FIREBASE_DATABASE_URL:https://eco-route-d0e49-default-rtdb.asia-southeast1.firebasedatabase.app/}
 
 minio:
+  port: ${MINIO_PORT:9000}
+  host: ${MINIO_HOST:localhost}
   username: ${MINIO_USERNAME:admin}
   password: ${MINIO_PASSWORD:admin123}
   endpoint: ${MINIO_ENDPOINT:http://localhost:9000}

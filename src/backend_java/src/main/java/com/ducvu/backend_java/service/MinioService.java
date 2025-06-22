@@ -17,6 +17,12 @@ import java.util.UUID;
 public class MinioService {
   private final MinioClient minioClient;
 
+  @Value("${minio.port}")
+  private String port;
+
+  @Value("${minio.host}")
+  private String host;
+
   @Value("${minio.endpoint}")
   private String endpoint;
 
@@ -81,7 +87,7 @@ public class MinioService {
       );
 
       log.info("Uploaded file to MinIO: {}", objectName);
-      return String.format("%s/%s/%s", endpoint, bucketName, objectName);
+      return String.format("http://%s:%s/%s/%s", host, port, bucketName, objectName);
 
     } catch (Exception e) {
       throw new RuntimeException("Failed to upload file to MinIO", e);
