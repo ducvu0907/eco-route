@@ -1,143 +1,103 @@
--- users
-INSERT INTO users (id, username, phone, hashed_password, fcm_token, role, created_at, updated_at)
-VALUES
-  ('11111111-1111-1111-1111-111111111111', 'customer1', '+8490'||floor(random()*8999999+1000000)::text, '$2a$10$l9iB8MFx6W4PdHQr29aWQerBxie/MiIfSt6oTidL9e2uBI7oBk3Me', NULL, 'CUSTOMER', now(), now()),
-  ('22222222-2222-2222-2222-222222222222', 'customer2', '+8490'||floor(random()*8999999+1000000)::text, '$2a$10$l9iB8MFx6W4PdHQr29aWQerBxie/MiIfSt6oTidL9e2uBI7oBk3Me', NULL, 'CUSTOMER', now(), now()),
-  ('33333333-3333-3333-3333-333333333333', 'customer3', '+8490'||floor(random()*8999999+1000000)::text, '$2a$10$l9iB8MFx6W4PdHQr29aWQerBxie/MiIfSt6oTidL9e2uBI7oBk3Me', NULL, 'CUSTOMER', now(), now()),
-  ('44444444-4444-4444-4444-444444444444', 'customer4', '+8490'||floor(random()*8999999+1000000)::text, '$2a$10$l9iB8MFx6W4PdHQr29aWQerBxie/MiIfSt6oTidL9e2uBI7oBk3Me', NULL, 'CUSTOMER', now(), now()),
-  ('55555555-5555-5555-5555-555555555555', 'customer5', '+8490'||floor(random()*8999999+1000000)::text, '$2a$10$l9iB8MFx6W4PdHQr29aWQerBxie/MiIfSt6oTidL9e2uBI7oBk3Me', NULL, 'CUSTOMER', now(), now()),
-  ('66666666-6666-6666-6666-666666666666', 'customer6', '+8490'||floor(random()*8999999+1000000)::text, '$2a$10$l9iB8MFx6W4PdHQr29aWQerBxie/MiIfSt6oTidL9e2uBI7oBk3Me', NULL, 'CUSTOMER', now(), now()),
-  ('77777777-7777-7777-7777-777777777777', 'customer7', '+8490'||floor(random()*8999999+1000000)::text, '$2a$10$l9iB8MFx6W4PdHQr29aWQerBxie/MiIfSt6oTidL9e2uBI7oBk3Me', NULL, 'CUSTOMER', now(), now()),
-  ('88888888-8888-8888-8888-888888888888', 'customer8', '+8490'||floor(random()*8999999+1000000)::text, '$2a$10$l9iB8MFx6W4PdHQr29aWQerBxie/MiIfSt6oTidL9e2uBI7oBk3Me', NULL, 'CUSTOMER', now(), now()),
-  ('99999999-9999-9999-9999-999999999999', 'customer9', '+8490'||floor(random()*8999999+1000000)::text, '$2a$10$l9iB8MFx6W4PdHQr29aWQerBxie/MiIfSt6oTidL9e2uBI7oBk3Me', NULL, 'CUSTOMER', now(), now()),
-  ('aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa', 'customer10', '+8490'||floor(random()*8999999+1000000)::text, '$2a$10$l9iB8MFx6W4PdHQr29aWQerBxie/MiIfSt6oTidL9e2uBI7oBk3Me', NULL, 'CUSTOMER', now(), now());
+-- Insert mock data
 
-INSERT INTO users (id, username, phone, hashed_password, fcm_token, role, created_at, updated_at)
-VALUES
-  ('manager', 'manager', '+8490'||floor(random()*8999999+1000000)::text, '$2a$10$l9iB8MFx6W4PdHQr29aWQerBxie/MiIfSt6oTidL9e2uBI7oBk3Me', NULL, 'MANAGER', now(), now());
+-- Users (Customers, Drivers, Manager)
+INSERT INTO Users (id, username, phone, hashed_password, fcm_token, role, created_at, updated_at) VALUES
+('user_cust_1', 'customer_one', '0901234561', '$2a$10$l9iB8MFx6W4PdHQr29aWQerBxie/MiIfSt6oTidL9e2uBI7oBk3Me', 'fcm_token_cust_1', 'CUSTOMER', NOW(), NOW()),
+('user_cust_2', 'customer_two', '0901234562', '$2a$10$l9iB8MFx6W4PdHQr29aWQerBxie/MiIfSt6oTidL9e2uBI7oBk3Me', 'fcm_token_cust_2', 'CUSTOMER', NOW(), NOW()),
+('user_cust_3', 'customer_three', '0901234563', '$2a$10$l9iB8MFx6W4PdHQr29aWQerBxie/MiIfSt6oTidL9e2uBI7oBk3Me', 'fcm_token_cust_3', 'CUSTOMER', NOW(), NOW()),
+('user_cust_4', 'customer_four', '0901234564', '$2a$10$l9iB8MFx6W4PdHQr29aWQerBxie/MiIfSt6oTidL9e2uBI7oBk3Me', 'fcm_token_cust_4', 'CUSTOMER', NOW(), NOW()),
+('user_cust_5', 'customer_five', '0901234565', '$2a$10$l9iB8MFx6W4PdHQr29aWQerBxie/MiIfSt6oTidL9e2uBI7oBk3Me', 'fcm_token_cust_5', 'CUSTOMER', NOW(), NOW()),
+('user_driver_1', 'driver_one', '0902000001', '$2a$10$l9iB8MFx6W4PdHQr29aWQerBxie/MiIfSt6oTidL9e2uBI7oBk3Me', 'fcm_token_d1', 'DRIVER', NOW(), NOW()),
+('user_driver_2', 'driver_two', '0902000002', '$2a$10$l9iB8MFx6W4PdHQr29aWQerBxie/MiIfSt6oTidL9e2uBI7oBk3Me', 'fcm_token_d2', 'DRIVER', NOW(), NOW()),
+('user_driver_3', 'driver_three', '0902000003', '$2a$10$l9iB8MFx6W4PdHQr29aWQerBxie/MiIfSt6oTidL9e2uBI7oBk3Me', 'fcm_token_d3', 'DRIVER', NOW(), NOW()),
+('user_driver_4', 'driver_four', '0902000004', '$2a$10$l9iB8MFx6W4PdHQr29aWQerBxie/MiIfSt6oTidL9e2uBI7oBk3Me', 'fcm_token_d4', 'DRIVER', NOW(), NOW()),
+('user_driver_5', 'driver_five', '0902000005', '$2a$10$l9iB8MFx6W4PdHQr29aWQerBxie/MiIfSt6oTidL9e2uBI7oBk3Me', 'fcm_token_d5', 'DRIVER', NOW(), NOW()),
+('user_driver_6', 'driver_six', '0902000006', '$2a$10$l9iB8MFx6W4PdHQr29aWQerBxie/MiIfSt6oTidL9e2uBI7oBk3Me', 'fcm_token_d6', 'DRIVER', NOW(), NOW()),
+('user_driver_7', 'driver_seven', '0902000007', '$2a$10$l9iB8MFx6W4PdHQr29aWQerBxie/MiIfSt6oTidL9e2uBI7oBk3Me', 'fcm_token_d7', 'DRIVER', NOW(), NOW()),
+('user_driver_8', 'driver_eight', '0902000008', '$2a$10$l9iB8MFx6W4PdHQr29aWQerBxie/MiIfSt6oTidL9e2uBI7oBk3Me', 'fcm_token_d8', 'DRIVER', NOW(), NOW()),
+('user_driver_9', 'driver_nine', '0902000009', '$2a$10$l9iB8MFx6W4PdHQr29aWQerBxie/MiIfSt6oTidL9e2uBI7oBk3Me', 'fcm_token_d9', 'DRIVER', NOW(), NOW()),
+('user_driver_10', 'driver_ten', '0902000010', '$2a$10$l9iB8MFx6W4PdHQr29aWQerBxie/MiIfSt6oTidL9e2uBI7oBk3Me', 'fcm_token_d10', 'DRIVER', NOW(), NOW()),
+('user_driver_11', 'driver_eleven', '0902000011', '$2a$10$l9iB8MFx6W4PdHQr29aWQerBxie/MiIfSt6oTidL9e2uBI7oBk3Me', 'fcm_token_d11', 'DRIVER', NOW(), NOW()),
+('user_driver_12', 'driver_twelve', '0902000012', '$2a$10$l9iB8MFx6W4PdHQr29aWQerBxie/MiIfSt6oTidL9e2uBI7oBk3Me', 'fcm_token_d12', 'DRIVER', NOW(), NOW()),
+('user_driver_13', 'driver_thirteen', '0902000013', '$2a$10$l9iB8MFx6W4PdHQr29aWQerBxie/MiIfSt6oTidL9e2uBI7oBk3Me', 'fcm_token_d13', 'DRIVER', NOW(), NOW()),
+('user_driver_14', 'driver_fourteen', '0902000014', '$2a$10$l9iB8MFx6W4PdHQr29aWQerBxie/MiIfSt6oTidL9e2uBI7oBk3Me', 'fcm_token_d14', 'DRIVER', NOW(), NOW()),
+('user_driver_15', 'driver_fifteen', '0902000015', '$2a$10$l9iB8MFx6W4PdHQr29aWQerBxie/MiIfSt6oTidL9e2uBI7oBk3Me', 'fcm_token_d15', 'DRIVER', NOW(), NOW()),
+('user_driver_16', 'driver_sixteen', '0902000016', '$2a$10$l9iB8MFx6W4PdHQr29aWQerBxie/MiIfSt6oTidL9e2uBI7oBk3Me', 'fcm_token_d16', 'DRIVER', NOW(), NOW()),
+('user_driver_17', 'driver_seventeen', '0902000017', '$2a$10$l9iB8MFx6W4PdHQr29aWQerBxie/MiIfSt6oTidL9e2uBI7oBk3Me', 'fcm_token_d17', 'DRIVER', NOW(), NOW()),
+('user_driver_18', 'driver_eighteen', '0902000018', '$2a$10$l9iB8MFx6W4PdHQr29aWQerBxie/MiIfSt6oTidL9e2uBI7oBk3Me', 'fcm_token_d18', 'DRIVER', NOW(), NOW()),
+('user_driver_19', 'driver_nineteen', '0902000019', '$2a$10$l9iB8MFx6W4PdHQr29aWQerBxie/MiIfSt6oTidL9e2uBI7oBk3Me', 'fcm_token_d19', 'DRIVER', NOW(), NOW()),
+('user_driver_20', 'driver_twenty', '0902000020', '$2a$10$l9iB8MFx6W4PdHQr29aWQerBxie/MiIfSt6oTidL9e2uBI7oBk3Me', 'fcm_token_d20', 'DRIVER', NOW(), NOW()),
+('user_manager_1', 'manager_one', '0903000001', '$2a$10$l9iB8MFx6W4PdHQr29aWQerBxie/MiIfSt6oTidL9e2uBI7oBk3Me', 'fcm_token_m1', 'MANAGER', NOW(), NOW());
 
-INSERT INTO users (id, username, phone, hashed_password, fcm_token, role, created_at, updated_at)
-VALUES
-  ('d1111111-1111-1111-1111-111111111111', 'driver1', '+849011100001', '$2a$10$l9iB8MFx6W4PdHQr29aWQerBxie/MiIfSt6oTidL9e2uBI7oBk3Me', NULL, 'DRIVER', now(), now()),
-  ('d2222222-2222-2222-2222-222222222222', 'driver2', '+849011100002', '$2a$10$l9iB8MFx6W4PdHQr29aWQerBxie/MiIfSt6oTidL9e2uBI7oBk3Me', NULL, 'DRIVER', now(), now()),
-  ('d3333333-3333-3333-3333-333333333333', 'driver3', '+849011100003', '$2a$10$l9iB8MFx6W4PdHQr29aWQerBxie/MiIfSt6oTidL9e2uBI7oBk3Me', NULL, 'DRIVER', now(), now()),
-  ('d4444444-4444-4444-4444-444444444444', 'driver4', '+849011100004', '$2a$10$l9iB8MFx6W4PdHQr29aWQerBxie/MiIfSt6oTidL9e2uBI7oBk3Me', NULL, 'DRIVER', now(), now()),
-  ('d5555555-5555-5555-5555-555555555555', 'driver5', '+849011100005', '$2a$10$l9iB8MFx6W4PdHQr29aWQerBxie/MiIfSt6oTidL9e2uBI7oBk3Me', NULL, 'DRIVER', now(), now()),
-  ('d6666666-6666-6666-6666-666666666666', 'driver6', '+849011100006', '$2a$10$l9iB8MFx6W4PdHQr29aWQerBxie/MiIfSt6oTidL9e2uBI7oBk3Me', NULL, 'DRIVER', now(), now()),
-  ('d7777777-7777-7777-7777-777777777777', 'driver7', '+849011100007', '$2a$10$l9iB8MFx6W4PdHQr29aWQerBxie/MiIfSt6oTidL9e2uBI7oBk3Me', NULL, 'DRIVER', now(), now()),
-  ('d8888888-8888-8888-8888-888888888888', 'driver8', '+849011100008', '$2a$10$l9iB8MFx6W4PdHQr29aWQerBxie/MiIfSt6oTidL9e2uBI7oBk3Me', NULL, 'DRIVER', now(), now()),
-  ('d9999999-9999-9999-9999-999999999999', 'driver9', '+849011100009', '$2a$10$l9iB8MFx6W4PdHQr29aWQerBxie/MiIfSt6oTidL9e2uBI7oBk3Me', NULL, 'DRIVER', now(), now()),
-  ('daaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa', 'driver10', '+849011100010', '$2a$10$l9iB8MFx6W4PdHQr29aWQerBxie/MiIfSt6oTidL9e2uBI7oBk3Me', NULL, 'DRIVER', now(), now());
+-- Depots
+INSERT INTO Depots (id, latitude, longitude, category, address, created_at, updated_at) VALUES
+('depot_1', 10.7769, 106.6978, 'GENERAL', '123 General St, District 1, HCMC', NOW(), NOW()),
+('depot_2', 10.7818, 106.7001, 'ORGANIC', '456 Organic Ave, District 1, HCMC', NOW(), NOW()),
+('depot_3', 10.7628, 106.6826, 'RECYCLABLE', '789 Recyclable Ln, District 3, HCMC', NOW(), NOW()),
+('depot_4', 10.7997, 106.6775, 'HAZARDOUS', '101 Hazardous Blvd, Tan Binh District, HCMC', NOW(), NOW()),
+('depot_5', 10.8231, 106.6297, 'ELECTRONIC', '202 Electronic Rd, Tan Phu District, HCMC', NOW(), NOW()),
+('depot_6', 10.7588, 106.6669, 'GENERAL', '303 General Way, District 5, HCMC', NOW(), NOW()),
+('depot_7', 10.7306, 106.7077, 'ORGANIC', '404 Organic Pl, District 7, HCMC', NOW(), NOW()),
+('depot_8', 10.8037, 106.7118, 'RECYCLABLE', '505 Recyclable Ct, Binh Thanh District, HCMC', NOW(), NOW()),
+('depot_9', 10.8113, 106.6067, 'HAZARDOUS', '606 Hazardous Sq, Binh Tan District, HCMC', NOW(), NOW()),
+('depot_10', 10.7188, 106.6033, 'ELECTRONIC', '707 Electronic Cir, District 8, HCMC', NOW(), NOW());
 
--- depots
-INSERT INTO depots (id, latitude, longitude, address, category, created_at, updated_at)
-VALUES
-  ('depothk1-0000-0000-0000-000000000001', 21.0285, 105.8542, 'Hoan Kiem, Hanoi', 'GENERAL', now(), now()),
-  ('depothk2-0000-0000-0000-000000000002', 21.0381, 105.7821, 'Cau Giay, Hanoi', 'ORGANIC', now(), now()),
-  ('depothk3-0000-0000-0000-000000000003', 21.0039, 105.8209, 'Dong Da, Hanoi', 'GENERAL', now(), now()),
-  ('depothk4-0000-0000-0000-000000000004', 21.0535, 105.9229, 'Long Bien, Hanoi', 'ORGANIC', now(), now()),
-  ('depothk5-0000-0000-0000-000000000005', 21.1166, 105.8601, 'Soc Son, Hanoi', 'GENERAL', now(), now()),
-  ('depothk6-0000-0000-0000-000000000006', 20.9980, 105.7938, 'Thanh Xuan, Hanoi', 'ORGANIC', now(), now()),
-  ('depothk7-0000-0000-0000-000000000007', 21.0532, 105.7383, 'Nam Tu Liem, Hanoi', 'GENERAL', now(), now()),
-  ('depothk8-0000-0000-0000-000000000008', 20.9856, 105.8752, 'Hoang Mai, Hanoi', 'ORGANIC', now(), now()),
-  ('depothk9-0000-0000-0000-000000000009', 21.0151, 105.8499, 'Ba Dinh, Hanoi', 'GENERAL', now(), now()),
-  ('depothk10-0000-0000-0000-000000000010', 21.0830, 105.7005, 'Quoc Oai, Hanoi', 'ORGANIC', now(), now());
+-- Vehicles (each belonging to one driver, category matches depot)
+INSERT INTO Vehicles (id, driver_id, depot_id, license_plate, current_latitude, current_longitude, current_load, capacity, type, category, status, created_at, updated_at) VALUES
+('vehicle_1', 'user_driver_1', 'depot_1', '51A-123.45', 10.7769, 106.6978, 0, 5000, 'COMPACTOR_TRUCK', 'GENERAL', 'IDLE', NOW(), NOW()),
+('vehicle_2', 'user_driver_2', 'depot_1', '51B-234.56', 10.7769, 106.6978, 0, 4500, 'COMPACTOR_TRUCK', 'GENERAL', 'IDLE', NOW(), NOW()),
+('vehicle_3', 'user_driver_3', 'depot_2', '51C-345.67', 10.7818, 106.7001, 0, 3000, 'THREE_WHEELER', 'ORGANIC', 'IDLE', NOW(), NOW()),
+('vehicle_4', 'user_driver_4', 'depot_2', '51D-456.78', 10.7818, 106.7001, 0, 2500, 'THREE_WHEELER', 'ORGANIC', 'IDLE', NOW(), NOW()),
+('vehicle_5', 'user_driver_5', 'depot_3', '51E-567.89', 10.7628, 106.6826, 0, 6000, 'COMPACTOR_TRUCK', 'RECYCLABLE', 'IDLE', NOW(), NOW()),
+('vehicle_6', 'user_driver_6', 'depot_3', '51F-678.90', 10.7628, 106.6826, 0, 5500, 'COMPACTOR_TRUCK', 'RECYCLABLE', 'IDLE', NOW(), NOW()),
+('vehicle_7', 'user_driver_7', 'depot_4', '51G-789.01', 10.7997, 106.6775, 0, 1000, 'THREE_WHEELER', 'HAZARDOUS', 'IDLE', NOW(), NOW()),
+('vehicle_8', 'user_driver_8', 'depot_4', '51H-890.12', 10.7997, 106.6775, 0, 900, 'THREE_WHEELER', 'HAZARDOUS', 'IDLE', NOW(), NOW()),
+('vehicle_9', 'user_driver_9', 'depot_5', '51I-901.23', 10.8231, 106.6297, 0, 1500, 'THREE_WHEELER', 'ELECTRONIC', 'IDLE', NOW(), NOW()),
+('vehicle_10', 'user_driver_10', 'depot_5', '51J-012.34', 10.8231, 106.6297, 0, 1200, 'THREE_WHEELER', 'ELECTRONIC', 'IDLE', NOW(), NOW()),
+('vehicle_11', 'user_driver_11', 'depot_6', '51K-111.22', 10.7588, 106.6669, 0, 4800, 'COMPACTOR_TRUCK', 'GENERAL', 'IDLE', NOW(), NOW()),
+('vehicle_12', 'user_driver_12', 'depot_6', '51L-222.33', 10.7588, 106.6669, 0, 4200, 'COMPACTOR_TRUCK', 'GENERAL', 'IDLE', NOW(), NOW()),
+('vehicle_13', 'user_driver_13', 'depot_7', '51M-333.44', 10.7306, 106.7077, 0, 2800, 'THREE_WHEELER', 'ORGANIC', 'IDLE', NOW(), NOW()),
+('vehicle_14', 'user_driver_14', 'depot_7', '51N-444.55', 10.7306, 106.7077, 0, 2200, 'THREE_WHEELER', 'ORGANIC', 'IDLE', NOW(), NOW()),
+('vehicle_15', 'user_driver_15', 'depot_8', '51O-555.66', 10.8037, 106.7118, 0, 5800, 'COMPACTOR_TRUCK', 'RECYCLABLE', 'IDLE', NOW(), NOW()),
+('vehicle_16', 'user_driver_16', 'depot_8', '51P-666.77', 10.8037, 106.7118, 0, 5300, 'COMPACTOR_TRUCK', 'RECYCLABLE', 'IDLE', NOW(), NOW()),
+('vehicle_17', 'user_driver_17', 'depot_9', '51Q-777.88', 10.8113, 106.6067, 0, 950, 'THREE_WHEELER', 'HAZARDOUS', 'IDLE', NOW(), NOW()),
+('vehicle_18', 'user_driver_18', 'depot_9', '51R-888.99', 10.8113, 106.6067, 0, 850, 'THREE_WHEELER', 'HAZARDOUS', 'IDLE', NOW(), NOW()),
+('vehicle_19', 'user_driver_19', 'depot_10', '51S-999.00', 10.7188, 106.6033, 0, 1400, 'THREE_WHEELER', 'ELECTRONIC', 'IDLE', NOW(), NOW()),
+('vehicle_20', 'user_driver_20', 'depot_10', '51T-000.11', 10.7188, 106.6033, 0, 1100, 'THREE_WHEELER', 'ELECTRONIC', 'IDLE', NOW(), NOW());
 
--- orders
-INSERT INTO orders (
-  id, user_id, route_id, latitude, longitude, address, weight, status,
-  completed_at, created_at, updated_at, image_url, description, category, index
-) VALUES
--- customer1
-('aaaaaaaa-aaaa-aaaa-aaaa-aaaa000001', '11111111-1111-1111-1111-111111111111', NULL, 21.0290, 105.8600, 'Trang Tien, Hanoi', 2.5, 'PENDING', NULL, now(), now(), 'https://placehold.co/400x300', 'Kitchen waste', 'GENERAL', NULL),
-('aaaaaaaa-aaaa-aaaa-aaaa-aaaa000002', '11111111-1111-1111-1111-111111111111', NULL, 21.0301, 105.8611, 'Ly Thai To, Hanoi', 1.8, 'PENDING', NULL, now(), now(), 'https://placehold.co/400x300', 'Cardboard boxes', 'GENERAL', NULL),
+-- Orders (30 orders with real locations around Ho Chi Minh City)
+INSERT INTO Orders (id, index, user_id, route_id, latitude, longitude, category, image_url, description, address, weight, status, completed_at, created_at, updated_at) VALUES
+('order_1', 1, 'user_cust_1', NULL, 10.7725, 106.6966, 'GENERAL', 'http://example.com/img1.jpg', 'Household trash', '1 Nguyen Hue, District 1, HCMC', 15, 'PENDING', NULL, NOW(), NOW()),
+('order_2', 2, 'user_cust_2', NULL, 10.7816, 106.7021, 'ORGANIC', 'http://example.com/img2.jpg', 'Kitchen waste', '2 Le Loi, District 1, HCMC', 10, 'PENDING', NULL, NOW(), NOW()),
+('order_3', 3, 'user_cust_3', NULL, 10.7634, 106.6853, 'RECYCLABLE', 'http://example.com/img3.jpg', 'Plastic bottles and cans', '3 Vo Van Tan, District 3, HCMC', 8, 'PENDING', NULL, NOW(), NOW()),
+('order_4', 4, 'user_cust_4', NULL, 10.8005, 106.6788, 'HAZARDOUS', 'http://example.com/img4.jpg', 'Old batteries', '4 Cong Hoa, Tan Binh District, HCMC', 2, 'PENDING', NULL, NOW(), NOW()),
+('order_5', 5, 'user_cust_5', NULL, 10.8240, 106.6310, 'ELECTRONIC', 'http://example.com/img5.jpg', 'Broken laptop', '5 Luy Ban Bich, Tan Phu District, HCMC', 5, 'PENDING', NULL, NOW(), NOW()),
+('order_6', 6, 'user_cust_1', NULL, 10.7592, 106.6678, 'GENERAL', 'http://example.com/img6.jpg', 'Mixed waste', '6 Tran Hung Dao, District 5, HCMC', 12, 'PENDING', NULL, NOW(), NOW()),
+('order_7', 7, 'user_cust_2', NULL, 10.7315, 106.7085, 'ORGANIC', 'http://example.com/img7.jpg', 'Food scraps', '7 Nguyen Thi Thap, District 7, HCMC', 7, 'PENDING', NULL, NOW(), NOW()),
+('order_8', 8, 'user_cust_3', NULL, 10.8045, 106.7125, 'RECYCLABLE', 'http://example.com/img8.jpg', 'Cardboard boxes', '8 Dien Bien Phu, Binh Thanh District, HCMC', 10, 'PENDING', NULL, NOW(), NOW()),
+('order_9', 9, 'user_cust_4', NULL, 10.8120, 106.6075, 'HAZARDOUS', 'http://example.com/img9.jpg', 'Expired medicine', '9 Kinh Duong Vuong, Binh Tan District, HCMC', 1, 'PENDING', NULL, NOW(), NOW()),
+('order_10', 10, 'user_cust_5', NULL, 10.7195, 106.6040, 'ELECTRONIC', 'http://example.com/img10.jpg', 'Old TV', '10 Pham Hung, District 8, HCMC', 20, 'PENDING', NULL, NOW(), NOW()),
+('order_11', 11, 'user_cust_1', NULL, 10.7850, 106.6900, 'GENERAL', 'http://example.com/img11.jpg', 'General household waste', '11 Pasteur, District 1, HCMC', 18, 'PENDING', NULL, NOW(), NOW()),
+('order_12', 12, 'user_cust_2', NULL, 10.7700, 106.6900, 'ORGANIC', 'http://example.com/img12.jpg', 'Garden waste', '12 Dong Khoi, District 1, HCMC', 9, 'PENDING', NULL, NOW(), NOW()),
+('order_13', 13, 'user_cust_3', NULL, 10.7600, 106.6750, 'RECYCLABLE', 'http://example.com/img13.jpg', 'Paper and newspaper', '13 Cao Thang, District 3, HCMC', 6, 'PENDING', NULL, NOW(), NOW()),
+('order_14', 14, 'user_cust_4', NULL, 10.8050, 106.6800, 'HAZARDOUS', 'http://example.com/img14.jpg', 'Paint cans', '14 Hoang Van Thu, Tan Binh District, HCMC', 3, 'PENDING', NULL, NOW(), NOW()),
+('order_15', 15, 'user_cust_5', NULL, 10.8300, 106.6350, 'ELECTRONIC', 'http://example.com/img15.jpg', 'Old phone', '15 Au Co, Tan Phu District, HCMC', 1, 'PENDING', NULL, NOW(), NOW()),
+('order_16', 16, 'user_cust_1', NULL, 10.7550, 106.6600, 'GENERAL', 'http://example.com/img16.jpg', 'Regular trash', '16 Nguyen Trai, District 5, HCMC', 14, 'PENDING', NULL, NOW(), NOW()),
+('order_17', 17, 'user_cust_2', NULL, 10.7250, 106.7000, 'ORGANIC', 'http://example.com/img17.jpg', 'Fruit peels', '17 Nguyen Luong Bang, District 7, HCMC', 6, 'PENDING', NULL, NOW(), NOW()),
+('order_18', 18, 'user_cust_3', NULL, 10.8100, 106.7050, 'RECYCLABLE', 'http://example.com/img18.jpg', 'Glass bottles', '18 Dinh Bo Linh, Binh Thanh District, HCMC', 11, 'PENDING', NULL, NOW(), NOW()),
+('order_19', 19, 'user_cust_4', NULL, 10.8150, 106.6100, 'HAZARDOUS', 'http://example.com/img19.jpg', 'Cleaning chemicals', '19 Quoc Lo 1A, Binh Tan District, HCMC', 2, 'PENDING', NULL, NOW(), NOW()),
+('order_20', 20, 'user_cust_5', NULL, 10.7150, 106.6100, 'ELECTRONIC', 'http://example.com/img20.jpg', 'DVD player', '20 Ta Quang Buu, District 8, HCMC', 4, 'PENDING', NULL, NOW(), NOW()),
+('order_21', 21, 'user_cust_1', NULL, 10.7700, 106.6750, 'GENERAL', 'http://example.com/img21.jpg', 'Household waste', '21 Ly Tu Trong, District 1, HCMC', 13, 'PENDING', NULL, NOW(), NOW()),
+('order_22', 22, 'user_cust_2', NULL, 10.7800, 106.6950, 'ORGANIC', 'http://example.com/img22.jpg', 'Compostable waste', '22 Ton Duc Thang, District 1, HCMC', 8, 'PENDING', NULL, NOW(), NOW()),
+('order_23', 23, 'user_cust_3', NULL, 10.7650, 106.6800, 'RECYCLABLE', 'http://example.com/img23.jpg', 'Aluminum cans', '23 Nguyen Dinh Chieu, District 3, HCMC', 7, 'PENDING', NULL, NOW(), NOW()),
+('order_24', 24, 'user_cust_4', NULL, 10.7950, 106.6700, 'HAZARDOUS', 'http://example.com/img24.jpg', 'Fluorescent bulbs', '24 Truong Chinh, Tan Binh District, HCMC', 1, 'PENDING', NULL, NOW(), NOW()),
+('order_25', 25, 'user_cust_5', NULL, 10.8200, 106.6250, 'ELECTRONIC', 'http://example.com/img25.jpg', 'Keyboard and mouse', '25 Kenh Nuoc Den, Tan Phu District, HCMC', 2, 'PENDING', NULL, NOW(), NOW()),
+('order_26', 26, 'user_cust_1', NULL, 10.7500, 106.6550, 'GENERAL', 'http://example.com/img26.jpg', 'Daily refuse', '26 Chau Van Liem, District 5, HCMC', 16, 'PENDING', NULL, NOW(), NOW()),
+('order_27', 27, 'user_cust_2', NULL, 10.7350, 106.7150, 'ORGANIC', 'http://example.com/img27.jpg', 'Yard waste', '27 Lam Van Ben, District 7, HCMC', 10, 'PENDING', NULL, NOW(), NOW()),
+('order_28', 28, 'user_cust_3', NULL, 10.8000, 106.7000, 'RECYCLABLE', 'http://example.com/img28.jpg', 'Mixed paper', '28 Bach Dang, Binh Thanh District, HCMC', 9, 'PENDING', NULL, NOW(), NOW()),
+('order_29', 29, 'user_cust_4', NULL, 10.8050, 106.6000, 'HAZARDOUS', 'http://example.com/img29.jpg', 'Motor oil', '29 Le Trong Tan, Binh Tan District, HCMC', 3, 'PENDING', NULL, NOW(), NOW()),
+('order_30', 30, 'user_cust_5', NULL, 10.7200, 106.5950, 'ELECTRONIC', 'http://example.com/img30.jpg', 'Printer', '30 Hung Phu, District 8, HCMC', 6, 'PENDING', NULL, NOW(), NOW());
 
--- customer2
-('aaaaaaaa-aaaa-aaaa-aaaa-aaaa000003', '22222222-2222-2222-2222-222222222222', NULL, 21.0400, 105.7900, 'Nghia Tan, Hanoi', 3.0, 'PENDING', NULL, now(), now(), 'https://placehold.co/400x300', 'Plastic bottles', 'GENERAL', NULL),
-('aaaaaaaa-aaaa-aaaa-aaaa-aaaa000004', '22222222-2222-2222-2222-222222222222', NULL, 21.0411, 105.7911, 'Mai Dich, Hanoi', 4.1, 'PENDING', NULL, now(), now(), 'https://placehold.co/400x300', 'Broken glass', 'GENERAL', NULL),
-
--- customer3
-('aaaaaaaa-aaaa-aaaa-aaaa-aaaa000005', '33333333-3333-3333-3333-333333333333', NULL, 21.0070, 105.8250, 'Kham Thien, Hanoi', 5.2, 'PENDING', NULL, now(), now(), 'https://placehold.co/400x300', 'Expired meds', 'GENERAL', NULL),
-('aaaaaaaa-aaaa-aaaa-aaaa-aaaa000006', '33333333-3333-3333-3333-333333333333', NULL, 21.0061, 105.8261, 'Ton Duc Thang, Hanoi', 1.9, 'PENDING', NULL, now(), now(), 'https://placehold.co/400x300', 'E-waste', 'GENERAL', NULL),
-
--- customer4
-('aaaaaaaa-aaaa-aaaa-aaaa-aaaa000007', '44444444-4444-4444-4444-444444444444', NULL, 21.0560, 105.9300, 'Ngoc Lam, Hanoi', 3.6, 'PENDING', NULL, now(), now(), 'https://placehold.co/400x300', 'Leaves and food scraps', 'GENERAL', NULL),
-('aaaaaaaa-aaaa-aaaa-aaaa-aaaa000008', '44444444-4444-4444-4444-444444444444', NULL, 21.0571, 105.9311, 'Bo De, Hanoi', 2.7, 'PENDING', NULL, now(), now(), 'https://placehold.co/400x300', 'Used oil', 'GENERAL', NULL),
-
--- customer5
-('aaaaaaaa-aaaa-aaaa-aaaa-aaaa000009', '55555555-5555-5555-5555-555555555555', NULL, 21.1200, 105.8700, 'Minh Phu, Hanoi', 6.0, 'PENDING', NULL, now(), now(), 'https://placehold.co/400x300', 'Old phone', 'GENERAL', NULL),
-('aaaaaaaa-aaaa-aaaa-aaaa-aaaa000010', '55555555-5555-5555-5555-555555555555', NULL, 21.1211, 105.8711, 'Phu Lo, Hanoi', 2.2, 'PENDING', NULL, now(), now(), 'https://placehold.co/400x300', 'Paper waste', 'GENERAL', NULL),
-
--- customer6
-('aaaaaaaa-aaaa-aaaa-aaaa-aaaa000011', '66666666-6666-6666-6666-666666666666', NULL, 21.0001, 105.8000, 'Khuat Duy Tien, Hanoi', 1.5, 'PENDING', NULL, now(), now(), 'https://placehold.co/400x300', 'Batteries', 'GENERAL', NULL),
-('aaaaaaaa-aaaa-aaaa-aaaa-aaaa000012', '66666666-6666-6666-6666-666666666666', NULL, 21.0011, 105.8011, 'Le Van Luong, Hanoi', 4.4, 'PENDING', NULL, now(), now(), 'https://placehold.co/400x300', 'Food waste', 'GENERAL', NULL),
-
--- customer7
-('aaaaaaaa-aaaa-aaaa-aaaa-aaaa000013', '77777777-7777-7777-7777-777777777777', NULL, 21.0560, 105.7450, 'My Dinh, Hanoi', 3.3, 'PENDING', NULL, now(), now(), 'https://placehold.co/400x300', 'Laptop', 'GENERAL', NULL),
-('aaaaaaaa-aaaa-aaaa-aaaa-aaaa000014', '77777777-7777-7777-7777-777777777777', NULL, 21.0571, 105.7461, 'Pham Hung, Hanoi', 2.0, 'PENDING', NULL, now(), now(), 'https://placehold.co/400x300', 'Textbooks', 'GENERAL', NULL),
-
--- customer8
-('aaaaaaaa-aaaa-aaaa-aaaa-aaaa000015', '88888888-8888-8888-8888-888888888888', NULL, 20.9870, 105.8800, 'Linh Nam, Hanoi', 3.7, 'PENDING', NULL, now(), now(), 'https://placehold.co/400x300', 'Kitchen trash', 'GENERAL', NULL),
-('aaaaaaaa-aaaa-aaaa-aaaa-aaaa000016', '88888888-8888-8888-8888-888888888888', NULL, 20.9881, 105.8811, 'Vinh Hung, Hanoi', 1.1, 'PENDING', NULL, now(), now(), 'https://placehold.co/400x300', 'Fruit peels', 'GENERAL', NULL),
-
--- customer9
-('aaaaaaaa-aaaa-aaaa-aaaa-aaaa000017', '99999999-9999-9999-9999-999999999999', NULL, 21.0170, 105.8550, 'Giang Vo, Hanoi', 5.6, 'PENDING', NULL, now(), now(), 'https://placehold.co/400x300', 'Old newspaper', 'GENERAL', NULL),
-('aaaaaaaa-aaaa-aaaa-aaaa-aaaa000018', '99999999-9999-9999-9999-999999999999', NULL, 21.0181, 105.8561, 'Lang Ha, Hanoi', 1.0, 'PENDING', NULL, now(), now(), 'https://placehold.co/400x300', 'Leftovers', 'GENERAL', NULL),
-
--- customer10
-('aaaaaaaa-aaaa-aaaa-aaaa-aaaa000019', 'aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa', NULL, 21.0850, 105.7100, 'Dong Quang, Hanoi', 2.8, 'PENDING', NULL, now(), now(), 'https://placehold.co/400x300', 'Light bulbs', 'GENERAL', NULL),
-('aaaaaaaa-aaaa-aaaa-aaaa-aaaa000020', 'aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa', NULL, 21.0861, 105.7111, 'Ngoc My, Hanoi', 3.1, 'PENDING', NULL, now(), now(), 'https://placehold.co/400x300', 'Mixed garbage', 'GENERAL', NULL);
-
-
--- vehicles
-INSERT INTO vehicles (id, driver_id, depot_id, license_plate, capacity, current_latitude, current_longitude, current_load, status, created_at, updated_at, type, category)
-VALUES
-('11111111-1111-1111-1111-111111111111', 'd1111111-1111-1111-1111-111111111111', 'depothk1-0000-0000-0000-000000000001', '29A-11111', 300.0, 21.0285, 105.8542, 0, 'IDLE', now(), now(), 'COMPACTOR_TRUCK', 'GENERAL'),
-('22222222-2222-2222-2222-222222222222', 'd2222222-2222-2222-2222-222222222222', 'depothk2-0000-0000-0000-000000000002', '29A-22222', 1000.0, 21.0381, 105.7821, 0, 'IDLE', now(), now(), 'COMPACTOR_TRUCK', 'ORGANIC'),
-('33333333-3333-3333-3333-333333333333', 'd3333333-3333-3333-3333-333333333333', 'depothk3-0000-0000-0000-000000000003', '29A-33333', 300.0, 21.0039, 105.8209, 0, 'IDLE', now(), now(), 'COMPACTOR_TRUCK', 'GENERAL'),
-('44444444-4444-4444-4444-444444444444', 'd4444444-4444-4444-4444-444444444444', 'depothk1-0000-0000-0000-000000000001', '29A-44444', 1000.0, 21.0285, 105.8542, 0, 'IDLE', now(), now(), 'COMPACTOR_TRUCK', 'GENERAL'),
-('55555555-5555-5555-5555-555555555555', 'd5555555-5555-5555-5555-555555555555', 'depothk2-0000-0000-0000-000000000002', '29A-55555', 300.0, 21.0381, 105.7821, 0, 'IDLE', now(), now(), 'COMPACTOR_TRUCK', 'ORGANIC'),
-('66666666-6666-6666-6666-666666666666', 'd6666666-6666-6666-6666-666666666666', 'depothk3-0000-0000-0000-000000000003', '29A-66666', 1000.0, 20.0039, 105.8209, 0, 'IDLE', now(), now(), 'COMPACTOR_TRUCK', 'GENERAL'),
-('77777777-7777-7777-7777-777777777777', 'd7777777-7777-7777-7777-777777777777', 'depothk1-0000-0000-0000-000000000001', '29A-77777', 300.0, 21.0285, 105.8542, 0, 'IDLE', now(), now(), 'COMPACTOR_TRUCK', 'GENERAL'),
-('88888888-8888-8888-8888-888888888888', 'd8888888-8888-8888-8888-888888888888', 'depothk2-0000-0000-0000-000000000002', '29A-88888', 1000.0, 20.0381, 105.7821, 0, 'IDLE', now(), now(), 'COMPACTOR_TRUCK', 'ORGANIC'),
-('99999999-9999-9999-9999-999999999999', 'd9999999-9999-9999-9999-999999999999', 'depothk3-0000-0000-0000-000000000003', '29A-99999', 300.0, 21.0039, 105.8209, 0, 'IDLE', now(), now(), 'COMPACTOR_TRUCK', 'GENERAL'),
-('aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa', 'daaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa', 'depothk1-0000-0000-0000-000000000001', '29A-00000', 1000.0, 21.0285, 105.8542, 0, 'IDLE', now(), now(), 'COMPACTOR_TRUCK', 'GENERAL');
-
-
--- orders
-INSERT INTO orders (
-id, user_id, route_id, latitude, longitude, address, weight, status,
-completed_at, created_at, updated_at, image_url, description, category, index
-) VALUES
--- customer5
-('aaaaaaaa-aaaa-aaaa-aaaa-aaaa000029', '55555555-5555-5555-5555-555555555555', NULL, 21.1205, 105.8705, 'Bac Son, Hanoi', 1.5, 'PENDING', NULL, now(), now(), 'https://placehold.co/400x300', 'Grass clippings', 'ORGANIC', NULL),
-('aaaaaaaa-aaaa-aaaa-aaaa-aaaa000030', '55555555-5555-5555-5555-555555555555', NULL, 21.1215, 105.8715, 'Thanh Xuan, Hanoi', 1.0, 'PENDING', NULL, now(), now(), 'https://placehold.co/400x300', 'Yard waste', 'ORGANIC', NULL),
-
--- customer6
-('aaaaaaaa-aaaa-aaaa-aaaa-aaaa000031', '66666666-6666-6666-6666-666666666666', NULL, 21.0005, 105.8005, 'Vu Trong Phung, Hanoi', 0.7, 'PENDING', NULL, now(), now(), 'https://placehold.co/400x300', 'Stale bread', 'ORGANIC', NULL),
-('aaaaaaaa-aaaa-aaaa-aaaa-aaaa000032', '66666666-6666-6666-6666-666666666666', NULL, 21.0015, 105.8015, 'Nguyen Tuan, Hanoi', 0.9, 'PENDING', NULL, now(), now(), 'https://placehold.co/400x300', 'Wilted flowers', 'ORGANIC', NULL),
-
--- customer7
-('aaaaaaaa-aaaa-aaaa-aaaa-aaaa000033', '77777777-7777-7777-7777-777777777777', NULL, 21.0565, 105.7455, 'Do Duc Duc, Hanoi', 1.3, 'PENDING', NULL, now(), now(), 'https://placehold.co/400x300', 'Used coffee filters', 'ORGANIC', NULL),
-('aaaaaaaa-aaaa-aaaa-aaaa-aaaa000034', '77777777-7777-7777-7777-777777777777', NULL, 21.0575, 105.7465, 'Chau Van Liem, Hanoi', 0.8, 'PENDING', NULL, now(), now(), 'https://placehold.co/400x300', 'Teabags', 'ORGANIC', NULL),
-
--- customer8
-('aaaaaaaa-aaaa-aaaa-aaaa-aaaa000035', '88888888-8888-8888-8888-888888888888', NULL, 20.9875, 105.8805, 'Tam Trinh, Hanoi', 1.0, 'PENDING', NULL, now(), now(), 'https://placehold.co/400x300', 'Expired dairy', 'ORGANIC', NULL),
-('aaaaaaaa-aaaa-aaaa-aaaa-aaaa000036', '88888888-8888-8888-8888-888888888888', NULL, 20.9885, 105.8815, 'Yen So, Hanoi', 0.6, 'PENDING', NULL, now(), now(), 'https://placehold.co/400x300', 'Mouldy food', 'ORGANIC', NULL),
-
--- customer9
-('aaaaaaaa-aaaa-aaaa-aaaa-aaaa000037', '99999999-9999-9999-9999-999999999999', NULL, 21.0175, 105.8555, 'De La Thanh, Hanoi', 1.4, 'PENDING', NULL, now(), now(), 'https://placehold.co/400x300', 'Fruit seeds', 'ORGANIC', NULL),
-('aaaaaaaa-aaaa-aaaa-aaaa-aaaa000038', '99999999-9999-9999-9999-999999999999', NULL, 21.0185, 105.8565, 'Nguyen Chi Thanh, Hanoi', 0.7, 'PENDING', NULL, now(), now(), 'https://placehold.co/400x300', 'Food scraps', 'ORGANIC', NULL);
-
--- Replace these user IDs with actual IDs from your users table
-INSERT INTO notifications (id, user_id, content, is_read, created_at, updated_at)
-VALUES
-(gen_random_uuid(), 'manager', 'Order has been picked up', false, now(), now()),
-(gen_random_uuid(), 'manager', 'New route assigned to you', false, now(), now()),
-(gen_random_uuid(), 'manager', 'Order #1234 is in progress', true, now(), now()),
-(gen_random_uuid(), 'manager', 'Dispatch completed successfully', true, now(), now()),
-(gen_random_uuid(), 'manager', 'Vehicle assigned for order #5678', false, now(), now()),
-(gen_random_uuid(), 'manager', 'Order delayed due to traffic', false, now(), now()),
-(gen_random_uuid(), 'manager', 'Route updated with new stops', true, now(), now()),
-(gen_random_uuid(), 'manager', 'You have unread notifications', false, now(), now()),
-(gen_random_uuid(), 'manager', 'Order #7890 has been cancelled', true, now(), now());
+-- Dispatches (empty for now, as they are created during dispatching process)
+-- Routes (empty for now, as they are created during dispatching process)
+-- Notifications (empty for now, as they are created by system actions)

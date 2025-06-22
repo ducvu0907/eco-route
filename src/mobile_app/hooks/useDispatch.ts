@@ -1,6 +1,7 @@
-import { createDispatch, getCurrentDispatch, getDispatchById, getDispatches, markDispatchAsDone } from "@/apis/dispatch";
-import { ApiResponse, DispatchResponse } from "@/types/types"
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
+import { createDispatch, getCurrentDispatch, getDispatchById, getDispatches } from "@/apis/dispatch";
+import { ApiResponse, DispatchResponse } from "@/types/types";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { useToast } from "./useToast";
 
 export const useGetDispatchById = (dispatchId: string) => {
   return useQuery<ApiResponse<DispatchResponse>>({
@@ -24,25 +25,15 @@ export const useGetDispatches = () => {
   });
 }
 
-export const useMarkDispatchAsDone = () => {
-  const queryClient = useQueryClient();
-
-  return useMutation({
-    mutationFn: (dispatchId: string) => markDispatchAsDone(dispatchId),
-    onSuccess: (_, dispatchId) => {
-      queryClient.invalidateQueries({queryKey: ["dispatches", "current"]});
-      queryClient.invalidateQueries({ queryKey: ["dispatches", dispatchId] });
-    }
-  });
-}
-
 export const useCreateDispatch = () => {
+  const {showToast} = useToast();
   const queryClient = useQueryClient();
 
   return useMutation({
     mutationFn: createDispatch,
-    onSuccess: () => {
+    onSuccess: (response) => {
       queryClient.invalidateQueries({queryKey: ["dispatches", "current"]});
+      showToast(response.message, "success");
     }
   });
 }

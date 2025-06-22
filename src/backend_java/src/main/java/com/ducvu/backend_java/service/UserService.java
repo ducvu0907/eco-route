@@ -40,11 +40,11 @@ public class UserService {
   public UserResponse getUserById(String userId) {
     User currentUser = getCurrentUser();
     if (!currentUser.getId().equals(userId) && currentUser.getRole() != Role.MANAGER) {
-      throw new RuntimeException("Unauthorized");
+      throw new RuntimeException("Không được phép"); // Updated message
     }
 
     User user = userRepository.findById(userId)
-        .orElseThrow(() -> new RuntimeException("User not found"));
+        .orElseThrow(() -> new RuntimeException("Không tìm thấy người dùng")); // Updated message
 
     return mapper.map(user);
   }
@@ -53,12 +53,12 @@ public class UserService {
   public User getCurrentUser() {
     String username = SecurityContextHolder.getContext().getAuthentication().getName();
     return userRepository.findByUsername(username)
-        .orElseThrow(() -> new UsernameNotFoundException("User not found"));
+        .orElseThrow(() -> new UsernameNotFoundException("Không tìm thấy người dùng")); // Updated message
   }
 
   public User getManager() {
     return userRepository.findManager()
-        .orElseThrow(() -> new RuntimeException("Manager doesn't exist"));
+        .orElseThrow(() -> new RuntimeException("Quản lý không tồn tại")); // Updated message
   }
 
 }

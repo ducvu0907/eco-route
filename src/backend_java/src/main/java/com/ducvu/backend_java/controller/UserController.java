@@ -20,30 +20,30 @@ public class UserController {
 
   @GetMapping("/drivers/not-assigned")
   public ApiResponse<List<UserResponse>> getDriversNotAssigned() {
-    log.info("Received get drivers not assigned request");
+    log.info("Đã nhận yêu cầu lấy tài xế chưa được phân công"); // Updated message
     var result = userService.getDriversNotAssigned();
     return ApiResponse.<List<UserResponse>>builder()
-        .message("Get drivers not assigned successfully")
+        .message("Lấy tài xế chưa được phân công thành công") // Updated message
         .result(result)
         .build();
   }
 
   @GetMapping("/users")
   public ApiResponse<List<UserResponse>> getUsers() {
-    log.info("Received get users request");
+    log.info("Đã nhận yêu cầu lấy danh sách người dùng"); // Updated message
     var result = userService.getUsers();
     return ApiResponse.<List<UserResponse>>builder()
-        .message("Get users successfully")
+        .message("Lấy danh sách người dùng thành công") // Updated message
         .result(result)
         .build();
   }
 
   @GetMapping("/users/{userId}")
   public ApiResponse<UserResponse> getUserById(@PathVariable("userId") String userId) {
-    log.info("Received get user request");
+    log.info("Đã nhận yêu cầu lấy người dùng"); // Updated message
     var result = userService.getUserById(userId);
     return ApiResponse.<UserResponse>builder()
-        .message("Get user successfully")
+        .message("Lấy người dùng thành công") // Updated message
         .result(result)
         .build();
   }

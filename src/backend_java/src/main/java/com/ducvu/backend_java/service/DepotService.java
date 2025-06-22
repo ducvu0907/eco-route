@@ -27,7 +27,7 @@ public class DepotService {
 
   public DepotResponse getDepotById(String depotId) {
     Depot depot = depotRepository.findById(depotId)
-        .orElseThrow(() -> new RuntimeException("Depot not found"));
+        .orElseThrow(() -> new RuntimeException("Không tìm thấy kho")); // Updated message
     return mapper.map(depot);
   }
 
@@ -40,7 +40,7 @@ public class DepotService {
 
   public DepotResponse updateDepot(String depotId, DepotUpdateRequest request) {
     Depot depot = depotRepository.findById(depotId)
-        .orElseThrow(() -> new RuntimeException("Depot not found"));
+        .orElseThrow(() -> new RuntimeException("Không tìm thấy kho")); // Updated message
 
     depot.setLatitude(request.getLatitude());
     depot.setLongitude(request.getLongitude());
@@ -73,10 +73,10 @@ public class DepotService {
 
   public void deleteDepot(String depotId) {
     Depot depot = depotRepository.findById(depotId)
-            .orElseThrow(() -> new RuntimeException("Depot not found"));
+        .orElseThrow(() -> new RuntimeException("Không tìm thấy kho")); // Updated message
 
     if (!depot.getVehicles().isEmpty()) {
-      throw new RuntimeException("Cannot delete depot with assigned vehicles");
+      throw new RuntimeException("Không thể xóa kho khi vẫn còn phương tiện được gán"); // Updated message
     }
 
     depotRepository.deleteById(depotId);

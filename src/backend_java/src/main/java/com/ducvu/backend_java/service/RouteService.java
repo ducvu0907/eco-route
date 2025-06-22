@@ -33,11 +33,11 @@ public class RouteService {
 
   public RouteResponse markRouteAsCompleted(String routeId) {
     Route route = routeRepository.findById(routeId)
-        .orElseThrow(() -> new RuntimeException("Route not found"));
+        .orElseThrow(() -> new RuntimeException("Không tìm thấy tuyến đường")); // Updated message
 
     for (Order order : route.getOrders()) {
       if (order.getStatus() == OrderStatus.PENDING) {
-        throw new RuntimeException("There are pending orders");
+        throw new RuntimeException("Có đơn hàng đang chờ xử lý"); // Updated message
       }
     }
 
@@ -61,17 +61,17 @@ public class RouteService {
 
   public RouteResponse getVehicleCurrentRoute(String vehicleId) {
     Vehicle vehicle = vehicleRepository.findById(vehicleId)
-        .orElseThrow(() -> new RuntimeException("Vehicle not found"));
+        .orElseThrow(() -> new RuntimeException("Không tìm thấy phương tiện")); // Updated message
 
     if (vehicle.getStatus() != VehicleStatus.ACTIVE) {
-      throw new RuntimeException("Vehicle is not active");
+      throw new RuntimeException("Phương tiện không hoạt động"); // Updated message
     }
 
     Dispatch dispatch = dispatchRepository.findActiveDispatch()
-        .orElseThrow(() -> new RuntimeException("No active dispatch found"));
+        .orElseThrow(() -> new RuntimeException("Không tìm thấy điều phối hoạt động")); // Updated message
 
     Route route = routeRepository.findByDispatchIdAndVehicleId(dispatch.getId(), vehicleId)
-        .orElseThrow(() -> new RuntimeException("Route not found"));
+        .orElseThrow(() -> new RuntimeException("Không tìm thấy tuyến đường")); // Updated message
 
     return mapper.map(route);
   }
@@ -79,7 +79,7 @@ public class RouteService {
   public RouteResponse getRouteById(String routeId) {
 
     Route route = routeRepository.findById(routeId)
-        .orElseThrow(() -> new RuntimeException("Route not found"));
+        .orElseThrow(() -> new RuntimeException("Không tìm thấy tuyến đường")); // Updated message
 
     return mapper.map(route);
   }
@@ -100,12 +100,12 @@ public class RouteService {
 
   private void notifyCompletedRoute(Route route) {
     User manager = userService.getManager();
-    notificationService.sendSingleNotification("Route is completed", manager, NotificationType.ROUTE, route.getId());
+    notificationService.sendSingleNotification("Tuyến đường đã hoàn thành", manager, NotificationType.ROUTE, route.getId()); // Updated message
   }
 
   private void notifyCompletedDispatch(Dispatch dispatch) {
     User manager = userService.getManager();
-    notificationService.sendSingleNotification("Dispatch is completed", manager, NotificationType.DISPATCH, dispatch.getId());
+    notificationService.sendSingleNotification("Điều phối đã hoàn thành", manager, NotificationType.DISPATCH, dispatch.getId()); // Updated message
   }
 
 }

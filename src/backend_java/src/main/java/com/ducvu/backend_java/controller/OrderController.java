@@ -27,50 +27,50 @@ public class OrderController {
 
   @GetMapping("/orders/in-progress")
   public ApiResponse<List<OrderResponse>> getOngoingOrders() {
-    log.info("Received get ongoing orders request");
+    log.info("Đã nhận yêu cầu lấy các đơn hàng đang xử lý"); // Updated message
     var result = orderService.getInProgressOrdersSorted();
     return ApiResponse.<List<OrderResponse>>builder()
-        .message("Get ongoing orders successfully")
+        .message("Lấy các đơn hàng đang xử lý thành công") // Updated message
         .result(result)
         .build();
   }
 
   @GetMapping("/orders/pending")
   public ApiResponse<List<OrderResponse>> getPendingOrders() {
-    log.info("Received get pending orders request");
+    log.info("Đã nhận yêu cầu lấy các đơn hàng đang chờ xử lý"); // Updated message
     var result = orderService.getPendingOrdersSorted();
     return ApiResponse.<List<OrderResponse>>builder()
-        .message("Get pending orders successfully")
+        .message("Lấy các đơn hàng đang chờ xử lý thành công") // Updated message
         .result(result)
         .build();
   }
 
   @GetMapping("/orders")
   public ApiResponse<List<OrderResponse>> getOrders() {
-    log.info("Received get orders request");
+    log.info("Đã nhận yêu cầu lấy danh sách đơn hàng"); // Updated message
     var result = orderService.getOrdersSorted();
     return ApiResponse.<List<OrderResponse>>builder()
-        .message("Get orders successfully")
+        .message("Lấy danh sách đơn hàng thành công") // Updated message
         .result(result)
         .build();
   }
 
   @GetMapping("/users/{userId}/orders")
   public ApiResponse<List<OrderResponse>> getOrdersByUserId(@PathVariable("userId") String userId) {
-    log.info("Received get orders by user id request");
+    log.info("Đã nhận yêu cầu lấy đơn hàng theo ID người dùng"); // Updated message
     var result = orderService.getOrdersByUserId(userId);
     return ApiResponse.<List<OrderResponse>>builder()
-        .message("Get orders by user id successfully")
+        .message("Lấy đơn hàng theo ID người dùng thành công") // Updated message
         .result(result)
         .build();
   }
 
   @GetMapping("/orders/{orderId}")
   public ApiResponse<OrderResponse> getOrderById(@PathVariable("orderId") String orderId) {
-    log.info("Received get order by id request");
+    log.info("Đã nhận yêu cầu lấy đơn hàng theo ID"); // Updated message
     var result = orderService.getOrderById(orderId);
     return ApiResponse.<OrderResponse>builder()
-        .message("Get order by id successfully")
+        .message("Lấy đơn hàng theo ID thành công") // Updated message
         .result(result)
         .build();
   }
@@ -80,10 +80,10 @@ public class OrderController {
       @PathVariable("orderId") String orderId,
       @RequestPart("request") OrderUpdateRequest request,
       @RequestPart(value = "file", required = false) MultipartFile file) {
-    log.info("Received order update request: {}", request);
+    log.info("Đã nhận yêu cầu cập nhật đơn hàng: {}", request); // Updated message
     var result = orderService.updateOrder(orderId, request, file);
     return ApiResponse.<OrderResponse>builder()
-        .message("Update order successfully")
+        .message("Cập nhật đơn hàng thành công") // Updated message
         .result(result)
         .build();
   }
@@ -91,40 +91,40 @@ public class OrderController {
   @PostMapping(value = "/orders", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
   public ApiResponse<OrderResponse> createOrder(
       @RequestPart("request") OrderCreateRequest request, @RequestPart(value = "file", required = false) MultipartFile file) {
-    log.info("Received order create request: {}", request);
+    log.info("Đã nhận yêu cầu tạo đơn hàng: {}", request); // Updated message
     var result = orderService.createOrder(request, file);
     return ApiResponse.<OrderResponse>builder()
-        .message("Create order successfully")
+        .message("Tạo đơn hàng thành công") // Updated message
         .result(result)
         .build();
   }
 
   @PostMapping("/orders/{orderId}/cancelled")
   public ApiResponse<OrderResponse> markOrderAsCancelled(@PathVariable("orderId") String orderId) {
-    log.info("Received mark order as cancelled");
+    log.info("Đã nhận yêu cầu hủy đơn hàng"); // Updated message
     var result = orderService.markOrderAsCancelled(orderId);
     return ApiResponse.<OrderResponse>builder()
-        .message("Mark order as cancelled successfully")
+        .message("Hủy đơn hàng thành công") // Updated message
         .result(result)
         .build();
   }
 
   @PostMapping("/orders/{orderId}/reassigned")
   public ApiResponse<OrderResponse> markOrderAsReassignment(@PathVariable("orderId") String orderId) {
-    log.info("Received mark order as reassigned: {}", orderId);
+    log.info("Đã nhận yêu cầu gán lại đơn hàng: {}", orderId); // Updated message
     var result = orderService.markOrderAsReassignment(orderId);
     return ApiResponse.<OrderResponse>builder()
-        .message("Mark order as reassigned successfully")
+        .message("Gán lại đơn hàng thành công") // Updated message
         .result(result)
         .build();
   }
 
   @PostMapping("/orders/{orderId}/completed")
   public ApiResponse<OrderResponse> markOrderAsCompleted(@PathVariable("orderId") String orderId) {
-    log.info("Received mark order as completed: {}", orderId);
+    log.info("Đã nhận yêu cầu đánh dấu đơn hàng đã hoàn thành: {}", orderId); // Updated message
     var result = orderService.markOrderAsCompleted(orderId);
     return ApiResponse.<OrderResponse>builder()
-        .message("Mark order as completed successfully")
+        .message("Đánh dấu đơn hàng đã hoàn thành thành công") // Updated message
         .result(result)
         .build();
   }

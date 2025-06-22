@@ -94,7 +94,7 @@ export default function NoDispatch() {
                 </div>
                 <div>
                   <p className="text-sm text-muted-foreground">{t("noDispatch.stats.totalWeight")}</p>
-                  <p className="text-2xl font-bold">{totalWeight}{t("noDispatch.stats.weightUnit")}</p>
+                  <p className="text-2xl font-bold">{totalWeight.toFixed(2)}{t("noDispatch.stats.weightUnit")}</p>
                 </div>
               </div>
             </CardContent>

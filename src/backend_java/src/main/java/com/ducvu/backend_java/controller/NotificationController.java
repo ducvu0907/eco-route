@@ -21,20 +21,20 @@ public class NotificationController {
 
   @GetMapping("/users/{userId}/notifications")
   public ApiResponse<List<NotificationResponse>> getNotificationsByUserId(@PathVariable("userId") String userId) {
-    log.info("Received get notifications by user id request");
+    log.info("Đã nhận yêu cầu lấy thông báo theo ID người dùng"); // Updated message
     var result = notificationService.getNotificationsByUser(userId);
     return ApiResponse.<List<NotificationResponse>>builder()
-        .message("Get notifications by user id successfully")
+        .message("Lấy thông báo theo ID người dùng thành công") // Updated message
         .result(result)
         .build();
   }
 
   @PostMapping("/notifications/{notificationId}/read")
   public ApiResponse<NotificationResponse> readNotification(@PathVariable("notificationId") String notificationId) {
-    log.info("Received read notification request");
+    log.info("Đã nhận yêu cầu đọc thông báo"); // Updated message
     var result = notificationService.readNotification(notificationId);
     return ApiResponse.<NotificationResponse>builder()
-        .message("Read notification successfully")
+        .message("Đọc thông báo thành công") // Updated message
         .result(result)
         .build();
   }

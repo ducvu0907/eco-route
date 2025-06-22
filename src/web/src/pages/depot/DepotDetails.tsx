@@ -142,7 +142,7 @@ export default function DepotDetails() {
               <p className="text-gray-600 mt-1">{t("depotDetails.overview.subtitle")}</p>
             </div>
             <Button variant={"default"} onClick={goToMap}>
-              <MapIcon className="w-5 h-5"/>
+              <MapIcon className="w-5 h-5" />
             </Button>
           </div>
         </div>
@@ -257,7 +257,7 @@ export default function DepotDetails() {
                 <div className="min-w-0">
                   <p className="text-sm font-medium text-gray-900">{t("depotDetails.info.category")}</p>
                   <Badge variant="outline" className={getCategoryStyle(depot.category)}>
-                    {depot.category.toLowerCase()}
+                    {t(`depotCreateModal.trashCategories.${depot.category}`)}
                   </Badge>
                 </div>
               </div>
@@ -348,10 +348,10 @@ export default function DepotDetails() {
                               </p>
                               {vehicle.currentLoad && (
                                 <div className="w-full bg-gray-200 rounded-full h-1.5">
-                                  <div 
+                                  <div
                                     className="bg-blue-600 h-1.5 rounded-full transition-all"
-                                    style={{ 
-                                      width: `${Math.min((vehicle.currentLoad / vehicle.capacity) * 100, 100)}%` 
+                                    style={{
+                                      width: `${Math.min((vehicle.currentLoad / vehicle.capacity) * 100, 100)}%`
                                     }}
                                   />
                                 </div>

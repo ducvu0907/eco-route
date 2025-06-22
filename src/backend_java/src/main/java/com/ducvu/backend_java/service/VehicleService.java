@@ -44,7 +44,7 @@ public class VehicleService {
       public void onChildChanged(DataSnapshot snapshot, String previousChildName) {
         log.info("Vehicle updated: {}", snapshot);
         Vehicle vehicle = vehicleRepository.findById(snapshot.getKey())
-            .orElseThrow(() -> new RuntimeException("Vehicle not found"));
+            .orElseThrow(() -> new RuntimeException("Không tìm thấy phương tiện"));
 
         VehicleRealtimeData data = snapshot.getValue(VehicleRealtimeData.class);
 
@@ -69,13 +69,13 @@ public class VehicleService {
 
   public VehicleResponse getVehicleByDriverId(String driverId) {
     Vehicle vehicle = vehicleRepository.findByDriverId(driverId)
-        .orElseThrow(() -> new RuntimeException("Vehicle not found"));
+        .orElseThrow(() -> new RuntimeException("Không tìm thấy phương tiện"));
     return mapper.map(vehicle);
   }
 
   public VehicleResponse getVehicleById(String vehicleId) {
     Vehicle vehicle = vehicleRepository.findById(vehicleId)
-        .orElseThrow(() -> new RuntimeException("Vehicle not found"));
+        .orElseThrow(() -> new RuntimeException("Không tìm thấy phương tiện"));
     return mapper.map(vehicle);
   }
 
@@ -90,7 +90,7 @@ public class VehicleService {
     validator.validate(request);
 
     vehicleRepository.findByLicensePlate(request.getLicensePlate())
-        .ifPresent(v -> {throw new RuntimeException("Vehicle already exists");});
+        .ifPresent(v -> {throw new RuntimeException("Phương tiện đã tồn tại");});
 
     Vehicle vehicle = Vehicle.builder()
         .licensePlate(request.getLicensePlate())
@@ -103,11 +103,11 @@ public class VehicleService {
     // validator already made sure driver id is not null
     if (request.getDriverId() != null) {
       User driver = userRepository.findById(request.getDriverId())
-          .orElseThrow(() -> new RuntimeException("Driver not found"));
+          .orElseThrow(() -> new RuntimeException("Không tìm thấy tài xế"));
 
       vehicleRepository.findByDriverId(request.getDriverId())
           .ifPresent(v -> {
-            throw new RuntimeException("Driver is already assigned");
+            throw new RuntimeException("Tài xế đã được phân công cho phương tiện khác");
           });
 
       vehicle.setDriver(driver);
@@ -116,7 +116,7 @@ public class VehicleService {
     // validator already made sure depot id is not null
     if (request.getDepotId() != null) {
       Depot depot = depotRepository.findById(request.getDepotId())
-          .orElseThrow(() -> new RuntimeException("Depot not found"));
+          .orElseThrow(() -> new RuntimeException("Không tìm thấy kho"));
 
       vehicle.setDepot(depot);
       vehicle.setCategory(depot.getCategory());
@@ -133,10 +133,10 @@ public class VehicleService {
 
   public VehicleResponse updateVehicle(String vehicleId, VehicleUpdateRequest request) {
     Vehicle vehicle = vehicleRepository.findById(vehicleId)
-        .orElseThrow(() -> new RuntimeException("Vehicle not found"));
+        .orElseThrow(() -> new RuntimeException("Không tìm thấy phương tiện"));
 
     if (vehicle.getStatus() == VehicleStatus.ACTIVE) {
-      throw new RuntimeException("Vehicle is active, cannot update info");
+      throw new RuntimeException("Phương tiện đang hoạt động, không thể cập nhật thông tin");
     }
 
     if (request.getStatus() != null && !request.getStatus().equals(vehicle.getStatus())) {
@@ -147,11 +147,11 @@ public class VehicleService {
         && (vehicle.getDriver() == null || !vehicle.getDriver().getId().equals(request.getDriverId()))
     ) {
       User driver = userRepository.findById(request.getDriverId())
-          .orElseThrow(() -> new RuntimeException("Driver not found"));
+          .orElseThrow(() -> new RuntimeException("Không tìm thấy tài xế"));
 
       vehicleRepository.findByDriverId(request.getDriverId())
           .ifPresent(v -> {
-            throw new RuntimeException("Driver is already assigned");
+            throw new RuntimeException("Tài xế đã được phân công cho phương tiện khác");
           });
 
       vehicle.setDriver(driver);
@@ -159,7 +159,7 @@ public class VehicleService {
 
     if (request.getDepotId() != null && !request.getDepotId().equals(vehicle.getDepot().getId())) {
       Depot depot = depotRepository.findById(request.getDepotId())
-          .orElseThrow(() -> new RuntimeException("Depot not found"));
+          .orElseThrow(() -> new RuntimeException("Không tìm thấy kho"));
 
       vehicle.setDepot(depot);
       vehicle.setCategory(depot.getCategory());
@@ -170,10 +170,10 @@ public class VehicleService {
 
   public void deleteVehicle(String vehicleId) {
     Vehicle vehicle = vehicleRepository.findById(vehicleId)
-        .orElseThrow(() -> new RuntimeException("Vehicle not found"));
+        .orElseThrow(() -> new RuntimeException("Không tìm thấy phương tiện"));
 
     if (vehicle.getStatus() == VehicleStatus.ACTIVE) {
-      throw new RuntimeException("Cannot delete active vehicle");
+      throw new RuntimeException("Không thể xóa phương tiện đang hoạt động");
     }
 
     if (vehicle.getDriver() != null) {

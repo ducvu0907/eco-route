@@ -6,18 +6,21 @@ import { useToast } from "./useToast";
 import { useRouter } from "expo-router";
 
 export const useRegister = () => {
+  const {showToast} = useToast();
   const router = useRouter();
 
   return useMutation({
     mutationFn: (payload: RegisterRequest) => register(payload),
     onSuccess: (response: ApiResponse<UserResponse>) => {
       const result = response.result as UserResponse;
+      showToast(response.message, "success");
       router.replace("/login");
     },
   });
 }
 
 export const useLogin = () => {
+  const {showToast} = useToast();
   const { setToken, setRole, setUserId, setUsername, setFcmToken } = useAuthContext();
   const router = useRouter();
 
@@ -25,10 +28,11 @@ export const useLogin = () => {
     mutationFn: (payload: LoginRequest) => login(payload),
     onSuccess: (response: ApiResponse<AuthResponse>) => {
       const result = response.result as AuthResponse;
-        setToken(result.token);
-        setUserId(result.userId);
-        setUsername(result.username);
-        setRole(result.role);
+      setToken(result.token);
+      setUserId(result.userId);
+      setUsername(result.username);
+      setRole(result.role);
+      showToast(response.message, "success");
       router.replace("/");
     },
   });

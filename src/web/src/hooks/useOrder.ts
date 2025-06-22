@@ -1,6 +1,7 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { getOrders, getOrderById, createOrder, updateOrder, getOrderByUserId, getPendingOrders, getOngoingOrders, markOrderAsDone, markOrderAsCancelled, } from "@/apis/order";
 import { ApiResponse, OrderResponse, OrderCreateRequest, OrderUpdateRequest, } from "@/types/types";
+import { useToast } from "./useToast";
 
 export const useGetOngoingOrders = () => {
   return useQuery<ApiResponse<OrderResponse[]>>({
@@ -40,47 +41,55 @@ export const useGetOrderById = (orderId: string) => {
 };
 
 export const useCreateOrder = () => {
+  const {showToast} = useToast();
   const queryClient = useQueryClient();
 
   return useMutation({
     mutationFn: ({ payload, file }: { payload: OrderCreateRequest, file: any}) => createOrder(payload, file),
-    onSuccess: () => {
+    onSuccess: (response) => {
       queryClient.invalidateQueries({ queryKey: ["orders"] });
+      showToast(response.message, "success");
     },
   });
 };
 
 export const useUpdateOrder = () => {
+  const {showToast} = useToast();
   const queryClient = useQueryClient();
 
   return useMutation({
     mutationFn: ({ orderId, payload }: { orderId: string; payload: OrderUpdateRequest }) =>
       updateOrder(orderId, payload),
-    onSuccess: (_data, { orderId }) => {
+    onSuccess: (response, { orderId }) => {
       queryClient.invalidateQueries({ queryKey: ["orders"] });
       queryClient.invalidateQueries({ queryKey: ["orders", orderId] });
+      showToast(response.message, "success");
     },
   });
 };
 
 export const useMarkOrderAsDone = () => {
+  const {showToast} = useToast();
   const queryClient = useQueryClient();
 
   return useMutation({
     mutationFn: (orderId: string) => markOrderAsDone(orderId),
-    onSuccess: (_data, orderId) => {
+    onSuccess: (response, orderId) => {
       queryClient.invalidateQueries({ queryKey: ["orders", orderId] });
+      showToast(response.message, "success");
     }
   })
 }
 
 export const useMarkOrderAsCancelled = () => {
+  const {showToast} = useToast();
   const queryClient = useQueryClient();
 
   return useMutation({
     mutationFn: (orderId: string) => markOrderAsCancelled(orderId),
-    onSuccess: (_data, orderId) => {
+    onSuccess: (response, orderId) => {
       queryClient.invalidateQueries({ queryKey: ["orders", orderId] });
+      showToast(response.message, "success");
     }
   })
 }

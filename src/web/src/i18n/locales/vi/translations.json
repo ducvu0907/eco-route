@@ -416,7 +416,8 @@
       "noAddress": "Không có địa chỉ",
       "coordinates": "Tọa độ",
       "created": "Đã tạo vào",
-      "updated": "Cập nhật lần cuối"
+      "updated": "Cập nhật lần cuối",
+      "category": "Loại rác thải"
     },
     "vehicles": {
       "title": "Phương tiện ({{count}})",

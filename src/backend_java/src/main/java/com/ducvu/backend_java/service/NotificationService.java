@@ -26,12 +26,12 @@ public class NotificationService {
 
   public List<NotificationResponse> saveAll(String content, List<User> users, NotificationType type, List<String> refIds) {
     if (users.isEmpty()) {
-      log.warn("No users provided");
+      log.warn("Không có người dùng nào được cung cấp"); // Updated message
       return List.of();
     }
 
     if (refIds.size() != users.size()) {
-      throw new RuntimeException("Mismatch between refIds and users size");
+      throw new RuntimeException("Kích thước danh sách refIds không khớp với kích thước danh sách người dùng"); // Updated message
     }
 
     List<Notification> notifications = IntStream.range(0, users.size())
@@ -64,7 +64,7 @@ public class NotificationService {
   }
 
   public void sendBatchNotifications(String content, List<User> users, NotificationType type, List<String> refIds) {
-    log.info("Sending notifications to {}", users);
+    log.info("Đang gửi thông báo đến {}", users); // Updated message
 
     List<String> fcmTokens = users.stream()
         .map(User::getFcmToken)
@@ -74,37 +74,37 @@ public class NotificationService {
     saveAll(content, users, type, refIds); // still persist notifications
 
     if (fcmTokens.isEmpty()) {
-      log.warn("No FCM tokens provided for batch notification.");
+      log.warn("Không có mã thông báo FCM nào được cung cấp cho thông báo hàng loạt."); // Updated message
       return;
     }
 
     MulticastMessage message = MulticastMessage.builder()
-        .putData("title", "Notification")
+        .putData("title", "Thông báo") // Updated message
         .putData("body", content)
         .addAllTokens(fcmTokens)
         .build();
 
     try {
       BatchResponse response = firebaseMessaging.sendEachForMulticast(message);
-      log.info("Batch notification sent. Success: {}, Failure: {}",
+      log.info("Đã gửi thông báo hàng loạt. Thành công: {}, Thất bại: {}", // Updated message
           response.getSuccessCount(), response.getFailureCount());
 
       if (response.getFailureCount() > 0) {
         response.getResponses().stream()
             .filter(r -> !r.isSuccessful())
-            .forEach(r -> log.error("Error sending message: {}", r.getException().getMessage()));
+            .forEach(r -> log.error("Lỗi khi gửi tin nhắn: {}", r.getException().getMessage())); // Updated message
       }
     } catch (Exception e) {
-      log.error("Failed to send batch notification", e);
+      log.error("Không thể gửi thông báo hàng loạt", e); // Updated message
     }
   }
 
   public void sendSingleNotification(String content, User user, NotificationType type, String refId) {
-    log.info("Sending notification to {}", user);
+    log.info("Đang gửi thông báo đến {}", user); // Updated message
     save(content, user, type, refId); // still persist notification
 
     if (user.getFcmToken() == null) {
-      log.warn("FCM token is null or empty. Notification not sent.");
+      log.warn("Mã thông báo FCM là null hoặc trống. Thông báo không được gửi."); // Updated message
       return;
     }
 
@@ -112,7 +112,7 @@ public class NotificationService {
         .setToken(user.getFcmToken())
         .setNotification(
             com.google.firebase.messaging.Notification.builder()
-                .setTitle("Notification")
+                .setTitle("Thông báo") // Updated message
                 .setBody(content)
                 .build()
         )
@@ -120,9 +120,9 @@ public class NotificationService {
 
     try {
       String response = firebaseMessaging.send(message);
-      log.info("Notification sent successfully. Response: {}", response);
+      log.info("Thông báo đã được gửi thành công. Phản hồi: {}", response); // Updated message
     } catch (Exception e) {
-      log.error("Failed to send notification to token: {}", user, e);
+      log.error("Không thể gửi thông báo đến mã thông báo: {}", user, e); // Updated message
     }
   }
 
@@ -135,7 +135,7 @@ public class NotificationService {
 
   public NotificationResponse readNotification(String notificationId) {
     Notification notification = notificationRepository.findById(notificationId)
-        .orElseThrow(() -> new RuntimeException("Notification not found"));
+        .orElseThrow(() -> new RuntimeException("Không tìm thấy thông báo")); // Updated message
 
     notification.setIsRead(true);
     return mapper.map(notificationRepository.save(notification));

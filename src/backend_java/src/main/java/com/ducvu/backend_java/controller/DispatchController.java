@@ -24,40 +24,40 @@ public class DispatchController {
 
   @GetMapping("/dispatches/current")
   public ApiResponse<DispatchResponse> getCurrentDispatch() {
-    log.info("Received get current dispatch request");
+    log.info("Đã nhận yêu cầu lấy điều phối hiện tại"); // Updated message
     var result = dispatchService.getCurrentDispatch();
     return ApiResponse.<DispatchResponse>builder()
-        .message("Get current dispatch successfully")
+        .message("Lấy điều phối hiện tại thành công") // Updated message
         .result(result)
         .build();
   }
 
   @GetMapping("/dispatches/{dispatchId}")
   public ApiResponse<DispatchResponse> getDispatchById(@PathVariable("dispatchId") String dispatchId) {
-    log.info("Received get dispatch by id request");
+    log.info("Đã nhận yêu cầu lấy điều phối theo ID"); // Updated message
     var result = dispatchService.getDispatchById(dispatchId);
     return ApiResponse.<DispatchResponse>builder()
-        .message("Get dispatch by id successfully")
+        .message("Lấy điều phối theo ID thành công") // Updated message
         .result(result)
         .build();
   }
 
   @GetMapping("/dispatches")
   public ApiResponse<List<DispatchResponse>> getDispatches() {
-    log.info("Received get dispatches request");
+    log.info("Đã nhận yêu cầu lấy các điều phối"); // Updated message
     var result = dispatchService.getDispatches();
     return ApiResponse.<List<DispatchResponse>>builder()
-        .message("Get dispatches successfully")
+        .message("Lấy các điều phối thành công") // Updated message
         .result(result)
         .build();
   }
 
   @PostMapping("/dispatches")
   public ApiResponse<Void> createDispatch() {
-    log.info("Received create dispatches request");
+    log.info("Đã nhận yêu cầu tạo điều phối"); // Updated message
     dispatchService.createDispatch();
     return ApiResponse.<Void>builder()
-        .message("Create dispatch successfully")
+        .message("Tạo điều phối thành công") // Updated message
         .build();
   }
 

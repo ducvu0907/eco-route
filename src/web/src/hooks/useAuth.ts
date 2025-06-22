@@ -1,19 +1,22 @@
 import { login, register } from "@/apis/auth";
 import { RegisterRequest, ApiResponse, LoginRequest, AuthResponse } from "@/types/types";
 import { useMutation } from "@tanstack/react-query";
-import { useToast } from "./useToast";
 import { useAuthContext } from "./useAuthContext";
+import { useToast } from "./useToast";
 
 export const useRegister = () => {
+  const {showToast} = useToast();
+
   return useMutation({
     mutationFn: (payload: RegisterRequest) => register(payload),
-    onSuccess: () => {
-      // const result = response.result as UserResponse;
+    onSuccess: (response) => {
+      showToast(response.message, "success");
     },
   });
 }
 
 export const useLogin = () => {
+  const {showToast} = useToast();
   const { fcmToken, setAuth } = useAuthContext();
 
   return useMutation({
@@ -27,17 +30,16 @@ export const useLogin = () => {
         fcmToken: fcmToken, // persist fcmToken
         role: result.role
       });
+      showToast(response.message, "success");
     },
   });
 }
 
 export const useLogout = () => {
   const { clearAuth } = useAuthContext();
-  const { showToast } = useToast();
 
   const logout = () => {
     clearAuth();
-    showToast("Logged out successfully", "success");
   }
 
 

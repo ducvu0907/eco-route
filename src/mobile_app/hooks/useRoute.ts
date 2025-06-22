@@ -1,6 +1,7 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { getRouteById, getRoutesByVehicleId, getRoutesByDispatchId, getVehicleCurrentRoute, markRouteAsCompleted } from "@/apis/route";
 import { ApiResponse, RouteResponse } from "@/types/types";
+import { useToast } from "./useToast";
 
 export const useGetRouteById = (routeId: string) => {
   return useQuery<ApiResponse<RouteResponse>>({
@@ -11,12 +12,14 @@ export const useGetRouteById = (routeId: string) => {
 }
 
 export const useMarkRouteAsDone = () => {
+  const {showToast} = useToast();
   const queryClient = useQueryClient();
 
   return useMutation({
     mutationFn: (routeId: string) => markRouteAsCompleted(routeId),
-    onSuccess: (_data, routeId) => {
+    onSuccess: (response, routeId) => {
       queryClient.invalidateQueries({queryKey: ["routes", routeId]});
+      showToast(response.message, "success");
     }
   });
 }

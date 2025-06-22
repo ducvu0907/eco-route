@@ -1,6 +1,7 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { getVehicles, createVehicle, updateVehicle, getVehicleById, getVehicleByDriverId, deleteVehicle } from "@/apis/vehicle";
 import { ApiResponse, VehicleResponse, VehicleCreateRequest, VehicleUpdateRequest } from "@/types/types";
+import { useToast } from "./useToast";
 
 export const useGetVehicles = () => {
   return useQuery<ApiResponse<VehicleResponse[]>>({
@@ -26,36 +27,42 @@ export const useGetVehicleById = (vehicleId: string) => {
 };
 
 export const useCreateVehicle = () => {
+  const {showToast} = useToast();
   const queryClient = useQueryClient();
 
   return useMutation({
     mutationFn: (payload: VehicleCreateRequest) => createVehicle(payload),
-    onSuccess: () => {
+    onSuccess: (response) => {
       queryClient.invalidateQueries({ queryKey: ["vehicles"] });
+      showToast(response.message, "success");
     },
   });
 };
 
 export const useUpdateVehicle = () => {
+  const {showToast} = useToast();
   const queryClient = useQueryClient();
 
   return useMutation({
     mutationFn: ({ vehicleId, payload }: { vehicleId: string; payload: VehicleUpdateRequest }) =>
       updateVehicle(vehicleId, payload),
-    onSuccess: (_data, { vehicleId }) => {
+    onSuccess: (response, { vehicleId }) => {
       queryClient.invalidateQueries({ queryKey: ["vehicles"] });
       queryClient.invalidateQueries({ queryKey: ["vehicles", vehicleId] });
+      showToast(response.message, "success");
     },
   });
 };
 
 export const useDeleteVehicle = () => {
+  const {showToast} = useToast();
   const queryClient = useQueryClient();
 
   return useMutation({
     mutationFn: (vehicleId: string) => deleteVehicle(vehicleId),
-    onSuccess: () => {
+    onSuccess: (response) => {
       queryClient.invalidateQueries({ queryKey: ["vehicles"] });
+      showToast(response.message, "success");
     },
   });
 };

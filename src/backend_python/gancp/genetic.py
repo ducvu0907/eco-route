@@ -172,7 +172,7 @@ def mdvrp_solve_refined(instance,
     # infeasibility check and repair
     # subpopulation = generate_subpopulation_refined(instance, population, scores, pop_limit[0])
     subpopulation = generate_subpopulation(instance, population, scores, pop_limit[0])
-    subpopulation = local_search(instance, subpopulation)
+    # subpopulation = local_search(instance, subpopulation)
     infeasibilities, excess_demands = are_infeasibles(instance, subpopulation)
     subpopulation, infeasibilities, excess_demands = repair_infeasibles_refined(
       instance, subpopulation, infeasibilities, excess_demands, generation, generations

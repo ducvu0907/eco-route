@@ -37,7 +37,7 @@ public class OrderService {
     User user = userService.getCurrentUser();
 
     if (!user.getId().equals(userId) && user.getRole() != Role.MANAGER) {
-      throw new RuntimeException("Unauthorized");
+      throw new RuntimeException("Không được phép"); // Updated message
     }
 
     return orderRepository.findByUserId(userId)
@@ -91,11 +91,11 @@ public class OrderService {
 
   public OrderResponse getOrderById(String orderId) {
     Order order = orderRepository.findById(orderId)
-        .orElseThrow(() -> new RuntimeException("Order not found"));
+        .orElseThrow(() -> new RuntimeException("Không tìm thấy đơn hàng")); // Updated message
     User user = userService.getCurrentUser();
 
     if (!user.getId().equals(order.getUser().getId()) && user.getRole() != Role.MANAGER) {
-      throw new RuntimeException("Unauthorized");
+      throw new RuntimeException("Không được phép"); // Updated message
     }
 
     return mapper.map(order);
@@ -103,7 +103,7 @@ public class OrderService {
 
   public OrderResponse updateOrder(String orderId, OrderUpdateRequest request, MultipartFile file) {
     Order order = orderRepository.findById(orderId)
-        .orElseThrow(() -> new RuntimeException("Order not found"));
+        .orElseThrow(() -> new RuntimeException("Không tìm thấy đơn hàng")); // Updated message
 
     if (request.getAddress() != null && request.getLatitude() != null && request.getLongitude() != null) {
       order.setAddress(request.getAddress());
@@ -161,7 +161,7 @@ public class OrderService {
 
   public OrderResponse markOrderAsReassignment(String orderId) {
     Order order = orderRepository.findById(orderId)
-        .orElseThrow(() -> new RuntimeException("Order not found"));
+        .orElseThrow(() -> new RuntimeException("Không tìm thấy đơn hàng")); // Updated message
 
     order.setStatus(OrderStatus.REASSIGNED);
     order = orderRepository.save(order);
@@ -172,10 +172,10 @@ public class OrderService {
 
   public OrderResponse markOrderAsCancelled(String orderId) {
     Order order = orderRepository.findById(orderId)
-        .orElseThrow(() -> new RuntimeException("Order not found"));
+        .orElseThrow(() -> new RuntimeException("Không tìm thấy đơn hàng")); // Updated message
 
     if (order.getStatus() != OrderStatus.PENDING && order.getStatus() != OrderStatus.REASSIGNED) {
-      throw new RuntimeException("Order is not cancellable");
+      throw new RuntimeException("Đơn hàng không thể hủy"); // Updated message
     }
 
     order.setStatus(OrderStatus.CANCELLED);
@@ -189,7 +189,7 @@ public class OrderService {
 
   public OrderResponse markOrderAsCompleted(String orderId) {
     Order order = orderRepository.findById(orderId)
-        .orElseThrow(() -> new RuntimeException("Order not found"));
+        .orElseThrow(() -> new RuntimeException("Không tìm thấy đơn hàng")); // Updated message
 
     order.setStatus(OrderStatus.COMPLETED);
     order.setCompletedAt(LocalDateTime.now());
@@ -203,27 +203,27 @@ public class OrderService {
 
   private void notifyOrderReassignment(Order order) {
     User customer = order.getUser();
-    notificationService.sendSingleNotification("Order is reassigned", customer, NotificationType.ORDER, order.getId());
+    notificationService.sendSingleNotification("Đơn hàng đã được phân công lại", customer, NotificationType.ORDER, order.getId()); // Updated message
   }
 
   private void notifyUpdatedOrder(Order order) {
     User manager = userService.getManager();
-    notificationService.sendSingleNotification("Order is updated", manager, NotificationType.ORDER, order.getId());
+    notificationService.sendSingleNotification("Đơn hàng đã được cập nhật", manager, NotificationType.ORDER, order.getId()); // Updated message
   }
 
   private void notifyNewOrder(Order order) {
     User manager = userService.getManager();
-    notificationService.sendSingleNotification("New order", manager, NotificationType.ORDER, order.getId());
+    notificationService.sendSingleNotification("Đơn hàng mới", manager, NotificationType.ORDER, order.getId()); // Updated message
   }
 
   private void notifyOrderCancelled(Order order) {
     User manager = userService.getManager();
-    notificationService.sendSingleNotification("Order is cancelled", manager, NotificationType.ORDER, order.getId());
+    notificationService.sendSingleNotification("Đơn hàng đã bị hủy", manager, NotificationType.ORDER, order.getId()); // Updated message
   }
 
   private void notifyOrderCompleted(Order order) {
     User customer = order.getUser();
-    notificationService.sendSingleNotification("Order is completed", customer, NotificationType.ORDER, order.getId());
+    notificationService.sendSingleNotification("Đơn hàng đã hoàn thành", customer, NotificationType.ORDER, order.getId()); // Updated message
   }
 
 }

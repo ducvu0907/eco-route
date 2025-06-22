@@ -35,10 +35,10 @@ public class AuthService {
     validator.validate(request);
 
     userRepository.findByUsername(request.getUsername())
-        .ifPresent(u -> { throw new RuntimeException("Username already exists"); });
+        .ifPresent(u -> { throw new RuntimeException("Tên người dùng đã tồn tại"); }); // Updated message
 
     userRepository.findByPhone(request.getPhone())
-        .ifPresent(u -> { throw new RuntimeException("Phone number already exists"); });
+        .ifPresent(u -> { throw new RuntimeException("Số điện thoại đã tồn tại"); }); // Updated message
 
     User user = User.builder()
         .username(request.getUsername())
@@ -55,7 +55,7 @@ public class AuthService {
     validator.validate(request);
 
     User user = userRepository.findByUsername(request.getUsername())
-        .orElseThrow(() -> new UsernameNotFoundException("Username not found"));
+        .orElseThrow(() -> new UsernameNotFoundException("Không tìm thấy tên người dùng")); // Updated message
 
     Authentication authentication = authenticationManager.authenticate(
         new UsernamePasswordAuthenticationToken(
@@ -81,5 +81,4 @@ public class AuthService {
 
     return authResponse;
   }
-
 }

@@ -38,10 +38,10 @@ public class DispatchService {
 
   public DispatchResponse markDispatchAsDone(String dispatchId) {
     Dispatch dispatch = dispatchRepository.findById(dispatchId)
-        .orElseThrow(() -> new RuntimeException("Dispatch not found"));
+        .orElseThrow(() -> new RuntimeException("Không tìm thấy điều phối")); // Updated message
 
     if (!routeRepository.findByDispatchId(dispatchId).isEmpty()) {
-      throw new RuntimeException("Routes are not completed");
+      throw new RuntimeException("Các tuyến đường chưa hoàn thành"); // Updated message
     }
 
     dispatch.setStatus(DispatchStatus.COMPLETED);
@@ -50,13 +50,13 @@ public class DispatchService {
 
   public DispatchResponse getDispatchById(String dispatchId) {
     Dispatch dispatch = dispatchRepository.findById(dispatchId)
-        .orElseThrow(() -> new RuntimeException("Dispatch not found"));
+        .orElseThrow(() -> new RuntimeException("Không tìm thấy điều phối")); // Updated message
     return mapper.map(dispatch);
   }
 
   public DispatchResponse getCurrentDispatch() {
     Dispatch dispatch = dispatchRepository.findActiveDispatch()
-        .orElseThrow(() -> new RuntimeException("No current dispatch found"));
+        .orElseThrow(() -> new RuntimeException("Không tìm thấy điều phối hiện tại")); // Updated message
     return mapper.map(dispatch);
   }
 
@@ -91,7 +91,7 @@ public class DispatchService {
     }
 
     if (orders.isEmpty()) {
-      throw new RuntimeException("No orders to be processed");
+      throw new RuntimeException("Không có đơn hàng nào để xử lý"); // Updated message
     }
 
     List<Vehicle> vehicles = vehicleRepository.findAll().stream()
@@ -107,12 +107,12 @@ public class DispatchService {
           .toList();
 
       if (filteredOrders.isEmpty()) {
-        log.warn("No orders for this category: {}", category);
+        log.warn("Không có đơn hàng cho loại này: {}", category); // Updated message
         continue;
       }
 
       if (filteredVehicles.isEmpty()) {
-        log.warn("No vehicles for this category: {}", category);
+        log.warn("Không có phương tiện cho loại này: {}", category); // Updated message
         continue;
       }
 
@@ -202,7 +202,7 @@ public class DispatchService {
 
     for (VrpJob job : vrpRoute.getSteps()) {
       Order order = orderRepository.findById(job.getId())
-          .orElseThrow(() -> new RuntimeException("Order not found: " + job.getId()));
+          .orElseThrow(() -> new RuntimeException("Không tìm thấy đơn hàng: " + job.getId())); // Updated message
       order.setStatus(OrderStatus.IN_PROGRESS);
       order.setIndex(index++);
       order.setRoute(route);
@@ -218,7 +218,7 @@ public class DispatchService {
     List<Route> updatedRoutes = vrpResponse.getRoutes().stream()
         .map(vrpRoute -> {
           Vehicle vehicle = vehicleRepository.findById(vrpRoute.getVehicleId())
-              .orElseThrow(() -> new RuntimeException("Vehicle not found"));
+              .orElseThrow(() -> new RuntimeException("Không tìm thấy phương tiện")); // Updated message
           if (vehicle.getStatus() != VehicleStatus.ACTIVE) {
             vehicle.setStatus(VehicleStatus.ACTIVE);
             Route route = buildRouteFromVrp(vrpRoute, dispatch);
@@ -226,7 +226,7 @@ public class DispatchService {
             return route;
           } else {
             Route route = routeRepository.findByDispatchIdAndVehicleId(dispatch.getId(), vehicle.getId())
-                .orElseThrow(() -> new RuntimeException("Route not found"));
+                .orElseThrow(() -> new RuntimeException("Không tìm thấy tuyến đường")); // Updated message
             route.setOrders(buildOrders(vrpRoute, route));
             route.setDistance(vrpRoute.getDistance());
             route.setDuration(vrpRoute.getDuration());
@@ -243,10 +243,10 @@ public class DispatchService {
 
   private Route buildRouteFromVrp(VrpRoute vrpRoute, Dispatch dispatch) {
     Vehicle vehicle = vehicleRepository.findById(vrpRoute.getVehicleId())
-        .orElseThrow(() -> new RuntimeException("Vehicle not found"));
+        .orElseThrow(() -> new RuntimeException("Không tìm thấy phương tiện")); // Updated message
     if (vehicle.getStatus() == VehicleStatus.ACTIVE) {
       Route route = routeRepository.findByDispatchIdAndVehicleId(dispatch.getId(), vehicle.getId())
-          .orElseThrow(() -> new RuntimeException("Route not found"));
+          .orElseThrow(() -> new RuntimeException("Không tìm thấy tuyến đường")); // Updated message
 
       route.setOrders(buildOrders(vrpRoute, route));
       route.setDistance(vrpRoute.getDistance());
@@ -302,7 +302,7 @@ public class DispatchService {
     VrpResponse response = restTemplate.postForObject(vrpApiUrl, request, VrpResponse.class);
 
     if (response == null || response.getError() != null) {
-      throw new RuntimeException("Error while solving vrp");
+      throw new RuntimeException("Lỗi khi giải quyết VRP"); // Updated message
     }
 
     return response;
@@ -316,7 +316,7 @@ public class DispatchService {
     List<String> refIds = orders.stream()
         .map(order -> order.getId())
         .toList();
-    notificationService.sendBatchNotifications("Order is in progress", users, NotificationType.ORDER, refIds);
+    notificationService.sendBatchNotifications("Đơn hàng đang được xử lý", users, NotificationType.ORDER, refIds); // Updated message
   }
 
   private void notifyNewRoutes(List<Route> routes) {
@@ -326,7 +326,7 @@ public class DispatchService {
     List<String> refIds = routes.stream()
         .map(route -> route.getId())
         .toList();
-    notificationService.sendBatchNotifications("New route", drivers, NotificationType.ROUTE, refIds);
+    notificationService.sendBatchNotifications("Tuyến đường mới", drivers, NotificationType.ROUTE, refIds); // Updated message
   }
 
 }

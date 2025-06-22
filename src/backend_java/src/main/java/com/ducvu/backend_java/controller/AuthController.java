@@ -23,20 +23,20 @@ public class AuthController {
 
   @PostMapping("/auth/register")
   public ApiResponse<UserResponse> register(@RequestBody RegisterRequest request) {
-    log.info("Received register request: {}", request);
+    log.info("Đã nhận yêu cầu đăng ký: {}", request); // Updated message
     var result = authService.register(request);
     return ApiResponse.<UserResponse>builder()
-        .message("Register successfully")
+        .message("Đăng ký thành công") // Updated message
         .result(result)
         .build();
   }
 
   @PostMapping("/auth/login")
   public ApiResponse<AuthResponse> login(@RequestBody LoginRequest request) {
-    log.info("Received login request: {}", request);
+    log.info("Đã nhận yêu cầu đăng nhập: {}", request); // Updated message
     var result = authService.login(request);
     return ApiResponse.<AuthResponse>builder()
-        .message("Login successfully")
+        .message("Đăng nhập thành công") // Updated message
         .result(result)
         .build();
   }

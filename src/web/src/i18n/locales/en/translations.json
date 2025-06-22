@@ -416,7 +416,8 @@
       "noAddress": "No address provided",
       "coordinates": "Coordinates",
       "created": "Created At",
-      "updated": "Last Updated"
+      "updated": "Last Updated",
+      "category": "Category"
     },
     "vehicles": {
       "title": "Vehicles ({{count}})",

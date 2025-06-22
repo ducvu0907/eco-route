@@ -26,50 +26,50 @@ public class DepotController {
 
   @GetMapping("/depots/{depotId}")
   public ApiResponse<DepotResponse> getDepotById(@PathVariable("depotId") String depotId) {
-    log.info("Received get depot by id request");
+    log.info("Đã nhận yêu cầu lấy kho theo ID"); // Updated message
     var result = depotService.getDepotById(depotId);
     return ApiResponse.<DepotResponse>builder()
-        .message("Get depot by id successfully")
+        .message("Lấy thông tin kho theo ID thành công") // Updated message
         .result(result)
         .build();
   }
 
   @GetMapping("/depots")
   public ApiResponse<List<DepotResponse>> getDepots() {
-    log.info("Received get depots request");
+    log.info("Đã nhận yêu cầu lấy danh sách kho"); // Updated message
     var result = depotService.getDepots();
     return ApiResponse.<List<DepotResponse>>builder()
-        .message("Get depots successfully")
+        .message("Lấy danh sách kho thành công") // Updated message
         .result(result)
         .build();
   }
 
   @PostMapping("/depots")
   public ApiResponse<DepotResponse> createDepot(@RequestBody DepotCreateRequest request) {
-    log.info("Received create depot request: {}", request);
+    log.info("Đã nhận yêu cầu tạo kho mới: {}", request); // Updated message
     var result = depotService.createDepot(request);
     return ApiResponse.<DepotResponse>builder()
-        .message("Create depot successfully")
+        .message("Tạo kho thành công") // Updated message
         .result(result)
         .build();
   }
 
   @PostMapping("/depots/{depotId}")
   public ApiResponse<DepotResponse> updateDepot(@PathVariable("depotId") String depotId, @RequestBody DepotUpdateRequest request) {
-    log.info("Received update depot request");
+    log.info("Đã nhận yêu cầu cập nhật kho"); // Updated message
     var result = depotService.updateDepot(depotId, request);
     return ApiResponse.<DepotResponse>builder()
-        .message("Update depot successfully")
+        .message("Cập nhật kho thành công") // Updated message
         .result(result)
         .build();
   }
 
   @DeleteMapping("/depots/{depotId}")
   public ApiResponse<Void> deleteDepot(@PathVariable("depotId") String depotId) {
-    log.info("Received delete depot request");
+    log.info("Đã nhận yêu cầu xóa kho"); // Updated message
     depotService.deleteDepot(depotId);
     return ApiResponse.<Void>builder()
-        .message("Delete depot successfully")
+        .message("Xóa kho thành công") // Updated message
         .build();
   }
 

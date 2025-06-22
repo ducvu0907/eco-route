@@ -27,50 +27,50 @@ public class VehicleController {
 
   @GetMapping("/users/{driverId}/vehicle")
   public ApiResponse<VehicleResponse> getVehicleByDriverId(@PathVariable("driverId") String driverId) {
-    log.info("Received get vehicle by driver id request");
+    log.info("Đã nhận yêu cầu lấy phương tiện theo ID tài xế"); // Updated message
     var result = vehicleService.getVehicleByDriverId(driverId);
     return ApiResponse.<VehicleResponse>builder()
-        .message("Get vehicle by driver id successfully")
+        .message("Lấy phương tiện theo ID tài xế thành công") // Updated message
         .result(result)
         .build();
   }
 
   @GetMapping("/vehicles/{vehicleId}")
   public ApiResponse<VehicleResponse> getVehicleById(@PathVariable("vehicleId") String vehicleId) {
-    log.info("Received get vehicle by id request");
+    log.info("Đã nhận yêu cầu lấy phương tiện theo ID"); // Updated message
     var result = vehicleService.getVehicleById(vehicleId);
     return ApiResponse.<VehicleResponse>builder()
-        .message("Get vehicle by id successfully")
+        .message("Lấy phương tiện theo ID thành công") // Updated message
         .result(result)
         .build();
   }
 
   @GetMapping("/vehicles")
   public ApiResponse<List<VehicleResponse>> getVehicles() {
-    log.info("Received get vehicles request");
+    log.info("Đã nhận yêu cầu lấy danh sách phương tiện"); // Updated message
     var result = vehicleService.getVehicles();
     return ApiResponse.<List<VehicleResponse>>builder()
-        .message("Get vehicles successfully")
+        .message("Lấy danh sách phương tiện thành công") // Updated message
         .result(result)
         .build();
   }
 
   @PostMapping("/vehicles")
   public ApiResponse<VehicleResponse> createVehicle(@RequestBody VehicleCreateRequest request) {
-    log.info("Received create vehicle request: {}", request);
+    log.info("Đã nhận yêu cầu tạo phương tiện: {}", request); // Updated message
     var result = vehicleService.createVehicle(request);
     return ApiResponse.<VehicleResponse>builder()
-        .message("Create vehicle successfully")
+        .message("Tạo phương tiện thành công") // Updated message
         .result(result)
         .build();
   }
 
   @PostMapping("/vehicles/{vehicleId}")
   public ApiResponse<VehicleResponse> updateVehicle(@PathVariable("vehicleId") String vehicleId, @RequestBody VehicleUpdateRequest request) {
-    log.info("Received update vehicle request: {}", request);
+    log.info("Đã nhận yêu cầu cập nhật phương tiện: {}", request); // Updated message
     var result = vehicleService.updateVehicle(vehicleId, request);
     return ApiResponse.<VehicleResponse>builder()
-        .message("Update vehicle successfully")
+        .message("Cập nhật phương tiện thành công") // Updated message
         .result(result)
         .build();
   }
@@ -78,10 +78,10 @@ public class VehicleController {
 
   @DeleteMapping("/vehicles/{vehicleId}")
   public ApiResponse<Void> deleteVehicle(@PathVariable("vehicleId") String vehicleId) {
-    log.info("Received delete vehicle request");
+    log.info("Đã nhận yêu cầu xóa phương tiện"); // Updated message
     vehicleService.deleteVehicle(vehicleId);
     return ApiResponse.<Void>builder()
-        .message("Delete vehicle successfully")
+        .message("Xóa phương tiện thành công") // Updated message
         .build();
   }
 }
