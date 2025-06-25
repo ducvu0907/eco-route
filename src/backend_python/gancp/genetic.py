@@ -267,7 +267,8 @@ def solve_instance(instance, dist_type="euclidean"):
     costs, routes = hgs_cvrp(instance, dist_type=dist_type)
     return costs, routes
   # _, _, hgs_costs, _, mdvrp_routes = mdvrp_solve(instance, dist_type=dist_type)
-  _, _, hgs_costs, _, mdvrp_routes = mdvrp_solve_refined(instance, dist_type=dist_type)
+  # _, _, hgs_costs, _, mdvrp_routes = mdvrp_solve_refined(instance, dist_type=dist_type)
+  _, _, hgs_costs, _, mdvrp_routes = mdvrp_solve(instance, dist_type=dist_type)
   best_cost = min(hgs_costs)
   best_idx = hgs_costs.index(best_cost)
   best_routes = mdvrp_routes[best_idx]
