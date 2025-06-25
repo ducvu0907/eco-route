@@ -1,0 +1,30 @@
+alns==7.0.0
+scikit-learn==1.6.1
+
+# Core FastAPI
+fastapi==0.115.12
+uvicorn==0.34.2
+httpx==0.28.1
+python-multipart==0.0.20
+
+# ML / Graph
+# torch==2.1.0
+dgl==2.4.0+cu121
+-f https://data.dgl.ai/wheels/torch-2.1/cu121/repo.html
+
+torch-scatter==2.1.2+pt21cpu
+-f https://data.pyg.org/whl/torch-2.1.0+cpu.html
+
+# Your core lib
+openrouteservice==2.3.3
+vrplib==1.5.1
+pyvrp==0.10.1
+hygese==0.0.0.10
+networkx==2.8.8
+numpy==1.26.0
+scipy==1.15.3
+pydantic==2.11.4
+
+# Optional: logging, utils
+python-json-logger==3.3.0
+python-dotenv==1.1.0
